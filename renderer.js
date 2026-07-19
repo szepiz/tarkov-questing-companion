@@ -1024,6 +1024,20 @@ function drawMap() {
     if (g) g.style.display = (i === mapView.floor) ? '' : 'none';
   }
 
+  // An upper floor is drawn ON TOP of the ground plan, and at full strength the
+  // two read as one drawing. Dim everything that isn't the selected floor so it
+  // stays as context instead of competing with it. Walking the base layer's
+  // siblings covers layers the data doesn't list (Customs and Shoreline both
+  // carry a First_Floor group nothing references).
+  const baseEl = svg.querySelector(`#${CSS.escape(md.baseLayer)}`);
+  const selLayer = mapView.floor >= 0 && md.floors[mapView.floor] ? md.floors[mapView.floor].svgLayer : null;
+  if (baseEl && baseEl.parentNode) {
+    for (const el of baseEl.parentNode.children) {
+      if (!el.id || el.id === selLayer || el.style.display === 'none') continue;
+      el.style.opacity = selLayer ? '.28' : '';
+    }
+  }
+
   const old = svg.querySelector('#qpins');
   if (old) old.remove();
   const ns = 'http://www.w3.org/2000/svg';

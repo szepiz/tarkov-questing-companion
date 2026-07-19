@@ -1070,6 +1070,23 @@ function createWindow() {
                   } catch { return null; }
                 })(),
                 floors: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
+                // selecting an upper floor must dim the ground plan underneath it.
+                // Checked per map because their SVG structures differ.
+                dim: await (async () => {
+                  const tabs = [...document.querySelectorAll('.floor-tab')];
+                  if (tabs.length < 2) return 'no floors';
+                  const base = svg.querySelector('#' + CSS.escape(MAP_DATA[${JSON.stringify(name)}].baseLayer));
+                  if (!base) return 'no base layer';
+                  const atGround = Number(getComputedStyle(base).opacity);
+                  tabs[1].click();
+                  await new Promise(r => setTimeout(r, 250));
+                  const onFloor = Number(getComputedStyle(base).opacity);
+                  tabs[0].click();
+                  await new Promise(r => setTimeout(r, 250));
+                  const backToGround = Number(getComputedStyle(base).opacity);
+                  return (atGround > 0.9 && onFloor < 0.5 && backToGround > 0.9)
+                    ? 'ok' : \`BAD ground=\${atGround} floor=\${onFloor} back=\${backToGround}\`;
+                })(),
               };
             })()`);
             console.log('TQT_MAPS', JSON.stringify(info));
@@ -1332,6 +1349,10 @@ function createWindow() {
             if (pin) pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));
             await new Promise(r => setTimeout(r, 300));
             const cleared = !document.querySelector('.qpin-card');
+            // the ground plan must be dimmed while an upper floor is shown
+            const svgEl = document.querySelector('#mapRot svg');
+            const baseOp = getComputedStyle(svgEl.querySelector('#Ground_Level')).opacity;
+            const selOp = getComputedStyle(svgEl.querySelector('#Second_Floor')).opacity;
             if (pin) pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));  // re-select for the screenshot
             await new Promise(r => setTimeout(r, 300));
             const ug = document.querySelector('#Second_Floor');
@@ -1342,6 +1363,9 @@ function createWindow() {
               undergroundHidden: gl ? gl.style.display === 'none' : null,
               detail,
               cardClearedOnSecondClick: cleared,
+              groundDimmed: Number(baseOp) < 0.9,
+              groundOpacity: Number(baseOp),
+              selectedFloorFull: Number(selOp) > 0.9,
             };
           })()`);
           console.log('TQT_FLOOR', JSON.stringify(floorChk));
