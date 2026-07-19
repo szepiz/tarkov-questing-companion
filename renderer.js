@@ -224,10 +224,12 @@ function reqSatisfied(req) {
   if (statuses.includes('complete') && isDone(req.task.id)) return true;
   if (statuses.includes('failed') && isFailed(req.task.id)) return true;
   if (statuses.some((s) => s !== 'complete' && s !== 'failed')) {
-    // "active": the prereq must be accepted/in progress. A failed prereq is
-    // terminal (can never be active again), so it does NOT satisfy an active
-    // requirement — otherwise a mutually-exclusive branch you failed would
-    // wrongly unlock its sibling branch.
+    // "active": the prereq must be accepted/in progress. A quest we still hold a
+    // failure for does NOT satisfy that — otherwise a mutually-exclusive branch
+    // you failed would wrongly unlock its sibling. (Failure is not always
+    // permanent: 16 tasks are restartable. But re-accepting one clears the
+    // failure during the log scan, so if the record is still here, it is not
+    // active.)
     if (isDone(req.task.id)) return true;
     if (isFailed(req.task.id)) return false;
     return taskReachable(req.task.id);
@@ -276,9 +278,11 @@ function buildTree() {
   const locking = lockingActive();
   for (const traders of maps.values()) {
     for (const list of traders.values()) {
-      const locked = locking ? new Map(list.map((t) => [t.id, isLocked(t) ? 1 : 0])) : null;
+      // sink the ones you cannot act on: locked below the rest, failed below that
+      const rank = new Map(list.map((t) => [t.id,
+        isFailed(t.id) && !isDone(t.id) ? 2 : (locking && isLocked(t)) ? 1 : 0]));
       list.sort((a, b) =>
-        (locked ? locked.get(a.id) - locked.get(b.id) : 0) ||
+        rank.get(a.id) - rank.get(b.id) ||
         (a.minPlayerLevel || 0) - (b.minPlayerLevel || 0) ||
         a.name.localeCompare(b.name));
     }
@@ -316,8 +320,11 @@ function renderTree() {
   // the x/y counts stay based on the full list so progress context is kept.
   const hideC = !!(state.settings && state.settings.hideCompleted);
   const hideL = !!(state.settings && state.settings.hideLocked);
-  const hiding = hideC || hideL;
-  const isVisible = (t) => !(hideC && isDone(t.id)) && !(hideL && isLocked(t));
+  const hideF = !!(state.settings && state.settings.hideFailed);
+  const hiding = hideC || hideL || hideF;
+  const isVisible = (t) => !(hideC && isDone(t.id))
+    && !(hideF && !isDone(t.id) && isFailed(t.id))
+    && !(hideL && isLocked(t));
 
   for (const mapName of mapNames) {
     const traders = grouped.get(mapName);
@@ -397,20 +404,27 @@ function renderTree() {
       for (const t of list) {
         if (!isVisible(t)) continue;
         const done = isDone(t.id);
-        const locked = isLocked(t);
+        // a completed record wins: you cannot have both, and completion is the
+        // one the player acted on
+        const failed = !done && isFailed(t.id);
+        const locked = !failed && isLocked(t);
         const row = document.createElement('div');
         row.className = 'quest-row' +
           (done ? ' completed' : '') +
+          (failed ? ' failed' : '') +
           (locked ? ' locked' : '') +
           (state.selQuestId === t.id ? ' selected' : '');
         const via = done && state.progress.completed[t.id] && state.progress.completed[t.id].via;
         const checkTitle = via === 'implied'
           ? "completed — worked out from a later quest you finished that required it. Tarkov never logged this one's hand-in. Click to untick."
           : done ? 'mark as not completed'
+          : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
+          : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
           : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
           : 'mark as completed';
         row.innerHTML = `
           <span class="quest-name" title="${escapeHtml(t.name)}">${escapeHtml(t.name.toUpperCase())}</span>
+          ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
           ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}
           <span class="quest-check" title="${checkTitle}"></span>`;
         row.querySelector('.quest-name').addEventListener('click', () => {
@@ -485,7 +499,12 @@ function renderQuest() {
 
   const badges = [];
   if (isDone(t.id)) badges.push('<span class="badge done">COMPLETED</span>');
-  if (isLocked(t)) badges.push('<span class="badge locked">LOCKED</span>');
+  else if (isFailed(t.id)) {
+    badges.push(t.restartable
+      ? '<span class="badge failed" title="Tarkov recorded this as failed, but it can be taken again from the trader.">FAILED · CAN RETAKE</span>'
+      : '<span class="badge failed" title="Tarkov recorded this as failed — usually because you took a competing quest instead. It cannot be handed in this wipe.">FAILED</span>');
+  }
+  if (!isFailed(t.id) && isLocked(t)) badges.push('<span class="badge locked">LOCKED</span>');
   if (t.kappaRequired) badges.push('<span class="badge kappa">KAPPA</span>');
   if (t.lightkeeperRequired) badges.push('<span class="badge lightkeeper">LIGHTKEEPER</span>');
   $('questBadges').innerHTML = badges.join('');
@@ -618,16 +637,18 @@ function renderSettingsPanel() {
   }
 
   // display toggles
-  for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked']]) {
+  for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'], ['hideFailedBtn', 'hideFailed']]) {
     const on = !!state.settings[key];
     $(btnId).textContent = on ? 'ON' : 'OFF';
     $(btnId).classList.toggle('on', on);
   }
+  // locked and failed both come from the logs, so both need automatic tracking
   const auto = state.settings.trackingMode === 'auto';
   $('hideLockedRow').style.opacity = auto ? '1' : '.45';
+  $('hideFailedRow').style.opacity = auto ? '1' : '.45';
   $('displayHint').textContent = auto
-    ? 'With both on, the list only shows quests you can take on right now.'
-    : 'Hiding locked quests needs AUTOMATIC tracking — that is how the app knows what is locked.';
+    ? 'With all three on, the list only shows quests you can take on right now.'
+    : 'Hiding locked and failed quests needs AUTOMATIC tracking — that is how the app knows about them.';
 
   const ws = state.watcherStatus;
   $('logsStatus').innerHTML = state.settings.trackingMode !== 'auto'
@@ -741,7 +762,7 @@ $('modeAuto').addEventListener('click', async () => {
   renderAll();
 });
 
-for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked']]) {
+for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'], ['hideFailedBtn', 'hideFailed']]) {
   $(btnId).addEventListener('click', async () => {
     state.settings = await backend.saveSettings({ [key]: !state.settings[key] });
     renderAll();
@@ -853,7 +874,57 @@ backend.onSettingsChanged((s) => {
 
 // ---------- quest map ----------
 
-const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null };
+const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null, zoom: 1, panX: 0, panY: 0 };
+
+const ZOOM_MIN = 1, ZOOM_MAX = 10;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+// Zoom/pan is a CSS transform on the whole map layer, so the artwork, the pins
+// and the card all move together. Pin sizes need no special handling: they are
+// derived from the RENDERED box (svgUnitsPerPx), and a bounding rect already
+// accounts for the transform — so redrawing after a zoom keeps them 13 px on
+// screen instead of ballooning with the map.
+function applyMapTransform(redraw) {
+  const rot = $('mapRot');
+  const set = () => { rot.style.transform = `translate(${mapView.panX}px, ${mapView.panY}px) scale(${mapView.zoom})`; };
+  set();
+  const svg = rot.querySelector('svg');
+  if (svg) {
+    // Clamp so the map cannot be dragged off screen. Measured AFTER writing the
+    // transform: reading the box first and dividing by the new zoom mixes an old
+    // measurement with a new scale, which quietly over-clamps and drags the point
+    // under the cursor away as you zoom.
+    const stage = $('mapStage').getBoundingClientRect();
+    const box = svg.getBoundingClientRect();          // already includes the scale
+    const maxX = Math.max(0, (box.width - stage.width) / 2);
+    const maxY = Math.max(0, (box.height - stage.height) / 2);
+    const px = clamp(mapView.panX, -maxX, maxX);
+    const py = clamp(mapView.panY, -maxY, maxY);
+    if (px !== mapView.panX || py !== mapView.panY) { mapView.panX = px; mapView.panY = py; set(); }
+  }
+  rot.classList.toggle('zoomed', mapView.zoom > 1);
+  if (redraw) requestAnimationFrame(() => { if (mapView.name) drawMap(); });
+}
+
+function resetMapView() {
+  mapView.zoom = 1; mapView.panX = 0; mapView.panY = 0;
+  $('mapRot').style.transform = '';
+  $('mapRot').classList.remove('zoomed');
+}
+
+function zoomMapAt(clientX, clientY, factor) {
+  const stage = $('mapStage').getBoundingClientRect();
+  const cx = clientX - stage.left - stage.width / 2;   // cursor, relative to the stage centre
+  const cy = clientY - stage.top - stage.height / 2;
+  const from = mapView.zoom;
+  const to = clamp(from * factor, ZOOM_MIN, ZOOM_MAX);
+  if (to === from) return;
+  // hold whatever is under the cursor still while the scale changes
+  mapView.panX = cx - (cx - mapView.panX) * (to / from);
+  mapView.panY = cy - (cy - mapView.panY) * (to / from);
+  mapView.zoom = to;
+  applyMapTransform(true);
+}
 
 function hasMapData(mapName) {
   return typeof MAP_DATA !== 'undefined' && !!MAP_DATA[mapName];
@@ -867,6 +938,7 @@ function collectMapPins(mapName) {
   const out = [];
   for (const t of state.tasks) {
     if (!taskPassesFilter(t) || isDone(t.id)) continue;
+    if (isFailed(t.id)) continue;   // can't be handed in — don't clutter the map with it
     const locked = isLocked(t);
     if (locked && state.settings && state.settings.hideLocked) continue;
     for (const o of t.objectives || []) {
@@ -971,7 +1043,10 @@ function drawMap() {
   if (sel) pinCard(md, sel, g, k);
 
   $('mapPinCount').textContent = `${mapView.pins.length} objective${mapView.pins.length === 1 ? '' : 's'} · ${shown.length} on this floor`;
-  $('mapHint').textContent = 'Pins show objectives for your unfinished quests here. Click a pin for details, click it again to hide them.';
+  $('mapHint').innerHTML = (md.approx
+    ? '<span class="bad">Pin positions on this map are approximate.</span> '
+    : '')
+    + 'Click a pin for details, click it again to hide them · scroll to zoom, right-drag to move, double-click to reset';
   renderFloorTabs();
 }
 
@@ -1044,6 +1119,7 @@ async function openQuestMap(mapName) {
   mapView.floor = -1;
   mapView.selected = null;
   mapView.pins = collectMapPins(mapName);
+  resetMapView();
   $('mapTitle').textContent = mapName.toUpperCase();
   $('mapCredit').innerHTML = 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0';
   $('mapOverlay').classList.remove('hidden');
@@ -1081,6 +1157,40 @@ async function openQuestMap(mapName) {
 // clicking the map away from a pin also clears the selection (pins stop propagation)
 $('mapStage').addEventListener('click', () => {
   if (mapView.selected != null) { mapView.selected = null; drawMap(); }
+});
+
+// ---- zoom (wheel) and pan (right-drag) ----
+$('mapStage').addEventListener('wheel', (e) => {
+  if (!mapView.name) return;
+  e.preventDefault();
+  zoomMapAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
+}, { passive: false });
+
+// double-click anywhere on the map returns to the default view
+$('mapStage').addEventListener('dblclick', (e) => {
+  e.preventDefault();
+  resetMapView();
+  drawMap();
+});
+
+let panning = null;
+$('mapStage').addEventListener('contextmenu', (e) => e.preventDefault());  // no menu while panning
+$('mapStage').addEventListener('mousedown', (e) => {
+  if (e.button !== 2 || !mapView.name) return;   // right button only
+  e.preventDefault();
+  panning = { x: e.clientX, y: e.clientY, panX: mapView.panX, panY: mapView.panY };
+  $('mapStage').classList.add('panning');
+});
+window.addEventListener('mousemove', (e) => {
+  if (!panning) return;
+  mapView.panX = panning.panX + (e.clientX - panning.x);
+  mapView.panY = panning.panY + (e.clientY - panning.y);
+  applyMapTransform(false);      // no redraw mid-drag: the scale has not changed
+});
+window.addEventListener('mouseup', (e) => {
+  if (!panning || e.button !== 2) return;
+  panning = null;
+  $('mapStage').classList.remove('panning');
 });
 // Pin and card sizes are measured against the rendered SVG, so a resized window
 // has to redraw or they drift away from their intended 13 px.

@@ -117,6 +117,7 @@ const TASK_FIELDS = `
     kappaRequired
     lightkeeperRequired
     minPlayerLevel
+    restartable
     wikiLink
     trader { name }
     map { name }
@@ -381,13 +382,18 @@ function parseQuestEventsWithTime(text) {
   // EFT also emits an extended form, "<id> successMessageText <traderId> <rewardId>"
   // (daily/weekly templates today). Requiring the quote right after the suffix would
   // silently drop those, so accept any trailing content.
-  const tmplRe = /"templateId"\s*:\s*"([a-f0-9]{24}) (successMessageText|failMessageText)[^"]*"/;
+  // "<id> description" is the quest-ACCEPTED notification; it is what tells us a
+  // failed-but-restartable quest has been taken again.
+  const tmplRe = /"templateId"\s*:\s*"([a-f0-9]{24}) (successMessageText|failMessageText|description)[^"]*"/;
   let curTs = null;
   for (const line of text.split('\n')) {
     const tm = tsRe.exec(line);
     if (tm) curTs = parseLogTs(tm[1]);
     const em = tmplRe.exec(line);
-    if (em) events.push({ questId: em[1], kind: em[2] === 'successMessageText' ? 'success' : 'fail', ts: curTs });
+    if (em) {
+      const kind = em[2] === 'successMessageText' ? 'success' : em[2] === 'failMessageText' ? 'fail' : 'accept';
+      events.push({ questId: em[1], kind, ts: curTs });
+    }
   }
   return events;
 }
@@ -477,7 +483,12 @@ function scanLogs() {
         // completions from BEFORE the reset, not the rest of the session)
         const evTs = ev.ts !== null ? ev.ts : folder.startTs;
         if (bucket.resetAt && evTs !== null && evTs < bucket.resetAt) continue;
+        // Events arrive in order (folders sorted by start time, lines in file
+        // order), so the LAST thing that happened to a quest wins. That matters:
+        // several quests are restartable, and a failure followed by a re-accept
+        // means the quest is active again, not failed.
         if (ev.kind === 'success') {
+          if (bucket.failed[ev.questId]) { delete bucket.failed[ev.questId]; anyFail = true; }
           // dedup is PER MODE on purpose — the same quest can be completed
           // independently in PvP and PvE (separate profiles)
           if (!bucket.completed[ev.questId]) {
@@ -487,8 +498,12 @@ function scanLogs() {
             // yet, so announce everything rather than nothing.
             if (!known[mode].size || known[mode].has(ev.questId)) newByMode[mode].push(ev.questId);
           }
-        } else if (!bucket.failed[ev.questId]) {
-          bucket.failed[ev.questId] = { at: Date.now() };
+        } else if (ev.kind === 'accept') {
+          // taking the quest again undoes an earlier failure
+          if (bucket.failed[ev.questId]) { delete bucket.failed[ev.questId]; anyFail = true; }
+        } else if (!bucket.failed[ev.questId] && !bucket.completed[ev.questId]) {
+          // record WHEN it failed, not when we happened to scan
+          bucket.failed[ev.questId] = { at: evTs !== null ? evTs : Date.now() };
           anyFail = true;
         }
       }
@@ -1043,6 +1058,17 @@ function createWindow() {
                 labelsOnArtwork: hits,
                 labelHitRate: labels.length ? Math.round(hits / labels.length * 100) + '%' : 'n/a',
                 dotPx: dots.length ? Math.round(dots[0].getBoundingClientRect().width * 10) / 10 : null,
+                // does the drawn artwork actually fill its viewBox? a map whose
+                // content is inset would need the CONTENT box as the mapping
+                // rectangle, not the viewBox
+                contentBBox: (() => {
+                  try {
+                    const g = svg.querySelector('g');
+                    const b = g.getBBox();
+                    const r = (n) => Math.round(n * 10) / 10;
+                    return { x: r(b.x), y: r(b.y), w: r(b.width), h: r(b.height) };
+                  } catch { return null; }
+                })(),
                 floors: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
               };
             })()`);
@@ -1074,6 +1100,40 @@ function createWindow() {
           await new Promise((r) => setTimeout(r, 900));
           sizes.large = await dot();
           console.log('TQT_RESIZE', JSON.stringify(sizes));
+          // zoom must magnify the map while pins stay the same size on screen,
+          // the point under the cursor must stay put, and pan must be bounded
+          const zoomChk = await win.webContents.executeJavaScript(`(async () => {
+            const wait = (ms) => new Promise(r => setTimeout(r, ms));
+            const stage = document.getElementById('mapStage');
+            const st = stage.getBoundingClientRect();
+            const at = () => { const s = document.querySelector('#mapRot svg').getBoundingClientRect(); return { w: Math.round(s.width), cx: Math.round(s.left + s.width / 2) }; };
+            const dot = () => { const d = document.querySelector('.qpin-dot'); return d ? Math.round(d.getBoundingClientRect().width * 10) / 10 : null; };
+            const dotXY = () => { const d = document.querySelector('.qpin-dot'); const r = d.getBoundingClientRect(); return { x: Math.round(r.left + r.width/2), y: Math.round(r.top + r.height/2) }; };
+            const before = { zoom: mapView.zoom, map: at().w, dot: dot(), pin: dotXY() };
+            // zoom in on the pin itself: it should barely move
+            const p = dotXY();
+            for (let i = 0; i < 6; i++) { stage.dispatchEvent(new WheelEvent('wheel', { deltaY: -120, clientX: p.x, clientY: p.y, bubbles: true, cancelable: true })); await wait(60); }
+            await wait(300);
+            const zoomed = { zoom: Math.round(mapView.zoom * 100) / 100, map: at().w, dot: dot(), pin: dotXY() };
+            // right-drag should move it, and stay bounded
+            stage.dispatchEvent(new MouseEvent('mousedown', { button: 2, clientX: st.left + 400, clientY: st.top + 300, bubbles: true }));
+            window.dispatchEvent(new MouseEvent('mousemove', { clientX: st.left + 400 + 5000, clientY: st.top + 300, bubbles: true }));
+            window.dispatchEvent(new MouseEvent('mouseup', { button: 2, bubbles: true }));
+            await wait(200);
+            const panned = { panX: Math.round(mapView.panX) };
+            stage.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true }));
+            await wait(300);
+            const reset = { zoom: mapView.zoom, panX: mapView.panX, dot: dot() };
+            return {
+              zoomedIn: zoomed.zoom > before.zoom && zoomed.map > before.map * 1.5,
+              pinStaysSameSize: before.dot !== null && Math.abs(zoomed.dot - before.dot) <= 1,
+              cursorAnchored: Math.abs(zoomed.pin.x - p.x) <= 25 && Math.abs(zoomed.pin.y - p.y) <= 25,
+              panBounded: Math.abs(panned.panX) < 5000,
+              dblClickResets: reset.zoom === 1 && reset.panX === 0,
+              detail: { before, zoomed, panned, reset },
+            };
+          })()`);
+          console.log('TQT_ZOOM', JSON.stringify(zoomChk));
         } catch (err) {
           console.error('TQT_MAPS failed:', err);
         }

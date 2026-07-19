@@ -25,6 +25,7 @@ const MAP_DATA = {
     bounds: [[249, -124], [-99, 364]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [
       {
         name: "Garage", svgLayer: "Underground_Level",
@@ -59,6 +60,7 @@ const MAP_DATA = {
     bounds: [[77, -64.5], [-65.5, 67.4]], // [[x,z],[x,z]] in game coords
     rotate: 90,
     baseLayer: "Ground_Floor",
+
     floors: [
       {
         name: "2nd Floor", svgLayer: "Second_Floor",
@@ -97,6 +99,7 @@ const MAP_DATA = {
     bounds: [[698, -307], [-372, 237]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [
       {
         name: "Underground", svgLayer: "Underground_Level",
@@ -148,6 +151,7 @@ const MAP_DATA = {
     bounds: [[646, -914], [-761, 442]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [],
     labels: [
       [10, -3, "Sawmill"], [-485, -390, "Scav Town"], [-517, -210, "Old Sawmill"],
@@ -163,6 +167,7 @@ const MAP_DATA = {
     bounds: [[504, -415], [-1056, 618]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [
       {
         name: "Underground", svgLayer: "Underground_Level",
@@ -200,6 +205,7 @@ const MAP_DATA = {
     bounds: [[598, -442], [-433, 426]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [
       {
         name: "2nd Floor", svgLayer: "First_Floor",
@@ -243,9 +249,10 @@ const MAP_DATA = {
   Reserve: {
     svg: "maps/Reserve.svg",
     viewBox: { w: 827.28742, h: 761.16437 },
-    bounds: [[289, -293], [-303, 244]], // [[x,z],[x,z]] in game coords
+    bounds: [[289, -274], [-303, 272]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [
       {
         name: "Bunkers", svgLayer: "Bunkers",
@@ -277,6 +284,7 @@ const MAP_DATA = {
     bounds: [[323, -295], [-280, 532]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [
       {
         name: "Underground", svgLayer: "Underground_Level",
@@ -334,6 +342,7 @@ const MAP_DATA = {
     bounds: [[515, -998], [-545, 725]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [],
     labels: [
       [-30, -882, "Train Yard"], [-120, -841, "Drug Lab"], [-65, -600, "Water Treatment"],
@@ -346,12 +355,51 @@ const MAP_DATA = {
       [-125, 296, "Crash Site"]
     ],
   },
+  "The Lab": {
+    svg: "maps/Labs.svg",
+    viewBox: { w: 720, h: 586 },
+    bounds: [[-80, -477], [-287, -193]], // [[x,z],[x,z]] in game coords
+    rotate: 270,
+    baseLayer: "First_Level",
+    approx: true,   // pin positions unverified — see _dev/build_mapdata.js
+
+    floors: [
+      {
+        name: "Second Level", svgLayer: "Second_Level",
+        extents: [
+          { height: [3, 10000], bounds: [[[-101, -422], [-271, -270]]] },
+        ],
+      },
+      {
+        name: "Technical", svgLayer: "Technical_Level",
+        extents: [
+          { height: [-10000, -0.9] },
+        ],
+      },
+    ],
+    labels: [
+      [-230, -400, "Parking"], [-246, -379, "Vestibules #1"], [-216, -379, "Vestibules #2"],
+      [-172, -342, "Main Working Area"], [-148, -398, "Negotiation Room"],
+      [-130, -398, "Infirmary Lvl 1"], [-130, -356, "Test Room"], [-125, -308, "Server Room"],
+      [-116, -266, "Warehouse Tunnels"], [-163, -269, "Warehouse"],
+      [-170, -248, "Warehouse Gate"], [-207, -305, "Lecture Hall"],
+      [-221, -343, "Recreation Area"], [-236, -302, "Gym"], [-241, -280, "Men's Locker Room"],
+      [-232, -280, "Women's Locker Room"], [-259, -366, "Boiler Room"],
+      [-260, -319, "Security Barracks"], [-260, -342, "Reception"],
+      [-260, -364, "Administrative Office"], [-254, -320, "Security Office"],
+      [-244, -378, "Security #1"], [-215, -379, "Security #2"], [-229, -343, "Conference Room"],
+      [-219, -302, "Cafeteria"], [-189, -401, "Offices #1"], [-149, -401, "Offices #2"],
+      [-130, -401, "Infirmary Lvl 2"], [-130, -361, "Sterile Laboratory"],
+      [-169, -288, "Control Room"], [-250, -281, "Corridor To Building #2"]
+    ],
+  },
   Terminal: {
     svg: "maps/Terminal.svg",
     viewBox: { w: 887.70096, h: 1043.9554 },
     bounds: [[463, -580], [-433, 475]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+
     floors: [],
     labels: [],
   },
