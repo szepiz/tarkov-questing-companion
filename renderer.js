@@ -339,6 +339,14 @@ function renderTree() {
       <span class="row-count${mapDone === mapTotal ? ' done' : ''}">${mapDone}/${mapTotal}</span>`;
     const mb = mapRow.querySelector('.map-btn');
     if (mb) mb.addEventListener('click', (e) => { e.stopPropagation(); openQuestMap(mapName); });
+    // the +/- toggle expands or collapses on its own, without first having to
+    // select the row (clicking the name still selects, as before)
+    mapRow.querySelector('.row-toggle').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (state.expandedMaps.has(mapName)) state.expandedMaps.delete(mapName);
+      else state.expandedMaps.add(mapName);
+      renderAll();
+    });
     mapRow.addEventListener('click', () => {
       if (state.selMap === mapName && state.expandedMaps.has(mapName)) {
         state.expandedMaps.delete(mapName);
@@ -367,6 +375,12 @@ function renderTree() {
         <span class="row-name">${escapeHtml(traderName.toUpperCase())}</span>
         <span class="row-toggle">${tExpanded ? '−' : '+'}</span>
         <span class="row-count${doneCount === list.length ? ' done' : ''}">${doneCount}/${list.length}</span>`;
+      traderRow.querySelector('.row-toggle').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.expandedTraders.has(tKey)) state.expandedTraders.delete(tKey);
+        else state.expandedTraders.add(tKey);
+        renderAll();
+      });
       traderRow.addEventListener('click', () => {
         if (state.selTrader === traderName && state.selMap === mapName && state.expandedTraders.has(tKey)) {
           state.expandedTraders.delete(tKey);
@@ -704,7 +718,6 @@ document.querySelectorAll('.mode-btn-top').forEach((el) => {
 $('settingsBtn').addEventListener('click', () => {
   $('settingsOverlay').classList.remove('hidden');
   renderSettingsPanel();
-  if (!upd.checked && !upd.checking) doCheckUpdate(false);
 });
 $('closeSettingsBtn').addEventListener('click', () => $('settingsOverlay').classList.add('hidden'));
 $('settingsOverlay').addEventListener('click', (e) => {
@@ -806,13 +819,15 @@ backend.onAutoCompletions((data) => {
   const names = mineIds.map((id) => (state.byId.get(id) || {}).name).filter(Boolean);
   const otherMode = state.gameMode === 'regular' ? 'pve' : 'regular';
   const otherCount = ((data.newByMode && data.newByMode[otherMode]) || []).length;
-  if (data.initial && mineIds.length > 3) {
-    toast(`Imported ${mineIds.length} completed ${modeLabel(state.gameMode)} quests from your logs`);
-  } else if (mineIds.length) {
+  // count only ids that resolve to a real quest — the logs also carry daily/weekly
+  // template ids, which belong to no quest in the list
+  if (data.initial && names.length > 3) {
+    toast(`Imported ${names.length} completed ${modeLabel(state.gameMode)} quests from your logs`);
+  } else if (names.length) {
     for (const n of names.slice(0, 5)) toast(`Quest completed: ${n}`);
     if (names.length > 5) toast(`…and ${names.length - 5} more`);
   }
-  if (data.initial && otherCount > 0 && mineIds.length === 0) {
+  if (data.initial && otherCount > 0 && names.length === 0) {
     toast(`Found ${otherCount} completed ${modeLabel(otherMode)} quests — switch to ${modeLabel(otherMode)} to see them.`);
   }
   renderAll();
@@ -918,25 +933,74 @@ function drawMap() {
     c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 6);
     c.setAttribute('class', 'qpin-dot' + (mapView.selected === i ? ' sel' : ''));
     if (p.locked) c.setAttribute('opacity', '.5');
-    c.addEventListener('click', (e) => { e.stopPropagation(); mapView.selected = i; drawMap(); });
+    // clicking the selected pin again clears it
+    c.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mapView.selected = (mapView.selected === i) ? null : i;
+      drawMap();
+    });
     wrap.appendChild(c);
-    if (mapView.selected === i) {
-      const t = document.createElementNS(ns, 'text');
-      t.setAttribute('x', s.x + 10); t.setAttribute('y', s.y + 4);
-      t.setAttribute('class', 'qpin-label');
-      t.textContent = p.quest;
-      wrap.appendChild(t);
-    }
     g.appendChild(wrap);
   });
+
+  const sel = mapView.selected != null ? shown[mapView.selected] : null;
+  if (sel) g.appendChild(pinCard(md, sel));
   svg.appendChild(g);
 
   $('mapPinCount').textContent = `${mapView.pins.length} objective${mapView.pins.length === 1 ? '' : 's'} · ${shown.length} on this floor`;
-  const sel = mapView.selected != null ? shown[mapView.selected] : null;
-  $('mapHint').innerHTML = sel
-    ? `<strong style="color:#d0a943">${escapeHtml(sel.quest)}</strong> — ${escapeHtml(sel.desc)}${sel.optional ? ' (optional)' : ''}${sel.locked ? ' · locked' : ''}`
-    : 'Pins show objectives for your unfinished quests here. Click a pin for details.';
+  $('mapHint').textContent = 'Pins show objectives for your unfinished quests here. Click a pin for details, click it again to hide them.';
   renderFloorTabs();
+}
+
+// The details card for the selected pin, anchored beside that pin.
+// The map itself is displayed rotated 180°, so this layer is counter-rotated
+// about the map centre: inside it, coordinates run the way they look on screen,
+// which is what makes the edge-clamping below mean what it says.
+function pinCard(md, p) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const W = md.viewBox.w, H = md.viewBox.h;
+  const s = gameToSvg(md, p.x, p.z);
+  const px = W - s.x, py = H - s.y;          // the pin, as seen on screen
+
+  const layer = document.createElementNS(ns, 'g');
+  layer.setAttribute('transform', `rotate(180 ${W / 2} ${H / 2})`);
+
+  const desc = p.desc || '';
+  const tags = [p.optional ? 'optional' : '', p.locked ? 'locked' : ''].filter(Boolean).join(' · ');
+  const cardW = Math.max(140, Math.min(280, W * 0.3));
+  // generous estimate: the card paints its own background, so a box that is
+  // slightly too tall is invisible, whereas one too short would clip the text
+  const perLine = Math.max(16, Math.round(cardW / 4.4));
+  const lines = Math.ceil((desc.length || 1) / perLine) + (tags ? 1 : 0);
+  const cardH = 26 + lines * 13;
+
+  let x = px + 14;
+  if (x + cardW > W - 4) x = px - 14 - cardW;              // flip sides near the edge
+  x = Math.max(4, Math.min(x, W - cardW - 4));
+  const y = Math.max(4, Math.min(py - cardH / 2, H - cardH - 4));
+
+  // leader line, so it stays obvious which pin the card belongs to
+  const ln = document.createElementNS(ns, 'line');
+  ln.setAttribute('x1', px); ln.setAttribute('y1', py);
+  ln.setAttribute('x2', x > px ? x : x + cardW);
+  ln.setAttribute('y2', Math.max(y + 8, Math.min(py, y + cardH - 8)));
+  ln.setAttribute('class', 'qpin-leader');
+  layer.appendChild(ln);
+
+  const fo = document.createElementNS(ns, 'foreignObject');
+  fo.setAttribute('x', x); fo.setAttribute('y', y);
+  fo.setAttribute('width', cardW); fo.setAttribute('height', cardH);
+  fo.setAttribute('pointer-events', 'none');
+  const div = document.createElement('div');
+  div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+  div.className = 'qpin-card';
+  div.innerHTML =
+    `<div class="qpin-card-quest">${escapeHtml(p.quest)}</div>` +
+    (desc ? `<div class="qpin-card-desc">${escapeHtml(desc)}</div>` : '') +
+    (tags ? `<div class="qpin-card-tags">${escapeHtml(tags)}</div>` : '');
+  fo.appendChild(div);
+  layer.appendChild(fo);
+  return layer;
 }
 
 async function openQuestMap(mapName) {
@@ -964,6 +1028,10 @@ async function openQuestMap(mapName) {
   drawMap();
 }
 
+// clicking the map away from a pin also clears the selection (pins stop propagation)
+$('mapStage').addEventListener('click', () => {
+  if (mapView.selected != null) { mapView.selected = null; drawMap(); }
+});
 $('closeMapBtn').addEventListener('click', () => $('mapOverlay').classList.add('hidden'));
 $('mapOverlay').addEventListener('click', (e) => {
   if (e.target === $('mapOverlay')) $('mapOverlay').classList.add('hidden');
@@ -985,7 +1053,7 @@ const upd = {
 function renderUpdateSection() {
   if (!$('updateStatus')) return;
   const status = $('updateStatus');
-  $('updateVersion').textContent = upd.current ? `Current version: ${upd.current}` : '';
+  $('versionTag').textContent = upd.current ? `v${upd.current}` : '';
 
   if (upd.checking) {
     status.innerHTML = 'Checking for updates…';
@@ -1008,6 +1076,9 @@ function renderUpdateSection() {
   } else {
     status.innerHTML = `<span class="ok">Update available: v${escapeHtml(upd.latest)}.</span> Your progress won't be affected.`;
   }
+
+  // the footer is always on screen, so an empty status line must not reserve space
+  status.classList.toggle('hidden', !status.textContent.trim());
 
   $('checkUpdateBtn').classList.toggle('hidden', upd.downloading || upd.staged);
   $('checkUpdateBtn').disabled = upd.checking || upd.downloading;
@@ -1063,7 +1134,7 @@ backend.onUpdateAvailable((r) => {
   upd.checked = true; upd.available = true;
   upd.latest = r.latest || ''; upd.notes = r.notes || '';
   upd.canApply = !!r.canApply; upd.current = r.current || upd.current;
-  toast(`Update available: v${r.latest} — open Settings to install.`);
+  toast(`Update available: v${r.latest} — DOWNLOAD & INSTALL is at the bottom left.`);
   renderUpdateSection();
 });
 
@@ -1080,6 +1151,7 @@ backend.onUpdateAvailable((r) => {
   applyMode();
   renderModeSwitch();
   renderAll();
+  renderUpdateSection();   // shows the version in the footer before any check runs
 
   // legacy progress from before PvP/PvE were separated, and the user is on
   // manual tracking (so the automatic re-split never runs) — nudge them once

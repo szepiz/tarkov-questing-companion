@@ -307,7 +307,10 @@ function modeAtTime(segs, ts) {
 function parseQuestEventsWithTime(text) {
   const events = [];
   const tsRe = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/;
-  const tmplRe = /"templateId"\s*:\s*"([a-f0-9]{24}) (successMessageText|failMessageText)"/;
+  // EFT also emits an extended form, "<id> successMessageText <traderId> <rewardId>"
+  // (daily/weekly templates today). Requiring the quote right after the suffix would
+  // silently drop those, so accept any trailing content.
+  const tmplRe = /"templateId"\s*:\s*"([a-f0-9]{24}) (successMessageText|failMessageText)[^"]*"/;
   let curTs = null;
   for (const line of text.split('\n')) {
     const tm = tsRe.exec(line);
@@ -377,9 +380,12 @@ function scanLogs() {
     for (const nf of notifFiles) {
       let stat;
       try { stat = fs.statSync(nf); } catch { continue; }
-      if (fileSizes.get(nf) !== stat.size) { changed = true; fileSizes.set(nf, stat.size); }
+      const grew = fileSizes.get(nf) !== stat.size;
       let t;
-      try { t = fs.readFileSync(nf, 'utf8'); } catch { continue; }
+      try { t = fs.readFileSync(nf, 'utf8'); } catch { continue; }  // locked by the game: retry next scan
+      // remember the size only once the read succeeded — recording it first would
+      // make a single failed read gate this folder out until the app restarts
+      if (grew) { changed = true; fileSizes.set(nf, stat.size); }
       texts.push(t);
     }
     if (!changed) continue; // nothing new in this folder
@@ -930,11 +936,11 @@ function createWindow() {
             };
           })()`);
           console.log('TQT_HIDE', JSON.stringify(hideChk));
-          // exercise the updates section (real GitHub check)
-          await win.webContents.executeJavaScript(`document.getElementById('settingsBtn').click();`);
+          // exercise the update controls, which now live in the sidebar footer
+          await win.webContents.executeJavaScript(`document.getElementById('checkUpdateBtn').click();`);
           await new Promise((r) => setTimeout(r, 4000));
           const updChk = await win.webContents.executeJavaScript(`(() => ({
-            current: document.getElementById('updateVersion').textContent,
+            current: document.getElementById('versionTag').textContent,
             status: document.getElementById('updateStatus').textContent,
             checkBtnVisible: !document.getElementById('checkUpdateBtn').classList.contains('hidden'),
             installBtnVisible: !document.getElementById('installUpdateBtn').classList.contains('hidden'),
@@ -972,13 +978,22 @@ function createWindow() {
             const pin = document.querySelector('.qpin-dot');
             if (pin) pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));
             await new Promise(r => setTimeout(r, 400));
+            const card = document.querySelector('.qpin-card');
+            const detail = card ? card.textContent.slice(0, 120) : null;
+            // clicking the same pin again must clear the card
+            if (pin) pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            await new Promise(r => setTimeout(r, 300));
+            const cleared = !document.querySelector('.qpin-card');
+            if (pin) pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));  // re-select for the screenshot
+            await new Promise(r => setTimeout(r, 300));
             const ug = document.querySelector('#Second_Floor');
             const gl = document.querySelector('#Underground_Level');
             return {
               pinsOn2nd: before,
               secondFloorVisible: ug ? ug.style.display !== 'none' : null,
               undergroundHidden: gl ? gl.style.display === 'none' : null,
-              detail: document.getElementById('mapHint').textContent.slice(0, 120),
+              detail,
+              cardClearedOnSecondClick: cleared,
             };
           })()`);
           console.log('TQT_FLOOR', JSON.stringify(floorChk));

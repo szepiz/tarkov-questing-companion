@@ -25,7 +25,17 @@
         <div class="tree-message">Loading quest data…</div>
       </div>
       <footer id="sidebarFooter">
-        <button id="settingsBtn">SETTINGS</button>
+        <div id="footerRow">
+          <button id="settingsBtn">SETTINGS</button>
+          <span id="versionTag"></span>
+          <div class="update-actions">
+            <button id="checkUpdateBtn">CHECK FOR UPDATES</button>
+            <button id="installUpdateBtn" class="hidden">DOWNLOAD &amp; INSTALL</button>
+            <button id="restartUpdateBtn" class="hidden">RESTART TO FINISH</button>
+          </div>
+        </div>
+        <div id="updateProgressWrap" class="hidden"><div id="updateProgressBar"></div></div>
+        <div id="updateStatus" class="hidden"></div>
         <div id="statusLine"></div>
       </footer>
     </aside>
@@ -108,18 +118,6 @@
           <button id="resetBtn">RESET ALL PROGRESS</button>
         </div>
 
-        <div class="setting-group">
-          <div class="setting-label">UPDATES</div>
-          <div class="setting-hint" id="updateStatus">Checking…</div>
-          <div id="updateProgressWrap" class="hidden"><div id="updateProgressBar"></div></div>
-          <div class="update-actions">
-            <button id="checkUpdateBtn">CHECK FOR UPDATES</button>
-            <button id="installUpdateBtn" class="hidden">DOWNLOAD &amp; INSTALL</button>
-            <button id="restartUpdateBtn" class="hidden">RESTART TO FINISH</button>
-          </div>
-          <div class="setting-hint" id="updateVersion"></div>
-        </div>
-
         <button id="closeSettingsBtn">CLOSE</button>
       </div>
     </div>
@@ -134,7 +132,7 @@
         </div>
         <div id="mapStage"><div id="mapRot"></div></div>
         <div id="mapFooter">
-          <span id="mapHint">Pins show objectives for your unfinished quests here. Click a pin for details.</span>
+          <span id="mapHint">Pins show objectives for your unfinished quests here. Click a pin for details, click it again to hide them.</span>
           <span id="mapCredit"></span>
         </div>
       </div>

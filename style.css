@@ -159,7 +159,10 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   width: 16px;
   text-align: center;
   flex: none;
+  cursor: pointer;
+  border-radius: 2px;
 }
+.row-toggle:hover { background: rgba(255, 255, 255, .16); color: #fff; }
 .row-count {
   margin-left: auto;
   font-size: 11px;
@@ -290,6 +293,25 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   text-shadow: 0 1px 0 rgba(255,255,255,.35);
 }
 #settingsBtn:hover { filter: brightness(1.1); }
+#footerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;          /* a narrow sidebar wraps rather than clipping the buttons */
+}
+#versionTag {
+  font-size: 11px;
+  color: #6e6b62;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+#updateStatus {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #8a877e;
+  letter-spacing: .3px;
+}
 #statusLine {
   margin-top: 6px;
   font-size: 11px;
@@ -598,16 +620,23 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 #browseBtn:hover, #refreshDataBtn:hover, #rescanBtn:hover, #closeSettingsBtn:hover { filter: brightness(1.25); }
 #rescanBtn:disabled { opacity: .5; cursor: default; }
-.update-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.update-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
 #checkUpdateBtn, #installUpdateBtn, #restartUpdateBtn {
   background: linear-gradient(#3a3a37, #2c2c29);
   border: 1px solid #4a4a44;
   color: #cfccc3;
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 1.5px;
-  padding: 7px 14px;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  padding: 6px 11px;
   border-radius: 2px;
+  white-space: nowrap;
+}
+/* an update that is ready to install should be the obvious thing to click */
+#installUpdateBtn, #restartUpdateBtn {
+  background: linear-gradient(#c9a94a, #a9862f);
+  border-color: #6b5a20;
+  color: #16160f;
 }
 #installUpdateBtn, #restartUpdateBtn {
   background:
@@ -746,13 +775,40 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 .qpin-dot:hover { fill: #ffd764; }
 .qpin-dot.sel { fill: #ff6a3d; }
-.qpin-label {
-  font: 700 11px 'Bender', sans-serif;
-  fill: #fff;
-  stroke: #000;
-  stroke-width: 3;
-  paint-order: stroke;
+.qpin-leader {
+  stroke: #ff6a3d;
+  stroke-width: 1.5;
+  opacity: .8;
   pointer-events: none;
+}
+/* sizes are in SVG user units, so the card scales with the map */
+.qpin-card {
+  font-family: 'Bender', sans-serif;
+  background: rgba(12, 12, 9, .93);
+  border: 1px solid #4a4a41;
+  border-left: 3px solid #ff6a3d;
+  border-radius: 2px;
+  padding: 5px 7px;
+  box-sizing: border-box;
+}
+.qpin-card-quest {
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: .5px;
+  color: #d0a943;
+  line-height: 1.25;
+}
+.qpin-card-desc {
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 1.3;
+  color: #d8d5cd;
+}
+.qpin-card-tags {
+  margin-top: 3px;
+  font-size: 9px;
+  letter-spacing: .5px;
+  color: #8a877e;
 }
 
 #mapFooter {
