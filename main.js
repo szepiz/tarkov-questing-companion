@@ -598,21 +598,26 @@ async function downloadUpdate() {
 // sleeps with Start-Sleep, neither of which need console input. (A .bat using
 // `timeout` / `tasklist | find` hangs when spawned detached with no stdin.)
 const UPDATE_PS = String.raw`
-param([int]$AppPid, [string]$Staged, [string]$Install, [string]$Backup, [string]$ExeName, [string]$TempDir)
+param([int]$AppPid, [string]$Staged, [string]$Install, [string]$Backup, [string]$ExeName, [string]$TempDir, [string]$Log)
 $ErrorActionPreference = 'SilentlyContinue'
+function Note($m) { "$(Get-Date -Format o)  $m" | Out-File -FilePath $Log -Append -Encoding utf8 }
+Note "update starting (waiting for pid $AppPid)"
 # wait for the app to exit (returns at once if it is already gone)
 Wait-Process -Id $AppPid -Timeout 90
 Start-Sleep -Seconds 2   # let helper processes / AV release file locks
 $rc = @('/MIR','/R:5','/W:2','/NFL','/NDL','/NJH','/NJS','/NC','/NS')
 robocopy $Install $Backup @rc | Out-Null          # back up the working install
+Note "backup rc=$LASTEXITCODE"
 robocopy $Staged  $Install @rc | Out-Null         # install the new build
 $code = $LASTEXITCODE
+Note "install rc=$code"
 if ($code -ge 8) {                                # robocopy >=8 = real failure
   robocopy $Backup $Install @rc | Out-Null        # restore the working version
+  Note "FAILED - rolled back to the previous version (rc=$LASTEXITCODE)"
 }
 Start-Process -FilePath (Join-Path $Install $ExeName)
 Remove-Item $Backup -Recurse -Force
-if ($code -lt 8) { Remove-Item $TempDir -Recurse -Force }
+if ($code -lt 8) { Remove-Item $TempDir -Recurse -Force; Note "update complete" }
 Remove-Item $MyInvocation.MyCommand.Path -Force
 `;
 
@@ -624,8 +629,9 @@ function applyUpdateAndRestart() {
   const backup = install.replace(/[\\/]+$/, '') + '.bak-update';
   const tempDir = path.join(os.tmpdir(), 'tqc-update');
   const psPath = path.join(os.tmpdir(), 'tqc-apply-update.ps1');
+  const logPath = path.join(app.getPath('userData'), 'update.log');
   fs.writeFileSync(psPath, UPDATE_PS, 'utf8');
-  spawn('powershell.exe', [
+  const psArgs = [
     '-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', psPath,
     '-AppPid', String(process.pid),
     '-Staged', stagedUpdateDir,
@@ -633,7 +639,13 @@ function applyUpdateAndRestart() {
     '-Backup', backup,
     '-ExeName', exeName,
     '-TempDir', tempDir,
-  ], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+    '-Log', logPath,
+  ];
+  // Launch through `cmd /c start` on purpose: Electron puts directly-spawned
+  // children in a job object that kills them the moment the app exits, so the
+  // helper never ran. `start` breaks it out of that job so it survives us.
+  spawn('cmd.exe', ['/c', 'start', '""', '/b', 'powershell.exe', ...psArgs],
+    { detached: true, stdio: 'ignore', windowsHide: true }).unref();
   setTimeout(() => app.quit(), 400);
   return { applying: true };
 }
