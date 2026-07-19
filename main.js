@@ -538,6 +538,8 @@ async function downloadUpdate() {
     throw new Error('this folder is read-only (e.g. Program Files) — move the app to a normal folder like Downloads, then update');
   }
   const tmp = path.join(os.tmpdir(), 'tqc-update');
+  // best effort — if this fails we still succeed, because the extract folder
+  // below is uniquely named
   try { fs.rmSync(tmp, { recursive: true, force: true }); } catch {}
   fs.mkdirSync(tmp, { recursive: true });
   const zipPath = path.join(tmp, 'update.zip');
@@ -566,7 +568,10 @@ async function downloadUpdate() {
   if (fs.statSync(zipPath).size < 1024) throw new Error('downloaded file is not a valid update');
 
   sendToRenderer('update-progress', { phase: 'extract', pct: 100 });
-  const extractDir = path.join(tmp, 'new');
+  // Extract into a FRESH, uniquely named folder. ExtractToDirectory refuses to
+  // write over existing files, and a stale folder can survive when clearing the
+  // temp dir fails (e.g. a previous update attempt died mid-way).
+  const extractDir = path.join(tmp, 'new-' + Date.now());
   try { fs.rmSync(extractDir, { recursive: true, force: true }); } catch {}
   execSync(
     `powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory([Environment]::GetEnvironmentVariable('TQC_ZIP'),[Environment]::GetEnvironmentVariable('TQC_DEST'))"`,
