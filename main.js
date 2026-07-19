@@ -178,24 +178,75 @@ function cacheToModes(cache) {
   return null;
 }
 
-// Ids we can put a name to, used to decide what is worth ANNOUNCING.
-// Storage still records every event: an id absent from the cache may simply be
-// newer than the cache, and dropping it would lose a real completion. Memoised
-// on the cache file's stamp — it is ~4.5 MB and the watcher polls every 5 s.
-let knownIds = { key: '', ids: null };
-function knownQuestIds() {
+// Quest index per mode: every id we can put a name to, plus the prerequisites
+// each quest demands be COMPLETE. Memoised on the cache file's stamp — it is
+// ~4.5 MB and the watcher polls every 5 s.
+let questIdx = { key: '', idx: null };
+function questIndex() {
   let key = '';
   for (const f of [CACHE_FILE, BUNDLED_CACHE]) {
     try { const st = fs.statSync(f); key = f + st.mtimeMs + ':' + st.size; break; } catch {}
   }
-  if (knownIds.ids && key && key === knownIds.key) return knownIds.ids;
-  const ids = { regular: new Set(), pve: new Set() };
+  if (questIdx.idx && key && key === questIdx.key) return questIdx.idx;
+  const idx = {
+    regular: { ids: new Set(), prereqs: new Map() },
+    pve: { ids: new Set(), prereqs: new Map() },
+  };
   const data = readJson(CACHE_FILE, null) || readJson(BUNDLED_CACHE, null);
   if (data) {
-    for (const m of MODES) for (const t of data[m] || []) if (t && t.id) ids[m].add(t.id);
+    for (const m of MODES) for (const t of data[m] || []) {
+      if (!t || !t.id) continue;
+      idx[m].ids.add(t.id);
+      const need = [];
+      for (const r of t.taskRequirements || []) {
+        const st = (r.status || []).map(String);
+        // ONLY an unambiguous "must be complete" proves anything. ['complete',
+        // 'failed'] or ['active'] mean the prerequisite may be unfinished.
+        if (st.length === 1 && st[0] === 'complete' && r.task && r.task.id) need.push(r.task.id);
+      }
+      if (need.length) idx[m].prereqs.set(t.id, need);
+    }
   }
-  knownIds = { key, ids };
-  return ids;
+  questIdx = { key, idx };
+  return idx;
+}
+
+// Storage still records every log event: an id absent from the cache may simply
+// be newer than the cache, and dropping it would lose a real completion.
+function knownQuestIds() {
+  const idx = questIndex();
+  return { regular: idx.regular.ids, pve: idx.pve.ids };
+}
+
+// Finishing a quest proves you finished everything it required.
+//
+// Tarkov does not always write a hand-in message: a quest that breaks for your
+// profile and is fixed server-side can complete with no notification at all
+// (seen live — "Quest with id … wasn't found!" in the logs, then silence). The
+// log scanner can only report what was written, so without this the app will
+// swear a quest is unfinished while happily showing its sequel as done.
+//
+// Runs to a fixpoint, because an implied completion proves its own prerequisites.
+function applyImpliedCompletions(mode, addedIds) {
+  const idx = questIndex()[mode];
+  if (!idx || !idx.ids.size) return 0;      // no quest data yet — infer nothing
+  const bucket = progress[mode];
+  if (!bucket || !bucket.completed) return 0;
+  let added = 0;
+  for (let round = 0; round < 30; round++) {
+    let changed = false;
+    for (const [id, need] of idx.prereqs) {
+      if (!bucket.completed[id]) continue;
+      for (const pid of need) {
+        if (bucket.completed[pid] || !idx.ids.has(pid)) continue;
+        bucket.completed[pid] = { via: 'implied', at: Date.now(), by: id };
+        if (addedIds) addedIds.push(pid);
+        added++; changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  return added;
 }
 
 async function loadTasks() {
@@ -443,6 +494,9 @@ function scanLogs() {
       }
     }
   }
+
+  // a completion just imported can prove earlier ones the logs never recorded
+  for (const m of MODES) applyImpliedCompletions(m, newByMode[m]);
 
   const total = newByMode.regular.length + newByMode.pve.length;
   if (total || anyFail) {
@@ -766,9 +820,14 @@ ipcMain.handle('save-settings', (_e, patch) => {
 });
 
 ipcMain.handle('toggle-task', (_e, { taskId, done, mode }) => {
-  const bucket = progress[MODES.includes(mode) ? mode : settings.gameMode];
-  if (done) bucket.completed[taskId] = { via: 'manual', at: Date.now() };
-  else delete bucket.completed[taskId];
+  const m = MODES.includes(mode) ? mode : settings.gameMode;
+  const bucket = progress[m];
+  if (done) {
+    bucket.completed[taskId] = { via: 'manual', at: Date.now() };
+    applyImpliedCompletions(m);   // ticking a quest also settles what it required
+  } else {
+    delete bucket.completed[taskId];
+  }
   saveProgress();
   return progress;
 });
@@ -1081,6 +1140,11 @@ function refuseIfRealProfile() {
 app.whenReady().then(() => {
   refuseIfRealProfile();
   initStorage();
+  // catch up on inferences from before this existed, and for manual-mode users
+  // who never run a log scan at all
+  let implied = 0;
+  for (const m of MODES) implied += applyImpliedCompletions(m);
+  if (implied) saveProgress();
   createWindow();
   cleanupStaleUpdate();
 });

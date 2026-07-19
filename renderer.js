@@ -403,7 +403,10 @@ function renderTree() {
           (done ? ' completed' : '') +
           (locked ? ' locked' : '') +
           (state.selQuestId === t.id ? ' selected' : '');
-        const checkTitle = done ? 'mark as not completed'
+        const via = done && state.progress.completed[t.id] && state.progress.completed[t.id].via;
+        const checkTitle = via === 'implied'
+          ? "completed — worked out from a later quest you finished that required it. Tarkov never logged this one's hand-in. Click to untick."
+          : done ? 'mark as not completed'
           : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
           : 'mark as completed';
         row.innerHTML = `
