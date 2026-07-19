@@ -38,9 +38,14 @@ const backend = window.api || (() => {
     rescanAll: async () => ({ progress: store.progress, imported: 0, failsImported: 0, hadReset: false, logsFound: false }),
     browseLogs: async () => null,
     openWiki: async (url) => window.open(url),
+    checkUpdate: async () => ({ available: false, current: 'dev', canApply: false }),
+    downloadUpdate: async () => ({ staged: false, error: 'not supported in browser' }),
+    applyUpdate: async () => ({ applying: false }),
     onAutoCompletions: () => {},
     onWatcherStatus: () => {},
     onSettingsChanged: () => {},
+    onUpdateAvailable: () => {},
+    onUpdateProgress: () => {},
   };
 })();
 
@@ -619,6 +624,8 @@ function renderSettingsPanel() {
       : di.source === 'cache'
         ? `Using cached data from ${new Date(di.fetchedAt).toLocaleString()} (${state.tasks.length} quests). Refresh when online.`
         : `<span class="bad">No data.</span> Connect to the internet and refresh.`;
+
+  if (typeof renderUpdateSection === 'function') renderUpdateSection();
 }
 
 function renderAll() {
@@ -693,6 +700,7 @@ document.querySelectorAll('.mode-btn-top').forEach((el) => {
 $('settingsBtn').addEventListener('click', () => {
   $('settingsOverlay').classList.remove('hidden');
   renderSettingsPanel();
+  if (!upd.checked && !upd.checking) doCheckUpdate(false);
 });
 $('closeSettingsBtn').addEventListener('click', () => $('settingsOverlay').classList.add('hidden'));
 $('settingsOverlay').addEventListener('click', (e) => {
@@ -816,11 +824,105 @@ backend.onSettingsChanged((s) => {
   renderSettingsPanel();
 });
 
+// ---------- updates ----------
+
+const upd = {
+  current: '', checked: false, checking: false, error: null,
+  available: false, latest: '', notes: '', canApply: false,
+  downloading: false, downloadFailed: false, staged: false, progress: 0, phase: '',
+};
+
+function renderUpdateSection() {
+  if (!$('updateStatus')) return;
+  const status = $('updateStatus');
+  $('updateVersion').textContent = upd.current ? `Current version: ${upd.current}` : '';
+
+  if (upd.checking) {
+    status.innerHTML = 'Checking for updates…';
+  } else if (!upd.checked) {
+    status.innerHTML = '';
+  } else if (upd.staged) {
+    status.innerHTML = `<span class="ok">v${escapeHtml(upd.latest)} downloaded.</span> Restart to finish — your progress is kept.`;
+  } else if (upd.downloading) {
+    status.innerHTML = upd.phase === 'extract' ? 'Extracting…'
+      : upd.phase === 'ready' ? 'Finishing…'
+      : `Downloading v${escapeHtml(upd.latest)}…`;
+  } else if (upd.downloadFailed) {
+    status.innerHTML = `<span class="bad">Download failed.</span> Check your connection and try again.`;
+  } else if (upd.error) {
+    status.innerHTML = `<span class="bad">Couldn't check for updates.</span>`;
+  } else if (!upd.available) {
+    status.innerHTML = `<span class="ok">You're on the latest version.</span>`;
+  } else if (!upd.canApply) {
+    status.innerHTML = `<span class="ok">Update available: v${escapeHtml(upd.latest)}.</span> Download it from the GitHub Releases page (one-click install works in the packaged app).`;
+  } else {
+    status.innerHTML = `<span class="ok">Update available: v${escapeHtml(upd.latest)}.</span> Your progress won't be affected.`;
+  }
+
+  $('checkUpdateBtn').classList.toggle('hidden', upd.downloading || upd.staged);
+  $('checkUpdateBtn').disabled = upd.checking || upd.downloading;
+  $('installUpdateBtn').classList.toggle('hidden',
+    !(upd.checked && upd.available && upd.canApply && !upd.staged && !upd.downloading));
+  $('restartUpdateBtn').classList.toggle('hidden', !upd.staged);
+  $('updateProgressWrap').classList.toggle('hidden', !upd.downloading);
+  $('updateProgressBar').style.width = (upd.downloading ? upd.progress : 0) + '%';
+}
+
+async function doCheckUpdate(userInitiated) {
+  upd.checking = true; upd.error = null; upd.downloadFailed = false; renderUpdateSection();
+  const r = await backend.checkUpdate();
+  upd.checking = false;
+  upd.checked = true;
+  upd.current = r.current || upd.current;
+  upd.available = !!r.available;
+  upd.latest = r.latest || '';
+  upd.notes = r.notes || '';
+  upd.canApply = !!r.canApply;
+  upd.error = r.error || null;
+  renderUpdateSection();
+  if (userInitiated && !r.available && !r.error) toast("You're on the latest version.");
+  if (userInitiated && r.error) toast("Couldn't reach GitHub to check for updates.");
+}
+
+$('checkUpdateBtn').addEventListener('click', () => doCheckUpdate(true));
+$('installUpdateBtn').addEventListener('click', async () => {
+  upd.downloading = true; upd.downloadFailed = false; upd.progress = 0; upd.phase = 'download'; renderUpdateSection();
+  const r = await backend.downloadUpdate();
+  upd.downloading = false;
+  if (r && r.staged) { upd.staged = true; toast(`v${upd.latest} downloaded — restart to finish.`); }
+  else { upd.downloadFailed = true; toast('Update failed: ' + ((r && r.error) || 'unknown')); }
+  renderUpdateSection();
+});
+$('restartUpdateBtn').addEventListener('click', async () => {
+  const btn = $('restartUpdateBtn');
+  if (btn.disabled) return;
+  btn.disabled = true; btn.textContent = 'RESTARTING…';
+  const r = await backend.applyUpdate();
+  if (!r || !r.applying) {
+    toast('Could not apply the update: ' + ((r && r.error) || 'unknown'));
+    btn.disabled = false; btn.textContent = 'RESTART TO FINISH';
+  }
+});
+
+backend.onUpdateProgress((p) => {
+  if (p && p.phase) upd.phase = p.phase;
+  if (p && typeof p.pct === 'number') upd.progress = p.pct;
+  renderUpdateSection();
+});
+backend.onUpdateAvailable((r) => {
+  upd.checked = true; upd.available = true;
+  upd.latest = r.latest || ''; upd.notes = r.notes || '';
+  upd.canApply = !!r.canApply; upd.current = r.current || upd.current;
+  toast(`Update available: v${r.latest} — open Settings to install.`);
+  renderUpdateSection();
+});
+
 // ---------- boot ----------
 
 (async function boot() {
   const init = await backend.getInit();
   state.settings = init.settings;
+  upd.current = init.version || '';
   state.gameMode = ['regular', 'pve'].includes(init.settings.gameMode) ? init.settings.gameMode : 'regular';
   if (init.progress && (init.progress.regular || init.progress.pve)) state.fullProgress = init.progress;
   state.watcherStatus = init.watcherStatus || state.watcherStatus;

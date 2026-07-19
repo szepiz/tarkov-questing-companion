@@ -56,6 +56,10 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   completions (your manual ticks are kept) and can only find quests still
   present in your logs; completions Tarkov has already deleted from its logs
   must be ticked by hand.
+- **UPDATES**: the app checks GitHub for a newer release on launch. When one is
+  available, **Settings → Updates** shows a *Download & Install* button — it
+  downloads the new version and swaps it in when you restart. Your progress is
+  never touched (it lives in `%APPDATA%`, not the app folder).
 
 ## Build from source
 

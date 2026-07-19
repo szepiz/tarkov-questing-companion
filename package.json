@@ -1,9 +1,9 @@
 {
-  "name": "tarkov-quest-tracker",
-  "productName": "Tarkov Quest Tracker",
-  "version": "1.0.0",
-  "description": "Escape from Tarkov quest tracker (All / Kappa / Lightkeeper)",
-  "author": "Tarkov Quest Tracker",
+  "name": "tarkov-questing-companion",
+  "productName": "Tarkov Questing Companion",
+  "version": "1.1.0",
+  "description": "Escape from Tarkov quest tracker (PvP/PvE, Kappa / Lightkeeper)",
+  "author": "szepiz",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

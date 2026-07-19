@@ -10,7 +10,7 @@
   <div id="app">
     <aside id="sidebar">
       <header id="titlebar">
-        <span id="titleText">TARKOV QUEST TRACKER</span>
+        <span id="titleText">TARKOV QUESTING COMPANION</span>
         <div class="mode-switch" title="Switch between your PvP and PvE profiles">
           <button class="mode-btn-top" data-mode="regular">PvP</button>
           <button class="mode-btn-top" data-mode="pve">PvE</button>
@@ -106,6 +106,18 @@
         <div class="setting-group">
           <div class="setting-label">DANGER ZONE</div>
           <button id="resetBtn">RESET ALL PROGRESS</button>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">UPDATES</div>
+          <div class="setting-hint" id="updateStatus">Checking…</div>
+          <div id="updateProgressWrap" class="hidden"><div id="updateProgressBar"></div></div>
+          <div class="update-actions">
+            <button id="checkUpdateBtn">CHECK FOR UPDATES</button>
+            <button id="installUpdateBtn" class="hidden">DOWNLOAD &amp; INSTALL</button>
+            <button id="restartUpdateBtn" class="hidden">RESTART TO FINISH</button>
+          </div>
+          <div class="setting-hint" id="updateVersion"></div>
         </div>
 
         <button id="closeSettingsBtn">CLOSE</button>

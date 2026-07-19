@@ -10,7 +10,12 @@ contextBridge.exposeInMainWorld('api', {
   rescanAll: () => ipcRenderer.invoke('rescan-all'),
   browseLogs: () => ipcRenderer.invoke('browse-logs'),
   openWiki: (url) => ipcRenderer.invoke('open-wiki', url),
+  checkUpdate: () => ipcRenderer.invoke('check-update'),
+  downloadUpdate: () => ipcRenderer.invoke('download-update'),
+  applyUpdate: () => ipcRenderer.invoke('apply-update'),
   onAutoCompletions: (cb) => ipcRenderer.on('auto-completions', (_e, data) => cb(data)),
   onWatcherStatus: (cb) => ipcRenderer.on('watcher-status', (_e, data) => cb(data)),
   onSettingsChanged: (cb) => ipcRenderer.on('settings-changed', (_e, data) => cb(data)),
+  onUpdateAvailable: (cb) => ipcRenderer.on('update-available', (_e, data) => cb(data)),
+  onUpdateProgress: (cb) => ipcRenderer.on('update-progress', (_e, data) => cb(data)),
 });

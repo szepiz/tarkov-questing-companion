@@ -598,6 +598,42 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 #browseBtn:hover, #refreshDataBtn:hover, #rescanBtn:hover, #closeSettingsBtn:hover { filter: brightness(1.25); }
 #rescanBtn:disabled { opacity: .5; cursor: default; }
+.update-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+#checkUpdateBtn, #installUpdateBtn, #restartUpdateBtn {
+  background: linear-gradient(#3a3a37, #2c2c29);
+  border: 1px solid #4a4a44;
+  color: #cfccc3;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  padding: 7px 14px;
+  border-radius: 2px;
+}
+#installUpdateBtn, #restartUpdateBtn {
+  background:
+    repeating-linear-gradient(115deg, rgba(0,0,0,.05) 0 2px, transparent 2px 4px),
+    linear-gradient(#c9a94a, #a9862f);
+  color: #17140c;
+  border-color: #8a7127;
+  text-shadow: 0 1px 0 rgba(255,255,255,.3);
+}
+#checkUpdateBtn:hover, #installUpdateBtn:hover, #restartUpdateBtn:hover { filter: brightness(1.15); }
+#checkUpdateBtn:disabled { opacity: .5; cursor: default; }
+#updateProgressWrap {
+  height: 8px;
+  background: #101010;
+  border: 1px solid #3a3a36;
+  border-radius: 2px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+#updateProgressBar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(#c9a94a, #a9862f);
+  transition: width .2s;
+}
+
 #resetBtn {
   background: none;
   border: 1px solid #7e2626;

@@ -1,9 +1,12 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const os = require('os');
+const { execSync, spawn } = require('child_process');
 
 const APP_DIR = __dirname;
+const REPO = 'szepiz/tarkov-questing-companion';
+const OLD_PRODUCT_NAME = 'Tarkov Quest Tracker'; // pre-rebrand userData folder
 // Read-only quest data shipped inside the app bundle (first-run + offline seed).
 const BUNDLED_CACHE = path.join(APP_DIR, 'quests_cache.json');
 const DEFAULT_LOGS_PATH = 'C:\\Battlestate Games\\EFT\\Logs';
@@ -59,14 +62,17 @@ function normalizeProgress(p) {
     }
     return p;
   }
-  // legacy flat progress (single mixed list) -> keep it under "regular" and flag
-  // for a one-time mode-aware re-derivation from the logs.
-  const bucket = {
-    completed: (p && p.completed) || {},
-    failed: (p && p.failed) || {},
-    resetAt: (p && p.resetAt) || 0,
+  // a fresh install has no progress at all — start clean, NOT flagged as legacy
+  if (!p || typeof p !== 'object' || !p.completed || !Object.keys(p.completed).length) {
+    return { regular: emptyBucket(), pve: emptyBucket() };
+  }
+  // genuine legacy flat progress (single mixed list) -> keep it under "regular"
+  // and flag for a one-time mode-aware re-derivation from the logs.
+  return {
+    regular: { completed: p.completed, failed: p.failed || {}, resetAt: p.resetAt || 0 },
+    pve: emptyBucket(),
+    pendingModeSplit: true,
   };
-  return { regular: bucket, pve: emptyBucket(), pendingModeSplit: true };
 }
 
 function initStorage() {
@@ -75,12 +81,26 @@ function initStorage() {
   SETTINGS_FILE = path.join(dir, 'settings.json');
   PROGRESS_FILE = path.join(dir, 'progress.json');
   CACHE_FILE = path.join(dir, 'quests_cache.json');
-  // migrate data from older builds that stored these next to the app
-  const legacySettings = readJson(path.join(APP_DIR, 'settings.json'), null);
-  const legacyProgress = readJson(path.join(APP_DIR, 'progress.json'), null);
-  settings = { ...DEFAULT_SETTINGS, ...(readJson(SETTINGS_FILE, null) || legacySettings || {}) };
+  const ownSettings = readJson(SETTINGS_FILE, null);
+  const ownProgress = readJson(PROGRESS_FILE, null);
+  // migrate legacy data ONLY when this location is brand new (neither file yet),
+  // so we never resurrect old data over what the user has here
+  const freshLocation = !ownSettings && !ownProgress;
+  let legacySettings = null, legacyProgress = null;
+  if (freshLocation) {
+    const oldUserDir = path.join(app.getPath('appData'), OLD_PRODUCT_NAME);
+    legacySettings = readJson(path.join(oldUserDir, 'settings.json'), null)
+      || readJson(path.join(APP_DIR, 'settings.json'), null);
+    legacyProgress = readJson(path.join(oldUserDir, 'progress.json'), null)
+      || readJson(path.join(APP_DIR, 'progress.json'), null);
+  }
+  settings = { ...DEFAULT_SETTINGS, ...(ownSettings || legacySettings || {}) };
   if (!MODES.includes(settings.gameMode)) settings.gameMode = 'regular';
-  progress = normalizeProgress(readJson(PROGRESS_FILE, null) || legacyProgress);
+  progress = normalizeProgress(ownProgress || legacyProgress);
+  // persist the migrated data into the new location so it is owned here going forward
+  if (freshLocation && (legacySettings || legacyProgress)) {
+    try { saveSettings(); saveProgress(); } catch {}
+  }
 }
 
 function saveSettings() { writeJson(SETTINGS_FILE, settings); }
@@ -444,9 +464,187 @@ function syncWatcherToSettings() {
   else stopWatcher();
 }
 
+// ---------- auto-update from GitHub Releases ----------
+
+// TQC_FAKE_VERSION lets tests pretend to be an older build to exercise the flow
+function currentVersion() { return process.env.TQC_FAKE_VERSION || app.getVersion(); }
+
+// compare dotted versions; returns -1 if a<b, 0 if equal, 1 if a>b
+function cmpVersion(a, b) {
+  const pa = String(a).replace(/^v/i, '').split('.').map((n) => parseInt(n, 10) || 0);
+  const pb = String(b).replace(/^v/i, '').split('.').map((n) => parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) {
+    const x = pa[i] || 0, y = pb[i] || 0;
+    if (x !== y) return x < y ? -1 : 1;
+  }
+  return 0;
+}
+
+let updateInfo = null;       // { version, notes, url, size, assetName }
+let stagedUpdateDir = null;  // extracted new build, ready to swap in on quit
+
+async function checkForUpdate() {
+  const controller = new AbortController();
+  const to = setTimeout(() => controller.abort(), 15000);
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'TarkovQuestingCompanion' },
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error('GitHub API ' + res.status);
+    const rel = await res.json();
+    const tag = String(rel.tag_name || '');
+    const asset = (rel.assets || []).find((a) => /\.zip$/i.test(a.name || ''));
+    const latest = tag.replace(/^v/i, '');
+    const available = !!asset && cmpVersion(currentVersion(), tag) < 0;
+    updateInfo = available
+      ? { version: latest, notes: rel.body || '', url: asset.browser_download_url, size: asset.size, assetName: asset.name }
+      : null;
+    return { available, current: currentVersion(), latest, notes: rel.body || '', canApply: app.isPackaged };
+  } finally {
+    clearTimeout(to);
+  }
+}
+
+function installDir() { return path.dirname(app.getPath('exe')); }
+
+// probe whether we can write into the install folder (fails under Program Files)
+function installWritable() {
+  try {
+    const probe = path.join(installDir(), '.tqc-write-test');
+    fs.writeFileSync(probe, 'x');
+    fs.rmSync(probe, { force: true });
+    return true;
+  } catch { return false; }
+}
+
+// remove a leftover backup folder from a previous (finished) update
+function cleanupStaleUpdate() {
+  if (!app.isPackaged) return;
+  try {
+    const bak = installDir().replace(/[\\/]+$/, '') + '.bak-update';
+    if (fs.existsSync(bak)) fs.rmSync(bak, { recursive: true, force: true });
+  } catch {}
+}
+
+async function downloadUpdate() {
+  if (!updateInfo) throw new Error('no update to download');
+  if (!app.isPackaged) throw new Error('updates only apply to the packaged app');
+  if (!installWritable()) {
+    throw new Error('this folder is read-only (e.g. Program Files) — move the app to a normal folder like Downloads, then update');
+  }
+  const tmp = path.join(os.tmpdir(), 'tqc-update');
+  try { fs.rmSync(tmp, { recursive: true, force: true }); } catch {}
+  fs.mkdirSync(tmp, { recursive: true });
+  const zipPath = path.join(tmp, 'update.zip');
+
+  const res = await fetch(updateInfo.url, { headers: { 'User-Agent': 'TarkovQuestingCompanion' } });
+  if (!res.ok) throw new Error('download failed (HTTP ' + res.status + ')');
+  const total = Number(res.headers.get('content-length')) || updateInfo.size || 0;
+
+  await new Promise((resolve, reject) => {
+    const out = fs.createWriteStream(zipPath);
+    out.on('error', reject);
+    const reader = res.body.getReader();
+    let got = 0;
+    (async () => {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        got += value.length;
+        if (!out.write(Buffer.from(value))) await new Promise((r) => out.once('drain', r));
+        if (total) sendToRenderer('update-progress', { phase: 'download', pct: Math.round((got / total) * 100) });
+      }
+      if (total && got < total) throw new Error('incomplete download');
+      out.end(resolve);
+    })().catch((e) => { out.destroy(); reject(e); });
+  });
+  if (fs.statSync(zipPath).size < 1024) throw new Error('downloaded file is not a valid update');
+
+  sendToRenderer('update-progress', { phase: 'extract', pct: 100 });
+  const extractDir = path.join(tmp, 'new');
+  try { fs.rmSync(extractDir, { recursive: true, force: true }); } catch {}
+  execSync(
+    `powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory([Environment]::GetEnvironmentVariable('TQC_ZIP'),[Environment]::GetEnvironmentVariable('TQC_DEST'))"`,
+    { windowsHide: true, env: { ...process.env, TQC_ZIP: zipPath, TQC_DEST: extractDir } }
+  );
+  // the zip has one top-level app folder; descend into it if so
+  const dirs = fs.readdirSync(extractDir, { withFileTypes: true }).filter((e) => e.isDirectory());
+  const root = dirs.length === 1 && !fs.existsSync(path.join(extractDir, path.basename(app.getPath('exe'))))
+    ? path.join(extractDir, dirs[0].name)
+    : extractDir;
+  if (!fs.readdirSync(root).some((f) => f.toLowerCase().endsWith('.exe'))) {
+    throw new Error('update package has no .exe');
+  }
+  stagedUpdateDir = root;
+  sendToRenderer('update-progress', { phase: 'ready', pct: 100 });
+  return { staged: true, version: updateInfo.version };
+}
+
+// Write a helper batch that waits for us to exit, backs up the current install,
+// mirrors the new build in, and rolls back on failure — then quit. Rollback +
+// exit-code checking mean a failed copy restores the working app instead of
+// leaving a half-updated (broken) one.
+function applyUpdateAndRestart() {
+  if (!stagedUpdateDir) throw new Error('nothing staged');
+  if (!app.isPackaged) throw new Error('updates only apply to the packaged app');
+  const install = installDir();
+  const exeName = path.basename(app.getPath('exe'));
+  const backup = install.replace(/[\\/]+$/, '') + '.bak-update';
+  const tempDir = path.join(os.tmpdir(), 'tqc-update');
+  const batPath = path.join(os.tmpdir(), 'tqc-apply-update.bat');
+  const q = (s) => `"${s}"`;
+  const RC = '/R:5 /W:2 /NFL /NDL /NJH /NJS /NC /NS';
+  const bat = [
+    '@echo off',
+    'setlocal EnableExtensions',
+    'set /a N=0',
+    ':waitloop',
+    `tasklist /FI "PID eq ${process.pid}" 2>nul | find "${process.pid}" >nul`,
+    'if errorlevel 1 goto gone',
+    'set /a N+=1',
+    'if %N% GEQ 90 goto done', // app never exited (~90s) — bail without touching files
+    'timeout /t 1 /nobreak >nul',
+    'goto waitloop',
+    ':gone',
+    'timeout /t 2 /nobreak >nul',            // let helper processes / AV release file locks
+    `robocopy ${q(install)} ${q(backup)} /MIR ${RC} >nul`,   // backup current install
+    `robocopy ${q(stagedUpdateDir)} ${q(install)} /MIR ${RC} >nul`, // install new build
+    'if errorlevel 8 goto rollback',         // robocopy >=8 = real failure
+    `start "" ${q(path.join(install, exeName))}`,
+    `rmdir /s /q ${q(backup)} >nul 2>&1`,
+    `rmdir /s /q ${q(tempDir)} >nul 2>&1`,
+    'goto done',
+    ':rollback',
+    `robocopy ${q(backup)} ${q(install)} /MIR ${RC} >nul`,   // restore the working version
+    `start "" ${q(path.join(install, exeName))}`,
+    `rmdir /s /q ${q(backup)} >nul 2>&1`,     // keep the staged copy for a retry
+    ':done',
+    'del "%~f0" >nul 2>&1',
+    '',
+  ].join('\r\n');
+  fs.writeFileSync(batPath, bat, 'utf8');
+  spawn('cmd.exe', ['/c', batPath], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+  setTimeout(() => app.quit(), 400);
+  return { applying: true };
+}
+
 // ---------- ipc ----------
 
-ipcMain.handle('get-init', () => ({ settings, progress, watcherStatus }));
+ipcMain.handle('get-init', () => ({ settings, progress, watcherStatus, version: currentVersion() }));
+
+ipcMain.handle('check-update', async () => {
+  try { return await checkForUpdate(); }
+  catch (e) { return { available: false, current: currentVersion(), error: String(e.message || e) }; }
+});
+ipcMain.handle('download-update', async () => {
+  try { return await downloadUpdate(); }
+  catch (e) { return { staged: false, error: String(e.message || e) }; }
+});
+ipcMain.handle('apply-update', () => {
+  try { return applyUpdateAndRestart(); }
+  catch (e) { return { applying: false, error: String(e.message || e) }; }
+});
 
 ipcMain.handle('load-tasks', async () => loadTasks());
 
@@ -536,7 +734,7 @@ function createWindow() {
     minHeight: 560,
     backgroundColor: '#0d0d0d',
     autoHideMenuBar: true,
-    title: 'Tarkov Quest Tracker',
+    title: 'Tarkov Questing Companion',
     show: !shooting,
     webPreferences: {
       preload: path.join(APP_DIR, 'preload.js'),
@@ -546,7 +744,16 @@ function createWindow() {
     },
   });
   win.loadFile(path.join(APP_DIR, 'index.html'));
-  win.webContents.on('did-finish-load', () => syncWatcherToSettings());
+  let autoChecked = false;
+  win.webContents.on('did-finish-load', () => {
+    syncWatcherToSettings();
+    if (!autoChecked && !process.env.TQT_SHOOT) {
+      autoChecked = true;
+      checkForUpdate()
+        .then((r) => { if (r.available) sendToRenderer('update-available', r); })
+        .catch(() => {});
+    }
+  });
 
   // dev aid: TQT_SHOOT=<file.png> drives the UI to a demo state, captures, exits
   if (process.env.TQT_SHOOT) {
@@ -631,6 +838,16 @@ function createWindow() {
             };
           })()`);
           console.log('TQT_HIDE', JSON.stringify(hideChk));
+          // exercise the updates section (real GitHub check)
+          await win.webContents.executeJavaScript(`document.getElementById('settingsBtn').click();`);
+          await new Promise((r) => setTimeout(r, 4000));
+          const updChk = await win.webContents.executeJavaScript(`(() => ({
+            current: document.getElementById('updateVersion').textContent,
+            status: document.getElementById('updateStatus').textContent,
+            checkBtnVisible: !document.getElementById('checkUpdateBtn').classList.contains('hidden'),
+            installBtnVisible: !document.getElementById('installUpdateBtn').classList.contains('hidden'),
+          }))()`);
+          console.log('TQT_UPD', JSON.stringify(updChk));
         } catch (err) {
           console.error('TQT_SHOOT failed:', err);
         }
@@ -643,6 +860,7 @@ function createWindow() {
 app.whenReady().then(() => {
   initStorage();
   createWindow();
+  cleanupStaleUpdate();
 });
 app.on('window-all-closed', () => {
   stopWatcher();
