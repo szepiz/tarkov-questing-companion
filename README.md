@@ -31,9 +31,12 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   out and faded.
 - **Quest map** — maps that have one show a small **▣** button next to their
   name. It opens the map with a pin on every objective of your *unfinished*
-  quests there, respecting the current tab filter. Click a pin for the quest and
-  objective; switch **floors** (Ground / Underground / 2nd / 3rd) to see
-  objectives inside multi-storey buildings like Dorms. *(Customs so far.)*
+  quests there, respecting the current tab filter. Click a pin and the quest and
+  objective appear beside it; click it again to dismiss. Switch **floors** to see
+  objectives inside multi-storey buildings like Dorms.
+  Available for **Ground Zero, Factory, Customs, Woods, Shoreline, Interchange,
+  Reserve, Streets of Tarkov and Lighthouse** — every map the artwork project
+  covers. The Lab and The Labyrinth have no map artwork yet, so no button.
 - **Settings → Display** has two toggles: *Hide completed quests* and *Hide
   locked quests*. With both on, the list shows only the quests you can take on
   right now (hiding locked ones needs automatic tracking). Maps and traders
@@ -94,13 +97,29 @@ updating or re-downloading the app never touches your progress.
 
 ## Credits
 
-Quest data by [tarkov.dev](https://tarkov.dev).
+This app is a thin shell around other people's work. It would not exist without
+any of the following, and the same list is in the app under **Settings → Credits**.
 
-Map artwork from the **Escape from Tarkov SVG Maps Project** by **Shebuka** —
-[tarkov-dev-svg-maps](https://github.com/the-hideout/tarkov-dev-svg-maps),
-licensed [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-The maps are used unmodified; map geometry (bounds, floor height ranges) comes
-from tarkov.dev's public map data.
+| What | Who | Licence |
+|---|---|---|
+| Quest data, map geometry, floor extents and landmark names | [tarkov.dev](https://tarkov.dev) by [the-hideout](https://github.com/the-hideout/tarkov-dev) | MIT |
+| Map artwork — *Escape from Tarkov SVG Maps Project* | **Shebuka** — [tarkov-dev-svg-maps](https://github.com/the-hideout/tarkov-dev-svg-maps) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
+| Bender typeface | [Jovanny Lemonad](https://www.behance.net/jovanny) | [SIL Open Font License 1.1](bender/Bender/FREE%20FONT%20LICENSE.txt) |
+| Application framework | [Electron](https://www.electronjs.org) | MIT |
+| Escape from Tarkov, trader portraits, location screenshots | [Battlestate Games](https://www.escapefromtarkov.com) | all rights reserved |
 
-Escape from Tarkov and all related imagery are property of Battlestate Games.
-This is an unofficial, non-commercial fan-made tool.
+**On the map artwork.** The SVGs are bundled **unmodified** and credited in the
+map footer, in Settings, and here — as CC BY-NC-SA 4.0 requires. This app is free
+and non-commercial, and it is a quest tracker: it draws quest objectives from
+public quest data onto a static map, exactly as tarkov.dev's own map pages do. It
+reads no game memory, renders nothing in-game, and knows nothing about live raids,
+so it is not the "radar / ESP / cheat client" category the maps project explicitly
+forbids. If Shebuka or the-hideout would prefer it not ship this artwork, open an
+issue and it comes out.
+
+**On the trader portraits and location screenshots.** These are Battlestate
+Games' artwork, used here for identification in a free fan tool. Unofficial, not
+affiliated with or endorsed by Battlestate Games. Same offer: a takedown request
+gets acted on, not argued with.
+
+Thank you to everyone above.

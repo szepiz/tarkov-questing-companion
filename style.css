@@ -373,14 +373,19 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   opacity: 0;
   transition: opacity .45s ease;
 }
+/* The map always spans the full pane. It used to shrink to 70% when a trader was
+   shown, which put its hard right edge inside the trader's translucent zone —
+   you could see the picture end, mid-fade. With no edge there is nothing to see
+   through, and the trader genuinely dissolves into the map. */
 #heroMap { left: 0; width: 100%; }
-#heroMap.narrow { width: 70%; }
 #heroTrader {
   right: 0;
-  width: 52%;
-  object-position: top center;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.55) 25%, black 55%);
-  mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.55) 25%, black 55%);
+  width: 58%;
+  object-position: center top;
+  /* Reaches full opacity by 45% so the trader themself — who sits in the right
+     half of every portrait once cover-cropped — is never washed out. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.3) 16%, rgba(0,0,0,.8) 34%, black 45%);
+  mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.3) 16%, rgba(0,0,0,.8) 34%, black 45%);
 }
 #heroMap.visible, #heroTrader.visible { opacity: 1; }
 
@@ -568,6 +573,19 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    error would render in the same grey as "you're on the latest version" */
 .setting-hint .ok, #updateStatus .ok { color: #7a9a5a; }
 .setting-hint .bad, #updateStatus .bad { color: #c05050; }
+
+.credit {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b6b2a8;
+  padding: 5px 0;
+  border-bottom: 1px solid #23231d;
+}
+.credit:last-of-type { border-bottom: none; }
+.credit-what { display: block; color: #6e6b62; font-size: 11px; letter-spacing: .3px; }
+.credit a { color: #d0a943; text-decoration: none; font-weight: 700; }
+.credit a:hover { text-decoration: underline; }
+.credit-lic { color: #6e6b62; font-size: 11px; }
 
 .toggle-row {
   display: flex;

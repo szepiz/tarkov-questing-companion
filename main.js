@@ -936,6 +936,105 @@ function createWindow() {
     }
   });
 
+  // dev aid: TQT_HERO=<dir> selects each trader in turn and screenshots the hero,
+  // to check the map/trader blend has no visible seam and the trader stays visible
+  if (process.env.TQT_HERO) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        const dir = process.env.TQT_HERO;
+        try {
+          fs.mkdirSync(dir, { recursive: true });
+          const traders = await win.webContents.executeJavaScript(`(async () => {
+            document.querySelector('.tab[data-filter="ALL"]').click();
+            await new Promise(r => setTimeout(r, 300));
+            const rows = [...document.querySelectorAll('.map-row')];
+            const customs = rows.find(r => r.textContent.includes('CUSTOMS'));
+            customs.querySelector('.row-toggle').click();
+            await new Promise(r => setTimeout(r, 300));
+            return [...document.querySelectorAll('.trader-row')].map(r => r.querySelector('.row-name').textContent);
+          })()`);
+          for (const name of traders) {
+            const info = await win.webContents.executeJavaScript(`(async () => {
+              const row = [...document.querySelectorAll('.trader-row')].find(r => r.querySelector('.row-name').textContent === ${JSON.stringify(name)});
+              row.click();
+              await new Promise(r => setTimeout(r, 600));
+              const m = document.getElementById('heroMap'), t = document.getElementById('heroTrader');
+              const hero = document.getElementById('hero').getBoundingClientRect();
+              const mr = m.getBoundingClientRect(), tr = t.getBoundingClientRect();
+              return {
+                trader: ${JSON.stringify(name)},
+                traderShown: t.classList.contains('visible'),
+                mapFillsPane: Math.abs(mr.width - hero.width) < 1,
+                mapRightEdgeInsideFade: mr.right < hero.right - 1,
+                traderWidthPct: Math.round(tr.width / hero.width * 100),
+              };
+            })()`);
+            console.log('TQT_HERO', JSON.stringify(info));
+            const img = await win.webContents.capturePage();
+            fs.writeFileSync(path.join(dir, 'hero_' + name.replace(/\W+/g, '_') + '.png'), img.toPNG());
+          }
+        } catch (err) {
+          console.error('TQT_HERO failed:', err);
+        }
+        app.quit();
+      }, 7000);
+    });
+  }
+
+  // dev aid: TQT_MAPS=<dir> opens every map in turn, screenshots it, and reports
+  // how the pins and the landmark labels fit — the calibration check for new maps
+  if (process.env.TQT_MAPS) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        const dir = process.env.TQT_MAPS;
+        try {
+          fs.mkdirSync(dir, { recursive: true });
+          const names = await win.webContents.executeJavaScript('Object.keys(MAP_DATA)');
+          for (const name of names) {
+            const info = await win.webContents.executeJavaScript(`(async () => {
+              await openQuestMap(${JSON.stringify(name)});
+              await new Promise(r => setTimeout(r, 700));
+              const svg = document.querySelector('#mapRot svg');
+              const box = svg.getBoundingClientRect(), stage = document.getElementById('mapStage').getBoundingClientRect();
+              const dots = [...document.querySelectorAll('.qpin-dot')];
+              const labels = [...document.querySelectorAll('#qpins text')];
+              const outside = (el) => { const r = el.getBoundingClientRect();
+                return r.left < box.left - 1 || r.right > box.right + 1 || r.top < box.top - 1 || r.bottom > box.bottom + 1; };
+              // Landmark labels name buildings, so on a correctly calibrated map
+              // most of them should sit ON drawn geometry rather than empty
+              // background. Labels are pointer-events:none, so hit-testing at
+              // their centre reports whatever artwork is underneath.
+              const onArt = (el) => {
+                const r = el.getBoundingClientRect();
+                const hit = document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2);
+                return !!hit && hit !== svg && svg.contains(hit) && hit.tagName.toLowerCase() !== 'text';
+              };
+              const hits = labels.filter(onArt).length;
+              return {
+                map: ${JSON.stringify(name)},
+                viewBox: svg.getAttribute('viewBox'),
+                overflowsStage: box.width > stage.width + 1 || box.height > stage.height + 1,
+                fill: Math.round(Math.max(box.width / stage.width, box.height / stage.height) * 100) + '%',
+                pins: dots.length, pinsOutside: dots.filter(outside).length,
+                labels: labels.length, labelsOutside: labels.filter(outside).length,
+                labelsOnArtwork: hits,
+                labelHitRate: labels.length ? Math.round(hits / labels.length * 100) + '%' : 'n/a',
+                dotPx: dots.length ? Math.round(dots[0].getBoundingClientRect().width * 10) / 10 : null,
+                floors: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
+              };
+            })()`);
+            console.log('TQT_MAPS', JSON.stringify(info));
+            const img = await win.webContents.capturePage();
+            fs.writeFileSync(path.join(dir, name.replace(/\W+/g, '_') + '.png'), img.toPNG());
+          }
+        } catch (err) {
+          console.error('TQT_MAPS failed:', err);
+        }
+        app.quit();
+      }, 7000);
+    });
+  }
+
   // dev aid: TQT_SHOOT=<file.png> drives the UI to a demo state, captures, exits
   if (process.env.TQT_SHOOT) {
     win.webContents.once('did-finish-load', () => {
@@ -1019,6 +1118,29 @@ function createWindow() {
             };
           })()`);
           console.log('TQT_HIDE', JSON.stringify(hideChk));
+          // credits sit at the bottom of the settings panel
+          const credits = await win.webContents.executeJavaScript(`(async () => {
+            if (document.getElementById('settingsOverlay').classList.contains('hidden')) {
+              document.getElementById('settingsBtn').click();
+              await new Promise(r => setTimeout(r, 300));
+            }
+            const g = document.getElementById('creditsGroup');
+            g.scrollIntoView({ block: 'end' });
+            await new Promise(r => setTimeout(r, 400));
+            const links = [...g.querySelectorAll('a[data-url]')];
+            const r = g.getBoundingClientRect();
+            return {
+              entries: g.querySelectorAll('.credit').length,
+              links: links.length,
+              allHaveUrls: links.every(a => /^https:\\/\\//.test(a.dataset.url)),
+              names: links.map(a => a.textContent.trim()),
+              visible: r.top < window.innerHeight && r.bottom > 0,
+            };
+          })()`);
+          console.log('TQT_CREDITS', JSON.stringify(credits));
+          await shoot(process.env.TQT_SHOOT.replace('.png', '_credits.png'));
+          await win.webContents.executeJavaScript(`document.getElementById('settingsPanel').scrollTop = 0;`);
+
           // exercise the update controls, which now live in the sidebar footer
           await win.webContents.executeJavaScript(`document.getElementById('checkUpdateBtn').click();`);
           await new Promise((r) => setTimeout(r, 4000));

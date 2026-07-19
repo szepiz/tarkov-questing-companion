@@ -455,7 +455,6 @@ function renderHero() {
   }
 
   if (state.selTrader) {
-    heroMap.classList.add('narrow');
     if (traderFile) {
       if (heroTrader.getAttribute('src') !== traderFile) heroTrader.src = traderFile;
       heroTrader.classList.add('visible');
@@ -468,7 +467,6 @@ function renderHero() {
       heroTraderName.classList.remove('hidden');
     }
   } else {
-    heroMap.classList.remove('narrow');
     heroTrader.classList.remove('visible');
     heroTrader.removeAttribute('src');
     heroTraderName.classList.add('hidden');
@@ -722,6 +720,13 @@ $('settingsBtn').addEventListener('click', () => {
   $('settingsOverlay').classList.remove('hidden');
   renderSettingsPanel();
 });
+// credit links: the CSP blocks in-app navigation, so hand them to the OS browser
+$('settingsPanel').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-url]');
+  if (!a) return;
+  e.preventDefault();
+  backend.openWiki(a.dataset.url);
+});
 $('closeSettingsBtn').addEventListener('click', () => $('settingsOverlay').classList.add('hidden'));
 $('settingsOverlay').addEventListener('click', (e) => {
   if (e.target === $('settingsOverlay')) $('settingsOverlay').classList.add('hidden');
@@ -898,6 +903,18 @@ function renderFloorTabs() {
   });
 }
 
+// One screen pixel expressed in this map's SVG units. Pins, labels and cards are
+// drawn in SVG units, but viewBoxes differ by more than 10x (Factory is 131 units
+// across, Woods 1473) AND each map fits the stage differently — a tall map like
+// Lighthouse fits by height. Sizing off the rendered box makes everything the
+// same physical size on screen whichever map is open.
+function svgUnitsPerPx(svg, md) {
+  const vb = rotatedViewBox(md);
+  const r = svg.getBoundingClientRect();
+  if (r.width > 0) return vb.w / r.width;
+  return Math.hypot(md.viewBox.w, md.viewBox.h) / Math.hypot(1062.4827, 535.17401); // not laid out yet
+}
+
 // show the base layer plus the selected floor; draw pins for that floor
 function drawMap() {
   const md = MAP_DATA[mapView.name];
@@ -915,26 +932,29 @@ function drawMap() {
   const g = document.createElementNS(ns, 'g');
   g.setAttribute('id', 'qpins');
 
+  // The map's rotation is baked into the SVG at load time (see openQuestMap),
+  // so everything below is placed in the coordinates the user actually sees —
+  // no per-element counter-rotation, and it works for Factory's 90° too.
+  const k = svgUnitsPerPx(svg, md);
+
   // faint landmark names for orientation
   for (const [lx, lz, text] of md.labels || []) {
-    const p = gameToSvg(md, lx, lz);
+    const p = mapPoint(md, lx, lz);
     const t = document.createElementNS(ns, 'text');
-    t.setAttribute('transform', `rotate(180 ${p.x} ${p.y})`);
     t.setAttribute('x', p.x); t.setAttribute('y', p.y);
     t.setAttribute('text-anchor', 'middle');
-    t.setAttribute('style', 'font:600 9px Bender,sans-serif;fill:#cfccc3;opacity:.45;stroke:#000;stroke-width:2.5;paint-order:stroke;pointer-events:none');
+    t.setAttribute('style', `font:600 ${10 * k}px Bender,sans-serif;fill:#cfccc3;opacity:.45;stroke:#000;stroke-width:${2.5 * k};paint-order:stroke;pointer-events:none`);
     t.textContent = text;
     g.appendChild(t);
   }
 
   const shown = mapView.pins.filter((p) => p.floor === mapView.floor);
   shown.forEach((p, i) => {
-    const s = gameToSvg(md, p.x, p.z);
-    const wrap = document.createElementNS(ns, 'g');
-    wrap.setAttribute('transform', `rotate(180 ${s.x} ${s.y})`);
+    const s = mapPoint(md, p.x, p.z);
     const c = document.createElementNS(ns, 'circle');
-    c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 6);
+    c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 6.5 * k);
     c.setAttribute('class', 'qpin-dot' + (mapView.selected === i ? ' sel' : ''));
+    c.setAttribute('stroke-width', 2 * k);
     if (p.locked) c.setAttribute('opacity', '.5');
     // clicking the selected pin again clears it
     c.addEventListener('click', (e) => {
@@ -942,14 +962,13 @@ function drawMap() {
       mapView.selected = (mapView.selected === i) ? null : i;
       drawMap();
     });
-    wrap.appendChild(c);
-    g.appendChild(wrap);
+    g.appendChild(c);
   });
 
   svg.appendChild(g);
   // after g is in the document, so the card can measure itself
   const sel = mapView.selected != null ? shown[mapView.selected] : null;
-  if (sel) pinCard(md, sel, g);
+  if (sel) pinCard(md, sel, g, k);
 
   $('mapPinCount').textContent = `${mapView.pins.length} objective${mapView.pins.length === 1 ? '' : 's'} · ${shown.length} on this floor`;
   $('mapHint').textContent = 'Pins show objectives for your unfinished quests here. Click a pin for details, click it again to hide them.';
@@ -960,35 +979,37 @@ function drawMap() {
 // The map itself is displayed rotated 180°, so this layer is counter-rotated
 // about the map centre: inside it, coordinates run the way they look on screen,
 // which is what makes the edge-clamping below mean what it says.
-function pinCard(md, p, parent) {
+function pinCard(md, p, parent, k) {
   const ns = 'http://www.w3.org/2000/svg';
-  const W = md.viewBox.w, H = md.viewBox.h;
-  const s = gameToSvg(md, p.x, p.z);
-  const px = W - s.x, py = H - s.y;          // the pin, as seen on screen
-
-  const layer = document.createElementNS(ns, 'g');
-  layer.setAttribute('transform', `rotate(180 ${W / 2} ${H / 2})`);
+  const vb = rotatedViewBox(md);                  // the box the user actually sees
+  const pin = mapPoint(md, p.x, p.z);
 
   const desc = p.desc || '';
   const tags = [p.optional ? 'optional' : '', p.locked ? 'locked' : ''].filter(Boolean).join(' · ');
-  const cardW = Math.max(140, Math.min(280, W * 0.3));
 
-  let x = px + 14;
-  if (x + cardW > W - 4) x = px - 14 - cardW;              // flip sides near the edge
-  x = Math.max(4, Math.min(x, W - cardW - 4));
+  // The card is built at its natural size and the whole group is scaled, so the
+  // px values in .qpin-card keep meaning the same thing on every map.
+  const cardW = 280;
+  const gap = 14 * k, pad = 4 * k;
+  const wUnits = cardW * k;
+
+  let x = pin.x + gap;
+  if (x + wUnits > vb.x + vb.w - pad) x = pin.x - gap - wUnits;   // flip sides near the edge
+  x = Math.max(vb.x + pad, Math.min(x, vb.x + vb.w - wUnits - pad));
 
   const ln = document.createElementNS(ns, 'line');   // leader line back to the pin
-  ln.setAttribute('x1', px); ln.setAttribute('y1', py);
-  ln.setAttribute('x2', x > px ? x : x + cardW);
+  ln.setAttribute('x1', pin.x); ln.setAttribute('y1', pin.y);
+  ln.setAttribute('x2', x > pin.x ? x : x + wUnits);
   ln.setAttribute('class', 'qpin-leader');
-  layer.appendChild(ln);
+  ln.setAttribute('stroke-width', 1.5 * k);
+  parent.appendChild(ln);
 
+  const box = document.createElementNS(ns, 'g');
+  box.setAttribute('pointer-events', 'none');
   const fo = document.createElementNS(ns, 'foreignObject');
-  fo.setAttribute('x', x);
+  fo.setAttribute('x', 0); fo.setAttribute('y', 0);
   fo.setAttribute('width', cardW);
-  fo.setAttribute('height', H);          // provisional: nothing can clip while we measure
-  fo.setAttribute('y', 0);
-  fo.setAttribute('pointer-events', 'none');
+  fo.setAttribute('height', vb.h / k);    // provisional: nothing can clip while we measure
   const div = document.createElement('div');
   div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
   div.className = 'qpin-card';
@@ -997,24 +1018,23 @@ function pinCard(md, p, parent) {
     (desc ? `<div class="qpin-card-desc">${escapeHtml(desc)}</div>` : '') +
     (tags ? `<div class="qpin-card-tags">${escapeHtml(tags)}</div>` : '');
   fo.appendChild(div);
-  layer.appendChild(fo);
-  parent.appendChild(layer);
+  box.appendChild(fo);
+  box.setAttribute('transform', `translate(${x} ${vb.y}) scale(${k})`);
+  parent.appendChild(box);
 
   // foreignObject clips whatever overflows it, so ASK the browser how tall the
   // card came out rather than predicting it from string length — font metrics,
-  // where the text wraps, padding and a quest name long enough to wrap are all
-  // things only layout knows. Measured in px, converted back to user units via
-  // the box we just gave it (both rotations are 180°, so a bounding rect keeps
-  // its width and height).
+  // where the text wraps, padding, and a quest name long enough to wrap are all
+  // things only layout knows.
   const rect = fo.getBoundingClientRect();
-  const scale = rect.width > 0 ? rect.width / cardW : 1;
-  const measured = div.getBoundingClientRect().height / scale;
-  const cardH = Math.min(Math.ceil(measured) + 1, H - 8);
+  const pxPerUnit = rect.width > 0 ? rect.width / cardW : 1;
+  const cardH = Math.min(Math.ceil(div.getBoundingClientRect().height / pxPerUnit) + 1, vb.h / k - 8);
+  const hUnits = cardH * k;
 
-  const y = Math.max(4, Math.min(py - cardH / 2, H - cardH - 4));
+  const y = Math.max(vb.y + pad, Math.min(pin.y - hUnits / 2, vb.y + vb.h - hUnits - pad));
   fo.setAttribute('height', cardH);
-  fo.setAttribute('y', y);
-  ln.setAttribute('y2', Math.max(y + 8, Math.min(py, y + cardH - 8)));
+  box.setAttribute('transform', `translate(${x} ${y}) scale(${k})`);
+  ln.setAttribute('y2', Math.max(y + 8 * k, Math.min(pin.y, y + hUnits - 8 * k)));
 }
 
 async function openQuestMap(mapName) {
@@ -1037,7 +1057,23 @@ async function openQuestMap(mapName) {
   const svg = $('mapRot').querySelector('svg');
   if (svg) {
     svg.removeAttribute('width'); svg.removeAttribute('height');
-    svg.style.transform = `rotate(${md.rotate || 0}deg)`;
+    // Bake the map's rotation into the SVG instead of applying it as a CSS
+    // transform on the element. A CSS rotate leaves the layout box unrotated,
+    // so a 90° map (Factory) would be fitted to the wrong aspect and overflow;
+    // rewriting the viewBox makes the browser fit what is actually drawn. It
+    // also means pins, labels and cards can be positioned in the coordinates
+    // the user sees, with no counter-rotation anywhere.
+    const rot = ((md.rotate || 0) % 360 + 360) % 360;
+    if (rot) {
+      const ns = 'http://www.w3.org/2000/svg';
+      const spin = document.createElementNS(ns, 'g');
+      spin.setAttribute('transform', `rotate(${rot} ${md.viewBox.w / 2} ${md.viewBox.h / 2})`);
+      while (svg.firstChild) spin.appendChild(svg.firstChild);
+      svg.appendChild(spin);
+    }
+    const vb = rotatedViewBox(md);
+    svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+    svg.style.transform = '';
   }
   drawMap();
 }
