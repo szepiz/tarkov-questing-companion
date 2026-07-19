@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <title>Tarkov Quest Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <header id="titlebar">
+        <span id="titleText">TARKOV QUEST TRACKER</span>
+        <div class="mode-switch" title="Switch between your PvP and PvE profiles">
+          <button class="mode-btn-top" data-mode="regular">PvP</button>
+          <button class="mode-btn-top" data-mode="pve">PvE</button>
+        </div>
+      </header>
+      <nav id="tabs">
+        <button class="tab" data-filter="ALL">ALL</button>
+        <button class="tab" data-filter="KAPPA">KAPPA</button>
+        <button class="tab" data-filter="LIGHTKEEPER">LIGHTKEEPER</button>
+      </nav>
+      <div id="tree">
+        <div class="tree-message">Loading quest data…</div>
+      </div>
+      <footer id="sidebarFooter">
+        <button id="settingsBtn">SETTINGS</button>
+        <div id="statusLine"></div>
+      </footer>
+    </aside>
+
+    <main id="content">
+      <div id="hero">
+        <div id="heroEmpty">
+          <div class="hero-empty-title">TARKOV<br>QUEST TRACKER</div>
+          <div class="hero-empty-sub">select a map on the left</div>
+        </div>
+        <img id="heroMap" alt="">
+        <img id="heroTrader" alt="">
+        <div id="heroTraderName" class="hidden"></div>
+        <div id="heroLabel"></div>
+      </div>
+      <div id="questInfo">
+        <div id="questPlaceholder">select a quest to see its details</div>
+        <div id="questDetails" class="hidden">
+          <div id="questHeader">
+            <h1 id="questName"></h1>
+            <div id="questBadges"></div>
+          </div>
+          <div id="questMeta"></div>
+          <div id="questObjectives"></div>
+          <div id="questRequirements"></div>
+          <button id="wikiBtn" class="hidden">OPEN WIKI PAGE</button>
+        </div>
+      </div>
+    </main>
+
+    <div id="settingsOverlay" class="hidden">
+      <div id="settingsPanel">
+        <h2>SETTINGS</h2>
+
+        <div class="setting-group">
+          <div class="setting-label">TASK TRACKING</div>
+          <div class="mode-buttons">
+            <button id="modeManual" class="mode-btn">MANUAL</button>
+            <button id="modeAuto" class="mode-btn">AUTOMATIC</button>
+          </div>
+          <div class="setting-hint" id="modeHint"></div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">DISPLAY</div>
+          <div class="toggle-row">
+            <span>Hide completed quests</span>
+            <button id="hideCompletedBtn" class="toggle-btn">OFF</button>
+          </div>
+          <div class="toggle-row" id="hideLockedRow">
+            <span>Hide locked quests</span>
+            <button id="hideLockedBtn" class="toggle-btn">OFF</button>
+          </div>
+          <div class="setting-hint" id="displayHint"></div>
+        </div>
+
+        <div class="setting-group" id="logsGroup">
+          <div class="setting-label">EFT LOGS FOLDER</div>
+          <div class="logs-row">
+            <input id="logsPathInput" type="text" spellcheck="false">
+            <button id="browseBtn">BROWSE</button>
+          </div>
+          <div class="setting-hint" id="logsStatus"></div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">QUEST DATA</div>
+          <div class="setting-hint" id="dataStatus"></div>
+          <button id="refreshDataBtn">REFRESH FROM TARKOV.DEV</button>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">RE-SCAN LOGS</div>
+          <div class="setting-hint">Re-reads your whole Tarkov log history and re-imports every completed quest it can still find — use this to undo a reset, or if a completed quest is missing. It only adds completions; your manual ticks are kept. (It can only find quests still present in your logs; very old completions Tarkov has since deleted can't be recovered — tick those by hand.)</div>
+          <button id="rescanBtn">RE-SCAN ALL LOGS</button>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">DANGER ZONE</div>
+          <button id="resetBtn">RESET ALL PROGRESS</button>
+        </div>
+
+        <button id="closeSettingsBtn">CLOSE</button>
+      </div>
+    </div>
+
+    <div id="toasts"></div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

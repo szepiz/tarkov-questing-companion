@@ -1,0 +1,90 @@
+# Tarkov Questing Companion
+
+A simple desktop quest tracker for Escape from Tarkov. Tracks your **PvP and
+PvE** quest progress — automatically from the game's own logs, or by hand — with
+**Kappa** and **Lightkeeper** filters, prerequisite locking, and per-map / per-
+trader browsing.
+
+## Download
+
+Grab the latest build from the **[Releases page](../../releases/latest)**, unzip
+it anywhere, and run the `.exe` inside. No installer, nothing to set up.
+
+> The app is unsigned, so the first time you run it Windows may show a blue
+> "Windows protected your PC" screen. Click **More info → Run anyway**. This is
+> normal for small indie apps without a (costly) code-signing certificate.
+
+## Use
+
+- **PvP / PvE toggle** (top-right of the title bar) switches between your two
+  Tarkov profiles. Each mode has its own quest list and its own tracked
+  progress; automatic tracking reads the game logs and files each completion
+  under the mode it was earned in. The app opens on whichever mode your
+  progress is in.
+- **ALL / KAPPA / LIGHTKEEPER** tabs at the top filter the quest list to what's
+  required for the Kappa container or the Lightkeeper.
+- Click a **map** to expand it and see its picture; click a **trader** under it
+  to see their quests (the trader portrait fades into the map picture).
+- Click a **quest** to see its objectives and requirements (level, prerequisite
+  quests, keys, items to hand in).
+- Tick the **circle** next to a quest to mark it completed — it gets crossed
+  out and faded.
+- **Settings → Display** has two toggles: *Hide completed quests* and *Hide
+  locked quests*. With both on, the list shows only the quests you can take on
+  right now (hiding locked ones needs automatic tracking). Maps and traders
+  with nothing left to show disappear too; the x/y counters keep counting
+  everything.
+
+## Settings
+
+- **MANUAL** (default): you tick quests yourself.
+- **AUTOMATIC**: the app reads the EFT log files and marks quests as completed
+  by itself — including quests you finished while the app was closed, as far
+  back as your log files go. The game's install folder is found automatically
+  (default `C:\Battlestate Games\EFT\Logs`, or via the registry if you
+  installed elsewhere); you can also set the logs folder by hand.
+  In this mode, quests whose prerequisite quests you haven't finished yet sink
+  to the bottom of their list, faded, with a yellow **LOCKED** tag and a
+  yellow **!** in the tick box — so you always see what you can actually take.
+  A locked quest's details show the missing prerequisites in yellow.
+- **RESET ALL PROGRESS**: clears every tick for the current mode. After a reset,
+  automatic tracking only imports quests completed *after* the reset — use this
+  after a wipe.
+- **RE-SCAN ALL LOGS**: the inverse of a reset — re-reads your whole Tarkov log
+  history and re-imports every completed quest it can still find, sorted by
+  mode. Use it to undo a reset, or if a completed quest is missing. It only adds
+  completions (your manual ticks are kept) and can only find quests still
+  present in your logs; completions Tarkov has already deleted from its logs
+  must be ticked by hand.
+
+## Build from source
+
+Requires [Node.js](https://nodejs.org). From the project folder:
+
+```sh
+npm install          # restore dependencies
+npm start            # run in development
+```
+
+To produce a distributable Windows folder like the one on the Releases page:
+
+```sh
+npx electron-packager . "Tarkov Quest Tracker" --platform=win32 --arch=x64 --asar --overwrite --out dist
+```
+
+## Data & storage
+
+Quest data comes from the free [tarkov.dev](https://tarkov.dev) API, fetched per
+game mode (~510 PvP / ~506 PvE quests — the lists differ slightly). It's cached
+in `quests_cache.json` so the app also works offline; use **Settings → Refresh**
+after a game patch.
+
+Your settings and progress are stored in your per-user data folder
+(`%APPDATA%\Tarkov Quest Tracker` on Windows), **not** in the app folder — so
+updating or re-downloading the app never touches your progress.
+
+## Credits
+
+Quest data by [tarkov.dev](https://tarkov.dev). Escape from Tarkov and all
+related imagery are property of Battlestate Games. This is an unofficial
+fan-made tool.

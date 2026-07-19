@@ -1,0 +1,15 @@
+{
+  "name": "tarkov-quest-tracker",
+  "productName": "Tarkov Quest Tracker",
+  "version": "1.0.0",
+  "description": "Escape from Tarkov quest tracker (All / Kappa / Lightkeeper)",
+  "author": "Tarkov Quest Tracker",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@electron/packager": "^18.4.4",
+    "electron": "^31.7.7"
+  }
+}
