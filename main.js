@@ -1007,7 +1007,23 @@ function createWindow() {
   }
 }
 
+// The screenshot/apply harnesses drive the real UI: they tick settings, toggle
+// display options and import completions. Run against the normal profile they
+// overwrite the user's own data -- which happened once, from a single typo in a
+// --user-data-dir path that Electron then quietly ignored. Refuse to start
+// instead: a dev harness must never be one keystroke away from real data.
+function refuseIfRealProfile() {
+  if (!process.env.TQT_SHOOT && !process.env.TQC_TEST_APPLY) return;
+  const real = path.join(app.getPath('appData'), app.getName());
+  if (path.resolve(app.getPath('userData')) !== path.resolve(real)) return;
+  console.error(
+    'REFUSING TO RUN: TQT_SHOOT/TQC_TEST_APPLY would use the real profile at\n  ' + real +
+    '\nPass --user-data-dir=<throwaway dir> (and check it was accepted).');
+  app.exit(2);
+}
+
 app.whenReady().then(() => {
+  refuseIfRealProfile();
   initStorage();
   createWindow();
   cleanupStaleUpdate();
