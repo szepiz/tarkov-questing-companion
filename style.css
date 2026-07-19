@@ -563,8 +563,11 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 .setting-hint { margin-top: 8px; font-size: 12px; color: #8a877e; line-height: 1.5; letter-spacing: .3px; }
-.setting-hint .ok { color: #7a9a5a; }
-.setting-hint .bad { color: #c05050; }
+/* #updateStatus lives in the sidebar footer, not the settings dialog, but
+   renderUpdateSection() still emits .ok/.bad spans — without it a rate-limit
+   error would render in the same grey as "you're on the latest version" */
+.setting-hint .ok, #updateStatus .ok { color: #7a9a5a; }
+.setting-hint .bad, #updateStatus .bad { color: #c05050; }
 
 .toggle-row {
   display: flex;

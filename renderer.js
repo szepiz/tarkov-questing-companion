@@ -943,9 +943,10 @@ function drawMap() {
     g.appendChild(wrap);
   });
 
-  const sel = mapView.selected != null ? shown[mapView.selected] : null;
-  if (sel) g.appendChild(pinCard(md, sel));
   svg.appendChild(g);
+  // after g is in the document, so the card can measure itself
+  const sel = mapView.selected != null ? shown[mapView.selected] : null;
+  if (sel) pinCard(md, sel, g);
 
   $('mapPinCount').textContent = `${mapView.pins.length} objective${mapView.pins.length === 1 ? '' : 's'} · ${shown.length} on this floor`;
   $('mapHint').textContent = 'Pins show objectives for your unfinished quests here. Click a pin for details, click it again to hide them.';
@@ -956,7 +957,7 @@ function drawMap() {
 // The map itself is displayed rotated 180°, so this layer is counter-rotated
 // about the map centre: inside it, coordinates run the way they look on screen,
 // which is what makes the edge-clamping below mean what it says.
-function pinCard(md, p) {
+function pinCard(md, p, parent) {
   const ns = 'http://www.w3.org/2000/svg';
   const W = md.viewBox.w, H = md.viewBox.h;
   const s = gameToSvg(md, p.x, p.z);
@@ -968,28 +969,22 @@ function pinCard(md, p) {
   const desc = p.desc || '';
   const tags = [p.optional ? 'optional' : '', p.locked ? 'locked' : ''].filter(Boolean).join(' · ');
   const cardW = Math.max(140, Math.min(280, W * 0.3));
-  // generous estimate: the card paints its own background, so a box that is
-  // slightly too tall is invisible, whereas one too short would clip the text
-  const perLine = Math.max(16, Math.round(cardW / 4.4));
-  const lines = Math.ceil((desc.length || 1) / perLine) + (tags ? 1 : 0);
-  const cardH = 26 + lines * 13;
 
   let x = px + 14;
   if (x + cardW > W - 4) x = px - 14 - cardW;              // flip sides near the edge
   x = Math.max(4, Math.min(x, W - cardW - 4));
-  const y = Math.max(4, Math.min(py - cardH / 2, H - cardH - 4));
 
-  // leader line, so it stays obvious which pin the card belongs to
-  const ln = document.createElementNS(ns, 'line');
+  const ln = document.createElementNS(ns, 'line');   // leader line back to the pin
   ln.setAttribute('x1', px); ln.setAttribute('y1', py);
   ln.setAttribute('x2', x > px ? x : x + cardW);
-  ln.setAttribute('y2', Math.max(y + 8, Math.min(py, y + cardH - 8)));
   ln.setAttribute('class', 'qpin-leader');
   layer.appendChild(ln);
 
   const fo = document.createElementNS(ns, 'foreignObject');
-  fo.setAttribute('x', x); fo.setAttribute('y', y);
-  fo.setAttribute('width', cardW); fo.setAttribute('height', cardH);
+  fo.setAttribute('x', x);
+  fo.setAttribute('width', cardW);
+  fo.setAttribute('height', H);          // provisional: nothing can clip while we measure
+  fo.setAttribute('y', 0);
   fo.setAttribute('pointer-events', 'none');
   const div = document.createElement('div');
   div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
@@ -1000,7 +995,23 @@ function pinCard(md, p) {
     (tags ? `<div class="qpin-card-tags">${escapeHtml(tags)}</div>` : '');
   fo.appendChild(div);
   layer.appendChild(fo);
-  return layer;
+  parent.appendChild(layer);
+
+  // foreignObject clips whatever overflows it, so ASK the browser how tall the
+  // card came out rather than predicting it from string length — font metrics,
+  // where the text wraps, padding and a quest name long enough to wrap are all
+  // things only layout knows. Measured in px, converted back to user units via
+  // the box we just gave it (both rotations are 180°, so a bounding rect keeps
+  // its width and height).
+  const rect = fo.getBoundingClientRect();
+  const scale = rect.width > 0 ? rect.width / cardW : 1;
+  const measured = div.getBoundingClientRect().height / scale;
+  const cardH = Math.min(Math.ceil(measured) + 1, H - 8);
+
+  const y = Math.max(4, Math.min(py - cardH / 2, H - cardH - 4));
+  fo.setAttribute('height', cardH);
+  fo.setAttribute('y', y);
+  ln.setAttribute('y2', Math.max(y + 8, Math.min(py, y + cardH - 8)));
 }
 
 async function openQuestMap(mapName) {

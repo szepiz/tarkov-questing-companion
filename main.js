@@ -178,6 +178,26 @@ function cacheToModes(cache) {
   return null;
 }
 
+// Ids we can put a name to, used to decide what is worth ANNOUNCING.
+// Storage still records every event: an id absent from the cache may simply be
+// newer than the cache, and dropping it would lose a real completion. Memoised
+// on the cache file's stamp — it is ~4.5 MB and the watcher polls every 5 s.
+let knownIds = { key: '', ids: null };
+function knownQuestIds() {
+  let key = '';
+  for (const f of [CACHE_FILE, BUNDLED_CACHE]) {
+    try { const st = fs.statSync(f); key = f + st.mtimeMs + ':' + st.size; break; } catch {}
+  }
+  if (knownIds.ids && key && key === knownIds.key) return knownIds.ids;
+  const ids = { regular: new Set(), pve: new Set() };
+  const data = readJson(CACHE_FILE, null) || readJson(BUNDLED_CACHE, null);
+  if (data) {
+    for (const m of MODES) for (const t of data[m] || []) if (t && t.id) ids[m].add(t.id);
+  }
+  knownIds = { key, ids };
+  return ids;
+}
+
 async function loadTasks() {
   try {
     const modes = await fetchTasksOnline();
@@ -365,6 +385,7 @@ function scanLogs() {
   folders.sort((a, b) => (a.startTs || 0) - (b.startTs || 0)); // chronological
 
   const newByMode = { regular: [], pve: [] };
+  const known = knownQuestIds();
   let anyFail = false;
   let lastKnownMode = 'regular'; // a markerless session inherits the mode around it
   for (const folder of folders) {
@@ -410,7 +431,10 @@ function scanLogs() {
           // independently in PvP and PvE (separate profiles)
           if (!bucket.completed[ev.questId]) {
             bucket.completed[ev.questId] = { via: 'auto', at: Date.now() };
-            newByMode[mode].push(ev.questId);
+            // count it as a completion only if it is a quest we can name — the
+            // logs also carry daily/weekly template ids. Empty set = no cache
+            // yet, so announce everything rather than nothing.
+            if (!known[mode].size || known[mode].has(ev.questId)) newByMode[mode].push(ev.questId);
           }
         } else if (!bucket.failed[ev.questId]) {
           bucket.failed[ev.questId] = { at: Date.now() };
@@ -998,6 +1022,38 @@ function createWindow() {
           })()`);
           console.log('TQT_FLOOR', JSON.stringify(floorChk));
           await shoot(process.env.TQT_SHOOT.replace('.png', '_floor.png'));
+          // every pin on every floor: the card's foreignObject must be at least as
+          // tall as the card, or the objective text is silently cut off
+          const cardChk = await win.webContents.executeJavaScript(`(async () => {
+            const wait = (ms) => new Promise(r => setTimeout(r, ms));
+            const pins = () => [...document.querySelectorAll('.qpin-dot')];
+            const out = { checked: 0, clipped: [], worstOverflow: 0, offMap: 0 };
+            const floors = document.querySelectorAll('.floor-tab').length;
+            for (let f = 0; f < floors; f++) {
+              [...document.querySelectorAll('.floor-tab')][f].click();
+              await wait(120);
+              const n = pins().length;
+              for (let i = 0; i < n; i++) {
+                pins()[i].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                await wait(0);
+                const fo = document.querySelector('#qpins foreignObject');
+                const card = document.querySelector('.qpin-card');
+                if (fo && card) {
+                  out.checked++;
+                  const over = card.getBoundingClientRect().height - fo.getBoundingClientRect().height;
+                  if (over > out.worstOverflow) out.worstOverflow = Math.round(over * 100) / 100;
+                  if (over > 0.5) out.clipped.push(card.textContent.slice(0, 45));
+                  const svg = document.querySelector('#mapRot svg').getBoundingClientRect();
+                  const b = fo.getBoundingClientRect();
+                  if (b.left < svg.left - 1 || b.right > svg.right + 1 || b.top < svg.top - 1 || b.bottom > svg.bottom + 1) out.offMap++;
+                }
+                pins()[i].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                await wait(0);
+              }
+            }
+            return out;
+          })()`);
+          console.log('TQT_CARD', JSON.stringify(cardChk));
         } catch (err) {
           console.error('TQT_SHOOT failed:', err);
         }
