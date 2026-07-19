@@ -465,6 +465,32 @@ function floorOf(md, x, y, z) {
   return -1;
 }
 
+// How high a floor sits, for ordering the tabs bottom-to-top. Upstream lists
+// floors in no particular order — The Lab reads "Second Level, Technical" — and
+// ground is a separate concept (index -1) that belongs in the MIDDLE of a map
+// with a basement, not permanently on the left.
+//
+// Height ranges use ±1000/±10000 as open-ended sentinels, so clamp before taking
+// a midpoint: an underground extent of [-1000, 0.5] must not drag its floor's
+// average to -500 and a top floor's [5.7, 1000] must not send it to +500. Ground
+// is 0 by definition.
+function floorHeight(floor) {
+  const mids = (floor.extents || []).map((e) => {
+    const lo = Math.max(-60, Math.min(60, e.height[0]));
+    const hi = Math.max(-60, Math.min(60, e.height[1]));
+    return (lo + hi) / 2;
+  });
+  if (!mids.length) return 0;
+  return mids.reduce((a, b) => a + b, 0) / mids.length;
+}
+
+// [{ name, idx }] for the floor tabs, lowest first; idx -1 is the ground floor
+function floorOrder(md) {
+  const tabs = [{ name: 'Ground', idx: -1, h: 0 }].concat(
+    (md.floors || []).map((f, i) => ({ name: f.name, idx: i, h: floorHeight(f) })));
+  return tabs.sort((a, b) => a.h - b.h || a.idx - b.idx);
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { MAP_DATA, mapPoint, rotatedViewBox, inRect, floorOf };
+  module.exports = { MAP_DATA, mapPoint, rotatedViewBox, inRect, floorOf, floorHeight, floorOrder };
 }

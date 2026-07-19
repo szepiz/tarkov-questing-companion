@@ -991,7 +991,8 @@ function collectMapPins(mapName) {
 
 function renderFloorTabs() {
   const md = MAP_DATA[mapView.name];
-  const tabs = [{ name: 'GROUND', idx: -1 }].concat(md.floors.map((f, i) => ({ name: f.name.toUpperCase(), idx: i })));
+  // ordered bottom-to-top, so ground sits above the basement rather than first
+  const tabs = floorOrder(md).map((t) => ({ name: t.name.toUpperCase(), idx: t.idx }));
   $('floorTabs').innerHTML = tabs.map((t) => {
     const n = mapView.pins.filter((p) => p.floor === t.idx).length;
     return `<button class="floor-tab${t.idx === mapView.floor ? ' active' : ''}" data-floor="${t.idx}">${escapeHtml(t.name)}${n ? ` (${n})` : ''}</button>`;

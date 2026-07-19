@@ -1072,16 +1072,25 @@ function createWindow() {
                 floors: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
                 // selecting an upper floor must dim the ground plan underneath it.
                 // Checked per map because their SVG structures differ.
+                // tabs are ordered by height now, so ground is not tabs[0] on a
+                // map with a basement — find them by their data-floor index
+                defaultIsGround: (() => {
+                  const active = document.querySelector('.floor-tab.active');
+                  return !!active && Number(active.dataset.floor) === -1;
+                })(),
+                tabOrder: [...document.querySelectorAll('.floor-tab')].map(t => Number(t.dataset.floor)),
                 dim: await (async () => {
                   const tabs = [...document.querySelectorAll('.floor-tab')];
-                  if (tabs.length < 2) return 'no floors';
+                  const ground = tabs.find(t => Number(t.dataset.floor) === -1);
+                  const upper = tabs.find(t => Number(t.dataset.floor) >= 0);
+                  if (!upper || !ground) return 'no floors';
                   const base = svg.querySelector('#' + CSS.escape(MAP_DATA[${JSON.stringify(name)}].baseLayer));
                   if (!base) return 'no base layer';
                   const atGround = Number(getComputedStyle(base).opacity);
-                  tabs[1].click();
+                  upper.click();
                   await new Promise(r => setTimeout(r, 250));
                   const onFloor = Number(getComputedStyle(base).opacity);
-                  tabs[0].click();
+                  ground.click();
                   await new Promise(r => setTimeout(r, 250));
                   const backToGround = Number(getComputedStyle(base).opacity);
                   return (atGround > 0.9 && onFloor < 0.5 && backToGround > 0.9)
