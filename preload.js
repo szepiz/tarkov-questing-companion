@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('api', {
   rescanAll: () => ipcRenderer.invoke('rescan-all'),
   browseLogs: () => ipcRenderer.invoke('browse-logs'),
   openWiki: (url) => ipcRenderer.invoke('open-wiki', url),
+  getMapSvg: (file) => ipcRenderer.invoke('get-map-svg', file),
   checkUpdate: () => ipcRenderer.invoke('check-update'),
   downloadUpdate: () => ipcRenderer.invoke('download-update'),
   applyUpdate: () => ipcRenderer.invoke('apply-update'),

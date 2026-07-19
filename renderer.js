@@ -38,6 +38,7 @@ const backend = window.api || (() => {
     rescanAll: async () => ({ progress: store.progress, imported: 0, failsImported: 0, hadReset: false, logsFound: false }),
     browseLogs: async () => null,
     openWiki: async (url) => window.open(url),
+    getMapSvg: async (file) => { try { return await (await fetch(file)).text(); } catch { return null; } },
     checkUpdate: async () => ({ available: false, current: 'dev', canApply: false }),
     downloadUpdate: async () => ({ staged: false, error: 'not supported in browser' }),
     applyUpdate: async () => ({ applying: false }),
@@ -334,7 +335,10 @@ function renderTree() {
     mapRow.innerHTML = `
       <span class="row-name">${escapeHtml(mapName.toUpperCase())}</span>
       <span class="row-toggle">${expanded ? '−' : '+'}</span>
+      ${hasMapData(mapName) ? `<button class="map-btn" title="Open the ${escapeHtml(mapName)} map with your objectives pinned">▣</button>` : ''}
       <span class="row-count${mapDone === mapTotal ? ' done' : ''}">${mapDone}/${mapTotal}</span>`;
+    const mb = mapRow.querySelector('.map-btn');
+    if (mb) mb.addEventListener('click', (e) => { e.stopPropagation(); openQuestMap(mapName); });
     mapRow.addEventListener('click', () => {
       if (state.selMap === mapName && state.expandedMaps.has(mapName)) {
         state.expandedMaps.delete(mapName);
@@ -822,6 +826,152 @@ backend.onSettingsChanged((s) => {
   state.settings = s;
   renderStatus();
   renderSettingsPanel();
+});
+
+// ---------- quest map ----------
+
+const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null };
+
+function hasMapData(mapName) {
+  return typeof MAP_DATA !== 'undefined' && !!MAP_DATA[mapName];
+}
+
+// every pinnable objective point for unfinished quests on this map,
+// honouring the current tab filter and the hide-locked setting
+function collectMapPins(mapName) {
+  const md = MAP_DATA[mapName];
+  if (!md) return [];
+  const out = [];
+  for (const t of state.tasks) {
+    if (!taskPassesFilter(t) || isDone(t.id)) continue;
+    const locked = isLocked(t);
+    if (locked && state.settings && state.settings.hideLocked) continue;
+    for (const o of t.objectives || []) {
+      const pts = [];
+      for (const z of o.zones || []) {
+        if (z && z.position && normMapName(z.map && z.map.name) === mapName) pts.push(z.position);
+      }
+      for (const l of o.possibleLocations || []) {
+        if (normMapName(l.map && l.map.name) !== mapName) continue;
+        for (const p of l.positions || []) pts.push(p);
+      }
+      for (const p of pts) {
+        if (typeof p.x !== 'number' || typeof p.z !== 'number') continue;
+        out.push({
+          x: p.x, y: typeof p.y === 'number' ? p.y : 0, z: p.z,
+          quest: t.name, desc: o.description || '', optional: !!o.optional, locked,
+          floor: floorOf(md, p.x, typeof p.y === 'number' ? p.y : 0, p.z),
+        });
+      }
+    }
+  }
+  return out;
+}
+
+function renderFloorTabs() {
+  const md = MAP_DATA[mapView.name];
+  const tabs = [{ name: 'GROUND', idx: -1 }].concat(md.floors.map((f, i) => ({ name: f.name.toUpperCase(), idx: i })));
+  $('floorTabs').innerHTML = tabs.map((t) => {
+    const n = mapView.pins.filter((p) => p.floor === t.idx).length;
+    return `<button class="floor-tab${t.idx === mapView.floor ? ' active' : ''}" data-floor="${t.idx}">${escapeHtml(t.name)}${n ? ` (${n})` : ''}</button>`;
+  }).join('');
+  $('floorTabs').querySelectorAll('.floor-tab').forEach((b) => {
+    b.addEventListener('click', () => { mapView.floor = Number(b.dataset.floor); mapView.selected = null; drawMap(); });
+  });
+}
+
+// show the base layer plus the selected floor; draw pins for that floor
+function drawMap() {
+  const md = MAP_DATA[mapView.name];
+  const svg = $('mapRot').querySelector('svg');
+  if (!svg) return;
+
+  for (let i = 0; i < md.floors.length; i++) {
+    const g = svg.querySelector(`#${CSS.escape(md.floors[i].svgLayer)}`);
+    if (g) g.style.display = (i === mapView.floor) ? '' : 'none';
+  }
+
+  const old = svg.querySelector('#qpins');
+  if (old) old.remove();
+  const ns = 'http://www.w3.org/2000/svg';
+  const g = document.createElementNS(ns, 'g');
+  g.setAttribute('id', 'qpins');
+
+  // faint landmark names for orientation
+  for (const [lx, lz, text] of md.labels || []) {
+    const p = gameToSvg(md, lx, lz);
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('transform', `rotate(180 ${p.x} ${p.y})`);
+    t.setAttribute('x', p.x); t.setAttribute('y', p.y);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('style', 'font:600 9px Bender,sans-serif;fill:#cfccc3;opacity:.45;stroke:#000;stroke-width:2.5;paint-order:stroke;pointer-events:none');
+    t.textContent = text;
+    g.appendChild(t);
+  }
+
+  const shown = mapView.pins.filter((p) => p.floor === mapView.floor);
+  shown.forEach((p, i) => {
+    const s = gameToSvg(md, p.x, p.z);
+    const wrap = document.createElementNS(ns, 'g');
+    wrap.setAttribute('transform', `rotate(180 ${s.x} ${s.y})`);
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 6);
+    c.setAttribute('class', 'qpin-dot' + (mapView.selected === i ? ' sel' : ''));
+    if (p.locked) c.setAttribute('opacity', '.5');
+    c.addEventListener('click', (e) => { e.stopPropagation(); mapView.selected = i; drawMap(); });
+    wrap.appendChild(c);
+    if (mapView.selected === i) {
+      const t = document.createElementNS(ns, 'text');
+      t.setAttribute('x', s.x + 10); t.setAttribute('y', s.y + 4);
+      t.setAttribute('class', 'qpin-label');
+      t.textContent = p.quest;
+      wrap.appendChild(t);
+    }
+    g.appendChild(wrap);
+  });
+  svg.appendChild(g);
+
+  $('mapPinCount').textContent = `${mapView.pins.length} objective${mapView.pins.length === 1 ? '' : 's'} · ${shown.length} on this floor`;
+  const sel = mapView.selected != null ? shown[mapView.selected] : null;
+  $('mapHint').innerHTML = sel
+    ? `<strong style="color:#d0a943">${escapeHtml(sel.quest)}</strong> — ${escapeHtml(sel.desc)}${sel.optional ? ' (optional)' : ''}${sel.locked ? ' · locked' : ''}`
+    : 'Pins show objectives for your unfinished quests here. Click a pin for details.';
+  renderFloorTabs();
+}
+
+async function openQuestMap(mapName) {
+  if (!hasMapData(mapName)) return;
+  const md = MAP_DATA[mapName];
+  mapView.name = mapName;
+  mapView.floor = -1;
+  mapView.selected = null;
+  mapView.pins = collectMapPins(mapName);
+  $('mapTitle').textContent = mapName.toUpperCase();
+  $('mapCredit').innerHTML = 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0';
+  $('mapOverlay').classList.remove('hidden');
+
+  const svgText = await backend.getMapSvg(md.svg);
+  if (!svgText) {
+    $('mapRot').innerHTML = '<div id="mapEmpty">Could not load the map image.</div>';
+    return;
+  }
+  $('mapRot').innerHTML = svgText;
+  const svg = $('mapRot').querySelector('svg');
+  if (svg) {
+    svg.removeAttribute('width'); svg.removeAttribute('height');
+    svg.style.transform = `rotate(${md.rotate || 0}deg)`;
+  }
+  drawMap();
+}
+
+$('closeMapBtn').addEventListener('click', () => $('mapOverlay').classList.add('hidden'));
+$('mapOverlay').addEventListener('click', (e) => {
+  if (e.target === $('mapOverlay')) $('mapOverlay').classList.add('hidden');
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !$('mapOverlay').classList.contains('hidden')) {
+    $('mapOverlay').classList.add('hidden');
+  }
 });
 
 // ---------- updates ----------

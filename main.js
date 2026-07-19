@@ -127,12 +127,16 @@ const TASK_FIELDS = `
       description
       optional
       maps { name }
-      ... on TaskObjectiveItem { items { name } count foundInRaid requiredKeys { name } }
-      ... on TaskObjectiveQuestItem { requiredKeys { name } }
-      ... on TaskObjectiveShoot { requiredKeys { name } }
+      ... on TaskObjectiveItem { items { name } count foundInRaid requiredKeys { name } zones { map { name } position { x y z } } }
+      ... on TaskObjectiveQuestItem {
+        requiredKeys { name }
+        zones { map { name } position { x y z } }
+        possibleLocations { map { name } positions { x y z } }
+      }
+      ... on TaskObjectiveShoot { requiredKeys { name } zones { map { name } position { x y z } } }
       ... on TaskObjectiveExtract { requiredKeys { name } }
-      ... on TaskObjectiveMark { requiredKeys { name } }
-      ... on TaskObjectiveBasic { requiredKeys { name } }
+      ... on TaskObjectiveMark { requiredKeys { name } zones { map { name } position { x y z } } }
+      ... on TaskObjectiveBasic { requiredKeys { name } zones { map { name } position { x y z } } }
       ... on TaskObjectiveUseItem { requiredKeys { name } }
       ... on TaskObjectiveBuildItem { item { name } }
     }`;
@@ -717,6 +721,12 @@ ipcMain.handle('browse-logs', async () => {
   return res.filePaths[0];
 });
 
+// serve a bundled map SVG to the renderer (file:// fetch is blocked by CSP)
+ipcMain.handle('get-map-svg', (_e, file) => {
+  if (typeof file !== 'string' || !/^maps[\\/][A-Za-z0-9_-]+\.svg$/.test(file)) return null;
+  try { return fs.readFileSync(path.join(APP_DIR, file), 'utf8'); } catch { return null; }
+});
+
 ipcMain.handle('open-wiki', (_e, url) => {
   if (typeof url === 'string' && /^https:\/\/(escapefromtarkov\.fandom\.com|www\.escapefromtarkov\.wiki)\//.test(url)) {
     shell.openExternal(url);
@@ -848,6 +858,49 @@ function createWindow() {
             installBtnVisible: !document.getElementById('installUpdateBtn').classList.contains('hidden'),
           }))()`);
           console.log('TQT_UPD', JSON.stringify(updChk));
+          // open the Customs quest map and report pin placement
+          const mapChk = await win.webContents.executeJavaScript(`(async () => {
+            document.getElementById('closeSettingsBtn').click();
+            document.querySelector('.tab[data-filter="ALL"]').click();
+            const customs = [...document.querySelectorAll('.map-row')].find(r => r.textContent.includes('CUSTOMS'));
+            const btn = customs && customs.querySelector('.map-btn');
+            if (!btn) return { error: 'no map button' };
+            btn.click();
+            await new Promise(r => setTimeout(r, 1500));
+            const svg = document.querySelector('#mapRot svg');
+            const pins = document.querySelectorAll('.qpin-dot');
+            return {
+              overlayOpen: !document.getElementById('mapOverlay').classList.contains('hidden'),
+              svgLoaded: !!svg,
+              viewBox: svg ? svg.getAttribute('viewBox') : null,
+              pinsOnGround: pins.length,
+              floorTabs: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
+              count: document.getElementById('mapPinCount').textContent,
+            };
+          })()`);
+          console.log('TQT_MAP', JSON.stringify(mapChk));
+          await new Promise((r) => setTimeout(r, 500));
+          await shoot(process.env.TQT_SHOOT.replace('.png', '_map.png'));
+          // switch to 2nd floor and click a pin
+          const floorChk = await win.webContents.executeJavaScript(`(async () => {
+            const t2 = [...document.querySelectorAll('.floor-tab')].find(t => t.textContent.startsWith('2ND'));
+            if (t2) t2.click();
+            await new Promise(r => setTimeout(r, 400));
+            const before = document.querySelectorAll('.qpin-dot').length;
+            const pin = document.querySelector('.qpin-dot');
+            if (pin) pin.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            await new Promise(r => setTimeout(r, 400));
+            const ug = document.querySelector('#Second_Floor');
+            const gl = document.querySelector('#Underground_Level');
+            return {
+              pinsOn2nd: before,
+              secondFloorVisible: ug ? ug.style.display !== 'none' : null,
+              undergroundHidden: gl ? gl.style.display === 'none' : null,
+              detail: document.getElementById('mapHint').textContent.slice(0, 120),
+            };
+          })()`);
+          console.log('TQT_FLOOR', JSON.stringify(floorChk));
+          await shoot(process.env.TQT_SHOOT.replace('.png', '_floor.png'));
         } catch (err) {
           console.error('TQT_SHOOT failed:', err);
         }

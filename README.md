@@ -29,6 +29,11 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   quests, keys, items to hand in).
 - Tick the **circle** next to a quest to mark it completed — it gets crossed
   out and faded.
+- **Quest map** — maps that have one show a small **▣** button next to their
+  name. It opens the map with a pin on every objective of your *unfinished*
+  quests there, respecting the current tab filter. Click a pin for the quest and
+  objective; switch **floors** (Ground / Underground / 2nd / 3rd) to see
+  objectives inside multi-storey buildings like Dorms. *(Customs so far.)*
 - **Settings → Display** has two toggles: *Hide completed quests* and *Hide
   locked quests*. With both on, the list shows only the quests you can take on
   right now (hiding locked ones needs automatic tracking). Maps and traders
@@ -89,6 +94,13 @@ updating or re-downloading the app never touches your progress.
 
 ## Credits
 
-Quest data by [tarkov.dev](https://tarkov.dev). Escape from Tarkov and all
-related imagery are property of Battlestate Games. This is an unofficial
-fan-made tool.
+Quest data by [tarkov.dev](https://tarkov.dev).
+
+Map artwork from the **Escape from Tarkov SVG Maps Project** by **Shebuka** —
+[tarkov-dev-svg-maps](https://github.com/the-hideout/tarkov-dev-svg-maps),
+licensed [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+The maps are used unmodified; map geometry (bounds, floor height ranges) comes
+from tarkov.dev's public map data.
+
+Escape from Tarkov and all related imagery are property of Battlestate Games.
+This is an unofficial, non-commercial fan-made tool.

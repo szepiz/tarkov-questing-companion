@@ -647,6 +647,134 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 #resetBtn:hover { background: rgba(192,58,58,.12); }
 #closeSettingsBtn { display: block; margin-left: auto; margin-top: 4px; }
 
+/* ---------- quest map ---------- */
+.map-btn {
+  flex: none;
+  margin-left: 6px;
+  width: 18px;
+  height: 16px;
+  border: 1px solid #4a4a44;
+  background: #191917;
+  border-radius: 2px;
+  color: #8a877e;
+  font-size: 10px;
+  line-height: 1;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.map-btn:hover { color: #d0a943; border-color: #8a7127; background: #221f16; }
+
+#mapOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+#mapPanel {
+  width: 96vw;
+  height: 94vh;
+  background: #14140f;
+  border: 1px solid #3a3a36;
+  box-shadow: 0 12px 50px #000;
+  display: flex;
+  flex-direction: column;
+}
+#mapHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: linear-gradient(#3a3a37, #2c2c29);
+  border-bottom: 1px solid #000;
+}
+#mapTitle { font-weight: 900; letter-spacing: 2px; font-size: 15px; color: #e4e1d8; }
+#mapPinCount { margin-left: auto; font-size: 12px; color: #8a877e; letter-spacing: .5px; }
+#floorTabs { display: flex; gap: 3px; }
+.floor-tab {
+  border: 1px solid #4a4a44;
+  background: linear-gradient(#1d1d1b, #141412);
+  color: #b8b5ac;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 4px 9px 3px;
+  border-radius: 2px;
+}
+.floor-tab:hover { color: #e8e5dc; }
+.floor-tab.active {
+  background:
+    repeating-linear-gradient(115deg, rgba(0,0,0,.05) 0 2px, transparent 2px 4px),
+    linear-gradient(#c9a94a, #a9862f);
+  color: #17140c;
+  border-color: #8a7127;
+}
+#closeMapBtn {
+  background: linear-gradient(#3a3a37, #2c2c29);
+  border: 1px solid #4a4a44;
+  color: #cfccc3;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 2px;
+}
+#closeMapBtn:hover { filter: brightness(1.25); }
+
+#mapStage {
+  flex: 1;
+  overflow: hidden;
+  background: #0b0b08;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#mapRot { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+#mapRot svg { max-width: 100%; max-height: 100%; display: block; }
+
+/* pins */
+.qpin-dot {
+  fill: #d0a943;
+  stroke: #14140f;
+  stroke-width: 2;
+  cursor: pointer;
+}
+.qpin-dot:hover { fill: #ffd764; }
+.qpin-dot.sel { fill: #ff6a3d; }
+.qpin-label {
+  font: 700 11px 'Bender', sans-serif;
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 3;
+  paint-order: stroke;
+  pointer-events: none;
+}
+
+#mapFooter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border-top: 1px solid #26261f;
+  background: #191914;
+  font-size: 11px;
+  color: #6e6b62;
+  letter-spacing: .3px;
+}
+#mapCredit { margin-left: auto; }
+#mapCredit a { color: #8a877e; }
+#mapEmpty {
+  position: absolute;
+  color: #55524a;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+}
+
 /* toasts */
 #toasts {
   position: fixed;
