@@ -881,10 +881,30 @@ ipcMain.handle('get-map-svg', (_e, file) => {
   try { return fs.readFileSync(path.join(APP_DIR, file), 'utf8'); } catch { return null; }
 });
 
+// The only hosts the app will hand to the OS browser: quest wiki pages, and the
+// projects credited in Settings. Matched on the PARSED hostname, exactly — the
+// previous prefix regex would have needed a trailing slash to stay safe against
+// "escapefromtarkov.fandom.com.evil.com/", and adding hosts to that pattern is
+// how such a check quietly becomes wrong.
+const EXTERNAL_HOSTS = new Set([
+  'escapefromtarkov.fandom.com', 'www.escapefromtarkov.wiki',   // quest pages
+  'tarkov.dev', 'github.com',                                   // data + map artwork
+  'www.behance.net', 'www.electronjs.org',                      // font, framework
+  'www.escapefromtarkov.com',                                   // Battlestate Games
+  'creativecommons.org', 'scripts.sil.org',                     // licence texts
+]);
+
+function isExternalAllowed(url) {
+  if (typeof url !== 'string') return false;
+  let u;
+  try { u = new URL(url); } catch { return false; }
+  return u.protocol === 'https:' && EXTERNAL_HOSTS.has(u.hostname);
+}
+
 ipcMain.handle('open-wiki', (_e, url) => {
-  if (typeof url === 'string' && /^https:\/\/(escapefromtarkov\.fandom\.com|www\.escapefromtarkov\.wiki)\//.test(url)) {
-    shell.openExternal(url);
-  }
+  if (!isExternalAllowed(url)) return false;
+  shell.openExternal(url);
+  return true;
 });
 
 // ---------- window ----------
@@ -944,14 +964,17 @@ function createWindow() {
         const dir = process.env.TQT_HERO;
         try {
           fs.mkdirSync(dir, { recursive: true });
+          // expand every map so we can reach one row for each distinct trader
           const traders = await win.webContents.executeJavaScript(`(async () => {
             document.querySelector('.tab[data-filter="ALL"]').click();
             await new Promise(r => setTimeout(r, 300));
-            const rows = [...document.querySelectorAll('.map-row')];
-            const customs = rows.find(r => r.textContent.includes('CUSTOMS'));
-            customs.querySelector('.row-toggle').click();
-            await new Promise(r => setTimeout(r, 300));
-            return [...document.querySelectorAll('.trader-row')].map(r => r.querySelector('.row-name').textContent);
+            for (const row of [...document.querySelectorAll('.map-row')]) {
+              row.querySelector('.row-toggle').click();
+              await new Promise(r => setTimeout(r, 60));
+            }
+            const seen = new Set();
+            for (const r of document.querySelectorAll('.trader-row')) seen.add(r.querySelector('.row-name').textContent);
+            return [...seen];
           })()`);
           for (const name of traders) {
             const info = await win.webContents.executeJavaScript(`(async () => {
@@ -1027,6 +1050,30 @@ function createWindow() {
             const img = await win.webContents.capturePage();
             fs.writeFileSync(path.join(dir, name.replace(/\W+/g, '_') + '.png'), img.toPNG());
           }
+          // pin/card sizes are measured off the rendered SVG, so a resize must redraw
+          const dot = () => win.webContents.executeJavaScript(`(() => {
+            const d = document.querySelector('.qpin-dot');
+            const svg = document.querySelector('#mapRot svg');
+            const s = svg.getBoundingClientRect(), st = document.getElementById('mapStage').getBoundingClientRect();
+            const r1 = (n) => Math.round(n * 10) / 10;
+            return {
+              dotPx: d ? r1(d.getBoundingClientRect().width) : null,
+              rAttr: d ? r1(Number(d.getAttribute('r'))) : null,
+              svgBox: r1(s.width) + 'x' + r1(s.height),
+              stage: r1(st.width) + 'x' + r1(st.height),
+              viewBox: svg.getAttribute('viewBox'),
+            };
+          })()`);
+          await win.webContents.executeJavaScript(`openQuestMap('Customs')`);
+          await new Promise((r) => setTimeout(r, 900));
+          const sizes = { start: await dot() };
+          win.setContentSize(820, 560);
+          await new Promise((r) => setTimeout(r, 900));
+          sizes.small = await dot();
+          win.setContentSize(1600, 900);
+          await new Promise((r) => setTimeout(r, 900));
+          sizes.large = await dot();
+          console.log('TQT_RESIZE', JSON.stringify(sizes));
         } catch (err) {
           console.error('TQT_MAPS failed:', err);
         }
@@ -1132,11 +1179,18 @@ function createWindow() {
             return {
               entries: g.querySelectorAll('.credit').length,
               links: links.length,
-              allHaveUrls: links.every(a => /^https:\\/\\//.test(a.dataset.url)),
+              urls: links.map(a => a.dataset.url),
               names: links.map(a => a.textContent.trim()),
               visible: r.top < window.innerHeight && r.bottom > 0,
             };
           })()`);
+          // Run every credit URL through the REAL allowlist. Checking that the
+          // attribute looks like a URL proves nothing — an earlier version of
+          // this probe did exactly that and passed while all six links were
+          // silently rejected by the handler. Validated here rather than by
+          // invoking the IPC, so the test does not open six browser tabs.
+          credits.rejected = credits.urls.filter((u) => !isExternalAllowed(u));
+          delete credits.urls;
           console.log('TQT_CREDITS', JSON.stringify(credits));
           await shoot(process.env.TQT_SHOOT.replace('.png', '_credits.png'));
           await win.webContents.executeJavaScript(`document.getElementById('settingsPanel').scrollTop = 0;`);
@@ -1250,7 +1304,9 @@ function createWindow() {
 // --user-data-dir path that Electron then quietly ignored. Refuse to start
 // instead: a dev harness must never be one keystroke away from real data.
 function refuseIfRealProfile() {
-  if (!process.env.TQT_SHOOT && !process.env.TQC_TEST_APPLY) return;
+  // every harness that drives the real UI, not just the first two
+  if (!process.env.TQT_SHOOT && !process.env.TQC_TEST_APPLY
+      && !process.env.TQT_MAPS && !process.env.TQT_HERO) return;
   const real = path.join(app.getPath('appData'), app.getName());
   if (path.resolve(app.getPath('userData')) !== path.resolve(real)) return;
   console.error(

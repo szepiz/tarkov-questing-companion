@@ -1,20 +1,24 @@
 'use strict';
 // Map geometry for the in-app quest maps.
 //
-// Game coordinates map LINEARLY from `bounds` onto the SVG viewBox, then the
-// map is rotated by `rotate` degrees for display. Verified against tarkov.dev's
-// own named landmarks — every one lands on the correct building.
+// Game coordinates map LINEARLY from `bounds` onto the ROTATED box — see
+// mapPoint() at the bottom. Mapping onto the raw viewBox and rotating afterwards
+// is equivalent at 180° and wrong at 90°, which is what made Factory misplace
+// everything. Verified against tarkov.dev's own named landmarks: 100% of them
+// land on drawn artwork on every map (run the app with TQT_MAPS=<dir>).
 //
-// GENERATED from tarkov.dev's public maps.json plus each SVG's own viewBox
-// (see _dev/gen_mapdata.js). Don't hand-edit an entry: regenerate, and diff.
+// GENERATED from tarkov.dev's public maps.json plus each SVG's own viewBox —
+// `node _dev/build_mapdata.js`. Don't hand-edit an entry: regenerate, and diff.
 // The generator is checked by reproducing the hand-verified Customs entry byte
 // for byte.
 //
 // Map artwork: "Escape from Tarkov SVG Maps Project" by Shebuka,
 // https://github.com/the-hideout/tarkov-dev-svg-maps — CC BY-NC-SA 4.0.
 // Geometry, landmark names and floor extents: tarkov.dev (the-hideout), MIT.
+// Full notices in THIRD-PARTY-NOTICES.txt.
 
 const MAP_DATA = {
+
   "Ground Zero": {
     svg: "maps/GroundZero.svg",
     viewBox: { w: 348.92543, h: 488.44792 },

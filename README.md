@@ -108,6 +108,9 @@ any of the following, and the same list is in the app under **Settings → Credi
 | Application framework | [Electron](https://www.electronjs.org) | MIT |
 | Escape from Tarkov, trader portraits, location screenshots | [Battlestate Games](https://www.escapefromtarkov.com) | all rights reserved |
 
+Full licence texts — including tarkov.dev's MIT notice — are in
+[THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which also ships inside the app.
+
 **On the map artwork.** The SVGs are bundled **unmodified** and credited in the
 map footer, in Settings, and here — as CC BY-NC-SA 4.0 requires. This app is free
 and non-commercial, and it is a quest tracker: it draws quest objectives from

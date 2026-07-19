@@ -1082,6 +1082,16 @@ async function openQuestMap(mapName) {
 $('mapStage').addEventListener('click', () => {
   if (mapView.selected != null) { mapView.selected = null; drawMap(); }
 });
+// Pin and card sizes are measured against the rendered SVG, so a resized window
+// has to redraw or they drift away from their intended 13 px.
+let mapResizeTimer = null;
+window.addEventListener('resize', () => {
+  if ($('mapOverlay').classList.contains('hidden') || !mapView.name) return;
+  clearTimeout(mapResizeTimer);
+  mapResizeTimer = setTimeout(() => {
+    if (!$('mapOverlay').classList.contains('hidden')) drawMap();
+  }, 120);
+});
 $('closeMapBtn').addEventListener('click', () => $('mapOverlay').classList.add('hidden'));
 $('mapOverlay').addEventListener('click', (e) => {
   if (e.target === $('mapOverlay')) $('mapOverlay').classList.add('hidden');

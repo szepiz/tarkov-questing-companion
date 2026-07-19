@@ -1,0 +1,68 @@
+﻿THIRD-PARTY NOTICES
+===================
+
+Tarkov Questing Companion bundles or derives from the works below. Each is
+credited in the app (Settings -> Credits) and in README.md.
+
+
+1. tarkov.dev  --  quest data, map geometry, floor extents, landmark names
+   https://github.com/the-hideout/tarkov-dev
+
+   `mapdata.js` is generated from this project's public map data, and
+   `quests_cache.json` is a cached copy of its API responses.
+
+MIT License
+
+Copyright (c) 2019 Oskar Risberg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+2. Escape from Tarkov SVG Maps Project by Shebuka  --  the map artwork in maps/
+   https://github.com/the-hideout/tarkov-dev-svg-maps
+
+   Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+   International (CC BY-NC-SA 4.0).
+   https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+   The SVG files are bundled byte-for-byte as published. The app rewrites a
+   copy's viewBox in memory at display time to orient the map; the distributed
+   files are unmodified.
+
+   That project forbids use of its assets in software that facilitates cheating
+   (in-game radar/ESP overlays, cheat clients, pixel-bots). This app reads no
+   game memory, renders nothing in-game, and has no knowledge of live raids --
+   it plots public quest data on a static map.
+
+
+3. Bender typeface by Jovanny Lemonad  --  bender/
+   Licensed under the SIL Open Font License 1.1. The full licence ships
+   alongside the fonts in `bender/Bender/FREE FONT LICENSE.txt`.
+   https://scripts.sil.org/OFL
+
+
+4. Electron  --  the application framework
+   https://github.com/electron/electron  --  MIT License.
+   Run `npx electron --version` and see that project for its own notices.
+
+
+5. Escape from Tarkov, the trader portraits and the location screenshots are
+   the property of Battlestate Games Limited, used here for identification in
+   a free, non-commercial fan tool. Not affiliated with, endorsed by, or
+   sponsored by Battlestate Games.

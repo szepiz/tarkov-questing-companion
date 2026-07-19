@@ -382,10 +382,12 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   right: 0;
   width: 58%;
   object-position: center top;
-  /* Reaches full opacity by 45% so the trader themself — who sits in the right
-     half of every portrait once cover-cropped — is never washed out. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.3) 16%, rgba(0,0,0,.8) 34%, black 45%);
-  mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.3) 16%, rgba(0,0,0,.8) 34%, black 45%);
+  /* Opaque by 24% of the box. Not a guess: at 45% the buildings behind Skier
+     showed through his head — he stands left of centre once cover-cropped, and
+     traders are not all framed alike. Only the leftmost sliver blends now,
+     which is still ~14% of the pane and plenty for a soft seam. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.35) 8%, rgba(0,0,0,.85) 16%, black 24%);
+  mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,.35) 8%, rgba(0,0,0,.85) 16%, black 24%);
 }
 #heroMap.visible, #heroTrader.visible { opacity: 1; }
 
@@ -788,17 +790,20 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 #mapRot svg { max-width: 100%; max-height: 100%; display: block; }
 
 /* pins */
+/* stroke-width is set per map in drawMap(), scaled so the outline is 2 px
+   whatever the viewBox. It must NOT be declared here: an author CSS rule beats
+   an SVG presentation attribute, so a value here silently wins and the outline
+   goes back to being 2 user units — barely visible on Woods, a fat ring on
+   Factory. Same for .qpin-leader below. */
 .qpin-dot {
   fill: #d0a943;
   stroke: #14140f;
-  stroke-width: 2;
   cursor: pointer;
 }
 .qpin-dot:hover { fill: #ffd764; }
 .qpin-dot.sel { fill: #ff6a3d; }
 .qpin-leader {
   stroke: #ff6a3d;
-  stroke-width: 1.5;
   opacity: .8;
   pointer-events: none;
 }
