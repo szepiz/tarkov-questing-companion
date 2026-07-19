@@ -874,56 +874,82 @@ backend.onSettingsChanged((s) => {
 
 // ---------- quest map ----------
 
-const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null, zoom: 1, panX: 0, panY: 0 };
+// `view` is the sub-rectangle of the map currently on screen, in viewBox units;
+// `zoom` is derived from it and kept only for display/assertions
+const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null, view: null, zoom: 1 };
 
 const ZOOM_MIN = 1, ZOOM_MAX = 10;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-// Zoom/pan is a CSS transform on the whole map layer, so the artwork, the pins
-// and the card all move together. Pin sizes need no special handling: they are
-// derived from the RENDERED box (svgUnitsPerPx), and a bounding rect already
-// accounts for the transform — so redrawing after a zoom keeps them 13 px on
-// screen instead of ballooning with the map.
-function applyMapTransform(redraw) {
-  const rot = $('mapRot');
-  const set = () => { rot.style.transform = `translate(${mapView.panX}px, ${mapView.panY}px) scale(${mapView.zoom})`; };
-  set();
-  const svg = rot.querySelector('svg');
-  if (svg) {
-    // Clamp so the map cannot be dragged off screen. Measured AFTER writing the
-    // transform: reading the box first and dividing by the new zoom mixes an old
-    // measurement with a new scale, which quietly over-clamps and drags the point
-    // under the cursor away as you zoom.
-    const stage = $('mapStage').getBoundingClientRect();
-    const box = svg.getBoundingClientRect();          // already includes the scale
-    const maxX = Math.max(0, (box.width - stage.width) / 2);
-    const maxY = Math.max(0, (box.height - stage.height) / 2);
-    const px = clamp(mapView.panX, -maxX, maxX);
-    const py = clamp(mapView.panY, -maxY, maxY);
-    if (px !== mapView.panX || py !== mapView.panY) { mapView.panX = px; mapView.panY = py; set(); }
-  }
-  rot.classList.toggle('zoomed', mapView.zoom > 1);
+// Zoom/pan moves the SVG's own viewBox rather than applying a CSS transform.
+// A CSS scale() rasterises the map once at its layout size and then magnifies
+// that bitmap — zoom in and you get a blurry mess out of artwork that is pure
+// vector. Narrowing the viewBox makes the browser re-render the paths, so the
+// map stays sharp at any zoom. Everything else falls out for free: viewBox units
+// per screen pixel shrink as you zoom, and pin/label/card sizes are derived from
+// that, so they stay the same size on screen.
+
+// the whole map, in the coordinates the user sees
+function fullView(md) { return rotatedViewBox(md); }
+// the part of it currently on screen
+function currentView(md) { return mapView.view || fullView(md); }
+
+function applyView(redraw) {
+  const md = MAP_DATA[mapView.name];
+  if (!md) return;
+  const full = fullView(md);
+  const v = mapView.view || { ...full };
+  // keep the aspect of the full map so the element's layout box never changes
+  v.w = clamp(v.w, full.w / ZOOM_MAX, full.w);
+  v.h = v.w * (full.h / full.w);
+  v.x = clamp(v.x, full.x, full.x + full.w - v.w);
+  v.y = clamp(v.y, full.y, full.y + full.h - v.h);
+  mapView.view = v;
+  mapView.zoom = full.w / v.w;
+  const svg = $('mapRot').querySelector('svg');
+  if (svg) svg.setAttribute('viewBox', `${v.x} ${v.y} ${v.w} ${v.h}`);
+  $('mapRot').classList.toggle('zoomed', mapView.zoom > 1.001);
   if (redraw) requestAnimationFrame(() => { if (mapView.name) drawMap(); });
 }
 
 function resetMapView() {
-  mapView.zoom = 1; mapView.panX = 0; mapView.panY = 0;
+  const md = MAP_DATA[mapView.name];
+  mapView.view = md ? { ...fullView(md) } : null;
+  mapView.zoom = 1;
   $('mapRot').style.transform = '';
   $('mapRot').classList.remove('zoomed');
+  if (md) applyView(false);
+}
+
+// where a screen point falls in viewBox coordinates
+function clientToSvg(clientX, clientY) {
+  const svg = $('mapRot').querySelector('svg');
+  const md = MAP_DATA[mapView.name];
+  if (!svg || !md) return null;
+  const r = svg.getBoundingClientRect();
+  if (!r.width || !r.height) return null;
+  const v = currentView(md);
+  return {
+    x: v.x + ((clientX - r.left) / r.width) * v.w,
+    y: v.y + ((clientY - r.top) / r.height) * v.h,
+    fx: (clientX - r.left) / r.width,
+    fy: (clientY - r.top) / r.height,
+  };
 }
 
 function zoomMapAt(clientX, clientY, factor) {
-  const stage = $('mapStage').getBoundingClientRect();
-  const cx = clientX - stage.left - stage.width / 2;   // cursor, relative to the stage centre
-  const cy = clientY - stage.top - stage.height / 2;
-  const from = mapView.zoom;
-  const to = clamp(from * factor, ZOOM_MIN, ZOOM_MAX);
-  if (to === from) return;
-  // hold whatever is under the cursor still while the scale changes
-  mapView.panX = cx - (cx - mapView.panX) * (to / from);
-  mapView.panY = cy - (cy - mapView.panY) * (to / from);
-  mapView.zoom = to;
-  applyMapTransform(true);
+  const md = MAP_DATA[mapView.name];
+  if (!md) return;
+  const p = clientToSvg(clientX, clientY);
+  if (!p) return;
+  const v = currentView(md);
+  const full = fullView(md);
+  const w = clamp(v.w / factor, full.w / ZOOM_MAX, full.w);
+  if (w === v.w) return;
+  const h = w * (full.h / full.w);
+  // hold whatever is under the cursor still
+  mapView.view = { x: p.x - p.fx * w, y: p.y - p.fy * h, w, h };
+  applyView(true);
 }
 
 function hasMapData(mapName) {
@@ -981,7 +1007,7 @@ function renderFloorTabs() {
 // Lighthouse fits by height. Sizing off the rendered box makes everything the
 // same physical size on screen whichever map is open.
 function svgUnitsPerPx(svg, md) {
-  const vb = rotatedViewBox(md);
+  const vb = currentView(md);          // the zoomed window, not the whole map
   const r = svg.getBoundingClientRect();
   if (r.width > 0) return vb.w / r.width;
   return Math.hypot(md.viewBox.w, md.viewBox.h) / Math.hypot(1062.4827, 535.17401); // not laid out yet
@@ -1056,7 +1082,7 @@ function drawMap() {
 // which is what makes the edge-clamping below mean what it says.
 function pinCard(md, p, parent, k) {
   const ns = 'http://www.w3.org/2000/svg';
-  const vb = rotatedViewBox(md);                  // the box the user actually sees
+  const vb = currentView(md);                     // clamp the card to what is on screen
   const pin = mapPoint(md, p.x, p.z);
 
   const desc = p.desc || '';
@@ -1178,14 +1204,22 @@ $('mapStage').addEventListener('contextmenu', (e) => e.preventDefault());  // no
 $('mapStage').addEventListener('mousedown', (e) => {
   if (e.button !== 2 || !mapView.name) return;   // right button only
   e.preventDefault();
-  panning = { x: e.clientX, y: e.clientY, panX: mapView.panX, panY: mapView.panY };
+  const svg = $('mapRot').querySelector('svg');
+  const r = svg && svg.getBoundingClientRect();
+  if (!r || !r.width) return;
+  const v = currentView(MAP_DATA[mapView.name]);
+  panning = { x: e.clientX, y: e.clientY, view: { ...v }, unitsPerPx: v.w / r.width };
   $('mapStage').classList.add('panning');
 });
 window.addEventListener('mousemove', (e) => {
   if (!panning) return;
-  mapView.panX = panning.panX + (e.clientX - panning.x);
-  mapView.panY = panning.panY + (e.clientY - panning.y);
-  applyMapTransform(false);      // no redraw mid-drag: the scale has not changed
+  // dragging right moves the map right, i.e. the window onto it moves left
+  mapView.view = {
+    x: panning.view.x - (e.clientX - panning.x) * panning.unitsPerPx,
+    y: panning.view.y - (e.clientY - panning.y) * panning.unitsPerPx,
+    w: panning.view.w, h: panning.view.h,
+  };
+  applyView(false);      // no redraw mid-drag: the scale has not changed
 });
 window.addEventListener('mouseup', (e) => {
   if (!panning || e.button !== 2) return;

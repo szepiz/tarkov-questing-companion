@@ -1106,34 +1106,63 @@ function createWindow() {
             const wait = (ms) => new Promise(r => setTimeout(r, ms));
             const stage = document.getElementById('mapStage');
             const st = stage.getBoundingClientRect();
-            const at = () => { const s = document.querySelector('#mapRot svg').getBoundingClientRect(); return { w: Math.round(s.width), cx: Math.round(s.left + s.width / 2) }; };
+            // Zoom must NARROW THE VIEWBOX, not scale a bitmap: a CSS transform
+            // magnifies an already-rasterised map and it turns to mush. Measure
+            // the viewBox width, and assert the element is not being scaled.
+            const at = () => {
+              const el = document.querySelector('#mapRot svg');
+              const s = el.getBoundingClientRect();
+              const raw = el.getAttribute('viewBox');
+              // NB: this script is a JS template literal, so regex backslashes
+              // must be doubled — /[\\s,]+/ here is /[\\s,]+/ in the page
+              const vb = String(raw).trim().split(/[\\s,]+/).map(Number);
+              return { w: Math.round(s.width), vbRaw: raw, vbW: Math.round(vb[2] * 10) / 10, cx: Math.round(s.left + s.width / 2) };
+            };
             const dot = () => { const d = document.querySelector('.qpin-dot'); return d ? Math.round(d.getBoundingClientRect().width * 10) / 10 : null; };
             const dotXY = () => { const d = document.querySelector('.qpin-dot'); const r = d.getBoundingClientRect(); return { x: Math.round(r.left + r.width/2), y: Math.round(r.top + r.height/2) }; };
-            const before = { zoom: mapView.zoom, map: at().w, dot: dot(), pin: dotXY() };
+            const before = { zoom: mapView.zoom, ...at(), map: at().w, dot: dot(), pin: dotXY() };
             // zoom in on the pin itself: it should barely move
             const p = dotXY();
             for (let i = 0; i < 6; i++) { stage.dispatchEvent(new WheelEvent('wheel', { deltaY: -120, clientX: p.x, clientY: p.y, bubbles: true, cancelable: true })); await wait(60); }
             await wait(300);
-            const zoomed = { zoom: Math.round(mapView.zoom * 100) / 100, map: at().w, dot: dot(), pin: dotXY() };
+            const zoomed = { zoom: Math.round(mapView.zoom * 100) / 100, ...at(), map: at().w, vbX: mapView.view.x, dot: dot(), pin: dotXY() };
             // right-drag should move it, and stay bounded
             stage.dispatchEvent(new MouseEvent('mousedown', { button: 2, clientX: st.left + 400, clientY: st.top + 300, bubbles: true }));
             window.dispatchEvent(new MouseEvent('mousemove', { clientX: st.left + 400 + 5000, clientY: st.top + 300, bubbles: true }));
             window.dispatchEvent(new MouseEvent('mouseup', { button: 2, bubbles: true }));
             await wait(200);
-            const panned = { panX: Math.round(mapView.panX) };
+            const panned = { vbX: mapView.view.x };
             stage.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true }));
             await wait(300);
-            const reset = { zoom: mapView.zoom, panX: mapView.panX, dot: dot() };
+            const reset = { zoom: mapView.zoom, vbW: at().vbW, dot: dot() };
+            const rot = getComputedStyle(document.getElementById('mapRot')).transform;
             return {
-              zoomedIn: zoomed.zoom > before.zoom && zoomed.map > before.map * 1.5,
+              zoomedIn: zoomed.zoom > before.zoom && zoomed.vbW < before.vbW / 1.5,
+              staysVector: rot === 'none' || rot === 'matrix(1, 0, 0, 1, 0, 0)',
+              elementNotScaled: zoomed.map === before.map,
               pinStaysSameSize: before.dot !== null && Math.abs(zoomed.dot - before.dot) <= 1,
               cursorAnchored: Math.abs(zoomed.pin.x - p.x) <= 25 && Math.abs(zoomed.pin.y - p.y) <= 25,
-              panBounded: Math.abs(panned.panX) < 5000,
-              dblClickResets: reset.zoom === 1 && reset.panX === 0,
-              detail: { before, zoomed, panned, reset },
+              panMoved: panned.vbX !== zoomed.vbX,
+              dblClickResets: Math.abs(reset.zoom - 1) < 0.01,
+              detail: { before, zoomed, panned, reset, transform: rot },
             };
           })()`);
           console.log('TQT_ZOOM', JSON.stringify(zoomChk));
+          // capture a deep zoom so the artwork's sharpness can be eyeballed
+          await win.webContents.executeJavaScript(`(async () => {
+            await openQuestMap('Woods');
+            await new Promise(r => setTimeout(r, 800));
+            const st = document.getElementById('mapStage').getBoundingClientRect();
+            for (let i = 0; i < 22; i++) {
+              document.getElementById('mapStage').dispatchEvent(new WheelEvent('wheel',
+                { deltaY: -120, clientX: st.left + st.width / 2, clientY: st.top + st.height / 2, bubbles: true, cancelable: true }));
+              await new Promise(r => setTimeout(r, 40));
+            }
+            await new Promise(r => setTimeout(r, 500));
+            return mapView.zoom;
+          })()`);
+          const img2 = await win.webContents.capturePage();
+          fs.writeFileSync(path.join(dir, '_zoomed_woods.png'), img2.toPNG());
         } catch (err) {
           console.error('TQT_MAPS failed:', err);
         }
