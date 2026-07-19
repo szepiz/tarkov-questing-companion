@@ -1,7 +1,7 @@
-# dependencies (restored with `npm install`)
+﻿# dependencies (restored with `npm install`)
 node_modules/
 
-# packaged build output — distributed as GitHub Releases, not committed
+# packaged build output â€” distributed as GitHub Releases, not committed
 share/
 dist/
 pkg/
@@ -11,7 +11,7 @@ build/
 DEV-NOTES.md
 _dev/
 
-# personal user data — NEVER commit (contains your logs path and quest progress)
+# personal user data â€” NEVER commit (contains your logs path and quest progress)
 settings.json
 progress.json
 
