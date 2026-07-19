@@ -5,6 +5,11 @@ node_modules/
 share/
 dist/
 pkg/
+build/
+
+# local developer notes and build/test scripts (contain machine-specific paths)
+DEV-NOTES.md
+_dev/
 
 # personal user data — NEVER commit (contains your logs path and quest progress)
 settings.json
