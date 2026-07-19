@@ -589,6 +589,28 @@ async function downloadUpdate() {
 // mirrors the new build in, and rolls back on failure — then quit. Rollback +
 // exit-code checking mean a failed copy restores the working app instead of
 // leaving a half-updated (broken) one.
+// The helper is PowerShell, not a batch file: it waits with Wait-Process and
+// sleeps with Start-Sleep, neither of which need console input. (A .bat using
+// `timeout` / `tasklist | find` hangs when spawned detached with no stdin.)
+const UPDATE_PS = String.raw`
+param([int]$AppPid, [string]$Staged, [string]$Install, [string]$Backup, [string]$ExeName, [string]$TempDir)
+$ErrorActionPreference = 'SilentlyContinue'
+# wait for the app to exit (returns at once if it is already gone)
+Wait-Process -Id $AppPid -Timeout 90
+Start-Sleep -Seconds 2   # let helper processes / AV release file locks
+$rc = @('/MIR','/R:5','/W:2','/NFL','/NDL','/NJH','/NJS','/NC','/NS')
+robocopy $Install $Backup @rc | Out-Null          # back up the working install
+robocopy $Staged  $Install @rc | Out-Null         # install the new build
+$code = $LASTEXITCODE
+if ($code -ge 8) {                                # robocopy >=8 = real failure
+  robocopy $Backup $Install @rc | Out-Null        # restore the working version
+}
+Start-Process -FilePath (Join-Path $Install $ExeName)
+Remove-Item $Backup -Recurse -Force
+if ($code -lt 8) { Remove-Item $TempDir -Recurse -Force }
+Remove-Item $MyInvocation.MyCommand.Path -Force
+`;
+
 function applyUpdateAndRestart() {
   if (!stagedUpdateDir) throw new Error('nothing staged');
   if (!app.isPackaged) throw new Error('updates only apply to the packaged app');
@@ -596,39 +618,17 @@ function applyUpdateAndRestart() {
   const exeName = path.basename(app.getPath('exe'));
   const backup = install.replace(/[\\/]+$/, '') + '.bak-update';
   const tempDir = path.join(os.tmpdir(), 'tqc-update');
-  const batPath = path.join(os.tmpdir(), 'tqc-apply-update.bat');
-  const q = (s) => `"${s}"`;
-  const RC = '/R:5 /W:2 /NFL /NDL /NJH /NJS /NC /NS';
-  const bat = [
-    '@echo off',
-    'setlocal EnableExtensions',
-    'set /a N=0',
-    ':waitloop',
-    `tasklist /FI "PID eq ${process.pid}" 2>nul | find "${process.pid}" >nul`,
-    'if errorlevel 1 goto gone',
-    'set /a N+=1',
-    'if %N% GEQ 90 goto done', // app never exited (~90s) — bail without touching files
-    'timeout /t 1 /nobreak >nul',
-    'goto waitloop',
-    ':gone',
-    'timeout /t 2 /nobreak >nul',            // let helper processes / AV release file locks
-    `robocopy ${q(install)} ${q(backup)} /MIR ${RC} >nul`,   // backup current install
-    `robocopy ${q(stagedUpdateDir)} ${q(install)} /MIR ${RC} >nul`, // install new build
-    'if errorlevel 8 goto rollback',         // robocopy >=8 = real failure
-    `start "" ${q(path.join(install, exeName))}`,
-    `rmdir /s /q ${q(backup)} >nul 2>&1`,
-    `rmdir /s /q ${q(tempDir)} >nul 2>&1`,
-    'goto done',
-    ':rollback',
-    `robocopy ${q(backup)} ${q(install)} /MIR ${RC} >nul`,   // restore the working version
-    `start "" ${q(path.join(install, exeName))}`,
-    `rmdir /s /q ${q(backup)} >nul 2>&1`,     // keep the staged copy for a retry
-    ':done',
-    'del "%~f0" >nul 2>&1',
-    '',
-  ].join('\r\n');
-  fs.writeFileSync(batPath, bat, 'utf8');
-  spawn('cmd.exe', ['/c', batPath], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+  const psPath = path.join(os.tmpdir(), 'tqc-apply-update.ps1');
+  fs.writeFileSync(psPath, UPDATE_PS, 'utf8');
+  spawn('powershell.exe', [
+    '-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', psPath,
+    '-AppPid', String(process.pid),
+    '-Staged', stagedUpdateDir,
+    '-Install', install,
+    '-Backup', backup,
+    '-ExeName', exeName,
+    '-TempDir', tempDir,
+  ], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
   setTimeout(() => app.quit(), 400);
   return { applying: true };
 }
@@ -754,6 +754,23 @@ function createWindow() {
     },
   });
   win.loadFile(path.join(APP_DIR, 'index.html'));
+  // test hook: drive a real check -> download -> apply cycle (env-gated)
+  if (process.env.TQC_TEST_APPLY) {
+    win.webContents.once('did-finish-load', async () => {
+      try {
+        const c = await checkForUpdate();
+        console.log('TQC_T_CHECK', JSON.stringify({ available: c.available, current: c.current, latest: c.latest }));
+        if (!c.available) { app.quit(); return; }
+        const d = await downloadUpdate();
+        console.log('TQC_T_DOWNLOAD', JSON.stringify({ staged: d.staged, dir: stagedUpdateDir }));
+        console.log('TQC_T_APPLY', JSON.stringify(applyUpdateAndRestart()));
+      } catch (e) {
+        console.log('TQC_T_ERR', String(e.message || e));
+        app.quit();
+      }
+    });
+  }
+
   let autoChecked = false;
   win.webContents.on('did-finish-load', () => {
     syncWatcherToSettings();
