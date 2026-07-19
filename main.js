@@ -484,6 +484,42 @@ function cmpVersion(a, b) {
   return 0;
 }
 
+// Turn a failed GitHub API response into something worth showing the user.
+// The anonymous rate limit is 60/hour PER IP and is shared with anything else on
+// the machine that talks to api.github.com, so hitting it is not an app fault --
+// say so plainly instead of implying the network is down.
+function githubErrorMessage(status, headers) {
+  const remaining = headers.get('x-ratelimit-remaining');
+  const retryAfter = headers.get('retry-after');
+  if ((status === 403 || status === 429) && remaining === '0') {
+    const reset = Number(headers.get('x-ratelimit-reset')) * 1000;
+    // guard against a missing/garbage header becoming a literal "Invalid Date"
+    const at = Number.isFinite(reset) && reset > 0
+      ? new Date(reset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : '';
+    return "GitHub's hourly limit for anonymous requests is used up"
+      + (at ? ` — try again after ${at}.` : ' — try again later.');
+  }
+  // secondary ("abuse") limit: 403/429 with Retry-After, quota not necessarily spent
+  if ((status === 403 || status === 429) && retryAfter) {
+    const secs = Number(retryAfter);
+    return 'GitHub is asking the app to slow down'
+      + (Number.isFinite(secs) && secs > 0 ? ` — try again in ${secs} second${secs === 1 ? '' : 's'}.` : ' — try again shortly.');
+  }
+  if (status === 404) return "Couldn't find a published release on GitHub (404).";
+  // NOT "couldn't be reached" -- receiving a status code proves we reached it.
+  return `GitHub answered with an error (HTTP ${status}). Nothing is wrong on your end — try again later.`;
+}
+
+// fetch()/body-read failures, phrased for a human
+function networkErrorMessage(e, whileReading) {
+  if (e && e.name === 'AbortError') return 'GitHub took too long to answer. Check your connection and try again.';
+  if (whileReading && e instanceof SyntaxError) return "GitHub sent something the app couldn't read. Try again in a moment.";
+  return whileReading
+    ? "GitHub's answer was cut off. Check your connection and try again."
+    : "Couldn't reach GitHub. Check your connection and try again.";
+}
+
 let updateInfo = null;       // { version, notes, url, size, assetName }
 let stagedUpdateDir = null;  // extracted new build, ready to swap in on quit
 
@@ -491,12 +527,24 @@ async function checkForUpdate() {
   const controller = new AbortController();
   const to = setTimeout(() => controller.abort(), 15000);
   try {
-    const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
-      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'TarkovQuestingCompanion' },
-      signal: controller.signal,
-    });
-    if (!res.ok) throw new Error('GitHub API ' + res.status);
-    const rel = await res.json();
+    let res;
+    try {
+      res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+        headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'TarkovQuestingCompanion' },
+        signal: controller.signal,
+      });
+    } catch (e) {
+      throw new Error(networkErrorMessage(e, false));
+    }
+    if (!res.ok) throw new Error(githubErrorMessage(res.status, res.headers));
+    // the timeout is still armed here -- an abort mid-body must not leak
+    // "The operation was aborted." to the user
+    let rel;
+    try {
+      rel = await res.json();
+    } catch (e) {
+      throw new Error(networkErrorMessage(e, true));
+    }
     const tag = String(rel.tag_name || '');
     const asset = (rel.assets || []).find((a) => /\.zip$/i.test(a.name || ''));
     const latest = tag.replace(/^v/i, '');

@@ -1000,7 +1000,7 @@ function renderUpdateSection() {
   } else if (upd.downloadFailed) {
     status.innerHTML = `<span class="bad">Download failed.</span> Check your connection and try again.`;
   } else if (upd.error) {
-    status.innerHTML = `<span class="bad">Couldn't check for updates.</span>`;
+    status.innerHTML = `<span class="bad">${escapeHtml(upd.error)}</span>`;
   } else if (!upd.available) {
     status.innerHTML = `<span class="ok">You're on the latest version.</span>`;
   } else if (!upd.canApply) {
@@ -1031,7 +1031,7 @@ async function doCheckUpdate(userInitiated) {
   upd.error = r.error || null;
   renderUpdateSection();
   if (userInitiated && !r.available && !r.error) toast("You're on the latest version.");
-  if (userInitiated && r.error) toast("Couldn't reach GitHub to check for updates.");
+  if (userInitiated && r.error) toast(r.error);
 }
 
 $('checkUpdateBtn').addEventListener('click', () => doCheckUpdate(true));

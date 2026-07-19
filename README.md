@@ -78,7 +78,7 @@ npm start            # run in development
 To produce a distributable Windows folder like the one on the Releases page:
 
 ```sh
-npx electron-packager . "Tarkov Quest Tracker" --platform=win32 --arch=x64 --asar --overwrite --out dist
+npx electron-packager . --platform=win32 --arch=x64 --asar --overwrite --out dist
 ```
 
 ## Data & storage
@@ -89,7 +89,7 @@ in `quests_cache.json` so the app also works offline; use **Settings → Refresh
 after a game patch.
 
 Your settings and progress are stored in your per-user data folder
-(`%APPDATA%\Tarkov Quest Tracker` on Windows), **not** in the app folder — so
+(`%APPDATA%\Tarkov Questing Companion` on Windows), **not** in the app folder — so
 updating or re-downloading the app never touches your progress.
 
 ## Credits
