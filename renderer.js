@@ -279,8 +279,40 @@ function taskReachable(taskId) {
 
 function isUnlocked(t) { return taskReachable(t.id); }
 
+// Your level, for quests gated on one. Tarkov never writes your own level to the
+// logs (the profiles that appear there are other players in your group), so it is
+// either what you set in Settings or a floor derived from what you have already
+// finished: completing a quest that needs level 35 proves you are at least 35.
+let _levelFloor = null;
+function inferredLevel() {
+  if (_levelFloor !== null) return _levelFloor;
+  let max = 0;
+  for (const t of state.tasks) {
+    if (isDone(t.id) && (t.minPlayerLevel || 0) > max) max = t.minPlayerLevel;
+  }
+  _levelFloor = max;
+  return max;
+}
+
+// ONLY what the user typed. The inferred floor is a lower bound and nothing
+// more: someone at level 45 who has not yet done a high-level quest would infer
+// far too low, and locking on that would hide quests they can actually take —
+// worse than the missing lock it was meant to fix. The estimate is offered in
+// Settings as a suggestion, never applied on its own.
+function playerLevel() {
+  const set = state.settings && state.settings.playerLevel;
+  const own = set && Number(set[state.gameMode]);
+  return own > 0 ? own : 0;
+}
+
+function levelLocked(t) {
+  const need = t.minPlayerLevel || 0;
+  const have = playerLevel();
+  return need > 0 && have > 0 && need > have;
+}
+
 function isLocked(t) {
-  return lockingActive() && !isDone(t.id) && !isUnlocked(t);
+  return lockingActive() && !isDone(t.id) && (!isUnlocked(t) || levelLocked(t));
 }
 
 // Map -> Trader -> [tasks]
@@ -440,6 +472,7 @@ function renderTree() {
           : done ? 'mark as not completed'
           : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
           : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
+          : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
           : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
           : 'mark as completed';
         row.innerHTML = `
@@ -571,7 +604,9 @@ function renderQuest() {
   // requirements: level, prerequisite quests, keys, items
   const reqs = [];
   if (t.minPlayerLevel) {
-    reqs.push(`<div class="req-line"><span class="req-tag">LEVEL</span><span>player level ${t.minPlayerLevel}</span></div>`);
+    const short = levelLocked(t);
+    reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">LEVEL</span>`
+      + `<span>player level ${t.minPlayerLevel}${short ? ` — you are ${playerLevel()}` : ''}</span></div>`);
   }
   // highlight each prerequisite with the same status-aware logic that
   // decides LOCKED: green = positively met, yellow = the one blocking it
@@ -695,6 +730,20 @@ function renderSettingsPanel() {
     ? 'With all three on, the list only shows quests you can take on right now.'
     : 'Hiding locked and failed quests needs AUTOMATIC tracking — that is how the app knows about them.';
 
+  // player level — typed in, or inferred from the hardest quest already finished
+  const set = (state.settings.playerLevel || {})[state.gameMode];
+  if (document.activeElement !== $('playerLevelInput')) {
+    $('playerLevelInput').value = set > 0 ? set : '';
+  }
+  const floor = inferredLevel();
+  $('playerLevelAuto').textContent = floor > 0 ? `USE ${floor}` : 'USE ESTIMATE';
+  $('playerLevelAuto').disabled = floor <= 0;
+  $('levelHint').innerHTML = set > 0
+    ? `Quests that need a higher level than <strong>${set}</strong> now show as LOCKED. Clear the box to switch it off.`
+    : floor > 0
+      ? `Not set, so quests are never locked on level. You are <strong>at least ${floor}</strong> — you finished a quest that needs it — but Tarkov never writes your real level to the logs, so type it in to get exact locking.`
+      : 'Not set. Tarkov never writes your level to the logs, so type it in and quests needing a higher level will show as LOCKED.';
+
   const ws = state.watcherStatus;
   $('logsStatus').innerHTML = state.settings.trackingMode !== 'auto'
     ? 'Only used when tracking is set to AUTOMATIC.'
@@ -716,6 +765,7 @@ function renderSettingsPanel() {
 function renderAll() {
   _reachMemo = new Map(); // progress may have changed since last render
   _reachStack.clear();    // defensive: never carry a partial DFS across renders
+  _levelFloor = null;     // a new completion can raise the inferred level
   renderTabs();
   renderTree();
   renderHero();
@@ -813,6 +863,23 @@ for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedB
     renderAll();
   });
 }
+
+// player level is per profile: your PvE and PvP characters level separately
+async function savePlayerLevel(v) {
+  const levels = { ...(state.settings.playerLevel || {}) };
+  if (v > 0) levels[state.gameMode] = v; else delete levels[state.gameMode];
+  state.settings = await backend.saveSettings({ playerLevel: levels });
+  renderAll();
+  renderSettingsPanel();
+}
+$('playerLevelInput').addEventListener('change', () => {
+  const v = Math.floor(Number($('playerLevelInput').value));
+  savePlayerLevel(Number.isFinite(v) && v > 0 ? Math.min(v, 99) : 0);
+});
+$('playerLevelAuto').addEventListener('click', () => {
+  const floor = inferredLevel();          // suggestion only — applied because you asked
+  if (floor > 0) { $('playerLevelInput').value = floor; savePlayerLevel(floor); }
+});
 
 $('logsPathInput').addEventListener('change', async () => {
   state.settings = await backend.saveSettings({ logsPath: $('logsPathInput').value.trim() });

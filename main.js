@@ -41,6 +41,11 @@ const DEFAULT_SETTINGS = {
   modeAutoResolved: false, // has the initial "open on the populated mode" decision been made
   hideCompleted: false,   // hide completed quests from the list
   hideLocked: false,      // hide locked quests from the list (auto mode only)
+  hideFailed: false,      // hide failed quests from the list
+  // Per profile, because PvE and PvP characters level separately. Empty = the
+  // app estimates a floor from the hardest quest already finished; Tarkov never
+  // writes your own level to the logs.
+  playerLevel: {},        // { regular?: number, pve?: number }
 };
 
 // progress is per game mode:
