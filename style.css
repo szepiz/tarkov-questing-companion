@@ -867,6 +867,24 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .ld-name { flex: 1; }
 .ld-qty { flex: none; font-weight: 900; color: #d0a943; }
 .ld-empty { padding: 10px; font-size: 11px; line-height: 1.5; color: #6e6b62; }
+.objective[data-obj] { cursor: pointer; border-radius: 2px; }
+.objective[data-obj]:hover { background: rgba(255,255,255,.05); }
+.objective.ticked { color: #6e6b62; }
+.objective.ticked span:last-child { text-decoration: line-through; opacity: .7; }
+.objective.ticked .bullet { color: #7a9a5a; }
+.obj-count { font-weight: 400; font-size: 11px; letter-spacing: .5px; color: #6e6b62; }
+
+.ld-ticked { border-top: 1px solid #26261f; margin-top: 10px; padding-top: 4px; }
+.ld-ticked .ld-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; color: #6e6b62; }
+.ld-ticked .ld-head button {
+  background: none; border: none; padding: 0;
+  color: #d0a943; font: inherit; font-size: 9px; font-weight: 700;
+  letter-spacing: .5px; text-transform: none; cursor: pointer;
+}
+.ld-ticked .ld-head button:hover { text-decoration: underline; }
+.ld-ticked li { cursor: pointer; color: #6e6b62; }
+.ld-ticked .ld-name { text-decoration: line-through; }
+.ld-ticked li:hover .ld-name { text-decoration: none; color: #cfccc3; }
 
 #mapStage {
   flex: 1;

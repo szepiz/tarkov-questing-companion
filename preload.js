@@ -6,6 +6,8 @@ contextBridge.exposeInMainWorld('api', {
   saveSettings: (patch) => ipcRenderer.invoke('save-settings', patch),
   setGameMode: (mode) => ipcRenderer.invoke('set-game-mode', mode),
   toggleTask: (taskId, done, mode) => ipcRenderer.invoke('toggle-task', { taskId, done, mode }),
+  toggleObjective: (objectiveId, done, mode) => ipcRenderer.invoke('toggle-objective', { objectiveId, done, mode }),
+  clearObjectives: (objectiveIds, mode) => ipcRenderer.invoke('clear-objectives', { objectiveIds, mode }),
   resetProgress: (mode) => ipcRenderer.invoke('reset-progress', mode),
   rescanAll: () => ipcRenderer.invoke('rescan-all'),
   browseLogs: () => ipcRenderer.invoke('browse-logs'),

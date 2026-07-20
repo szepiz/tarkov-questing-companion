@@ -50,7 +50,10 @@ const DEFAULT_SETTINGS = {
 let settings;
 let progress;
 
-function emptyBucket() { return { completed: {}, failed: {}, resetAt: 0 }; }
+// `objectives` holds individual objectives the player ticked off by hand. The
+// game never reports partial quest progress (only accepted/completed/failed), so
+// this is the user's own bookkeeping for multi-objective quests.
+function emptyBucket() { return { completed: {}, failed: {}, objectives: {}, resetAt: 0 }; }
 
 function normalizeProgress(p) {
   if (p && (p.regular || p.pve)) {
@@ -58,6 +61,7 @@ function normalizeProgress(p) {
       if (!p[m]) p[m] = emptyBucket();
       if (!p[m].completed) p[m].completed = {};
       if (!p[m].failed) p[m].failed = {};
+      if (!p[m].objectives) p[m].objectives = {};   // added later; older files lack it
       if (!p[m].resetAt) p[m].resetAt = 0;
     }
     return p;
@@ -69,7 +73,7 @@ function normalizeProgress(p) {
   // genuine legacy flat progress (single mixed list) -> keep it under "regular"
   // and flag for a one-time mode-aware re-derivation from the logs.
   return {
-    regular: { completed: p.completed, failed: p.failed || {}, resetAt: p.resetAt || 0 },
+    regular: { completed: p.completed, failed: p.failed || {}, objectives: {}, resetAt: p.resetAt || 0 },
     pve: emptyBucket(),
     pendingModeSplit: true,
   };
@@ -849,9 +853,30 @@ ipcMain.handle('toggle-task', (_e, { taskId, done, mode }) => {
   return progress;
 });
 
+// Tick a single objective off by hand. The logs carry no per-objective progress,
+// so this is the only way a multi-objective quest can show partial completion.
+ipcMain.handle('toggle-objective', (_e, { objectiveId, done, mode }) => {
+  const m = MODES.includes(mode) ? mode : settings.gameMode;
+  const bucket = progress[m];
+  if (!bucket.objectives) bucket.objectives = {};
+  if (done) bucket.objectives[objectiveId] = { at: Date.now() };
+  else delete bucket.objectives[objectiveId];
+  saveProgress();
+  return progress;
+});
+
+// Clear every hand-ticked objective belonging to the given ids (one map's worth)
+ipcMain.handle('clear-objectives', (_e, { objectiveIds, mode }) => {
+  const m = MODES.includes(mode) ? mode : settings.gameMode;
+  const bucket = progress[m];
+  for (const id of objectiveIds || []) delete (bucket.objectives || {})[id];
+  saveProgress();
+  return progress;
+});
+
 ipcMain.handle('reset-progress', (_e, mode) => {
   const m = MODES.includes(mode) ? mode : settings.gameMode;
-  progress[m] = { completed: {}, failed: {}, resetAt: Date.now() };
+  progress[m] = { completed: {}, failed: {}, objectives: {}, resetAt: Date.now() };
   saveProgress();
   syncWatcherToSettings(); // restart so the watcher forgets offsets, honors resetAt
   return progress;
@@ -1373,6 +1398,33 @@ function createWindow() {
             };
           })()`);
           console.log('TQT_LOADOUT', JSON.stringify(tabChk));
+          // right-click a pin -> that objective goes away and can be restored
+          const objChk2 = await win.webContents.executeJavaScript(`(async () => {
+            const wait = (ms) => new Promise(r => setTimeout(r, ms));
+            document.getElementById('closeMapBtn').click();
+            document.querySelector('.tab[data-filter="ALL"]').click();
+            await wait(300);
+            const row = [...document.querySelectorAll('.map-row')].find(r => r.textContent.includes('CUSTOMS'));
+            row.querySelector('.map-btn').click();
+            await wait(900);
+            const before = mapView.pins.length;
+            const firstPin = document.querySelector('.qpin-dot');
+            firstPin.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+            await wait(500);
+            const afterTick = mapView.pins.length;
+            const ticked = document.querySelectorAll('.ld-ticked li[data-obj]').length;
+            return { pinsBefore: before, pinsAfterTick: afterTick, showsInPanel: ticked > 0 };
+          })()`);
+          await shoot(process.env.TQT_SHOOT.replace('.png', '_ticked.png'));
+          const restoreChk = await win.webContents.executeJavaScript(`(async () => {
+            const wait = (ms) => new Promise(r => setTimeout(r, ms));
+            const btn = document.getElementById('ldRestoreAll');
+            if (!btn) return { restored: false, why: 'no restore control' };
+            btn.click();
+            await wait(600);
+            return { restored: true, pins: mapView.pins.length, stillListed: document.querySelectorAll('.ld-ticked li').length };
+          })()`);
+          console.log('TQT_OBJTICK', JSON.stringify({ ...objChk2, ...restoreChk }));
           await new Promise((r) => setTimeout(r, 500));
           await shoot(process.env.TQT_SHOOT.replace('.png', '_map.png'));
           // switch to 2nd floor and click a pin

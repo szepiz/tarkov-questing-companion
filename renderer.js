@@ -34,6 +34,18 @@ const backend = window.api || (() => {
       else delete b.completed[taskId];
       persist(); return store.progress;
     },
+    toggleObjective: async (objectiveId, done, mode) => {
+      const b = bucket(mode);
+      if (!b.objectives) b.objectives = {};
+      if (done) b.objectives[objectiveId] = { at: Date.now() };
+      else delete b.objectives[objectiveId];
+      persist(); return store.progress;
+    },
+    clearObjectives: async (ids, mode) => {
+      const b = bucket(mode);
+      for (const id of ids || []) delete (b.objectives || {})[id];
+      persist(); return store.progress;
+    },
     resetProgress: async (mode) => { store.progress[['regular', 'pve'].includes(mode) ? mode : store.settings.gameMode] = { completed: {}, failed: {}, resetAt: Date.now() }; persist(); return store.progress; },
     rescanAll: async () => ({ progress: store.progress, imported: 0, failsImported: 0, hadReset: false, logsFound: false }),
     browseLogs: async () => null,
@@ -173,9 +185,10 @@ function applyMode() {
   const m = state.gameMode;
   state.tasks = state.tasksByMode[m] || [];
   state.byId = new Map(state.tasks.map((t) => [t.id, t]));
-  state.progress = state.fullProgress[m] || { completed: {}, failed: {}, resetAt: 0 };
+  state.progress = state.fullProgress[m] || { completed: {}, failed: {}, objectives: {}, resetAt: 0 };
   if (!state.progress.completed) state.progress.completed = {};
   if (!state.progress.failed) state.progress.failed = {};
+  if (!state.progress.objectives) state.progress.objectives = {};
 }
 
 // ---------- filtering / grouping ----------
@@ -188,6 +201,13 @@ function taskPassesFilter(t) {
 
 function isDone(taskId) {
   return !!state.progress.completed[taskId];
+}
+
+// An objective the player ticked off by hand. Tarkov reports no partial quest
+// progress, so a quest spread over three maps otherwise keeps showing all three
+// pins after you have done one.
+function isObjectiveDone(objectiveId) {
+  return !!(objectiveId && state.progress.objectives && state.progress.objectives[objectiveId]);
 }
 
 function isFailed(taskId) {
@@ -515,13 +535,38 @@ function renderQuest() {
   if (t.minPlayerLevel) metaBits.push(`level ${t.minPlayerLevel}+`);
   $('questMeta').textContent = metaBits.join('  ·  ').toUpperCase();
 
-  // objectives = the quest description
-  const objectives = (t.objectives || []).map((o) => `
-    <div class="objective${o.optional ? ' optional' : ''}">
-      <span class="bullet">▪</span>
+  // objectives = the quest description. Each can be ticked off by hand, the same
+  // state the map's right-click sets, so the two views never disagree.
+  const done = isDone(t.id);
+  const objectives = (t.objectives || []).map((o) => {
+    const off = !done && isObjectiveDone(o.id);
+    return `
+    <div class="objective${o.optional ? ' optional' : ''}${off ? ' ticked' : ''}"
+         data-obj="${escapeHtml(o.id || '')}"
+         title="${done ? '' : off ? 'ticked off by hand — click to undo' : 'click to tick this objective off by hand'}">
+      <span class="bullet">${off ? '✔' : '▪'}</span>
       <span>${escapeHtml(o.description || '')}${o.optional ? ' (optional)' : ''}</span>
-    </div>`).join('');
-  $('questObjectives').innerHTML = objectives ? `<h3>OBJECTIVES</h3>${objectives}` : '';
+    </div>`;
+  }).join('');
+  const objDone = (t.objectives || []).filter((o) => !done && isObjectiveDone(o.id)).length;
+  const heading = objDone ? `OBJECTIVES <span class="obj-count">${objDone}/${(t.objectives || []).length} done</span>` : 'OBJECTIVES';
+  $('questObjectives').innerHTML = objectives ? `<h3>${heading}</h3>${objectives}` : '';
+  if (!done) {
+    for (const el of $('questObjectives').querySelectorAll('.objective[data-obj]')) {
+      const id = el.dataset.obj;
+      if (!id) continue;
+      el.addEventListener('click', async () => {
+        state.fullProgress = await backend.toggleObjective(id, !isObjectiveDone(id), state.gameMode);
+        applyMode();
+        if (mapView.name && !$('mapOverlay').classList.contains('hidden')) {
+          mapView.pins = collectMapPins(mapView.name);
+          renderMapLoadout(mapView.name);
+          drawMap();
+        }
+        renderAll();
+      });
+    }
+  }
 
   // requirements: level, prerequisite quests, keys, items
   const reqs = [];
@@ -1034,6 +1079,7 @@ function collectMapLoadout(mapName) {
 
   for (const [t] of mapTasks()) {
     for (const o of t.objectives || []) {
+      if (isObjectiveDone(o.id)) continue;   // already ticked off by hand
       if (!objectiveMapPoints(o, mapName).length) continue;
       // a key opens the door however many objectives are behind it
       for (const k of [].concat(...(o.requiredKeys || []))) {
@@ -1060,6 +1106,20 @@ function collectMapLoadout(mapName) {
   };
 }
 
+// Objectives on this map the player has ticked off by hand — the only way back,
+// since the pin they right-clicked is gone from the map.
+function handTickedOnMap(mapName) {
+  const out = [];
+  for (const [t] of mapTasks()) {
+    for (const o of t.objectives || []) {
+      if (!isObjectiveDone(o.id)) continue;
+      if (!objectiveMapPoints(o, mapName).length) continue;
+      out.push({ id: o.id, quest: t.name, desc: o.description || '' });
+    }
+  }
+  return out;
+}
+
 function renderMapLoadout(mapName) {
   const load = collectMapLoadout(mapName);
   const row = (i) => `<li title="${escapeHtml(i.quests.slice(0, 6).join(' · '))}">`
@@ -1069,10 +1129,32 @@ function renderMapLoadout(mapName) {
     ? `<div class="ld-group"><div class="ld-head">${title}</div><ul>${items.map(row).join('')}</ul></div>` : '');
 
   const html = section('KEYS', load.keys) + section('TAKE WITH YOU', load.bring);
-  $('mapLoadoutList').innerHTML = html
-    || '<div class="ld-empty">Nothing needs bringing for these objectives.</div>';
+  const ticked = handTickedOnMap(mapName);
+  const tickedHtml = ticked.length ? `<div class="ld-group ld-ticked">
+      <div class="ld-head">DONE BY HAND (${ticked.length})<button id="ldRestoreAll" title="Put all of these back on the map">restore all</button></div>
+      <ul>${ticked.map((o) => `<li data-obj="${escapeHtml(o.id)}" title="${escapeHtml(o.quest)} — click to put it back on the map">
+        <span class="ld-name">${escapeHtml(o.desc || o.quest)}</span></li>`).join('')}</ul>
+    </div>` : '';
+
+  $('mapLoadoutList').innerHTML = (html || (ticked.length ? ''
+    : '<div class="ld-empty">Nothing needs bringing for these objectives.</div>')) + tickedHtml;
+
   const n = load.keys.length + load.bring.reduce((a, i) => a + i.qty, 0);
   $('mapLoadoutCount').textContent = n ? `${n} item${n === 1 ? '' : 's'}` : '';
+
+  const restore = async (ids) => {
+    state.fullProgress = await backend.clearObjectives(ids, state.gameMode);
+    applyMode();
+    mapView.pins = collectMapPins(mapName);
+    renderMapLoadout(mapName);
+    drawMap();
+    renderAll();
+  };
+  const all = $('ldRestoreAll');
+  if (all) all.addEventListener('click', (e) => { e.stopPropagation(); restore(ticked.map((o) => o.id)); });
+  for (const li of $('mapLoadoutList').querySelectorAll('.ld-ticked li[data-obj]')) {
+    li.addEventListener('click', () => restore([li.dataset.obj]));
+  }
 }
 
 function collectMapPins(mapName) {
@@ -1080,15 +1162,19 @@ function collectMapPins(mapName) {
   if (!md) return [];
   const out = [];
   for (const [t, locked] of mapTasks()) {
+    const objTotal = (t.objectives || []).length;
     for (const o of t.objectives || []) {
+      if (isObjectiveDone(o.id)) continue;   // right-clicked away
       const pts = objectiveMapPoints(o, mapName);
       const needs = objectiveNeeds(o);
+      const objDone = (t.objectives || []).filter((x) => isObjectiveDone(x.id)).length;
       for (const p of pts) {
         if (typeof p.x !== 'number' || typeof p.z !== 'number') continue;
         out.push({
           x: p.x, y: typeof p.y === 'number' ? p.y : 0, z: p.z,
           quest: t.name, trader: (t.trader && t.trader.name) || '',
           desc: o.description || '', optional: !!o.optional, locked, needs,
+          objId: o.id, objDone, objTotal,
           floor: floorOf(md, p.x, typeof p.y === 'number' ? p.y : 0, p.z),
         });
       }
@@ -1183,6 +1269,23 @@ function drawMap() {
       mapView.selected = (mapView.selected === i) ? null : i;
       drawMap();
     });
+    // right-click ticks this one objective off by hand. Panning also uses the
+    // right button, so swallow mousedown here or a right-click on a pin would
+    // start a drag as well.
+    c.addEventListener('mousedown', (e) => { if (e.button === 2) e.stopPropagation(); });
+    c.addEventListener('contextmenu', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!p.objId) return;
+      mapView.selected = null;
+      state.fullProgress = await backend.toggleObjective(p.objId, true, state.gameMode);
+      applyMode();
+      mapView.pins = collectMapPins(mapView.name);
+      renderMapLoadout(mapView.name);
+      drawMap();
+      renderAll();
+      toast(`Objective marked done: ${p.quest}`);
+    });
     g.appendChild(c);
   });
 
@@ -1209,7 +1312,12 @@ function pinCard(md, p, parent, k) {
   const pin = mapPoint(md, p.x, p.z);
 
   const desc = p.desc || '';
-  const tags = [p.optional ? 'optional' : '', p.locked ? 'locked' : ''].filter(Boolean).join(' · ');
+  const tags = [
+    p.optional ? 'optional' : '',
+    p.locked ? 'locked' : '',
+    p.objTotal > 1 ? `${p.objDone}/${p.objTotal} objectives done` : '',
+    'right-click to tick off',
+  ].filter(Boolean).join(' · ');
 
   // The card is built at its natural size and the whole group is scaled, so the
   // px values in .qpin-card keep meaning the same thing on every map.
