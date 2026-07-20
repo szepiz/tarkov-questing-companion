@@ -130,15 +130,17 @@ const TASK_FIELDS = `
       maps { name }
       ... on TaskObjectiveItem { items { name } count foundInRaid requiredKeys { name } zones { map { name } position { x y z } } }
       ... on TaskObjectiveQuestItem {
+        questItem { name }
+        count
         requiredKeys { name }
         zones { map { name } position { x y z } }
         possibleLocations { map { name } positions { x y z } }
       }
-      ... on TaskObjectiveShoot { requiredKeys { name } zones { map { name } position { x y z } } }
-      ... on TaskObjectiveExtract { requiredKeys { name } }
-      ... on TaskObjectiveMark { requiredKeys { name } zones { map { name } position { x y z } } }
+      ... on TaskObjectiveShoot { count requiredKeys { name } zones { map { name } position { x y z } } }
+      ... on TaskObjectiveExtract { exitName requiredKeys { name } }
+      ... on TaskObjectiveMark { markerItem { name } requiredKeys { name } zones { map { name } position { x y z } } }
       ... on TaskObjectiveBasic { requiredKeys { name } zones { map { name } position { x y z } } }
-      ... on TaskObjectiveUseItem { requiredKeys { name } }
+      ... on TaskObjectiveUseItem { useAny { name } count requiredKeys { name } }
       ... on TaskObjectiveBuildItem { item { name } }
     }`;
 const TASKS_QUERY = `{
@@ -1384,7 +1386,7 @@ function createWindow() {
           const cardChk = await win.webContents.executeJavaScript(`(async () => {
             const wait = (ms) => new Promise(r => setTimeout(r, ms));
             const pins = () => [...document.querySelectorAll('.qpin-dot')];
-            const out = { checked: 0, clipped: [], worstOverflow: 0, offMap: 0 };
+            const out = { checked: 0, clipped: [], worstOverflow: 0, offMap: 0, withTrader: 0, withNeed: 0, needSamples: [] };
             const floors = document.querySelectorAll('.floor-tab').length;
             for (let f = 0; f < floors; f++) {
               [...document.querySelectorAll('.floor-tab')][f].click();
@@ -1400,6 +1402,9 @@ function createWindow() {
                   const over = card.getBoundingClientRect().height - fo.getBoundingClientRect().height;
                   if (over > out.worstOverflow) out.worstOverflow = Math.round(over * 100) / 100;
                   if (over > 0.5) out.clipped.push(card.textContent.slice(0, 45));
+                  if (card.querySelector('.qpin-card-trader')) out.withTrader++;
+                  const need = card.querySelector('.qpin-card-need');
+                  if (need) { out.withNeed++; if (out.needSamples.length < 4) out.needSamples.push(need.textContent.trim().slice(0, 60)); }
                   const svg = document.querySelector('#mapRot svg').getBoundingClientRect();
                   const b = fo.getBoundingClientRect();
                   if (b.left < svg.left - 1 || b.right > svg.right + 1 || b.top < svg.top - 1 || b.bottom > svg.bottom + 1) out.offMap++;
@@ -1411,6 +1416,26 @@ function createWindow() {
             return out;
           })()`);
           console.log('TQT_CARD', JSON.stringify(cardChk));
+          // capture a card that actually carries a requirement line
+          const shot = await win.webContents.executeJavaScript(`(async () => {
+            const wait = (ms) => new Promise(r => setTimeout(r, ms));
+            const floors = [...document.querySelectorAll('.floor-tab')];
+            for (const f of floors) {
+              f.click(); await wait(200);
+              const pins = () => [...document.querySelectorAll('.qpin-dot')];
+              for (let i = 0; i < pins().length; i++) {
+                pins()[i].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                await wait(0);
+                const need = document.querySelector('.qpin-card-need');
+                if (need) return document.querySelector('.qpin-card').textContent.slice(0, 90);
+                pins()[i].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                await wait(0);
+              }
+            }
+            return null;
+          })()`);
+          console.log('TQT_NEEDSHOT', JSON.stringify(shot));
+          if (shot) await shoot(process.env.TQT_SHOOT.replace('.png', '_need.png'));
         } catch (err) {
           console.error('TQT_SHOOT failed:', err);
         }

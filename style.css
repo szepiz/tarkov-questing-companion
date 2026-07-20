@@ -872,11 +872,30 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   color: #d0a943;
   line-height: 1.25;
 }
+.qpin-card-trader {
+  font-size: 9px;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: #8a877e;
+  margin-top: 1px;
+}
 .qpin-card-desc {
   margin-top: 3px;
   font-size: 10px;
   line-height: 1.3;
   color: #d8d5cd;
+}
+/* what you have to bring: key, marker, items to hand in … */
+.qpin-card-need {
+  margin-top: 2px;
+  font-size: 9.5px;
+  line-height: 1.3;
+  color: #cfccc3;
+}
+.qpin-card-need span {
+  color: #d0a943;
+  font-weight: 700;
+  letter-spacing: .3px;
 }
 .qpin-card-tags {
   margin-top: 3px;

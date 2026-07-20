@@ -958,6 +958,33 @@ function hasMapData(mapName) {
 
 // every pinnable objective point for unfinished quests on this map,
 // honouring the current tab filter and the hide-locked setting
+// What an objective actually requires you to bring or use, as short "label: value"
+// pairs for the pin card. Only fields the API populates for that objective type
+// show up, so most pins get one line or none.
+function objectiveNeeds(o) {
+  const out = [];
+  const names = (arr) => [...new Set((arr || []).map((i) => i && i.name).filter(Boolean))];
+  const list = (arr, max = 3) => {
+    const n = names(arr);
+    return n.length > max ? `${n.slice(0, max).join(', ')} +${n.length - max} more` : n.join(' or ');
+  };
+
+  // requiredKeys is a list of ALTERNATIVE key sets, so it nests one level deeper
+  const keys = names([].concat(...(o.requiredKeys || [])));
+  if (keys.length) out.push(['Key', keys.length > 3 ? `${keys.slice(0, 3).join(', ')} +${keys.length - 3} more` : keys.join(' or ')]);
+
+  if (o.markerItem && o.markerItem.name) out.push(['Place', o.markerItem.name]);
+  if (o.questItem && o.questItem.name) out.push(['Find', o.questItem.name + (o.count > 1 ? ` ×${o.count}` : '')]);
+  if (o.items && o.items.length) {
+    out.push([o.foundInRaid ? 'Hand in (found in raid)' : 'Hand in',
+      (o.count > 1 ? `${o.count}× ` : '') + list(o.items)]);
+  }
+  if (o.useAny && o.useAny.length) out.push(['Use', list(o.useAny)]);
+  if (o.item && o.item.name) out.push(['Build', o.item.name]);
+  if (o.exitName) out.push(['Extract at', o.exitName]);
+  return out;
+}
+
 function collectMapPins(mapName) {
   const md = MAP_DATA[mapName];
   if (!md) return [];
@@ -976,11 +1003,13 @@ function collectMapPins(mapName) {
         if (normMapName(l.map && l.map.name) !== mapName) continue;
         for (const p of l.positions || []) pts.push(p);
       }
+      const needs = objectiveNeeds(o);
       for (const p of pts) {
         if (typeof p.x !== 'number' || typeof p.z !== 'number') continue;
         out.push({
           x: p.x, y: typeof p.y === 'number' ? p.y : 0, z: p.z,
-          quest: t.name, desc: o.description || '', optional: !!o.optional, locked,
+          quest: t.name, trader: (t.trader && t.trader.name) || '',
+          desc: o.description || '', optional: !!o.optional, locked, needs,
           floor: floorOf(md, p.x, typeof p.y === 'number' ? p.y : 0, p.z),
         });
       }
@@ -1131,7 +1160,10 @@ function pinCard(md, p, parent, k) {
   div.className = 'qpin-card';
   div.innerHTML =
     `<div class="qpin-card-quest">${escapeHtml(p.quest)}</div>` +
+    (p.trader ? `<div class="qpin-card-trader">${escapeHtml(p.trader)}</div>` : '') +
     (desc ? `<div class="qpin-card-desc">${escapeHtml(desc)}</div>` : '') +
+    ((p.needs || []).map(([label, value]) =>
+      `<div class="qpin-card-need"><span>${escapeHtml(label)}</span> ${escapeHtml(value)}</div>`).join('')) +
     (tags ? `<div class="qpin-card-tags">${escapeHtml(tags)}</div>` : '');
   fo.appendChild(div);
   box.appendChild(fo);
