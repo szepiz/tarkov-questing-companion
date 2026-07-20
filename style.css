@@ -1000,15 +1000,31 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    moving it into drawMapMarkers() — that is the opposite of the pin rule. */
 .mk {
   stroke: #14140f;
-  stroke-width: 1.6;
+  stroke-width: 1.7;
   stroke-linejoin: round;
+  stroke-linecap: round;
   cursor: pointer;
-  opacity: .92;
+  opacity: .95;
+  /* An outline glyph has no painted middle, so the default visiblePainted would
+     only accept clicks on the stroke itself — a 2 px ring. `all` hit-tests the
+     fill area too, so the hole in the middle of a diamond or a crate is clickable
+     like the rest of it. */
+  pointer-events: all;
 }
-.mk.hollow { fill: none; stroke-width: 1.8; }
+.mk.hollow { fill: none; stroke-width: 1.9; }
+/* Dark halo drawn under every glyph. Solid glyphs got an edge from .mk's stroke;
+   outline glyphs replace that stroke with their category colour and so had none
+   at all, which is what made them vanish over pale artwork. */
+.mk.halo {
+  fill: none;
+  stroke: #0a0a08;
+  stroke-width: 4.6;
+  opacity: .8;
+  pointer-events: none;
+}
 .mk.noclick { pointer-events: none; }          /* a mine point has nothing to say */
 .mk:hover { opacity: 1; }
-.mk.sel { stroke: #ff6a3d; stroke-width: 2.2; opacity: 1; }
+.mk.sel { stroke: #ff6a3d; stroke-width: 2.4; opacity: 1; }
 /* hollow glyphs carry their colour on the stroke, solid ones on the fill */
 .mk-pmc    { fill: #5fbf5f; }
 .mk-scav   { fill: #c98a3d; }
@@ -1028,27 +1044,39 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-drink.hollow  { stroke: #7a9a5a; }
 .mk-sniper.hollow { stroke: #e0533f; }
 .mk-hazard.hollow { stroke: #e8c14a; }
-.mk-marked.hollow { stroke: #b06fd0; stroke-width: 2.2; }
+.mk-marked.hollow { stroke: #b06fd0; stroke-width: 2.4; }
+/* static containers — always present, so they read as steady outlines */
+.mk-safe.hollow   { stroke: #e6e2d6; }
+.mk-medbox.hollow { stroke: #e2718f; }
+.mk-weapon.hollow { stroke: #c08f52; }
+.mk-tool.hollow   { stroke: #e0883a; }
+.mk-pc.hollow     { stroke: #5f92c9; }
+.mk-till.hollow   { stroke: #4fae95; }
+.mk-jacket.hollow { stroke: #9b83c4; }
+.mk-cache.hollow  { stroke: #93a55e; }
+.mk-body.hollow   { stroke: #b56a6a; }
+.mk-common.hollow { stroke: #8d8a80; }
 .mk-card { border-left-color: #6fa8dc; }
 .mk-leader { stroke: #6fa8dc; }
 
 /* ---- the layer panel ---- */
 /* `display: flex` below outranks the UA stylesheet's [hidden] { display: none },
-   so setting .hidden in JS would otherwise leave an empty 218 px-wide box sitting
+   so setting .hidden in JS would otherwise leave an empty 270 px-wide box sitting
    over the map's corner, still swallowing clicks. */
 #mapLayers[hidden] { display: none; }
 #mapLayers {
   position: absolute;
   top: 8px; right: 8px;
   z-index: 3;
-  width: 218px;
+  width: 270px;
+  max-width: calc(100% - 16px);   /* a narrow window must not push it off the stage */
   max-height: calc(100% - 16px);
   display: flex;
   flex-direction: column;
   background: rgba(20, 20, 15, .94);
   border: 1px solid #26261f;
   border-radius: 2px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .ml-toggle {
   flex: none;
@@ -1056,10 +1084,10 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   border: 0;
   border-bottom: 1px solid #26261f;
   color: #d0a943;
-  font: 900 11px/1 'Bender', sans-serif;
+  font: 900 13px/1 'Bender', sans-serif;
   letter-spacing: 1.4px;
   text-align: left;
-  padding: 8px 10px;
+  padding: 10px 12px;
   cursor: pointer;
 }
 .ml-toggle::before { content: '▾ '; }
@@ -1072,11 +1100,11 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .ml-head {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 7px;
+  padding: 8px 12px;
   color: #8a877e;
   font-weight: 900;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1px;
   cursor: pointer;
   list-style: none;
@@ -1087,32 +1115,32 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .ml-head:hover { color: #cfccc3; }
 .ml-head .ml-n { margin-left: auto; }
 .ml-note {
-  padding: 0 10px 6px 22px;
-  color: #55524a;
-  font-size: 10px;
-  line-height: 1.35;
+  padding: 0 12px 7px 26px;
+  color: #6b675e;
+  font-size: 11.5px;
+  line-height: 1.4;
 }
 .ml-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 10px 3px 18px;
+  gap: 8px;
+  padding: 5px 12px 5px 22px;
   cursor: pointer;
   color: #cfccc3;
 }
 .ml-row:hover { background: rgba(255,255,255,.05); }
 .ml-row.off { color: #45433d; cursor: default; }
 .ml-row.off:hover { background: none; }
-.ml-row input { accent-color: #d0a943; margin: 0; cursor: inherit; }
+.ml-row input { accent-color: #d0a943; margin: 0; cursor: inherit; width: 14px; height: 14px; }
 .ml-swatch { flex: none; overflow: visible; }
 .ml-label { flex: 1; }
 .ml-n { color: #55524a; font-variant-numeric: tabular-nums; }
 .ml-foot {
-  padding: 7px 10px 8px;
+  padding: 9px 12px 10px;
   border-top: 1px solid #1e1e18;
-  color: #55524a;
-  font-size: 9.5px;
-  line-height: 1.4;
+  color: #6b675e;
+  font-size: 11px;
+  line-height: 1.45;
 }
 .ml-foot em { color: #8a877e; font-style: normal; }
 

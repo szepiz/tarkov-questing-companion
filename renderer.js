@@ -1287,6 +1287,22 @@ const MARKER_GROUPS = [
     ],
   },
   {
+    id: 'containers', title: 'ALWAYS HERE · CONTAINERS',
+    note: 'These are part of the level, so they are in that spot every raid. What is inside is still a roll.',
+    rows: [
+      { id: 'contSafe', label: 'Safes', glyph: 'safe', cls: 'mk-safe' },
+      { id: 'contMed', label: 'Medical cases', glyph: 'medbox', cls: 'mk-medbox' },
+      { id: 'contWeapon', label: 'Weapon & ammo boxes', glyph: 'crate', cls: 'mk-weapon' },
+      { id: 'contTool', label: 'Toolboxes', glyph: 'toolbox', cls: 'mk-tool' },
+      { id: 'contPc', label: 'PC blocks', glyph: 'pcblock', cls: 'mk-pc' },
+      { id: 'contTill', label: 'Cash registers', glyph: 'till', cls: 'mk-till' },
+      { id: 'contJacket', label: 'Jackets & suitcases', glyph: 'jacket', cls: 'mk-jacket' },
+      { id: 'contCache', label: 'Buried caches & stashes', glyph: 'cache', cls: 'mk-cache' },
+      { id: 'contBody', label: 'Bodies', glyph: 'body', cls: 'mk-body' },
+      { id: 'contCommon', label: 'Bags & drawers', glyph: 'drawers', cls: 'mk-common' },
+    ],
+  },
+  {
     id: 'lootSole', title: 'LOOT · SOLE SPAWN POINTS',
     note: 'Nothing else can spawn at that exact spot. Still not a guarantee that anything does.',
     rows: LOOT_CATS.map((c) => ({ id: 'sole' + c.key, label: c.label, glyph: 'gem', cls: c.cls })),
@@ -1378,6 +1394,28 @@ function collectMapMarkers(mapName) {
       [['', sole ? 'Nothing else spawns at this spot' : `Shares this spot with ${alts} other item${alts === 1 ? '' : 's'}`],
         ['', 'A possible spawn — never guaranteed']]);
   }
+  // The only layer that is genuinely always there: the container is level
+  // geometry, so it is in that spot every raid. Its CONTENTS are still a roll,
+  // and the card says so rather than letting "always here" be read as a promise
+  // of loot.
+  const CONT = [
+    ['contSafe', 'safe', 'mk-safe', 'Safe'],
+    ['contWeapon', 'crate', 'mk-weapon', 'Weapon or ammo box'],
+    ['contMed', 'medbox', 'mk-medbox', 'Medical case'],
+    ['contTool', 'toolbox', 'mk-tool', 'Toolbox'],
+    ['contJacket', 'jacket', 'mk-jacket', 'Jacket or suitcase'],
+    ['contTill', 'till', 'mk-till', 'Cash register'],
+    ['contPc', 'pcblock', 'mk-pc', 'PC block'],
+    ['contCache', 'cache', 'mk-cache', 'Buried cache or stash'],
+    ['contBody', 'body', 'mk-body', 'Body'],
+    ['contCommon', 'drawers', 'mk-common', 'Bag or drawer'],
+  ];
+  for (const [x, y, z, kind] of M.co || []) {
+    const c = CONT[kind];
+    if (!c) continue;
+    add(x, y, z, [c[0]], c[1], c[2], c[3],
+      [['', 'Always here — it is part of the map'], ['', 'What is inside it is not']]);
+  }
   for (const [x, y, z, pool, keys] of M.mk || []) {
     add(x, y, z, ['markedRooms'], 'marked', 'mk-marked', 'Marked room',
       [['', `${pool} different items can spawn here`]].concat(keys ? [['Keys in the pool', keys]] : []));
@@ -1406,23 +1444,51 @@ function mapGroupCount(grp) {
 // Glyph geometry, drawn in a box centred on the origin and sized in screen
 // pixels by the caller's scale(k). Shared by the map and the panel swatches so
 // the legend can never show a different shape from the map.
+// Glyphs are authored in a ~13 px box and then scaled up here, so the shapes and
+// the CSS stroke widths stay in one readable unit while the drawn size can be
+// tuned in one place.
+const GLYPH_SCALE = 1.3;
+
 const MARKER_GLYPHS = {
   exit: 'M0 -7.5 L6.5 0 L3 0 L3 7 L-3 7 L-3 0 L-6.5 0 Z',
-  mine: 'M0 -4.6 L4.2 2.8 L-4.2 2.8 Z',
+  mine: 'M0 -5.2 L4.8 3.2 L-4.8 3.2 Z',
   sniper: 'M0 -6.5 L0 6.5 M-6.5 0 L6.5 0 M0 -3.6 A3.6 3.6 0 1 1 0 3.6 A3.6 3.6 0 1 1 0 -3.6',
   hazard: 'M0 -6.4 L6 4.4 L-6 4.4 Z',
   key: 'M0 -6.2 A3 3 0 1 1 0 -0.2 A3 3 0 1 1 0 -6.2 M-1.4 -0.6 L-1.4 6.4 L1.4 6.4 L1.4 -0.6 M1.4 3 L3.4 3',
-  gem: 'M0 -6 L6 0 L0 6 L-6 0 Z',
-  gemHollow: 'M0 -6 L6 0 L0 6 L-6 0 Z',
+  gem: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
+  gemHollow: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
   marked: 'M-6.5 -6.5 L6.5 -6.5 L6.5 6.5 L-6.5 6.5 Z M-6.5 -2 L-6.5 -6.5 L-2 -6.5 M2 6.5 L6.5 6.5 L6.5 2',
+  // static containers — five of these are box-shaped, so each gets its own
+  // silhouette rather than relying on colour alone to tell them apart
+  crate: 'M-6 -4.5 L6 -4.5 L6 4.5 L-6 4.5 Z M-6 0 L6 0',
+  toolbox: 'M-6 -2.5 L6 -2.5 L6 5 L-6 5 Z M-2.6 -2.5 L-2.6 -5.6 L2.6 -5.6 L2.6 -2.5',
+  pcblock: 'M-4.6 -6 L4.6 -6 L4.6 6 L-4.6 6 Z M-2.2 -3.6 L2.2 -3.6 M-2.2 -1.2 L2.2 -1.2',
+  till: 'M-6 -1 L6 -1 L6 5 L-6 5 Z M-3.6 -1 L-3.6 -5.2 L3.6 -5.2 L3.6 -1',
+  drawers: 'M-6 -5 L6 -5 L6 5 L-6 5 Z M-6 0 L6 0 M-1.6 -2.6 L1.6 -2.6 M-1.6 2.4 L1.6 2.4',
+  safe: 'M-6 -6 L6 -6 L6 6 L-6 6 Z M0 -2.5 A2.5 2.5 0 1 1 0 2.5 A2.5 2.5 0 1 1 0 -2.5',
+  medbox: 'M-6 -5 L6 -5 L6 5 L-6 5 Z M0 -2.8 L0 2.8 M-2.8 0 L2.8 0',
+  jacket: 'M-4.8 -5.5 L4.8 -5.5 L6.4 5.5 L-6.4 5.5 Z',
+  cache: 'M0 6.4 L-4.6 -0.8 A4.6 4.6 0 1 1 4.6 -0.8 Z',
+  body: 'M0 -5.4 A5.4 5.4 0 1 0 0 5.4 A5.4 5.4 0 1 0 0 -5.4 M-3 -3 L3 3 M3 -3 L-3 3',
 };
 // Which glyphs are outlines rather than solids. Kept here, not in CSS, because
 // the panel swatches build the same markup and must agree.
-const HOLLOW = new Set(['gemHollow', 'sniper', 'hazard', 'marked']);
+const HOLLOW = new Set(['gemHollow', 'sniper', 'hazard', 'marked',
+  'crate', 'toolbox', 'pcblock', 'till', 'drawers', 'safe', 'medbox', 'jacket', 'cache', 'body']);
+
+// Every glyph is drawn twice: a dark, wide, unpainted-fill "halo" underneath and
+// the real thing on top. Without it an outline glyph has no dark edge at all —
+// only solids got one from `.mk`'s stroke — and pale artwork swallows them.
+function glyphMarkup(glyph, cls, extra) {
+  const d = MARKER_GLYPHS[glyph];
+  const hollow = HOLLOW.has(glyph) ? ' hollow' : '';
+  return `<path class="mk halo" d="${d}"/>`
+    + `<path class="mk ${cls}${hollow}${extra || ''}" d="${d}"/>`;
+}
 
 function markerSvg(glyph, cls, px) {
-  return `<svg class="ml-swatch" viewBox="-8 -8 16 16" width="${px}" height="${px}">`
-    + `<path class="mk ${cls}${HOLLOW.has(glyph) ? ' hollow' : ''}" d="${MARKER_GLYPHS[glyph]}"/></svg>`;
+  return `<svg class="ml-swatch" viewBox="-9 -9 18 18" width="${px}" height="${px}">`
+    + glyphMarkup(glyph, cls) + '</svg>';
 }
 
 // The part of the current view a detail card may occupy. The layer panel floats
@@ -1452,7 +1518,7 @@ function cardArea(md) {
 // far enough out to belong to a different map.
 function markerPoint(md, m, k) {
   const box = fullView(md);
-  const i = 8 * k;
+  const i = 9 * k * GLYPH_SCALE;      // half a glyph, so a clamped one sits fully on the map
   const p = mapPoint(md, m.x, m.z);
   return {
     x: clamp(p.x, box.x + i, box.x + box.w - i),
@@ -1504,6 +1570,7 @@ function drawMapMarkers(md, svg, k) {
     s += `<path id="mkdef-${name}" d="${d}"/>`;
   }
   s += '</defs>';
+  const gs = k * GLYPH_SCALE;
   shown.forEach((m, i) => {
     const p = markerPoint(md, m, k);
     const hollow = HOLLOW.has(m.glyph) ? ' hollow' : '';
@@ -1511,8 +1578,11 @@ function drawMapMarkers(md, svg, k) {
     const sel = mapView.selectedMarker === m ? ' sel' : '';
     // Unlike .qpin-dot, the glyph lives inside scale(k), so its own coordinates
     // ARE screen pixels and the size/stroke can stay in CSS — see style.css.
-    s += `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}"`
-      + ` transform="translate(${p.x} ${p.y}) scale(${k})" data-mk="${i}"/>`;
+    // Drawn twice: dark halo underneath, then the glyph. The halo is what makes
+    // an outline glyph readable over pale artwork, and it takes no clicks.
+    const t = `transform="translate(${p.x} ${p.y}) scale(${gs})"`;
+    s += `<use href="#mkdef-${m.glyph}" class="mk halo" ${t}/>`
+      + `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}" ${t} data-mk="${i}"/>`;
   });
 
   const doc = new DOMParser().parseFromString(`<svg xmlns="${ns}">${s}</svg>`, 'image/svg+xml');
@@ -1627,7 +1697,7 @@ function renderMapLayers() {
       const n = counts[r.id] || 0;
       return `<label class="ml-row${n ? '' : ' off'}">`
         + `<input type="checkbox" data-layer="${r.id}"${layerOn(r.id) ? ' checked' : ''}${n ? '' : ' disabled'}>`
-        + markerSvg(r.glyph, r.cls, 13)
+        + markerSvg(r.glyph, r.cls, 16)
         + `<span class="ml-label">${escapeHtml(r.label)}</span>`
         + `<span class="ml-n">${n || '–'}</span></label>`;
     }).join('');

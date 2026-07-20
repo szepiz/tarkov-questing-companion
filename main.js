@@ -1296,7 +1296,7 @@ function createWindow() {
 
               const svg = document.querySelector('#mapRot svg');
               const box = svg.getBoundingClientRect();
-              const uses = [...document.querySelectorAll('#mkpins use')];
+              const uses = [...document.querySelectorAll('#mkpins use[data-mk]')];
               const outside = (el) => { const r = el.getBoundingClientRect();
                 return r.right < box.left - 1 || r.left > box.right + 1
                     || r.bottom < box.top - 1 || r.top > box.bottom + 1; };
@@ -1305,7 +1305,7 @@ function createWindow() {
               // reports a zero rect — which reads as "outside" for all of them.
               const drawn = uses.length;
               const drawnOutside = uses.filter(outside).length;
-              const glyphPx = () => { const u = document.querySelector('#mkpins use');
+              const glyphPx = () => { const u = document.querySelector('#mkpins use[data-mk]');
                 return u ? r1(u.getBoundingClientRect().width) : null; };
               const at1 = glyphPx();
 
@@ -1320,13 +1320,13 @@ function createWindow() {
               await new Promise(r => setTimeout(r, 500));
               const zoomed = mapView.zoom;
               const at4 = glyphPx();
-              const denseZoomed = document.querySelectorAll('#mkpins use').length;
+              const denseZoomed = document.querySelectorAll('#mkpins use[data-mk]').length;
               resetMapView(); drawMap();
               await new Promise(r => setTimeout(r, 400));
 
               // clicking a marker must open a readable card; clicking it again closes it
               const card = await (async () => {
-                const u = [...document.querySelectorAll('#mkpins use')].find(e => !e.classList.contains('noclick'));
+                const u = [...document.querySelectorAll('#mkpins use[data-mk]')].find(e => !e.classList.contains('noclick'));
                 if (!u) return 'n/a (no clickable marker)';
                 u.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
                 await new Promise(r => setTimeout(r, 300));
@@ -1349,7 +1349,7 @@ function createWindow() {
               // Only ONE detail card may ever be open. Clicking a quest pin used
               // to leave a marker card up, so both rendered with two leader lines.
               const oneCard = await (async () => {
-                const u = [...document.querySelectorAll('#mkpins use')].find(e => !e.classList.contains('noclick'));
+                const u = [...document.querySelectorAll('#mkpins use[data-mk]')].find(e => !e.classList.contains('noclick'));
                 const dot = document.querySelector('.qpin-dot');
                 if (!u || !dot) return 'n/a';
                 u.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
@@ -1361,6 +1361,23 @@ function createWindow() {
                 document.getElementById('mapStage').dispatchEvent(new MouseEvent('click', { bubbles: true }));
                 await new Promise(r => setTimeout(r, 200));
                 return (n === 1 && leaders === 1) ? 'ok' : \`BAD \${n} cards, \${leaders} leaders\`;
+              })();
+
+              // the panel must survive a small window without leaving the stage
+              const narrow = await (async () => {
+                const el = document.getElementById('mapLayers');
+                if (!el || el.hidden) return 'n/a';
+                const outer = document.getElementById('mapOverlay') || document.body;
+                const prev = outer.style.width;
+                outer.style.width = '760px';
+                await new Promise(r => setTimeout(r, 250));
+                const p2 = el.getBoundingClientRect();
+                const s2 = document.getElementById('mapStage').getBoundingClientRect();
+                const fits = p2.width > 0 && p2.left >= s2.left - 1 && p2.right <= s2.right + 1
+                  && p2.top >= s2.top - 1 && p2.bottom <= s2.bottom + 1;
+                outer.style.width = prev;
+                await new Promise(r => setTimeout(r, 250));
+                return fits ? 'ok' : \`BAD panel \${Math.round(p2.width)}px leaves the \${Math.round(s2.width)}px stage\`;
               })();
 
               // the panel must not be transparent to the map's own listeners
@@ -1381,7 +1398,7 @@ function createWindow() {
                   : \`BAD \${at1} -> \${at4}\`,
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
-                card, oneCard,
+                card, oneCard, narrow,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
                 zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0
