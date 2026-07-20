@@ -68,12 +68,12 @@ const MAP_MARKERS = {
 
   "Ground Zero": {
     ex: [
-      [-19.5, 23.711, 114.9, 0, 0, "Police Cordon V-Ex", "RUB", 20000],
+      [-19.5, 23.711, 114.9, 0, 0, "Police Cordon V-Ex", "Roubles", 20000],
       [151.6, 24.6621, -97.5, 2, 0, "Emercom Checkpoint", "", 0],
       [25.2, 24.5092, -79.5, 2, 0, "Scav Checkpoint (Co-op)", "", 0],
       [-16.1, 14.7621, 335.1, 2, 0, "Nakatani Basement Stairs", "", 0],
       [218.2, 17.9921, -38.5, 0, 0, "Mira Ave (Flare)", "", 0],
-      [190.8, 17.645, 133.4, 0, 0, "Tartowers Sales Office", "Code", 1]
+      [190.8, 17.645, 133.4, 0, 0, "Tartowers Sales Office", "Note with code word Adaptation", 1]
     ],
     hz: [
       [227.9, 27.14, -42.1, 1], [-88.2, 31.41, 137.5, 1], [-45.8, 31.41, 295.7, 1], [-69.2, 31.41, 289.2, 1],
@@ -318,7 +318,7 @@ const MAP_MARKERS = {
       [58.4, 3.1723, 63.3, 0, 0, "Gate 3", "", 0], [-15.7, -1.6477, 40.1, 1, 0, "Camera Bunker Door", "", 0],
       [17.8, 8.7303, 39.9, 1, 0, "Office Window", "", 0], [-63.7, 2.8523, 55.9, 0, 0, "Gate 0", "", 0],
       [-17.5, 1.9923, -61.3, 0, 0, "Med Tent Gate", "", 0], [23.8, 1.3623, 68.9, 0, 0, "Courtyard Gate", "", 0],
-      [48, -1.613, -28.9, 0, 0, "Smugglers' Passage", "Code", 1]
+      [48, -1.613, -28.9, 0, 0, "Smugglers' Passage", "Note with code word Ark", 1]
     ],
     hz: [],
     lk: [
@@ -379,7 +379,8 @@ const MAP_MARKERS = {
   },
   Customs: {
     ex: [
-      [201, -1.1484, -153.1, 0, 1, "ZB-013", "", 0], [181.1, -0.71, 213.3, 0, 0, "Dorms V-Ex", "RUB", 20000],
+      [201, -1.1484, -153.1, 0, 1, "ZB-013", "", 0],
+      [181.1, -0.71, 213.3, 0, 0, "Dorms V-Ex", "Roubles", 20000],
       [621.5, -2.07, -128.6, 0, 0, "ZB-1011", "", 0], [-334.8, 2.19, -88, 2, 0, "Crossroads", "", 0],
       [309.5, -2.182, -174.3, 0, 0, "Old Gas Station", "", 0],
       [-313.7, -1.72, -233.3, 0, 0, "Trailer Park", "", 0],
@@ -399,8 +400,8 @@ const MAP_MARKERS = {
       [139.6, 3.8, -324.7, 0, 0, "Railroad Passage (Flare)", "", 0],
       [652.2, 1.005, -27.1, 1, 0, "Scav Checkpoint", "", 0],
       [100.6, -4.98, -44.4, 2, 0, "Boiler Room Basement (Co-op)", "", 0],
-      [-41.5, -12.633, 122.7, 0, 0, "Smugglers' Boat", "Code", 1],
-      [463.2, -1.46, -112.4, 0, 0, "Smugglers' Bunker (ZB-1012)", "Code", 1]
+      [-41.5, -12.633, 122.7, 0, 0, "Smugglers' Boat", "Note with code word Voron", 1],
+      [463.2, -1.46, -112.4, 0, 0, "Smugglers' Bunker (ZB-1012)", "Note with code word Voron", 1]
     ],
     hz: [
       [155, 10.48, -257.8, 1], [171.6, 10.9, -284.8, 1], [195.1, 9.2, -287.2, 1], [51.1, -8.6, 187.3, 0],
@@ -662,7 +663,7 @@ const MAP_MARKERS = {
       [93.2, 16.57, -844, 2, 0, "Friendship Bridge (Co-Op)", "", 0],
       [-141.7, -2.37, 446.8, 0, 0, "RUAF Gate", "", 0], [-389.2, 4.147, 11, 0, 0, "ZB-016", "", 0],
       [447.2, -13.4635, 57.5, 0, 0, "ZB-014", "", 0], [-536.1, 1.6813, 286.8, 0, 0, "UN Roadblock", "", 0],
-      [-485.3, 15.5813, -504.1, 0, 0, "Bridge V-Ex", "RUB", 20000],
+      [-485.3, 15.5813, -504.1, 0, 0, "Bridge V-Ex", "Roubles", 20000],
       [347.2, -11.15, 360.1, 1, 0, "Outskirts", "", 0],
       [195.6, -16.6887, 259.2, 1, 0, "Dead Man's Place", "", 0], [176.6, -20.72, 215.9, 1, 0, "Boat", "", 0],
       [413.7, -12.5587, 242.2, 1, 0, "Scav House", "", 0], [220.4, 20.5383, -705.8, 1, 0, "Scav Bunker", "", 0],
@@ -673,7 +674,7 @@ const MAP_MARKERS = {
       [-135.8, 0.9713, 416.3, 1, 0, "RUAF Roadblock", "", 0], [349, -9.1487, 358.6, 0, 0, "Outskirts", "", 0],
       [-557.3, 9.3213, -67, 0, 0, "Northern UN Roadblock", "", 0],
       [574, -1.7487, -85.3, 0, 0, "Power Line Passage (Flare)", "", 0],
-      [-730.4, 8.7, 129.3, 0, 0, "Railway Bridge to Tarkov", "Mines", 1]
+      [-730.4, 8.7, 129.3, 0, 0, "Railway Bridge to Tarkov", "Minefield map (Woods)", 1]
     ],
     hz: [
       [565.5, -3, -159.4, 1], [-566.5, 5.44, 251.3, 1], [-653, 8.7, 224.1, 1], [-575, 13.3, 123.7, 1],
@@ -928,7 +929,7 @@ const MAP_MARKERS = {
   },
   Shoreline: {
     ex: [
-      [-543.3, -16.842, -379.7, 0, 0, "Road to North V-Ex", "RUB", 20000],
+      [-543.3, -16.842, -379.7, 0, 0, "Road to North V-Ex", "Roubles", 20000],
       [-859, -42.07, 0.5, 0, 0, "Road to Customs", "", 0],
       [-1029.3, -60.79, 307.6, 0, 0, "Railway Bridge", "", 0], [376.4, -55.94, 319.3, 0, 0, "Tunnel", "", 0],
       [448.9, -44.7, -254.6, 0, 0, "Path to Lighthouse", "", 0],
@@ -938,7 +939,7 @@ const MAP_MARKERS = {
       [-256.9, -7.708, -149.8, 1, 0, "Admin Basement", "", 0],
       [-729.4, -26, -255.1, 2, 0, "Smugglers' Path (Co-op)", "", 0],
       [-332.6, -66.12, 561.3, 0, 0, "Pier Boat", "", 0], [-214.3, -1, -361.8, 0, 0, "Climber's Trail", "", 0],
-      [-391, -2.55, -385.7, 0, 0, "Mountain Bunker", "Code", 1]
+      [-391, -2.55, -385.7, 0, 0, "Mountain Bunker", "Note with code word Heartbeat", 1]
     ],
     hz: [
       [110.8, -31.1, -418.9, 1], [190.5, -33.7, -382.5, 1], [236.4, -27.6, -357.2, 1],
@@ -1301,7 +1302,7 @@ const MAP_MARKERS = {
     ex: [
       [-321.6, 24.18, 266.7, 2, 0, "Emercom Checkpoint", "", 0],
       [472.3, 20.92, -429.7, 2, 0, "Railway Exfil", "", 0],
-      [-251.9, 21.72, -367.1, 0, 0, "Power Station V-Ex", "RUB", 20000],
+      [-251.9, 21.72, -367.1, 0, 0, "Power Station V-Ex", "Roubles", 20000],
       [278.7, 21.9495, -31, 2, 0, "Scav Camp (Co-Op)", "", 0],
       [-219.9, 22.79, -37, 0, 0, "Hole in the Fence", "", 0],
       [-47.7, 22.97, 44.1, 0, 1, "Saferoom Exfil", "", 0]
@@ -1740,7 +1741,7 @@ const MAP_MARKERS = {
       [-35.3, -5.15, -180.1, 1, 0, "Heating Pipe", "", 0],
       [120.8, -10.27, -120.4, 1, 0, "Depot Hermetic Door", "", 0],
       [62, -4.43, 134.3, 1, 0, "Checkpoint Fence", "", 0],
-      [36.5, -5.97, -221.6, 0, 0, "Exit to Woods", "Mines", 1]
+      [36.5, -5.97, -221.6, 0, 0, "Exit to Woods", "Minefield map (Reserve)", 1]
     ],
     hz: [
       [267.8, -2, -137.4, 1], [286.1, -2, -62.4, 1], [243.6, -2, -221, 1], [82.8, -22.0797, -298.2, 0]
@@ -2107,14 +2108,14 @@ const MAP_MARKERS = {
       [104.8, 0.13, -161.2, 1, 0, "Cardinal Apartment Complex Parking", "", 0],
       [-163.8, 1.591, -5.7, 1, 0, "Klimov Shopping Mall Exfil", "", 0],
       [-148.9, 1.786, 500.2, 0, 0, "Courtyard", "", 0],
-      [-2.2, 3.2, 461.2, 0, 0, "Primorsky Ave Taxi V-Ex", "RUB", 20000],
+      [-2.2, 3.2, 461.2, 0, 0, "Primorsky Ave Taxi V-Ex", "Roubles", 20000],
       [-44.7, 11.04, -72.2, 0, 0, "Stylobate Building Elevator", "", 0],
       [312.7, 6.8, 406, 0, 0, "Crash Site", "", 0], [-267, -1.535, 219.5, 0, 0, "Sewer River", "", 0],
       [-249, 7.195, 344.3, 0, 0, "Damaged House", "", 0], [216.1, 3.44, 272.7, 0, 0, "Collapsed Crane", "", 0],
       [-263.4, 2.9, 43.2, 0, 0, "Klimov Street (Flare)", "", 0],
       [-114.3, -2.05, 64.9, 2, 0, "Pinewood Basement (Co-Op)", "", 0],
       [213.1, 0.09, -105, 0, 0, "Expo Checkpoint", "", 0],
-      [76, -0.603, 50, 0, 0, "Smugglers' Basement", "Code", 1]
+      [76, -0.603, 50, 0, 0, "Smugglers' Basement", "Note with code word Onyx", 1]
     ],
     hz: [
       [-262.3, 10.4, 438.7, 1], [5.1, 17, 497.2, 1], [16.3, 10.4, 472.4, 1], [-253.6, 10.4, 42.7, 1],
@@ -2760,7 +2761,7 @@ const MAP_MARKERS = {
   Lighthouse: {
     ex: [
       [6.3, 14.1133, -873.8, 2, 0, "Armored Train", "", 0],
-      [-329, 16.73, -784.4, 0, 0, "Road to Military Base V-Ex", "RUB", 20000],
+      [-329, 16.73, -784.4, 0, 0, "Road to Military Base V-Ex", "Roubles", 20000],
       [-68.3, 6.83, 318.1, 2, 0, "Side Tunnel (Co-Op)", "", 0],
       [-172.3, 41.89, -6.4, 0, 0, "Mountain Pass", "", 0],
       [-364.4, 28.758, -121.4, 0, 0, "Path to Shoreline", "", 0],
@@ -2771,7 +2772,7 @@ const MAP_MARKERS = {
       [133.1, -0.467, 286.8, 1, 0, "Hideout Under the Landing Stage", "", 0],
       [180.7, 1.18, -485.9, 1, 0, "Scav Hideout at the Grotto", "", 0],
       [-152.6, 12.25, -794.1, 1, 0, "Industrial Zone Gates", "", 0],
-      [-360, 27.19, -564.9, 0, 0, "Passage by the Lake", "Mines", 1]
+      [-360, 27.19, -564.9, 0, 0, "Passage by the Lake", "Minefield map (Lighthouse)", 1]
     ],
     hz: [
       [-347.6, 26.7, -747.2, 1], [57.5, 18.9, -988.3, 1], [-21.7, 27.4, -998.7, 1], [-338.6, 27.2, -817.7, 1],

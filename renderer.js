@@ -64,6 +64,11 @@ const backend = window.api || (() => {
 
 // ---------- static config ----------
 
+// Location and trader photos live in images/ rather than loose in the app root.
+// The tables below hold bare filenames; this is the only place the folder is
+// named, so moving them again is a one-line change.
+const IMG_DIR = 'images/';
+
 const MAP_IMAGES = {
   'ground zero': 'ground_zero.jpg',
   'factory': 'factory.jpg',
@@ -507,8 +512,10 @@ function renderHero() {
   const heroLabel = $('heroLabel');
   const heroTraderName = $('heroTraderName');
 
-  const mapFile = state.selMap ? MAP_IMAGES[state.selMap.toLowerCase()] : null;
-  const traderFile = state.selTrader ? TRADER_IMAGES[state.selTrader.toLowerCase()] : null;
+  const mapName = state.selMap ? MAP_IMAGES[state.selMap.toLowerCase()] : null;
+  const traderName = state.selTrader ? TRADER_IMAGES[state.selTrader.toLowerCase()] : null;
+  const mapFile = mapName ? IMG_DIR + mapName : null;
+  const traderFile = traderName ? IMG_DIR + traderName : null;
 
   heroEmpty.style.display = state.selMap ? 'none' : '';
   heroLabel.textContent = state.selMap ? state.selMap.toUpperCase() : '';
@@ -994,7 +1001,7 @@ backend.onSettingsChanged((s) => {
 const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null,
   markers: [], selectedMarker: null, view: null, zoom: 1 };
 
-const ZOOM_MIN = 1, ZOOM_MAX = 10;
+const ZOOM_MAX = 10;   // zoom 1 is the whole map; the floor is implicit in baseView
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 // Zoom/pan moves the SVG's own viewBox rather than applying a CSS transform.
@@ -1005,23 +1012,68 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 // per screen pixel shrink as you zoom, and pin/label/card sizes are derived from
 // that, so they stay the same size on screen.
 
-// the whole map, in the coordinates the user sees
+// the map's own box, in the coordinates the user sees. Markers clamp to this —
+// it is the artwork, not the window onto it.
 function fullView(md) { return rotatedViewBox(md); }
+
+// The stage's shape, as width/height.
+function stageAspect() {
+  const r = $('mapStage').getBoundingClientRect();
+  return (r.width > 0 && r.height > 0) ? r.width / r.height : 16 / 9;
+}
+
+// The zoom-1 window: the map box grown to the STAGE's aspect, centred.
+//
+// The view rectangle has to match the stage, not the map. It used to keep the
+// map's own aspect, which meant a map shaped differently from the pane kept its
+// letterbox bars at every zoom level — zooming magnified a small window instead
+// of filling the screen, and Lighthouse (tall) or Factory (turned 90°) wasted
+// most of the stage no matter how far you went in. At zoom 1 this is visually
+// identical to before: the extra width or height is exactly the bars that were
+// already there, so the artwork renders at the same scale.
+function baseView(md) {
+  const full = fullView(md);
+  const a = stageAspect();
+  let { w, h } = full;
+  if (w / h < a) w = h * a; else h = w / a;
+  return { x: full.x - (w - full.w) / 2, y: full.y - (h - full.h) / 2, w, h };
+}
+
 // the part of it currently on screen
-function currentView(md) { return mapView.view || fullView(md); }
+function currentView(md) { return mapView.view || baseView(md); }
 
 function applyView(redraw) {
   const md = MAP_DATA[mapView.name];
   if (!md) return;
+  const base = baseView(md);
   const full = fullView(md);
-  const v = mapView.view || { ...full };
-  // keep the aspect of the full map so the element's layout box never changes
-  v.w = clamp(v.w, full.w / ZOOM_MAX, full.w);
-  v.h = v.w * (full.h / full.w);
-  v.x = clamp(v.x, full.x, full.x + full.w - v.w);
-  v.y = clamp(v.y, full.y, full.y + full.h - v.h);
+
+  // Carry the ZOOM RATIO across, never the absolute width. `base.w` depends on
+  // the pane's shape, so keeping `v.w` through a resize silently changed how far
+  // in you were — and the clamp only ever shrank it, so narrowing the window and
+  // widening it again left the map zoomed in and cropped without the user
+  // touching the wheel. A plain maximise did it too.
+  const zoom = clamp(mapView.zoom || 1, 1, ZOOM_MAX);
+  const w = base.w / zoom;
+  const h = w / stageAspect();
+
+  // Keep looking at the same place across a resize or a zoom step.
+  const prev = mapView.view;
+  const cx = prev ? prev.x + prev.w / 2 : base.x + base.w / 2;
+  const cy = prev ? prev.y + prev.h / 2 : base.y + base.h / 2;
+
+  // Clamp against the ARTWORK, not the padded base. The padding either side of a
+  // map narrower than the pane is empty stage; allowing the view into it let a
+  // zoomed-in map be dragged entirely off screen, leaving a black rectangle with
+  // no pin or marker left to say where it went. Where the view is bigger than the
+  // map there is nothing to pan, so centre it — that is what draws the letterbox.
+  const axis = (c, size, fp, fs) => (size >= fs
+    ? fp + fs / 2 - size / 2
+    : clamp(c - size / 2, fp, fp + fs - size));
+
+  const v = { x: axis(cx, w, full.x, full.w), y: axis(cy, h, full.y, full.h), w, h };
   mapView.view = v;
-  mapView.zoom = full.w / v.w;
+  mapView.zoom = zoom;
   const svg = $('mapRot').querySelector('svg');
   if (svg) svg.setAttribute('viewBox', `${v.x} ${v.y} ${v.w} ${v.h}`);
   $('mapRot').classList.toggle('zoomed', mapView.zoom > 1.001);
@@ -1030,7 +1082,7 @@ function applyView(redraw) {
 
 function resetMapView() {
   const md = MAP_DATA[mapView.name];
-  mapView.view = md ? { ...fullView(md) } : null;
+  mapView.view = null;          // applyView re-derives it from zoom + the map box
   mapView.zoom = 1;
   $('mapRot').style.transform = '';
   $('mapRot').classList.remove('zoomed');
@@ -1059,11 +1111,13 @@ function zoomMapAt(clientX, clientY, factor) {
   const p = clientToSvg(clientX, clientY);
   if (!p) return;
   const v = currentView(md);
-  const full = fullView(md);
-  const w = clamp(v.w / factor, full.w / ZOOM_MAX, full.w);
+  const base = baseView(md);
+  const w = clamp(v.w / factor, base.w / ZOOM_MAX, base.w);
   if (w === v.w) return;
-  const h = w * (full.h / full.w);
-  // hold whatever is under the cursor still
+  const h = w / stageAspect();
+  // hold whatever is under the cursor still. applyView takes the width from
+  // `zoom` and the position from this rectangle's centre, so both must be set.
+  mapView.zoom = base.w / w;
   mapView.view = { x: p.x - p.fx * w, y: p.y - p.fy * h, w, h };
   applyView(true);
 }
@@ -1356,14 +1410,18 @@ async function setGroupOpen(id, open) {
   state.settings = await backend.saveSettings({ mapLayersOpen: next });
 }
 
-// What an extract charges to let you out. "RUB" is the car-extract fare, "Code"
-// the smuggler ones, "Mines" a mine detector.
+// What an extract charges to let you out. Say the item's real name rather than
+// paraphrasing it: the short forms are "Code" and "Mines", and guessing at those
+// produced two wrong labels — "Mines" is the Minefield map item, not a detector,
+// and every smuggler extract wants its own named note.
 function tollLabel(item, count) {
-  if (item === 'RUB') return `${Number(count).toLocaleString('en-US')} roubles`;
-  if (item === 'Code') return 'the transit code';
-  if (count > 1) return `${count} x ${item}`;
-  return item;
+  if (/^roubles?$/i.test(item)) return `${Number(count).toLocaleString('en-US')} roubles`;
+  return count > 1 ? `${count} x ${item}` : item;
 }
+// The vehicle fee in the data is a BASE value. What you actually pay scales with
+// Scav karma, and a well-regarded player pays a good deal less — so the card must
+// not present 20,000 as the price.
+const isFee = (item) => /^roubles?$/i.test(item);
 
 // Gear requirements are NOT in tarkov.dev's extract data — it only carries the
 // `transferItem` toll — so these few are listed by hand from the wiki. Keyed by
@@ -1395,7 +1453,10 @@ function collectMapMarkers(mapName) {
     const layers = fac === 0 ? ['extractPmc'] : fac === 1 ? ['extractScav'] : ['extractPmc', 'extractScav'];
     const who = fac === 0 ? 'PMC extract' : fac === 1 ? 'Scav extract' : 'PMC and Scav extract';
     const lines = [['', who]];
-    if (toll) lines.push(['Costs', tollLabel(toll, tollN)]);
+    if (toll) {
+      lines.push([isFee(toll) ? 'Fee' : 'Needs', tollLabel(toll, tollN)]);
+      if (isFee(toll)) lines.push(['', 'Base fee — you pay less with better Scav karma']);
+    }
     if (sw) lines.push(['Needs', 'a switch or lever thrown first']);
     for (const g of extractGear(mapName, name)) lines.push(['Needs', g]);
     const m = out.length;
@@ -1793,6 +1854,21 @@ function svgUnitsPerPx(svg, md) {
   return Math.hypot(md.viewBox.w, md.viewBox.h) / Math.hypot(1062.4827, 535.17401); // not laid out yet
 }
 
+// Which landmark names belong on the floor currently selected.
+//
+// Labels carry only (x, z) — upstream gives them no height and no layer, so they
+// cannot go through floorOf(). What the floor data does give is each floor's
+// FOOTPRINT, so on an upper storey we show only the names standing inside it:
+// once you are looking at the third floor of Dorms, "Old Gas Station" across the
+// map is noise. Ground shows everything, because ground is the whole map. A floor
+// whose extent has no bounds genuinely covers the map, so it keeps every label.
+function labelOnFloor(md, lx, lz) {
+  if (mapView.floor < 0) return true;
+  const f = md.floors[mapView.floor];
+  if (!f || !f.extents || !f.extents.length) return true;
+  return f.extents.some((ex) => !ex.bounds || ex.bounds.some((r) => inRect(lx, lz, r)));
+}
+
 // show the base layer plus the selected floor; draw pins for that floor
 function drawMap() {
   const md = MAP_DATA[mapView.name];
@@ -1836,8 +1912,8 @@ function drawMap() {
   // no per-element counter-rotation, and it works for Factory's 90° too.
   const k = svgUnitsPerPx(svg, md);
 
-  // faint landmark names for orientation
-  for (const [lx, lz, text] of md.labels || []) {
+  // faint landmark names for orientation, limited to the floor you are on
+  for (const [lx, lz, text] of (md.labels || []).filter(([lx, lz]) => labelOnFloor(md, lx, lz))) {
     const p = mapPoint(md, lx, lz);
     const t = document.createElementNS(ns, 'text');
     t.setAttribute('x', p.x); t.setAttribute('y', p.y);
@@ -2012,11 +2088,19 @@ async function openQuestMap(mapName) {
       while (svg.firstChild) spin.appendChild(svg.firstChild);
       svg.appendChild(spin);
     }
-    const vb = rotatedViewBox(md);
-    svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+    // Now the svg exists and the stage is laid out, so the zoom-1 window can be
+    // computed against the real pane size. Doing it before the load would use a
+    // guessed aspect and the first wheel event would visibly jump.
     svg.style.transform = '';
+    resetMapView();
   }
   drawMap();
+  // drawMap writes the footer hint, which rewraps to two lines on some maps and
+  // moves the stage's bottom edge — so the view resetMapView just computed was
+  // measured against a stage that no longer exists. Settle it here against the
+  // final layout rather than leaving the ResizeObserver to correct it a moment
+  // later, which showed up as the map twitching on open.
+  applyView(false);
 }
 
 // clicking the map away from a pin also clears the selection (pins stop propagation)
@@ -2071,14 +2155,23 @@ window.addEventListener('mouseup', (e) => {
 });
 // Pin and card sizes are measured against the rendered SVG, so a resized window
 // has to redraw or they drift away from their intended 13 px.
+// The view rectangle is shaped to the stage, so anything that changes the stage's
+// shape has to re-derive it. That is more than window resizes: the footer hint
+// rewraps to two lines on some maps, which moves the stage's bottom edge AFTER
+// openQuestMap measured it. Watch the element itself rather than the window, and
+// debounce so a drag-resize doesn't redraw every frame.
 let mapResizeTimer = null;
-window.addEventListener('resize', () => {
+function onStageResized() {
   if ($('mapOverlay').classList.contains('hidden') || !mapView.name) return;
   clearTimeout(mapResizeTimer);
   mapResizeTimer = setTimeout(() => {
-    if (!$('mapOverlay').classList.contains('hidden')) drawMap();
-  }, 120);
-});
+    if (!$('mapOverlay').classList.contains('hidden') && mapView.name) applyView(true);
+  }, 100);
+}
+if (typeof ResizeObserver !== 'undefined') {
+  new ResizeObserver(onStageResized).observe($('mapStage'));
+}
+window.addEventListener('resize', onStageResized);
 $('closeMapBtn').addEventListener('click', () => $('mapOverlay').classList.add('hidden'));
 $('mapOverlay').addEventListener('click', (e) => {
   if (e.target === $('mapOverlay')) $('mapOverlay').classList.add('hidden');

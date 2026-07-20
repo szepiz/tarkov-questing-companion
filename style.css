@@ -903,7 +903,11 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 #mapRot.zoomed { cursor: grab; }
 #mapStage.panning, #mapStage.panning #mapRot { cursor: grabbing; }
-#mapRot svg { max-width: 100%; max-height: 100%; display: block; }
+/* The svg FILLS the stage rather than being fitted to the artwork's shape. The
+   viewBox carries the stage's aspect (see baseView in renderer.js), so at zoom 1
+   the map still renders letterboxed at exactly the same scale as before — but
+   zooming in now uses the whole pane instead of magnifying inside the old bars. */
+#mapRot svg { width: 100%; height: 100%; display: block; }
 
 /* pins */
 /* stroke-width is set per map in drawMap(), scaled so the outline is 2 px

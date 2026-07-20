@@ -1363,6 +1363,80 @@ function createWindow() {
                 return (n === 1 && leaders === 1) ? 'ok' : \`BAD \${n} cards, \${leaders} leaders\`;
               })();
 
+              // A resize must not change how far in you are. base.w depends on the
+              // pane's shape, so carrying the absolute view width across a resize
+              // silently zoomed the map in and cropped it — and only ever one way.
+              // Runs on THIS map, not Customs: Customs is wider than any stage, so
+              // it is the one map immune to the bug.
+              const resizeKeepsZoom = await (async () => {
+                const panel = document.getElementById('mapPanel') || document.getElementById('mapOverlay');
+                if (!panel) return 'n/a';
+                const stageW = () => Math.round(document.getElementById('mapStage').getBoundingClientRect().width);
+                const before = r1(mapView.zoom), w0 = stageW();
+                const prevW = panel.style.width, prevH = panel.style.height;
+                panel.style.width = '60vw'; panel.style.height = '94vh';
+                await new Promise(r => setTimeout(r, 400));
+                const narrow = r1(mapView.zoom), w1 = stageW();
+                panel.style.width = prevW; panel.style.height = prevH;
+                await new Promise(r => setTimeout(r, 400));
+                const after = r1(mapView.zoom), w2 = stageW();
+                // a test that never actually resized the stage would pass vacuously
+                if (!(w1 < w0 - 50 && w2 > w1 + 50)) return \`BAD stage never resized (\${w0}/\${w1}/\${w2})\`;
+                return (Math.abs(after - before) < 0.02 && Math.abs(narrow - before) < 0.02)
+                  ? \`ok zoom \${before}->\${narrow}->\${after} across stage \${w0}->\${w1}->\${w2}px\`
+                  : \`BAD zoom drifted \${before} -> \${narrow} -> \${after}\`;
+              })();
+
+              // Panning must never take the artwork off screen. The padding beside
+              // a map narrower than the pane is empty stage; clamping into it let
+              // a zoomed-in map be dragged away entirely.
+              const panStaysOnMap = await (async () => {
+                const md = MAP_DATA[${JSON.stringify(name)}];
+                if (!md) return 'n/a';
+                for (let i = 0; i < 12; i++) {
+                  document.getElementById('mapStage').dispatchEvent(new WheelEvent('wheel',
+                    { deltaY: -120, clientX: st.left + st.width / 2, clientY: st.top + st.height / 2,
+                      bubbles: true, cancelable: true }));
+                  await new Promise(r => setTimeout(r, 25));
+                }
+                await new Promise(r => setTimeout(r, 300));
+                // shove the view hard in every direction
+                const worst = [];
+                for (const [dx, dy] of [[-9999, 0], [9999, 0], [0, -9999], [0, 9999]]) {
+                  mapView.view = { x: mapView.view.x + dx, y: mapView.view.y + dy,
+                                   w: mapView.view.w, h: mapView.view.h };
+                  applyView(false);
+                  const v = mapView.view, f = { x: 0, y: 0, w: md.viewBox.w, h: md.viewBox.h };
+                  const rot = ((md.rotate || 0) % 360 + 360) % 360;
+                  const fb = (rot === 90 || rot === 270)
+                    ? { x: (f.w - f.h) / 2, y: (f.h - f.w) / 2, w: f.h, h: f.w } : f;
+                  const overlapX = Math.min(v.x + v.w, fb.x + fb.w) - Math.max(v.x, fb.x);
+                  const overlapY = Math.min(v.y + v.h, fb.y + fb.h) - Math.max(v.y, fb.y);
+                  worst.push(Math.round(Math.min(overlapX / v.w, overlapY / v.h) * 100));
+                }
+                resetMapView(); drawMap();
+                await new Promise(r => setTimeout(r, 250));
+                const min = Math.min(...worst);
+                return min > 50 ? \`ok (worst \${min}% of the view still on the map)\`
+                  : \`BAD view can leave the artwork: \${worst.join('/')}%\`;
+              })();
+
+              // landmark names must thin out on an upper floor, not follow you up
+              const floorLabels = await (async () => {
+                const tabs = [...document.querySelectorAll('.floor-tab')];
+                const ground = tabs.find(t => Number(t.dataset.floor) === -1);
+                const upper = tabs.find(t => Number(t.dataset.floor) >= 0);
+                if (!ground || !upper) return 'n/a (no floors)';
+                const count = () => document.querySelectorAll('#qpins text').length;
+                ground.click(); await new Promise(r => setTimeout(r, 250));
+                const g = count();
+                upper.click(); await new Promise(r => setTimeout(r, 250));
+                const u = count();
+                ground.click(); await new Promise(r => setTimeout(r, 250));
+                if (count() !== g) return \`BAD ground count changed \${g} -> \${count()}\`;
+                return u <= g ? \`ok ground \${g} -> floor \${u}\` : \`BAD floor shows MORE: \${g} -> \${u}\`;
+              })();
+
               // the panel must survive a small window without leaving the stage
               const narrow = await (async () => {
                 const el = document.getElementById('mapLayers');
@@ -1398,7 +1472,7 @@ function createWindow() {
                   : \`BAD \${at1} -> \${at4}\`,
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
-                card, oneCard, narrow,
+                card, oneCard, narrow, floorLabels, resizeKeepsZoom, panStaysOnMap,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
                 zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0
