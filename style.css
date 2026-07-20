@@ -1056,6 +1056,19 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-cache.hollow  { stroke: #93a55e; }
 .mk-body.hollow   { stroke: #b56a6a; }
 .mk-common.hollow { stroke: #8d8a80; }
+/* extract names, drawn above their icon. font-size and stroke-width are set per
+   draw (they scale with the map); everything else lives here. */
+.mk-name {
+  text-anchor: middle;
+  font-family: 'Bender', sans-serif;
+  font-weight: 700;
+  fill: #eae7de;
+  stroke: #0a0a08;
+  paint-order: stroke;
+  stroke-linejoin: round;
+  pointer-events: none;
+  letter-spacing: .3px;
+}
 .mk-card { border-left-color: #6fa8dc; }
 .mk-leader { stroke: #6fa8dc; }
 

@@ -1356,6 +1356,27 @@ async function setGroupOpen(id, open) {
   state.settings = await backend.saveSettings({ mapLayersOpen: next });
 }
 
+// What an extract charges to let you out. "RUB" is the car-extract fare, "Code"
+// the smuggler ones, "Mines" a mine detector.
+function tollLabel(item, count) {
+  if (item === 'RUB') return `${Number(count).toLocaleString('en-US')} roubles`;
+  if (item === 'Code') return 'the transit code';
+  if (count > 1) return `${count} x ${item}`;
+  return item;
+}
+
+// Gear requirements are NOT in tarkov.dev's extract data — it only carries the
+// `transferItem` toll — so these few are listed by hand from the wiki. Keyed by
+// map and the extract's exact upstream name; a rename just means the line stops
+// showing, never a wrong one. Keep this short and only for things that are
+// stable and well documented.
+const EXTRACT_GEAR = {
+  'Reserve|Cliff Descent': ['a Paracord and a Red Rebel ice pick'],
+  'Lighthouse|Mountain Pass': ['a Paracord and a Red Rebel ice pick'],
+  'Shoreline|Climber\'s Trail': ['a Paracord and a Red Rebel ice pick'],
+};
+const extractGear = (map, name) => EXTRACT_GEAR[`${map}|${name}`] || [];
+
 // Decode the packed rows into marker objects once per map open. Each marker
 // carries the list of layer ids that would show it — a shared extract belongs to
 // both PMC and Scav, so it appears once whichever of the two is ticked instead
@@ -1370,11 +1391,16 @@ function collectMapMarkers(mapName) {
     out.push({ x, y: y || 0, z, layers, glyph, cls, title, lines, floor: floorOf(md, x, y || 0, z) });
   };
 
-  for (const [x, y, z, fac, sw, name] of M.ex || []) {
+  for (const [x, y, z, fac, sw, name, toll, tollN] of M.ex || []) {
     const layers = fac === 0 ? ['extractPmc'] : fac === 1 ? ['extractScav'] : ['extractPmc', 'extractScav'];
     const who = fac === 0 ? 'PMC extract' : fac === 1 ? 'Scav extract' : 'PMC and Scav extract';
-    add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract',
-      [['', who]].concat(sw ? [['', 'Needs a switch or lever']] : []));
+    const lines = [['', who]];
+    if (toll) lines.push(['Costs', tollLabel(toll, tollN)]);
+    if (sw) lines.push(['Needs', 'a switch or lever thrown first']);
+    for (const g of extractGear(mapName, name)) lines.push(['Needs', g]);
+    const m = out.length;
+    add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract', lines);
+    if (out.length > m) out[out.length - 1].label = name || '';   // drawn above the icon
   }
   for (const [x, y, z, type] of M.hz || []) {
     if (type !== 0 && type !== 1) continue;   // see the note on MARKER_GROUPS.hazards
@@ -1583,6 +1609,14 @@ function drawMapMarkers(md, svg, k) {
     const t = `transform="translate(${p.x} ${p.y}) scale(${gs})"`;
     s += `<use href="#mkdef-${m.glyph}" class="mk halo" ${t}/>`
       + `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}" ${t} data-mk="${i}"/>`;
+    // Extracts carry their name above the icon at all times — which one it is
+    // matters more than that one exists. Escaped because these strings come
+    // from the API, and drawn with a stroke behind the fill so they read over
+    // any artwork. Never clickable: the icon under it must stay hittable.
+    if (m.label) {
+      s += `<text class="mk-name" x="${p.x}" y="${p.y - 11 * k}"`
+        + ` style="font-size:${10.5 * k}px;stroke-width:${2.8 * k}px">${escapeHtml(m.label)}</text>`;
+    }
   });
 
   const doc = new DOMParser().parseFromString(`<svg xmlns="${ns}">${s}</svg>`, 'image/svg+xml');

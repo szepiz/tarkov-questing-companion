@@ -29,7 +29,10 @@
 // dorms" is therefore false as stated; the marked room is where it *can* roll.
 //
 // Row layouts (see MARKER_COLS — read it, don't hard-code indices):
-//   ex  [x, y, z, faction, needsSwitch, name]        faction 0=pmc 1=scav 2=shared
+//   ex  [x, y, z, faction, needsSwitch, name, tollItem, tollCount]
+//                                                   faction 0=pmc 1=scav 2=shared
+//                                                   toll = what the extract charges
+//                                                   ("RUB" 20000, "Code", "Mines"), "" if free
 //   hz  [x, y, z, type]                              type    0=minefield 1=sniper 2=other
 //   lk  [x, y, z, type, keyShort, keyName]           type    0=door 1=trunk 2=container 3=switch
 //   lt  [x, y, z, cat, alts, itemName]               cat     0=keys 1=intel 2=valuables
@@ -53,7 +56,7 @@
 // THIRD-PARTY-NOTICES.txt.
 
 const MARKER_COLS = {
-  ex: ['x', 'y', 'z', 'faction', 'needsSwitch', 'name'],
+  ex: ['x', 'y', 'z', 'faction', 'needsSwitch', 'name', 'toll', 'tollCount'],
   hz: ['x', 'y', 'z', 'type'],
   lk: ['x', 'y', 'z', 'type', 'keyShort', 'keyName'],
   lt: ['x', 'y', 'z', 'cat', 'alts', 'item'],
@@ -65,10 +68,12 @@ const MAP_MARKERS = {
 
   "Ground Zero": {
     ex: [
-      [-19.5, 23.711, 114.9, 0, 0, "Police Cordon V-Ex"], [151.6, 24.6621, -97.5, 2, 0, "Emercom Checkpoint"],
-      [25.2, 24.5092, -79.5, 2, 0, "Scav Checkpoint (Co-op)"],
-      [-16.1, 14.7621, 335.1, 2, 0, "Nakatani Basement Stairs"],
-      [218.2, 17.9921, -38.5, 0, 0, "Mira Ave (Flare)"], [190.8, 17.645, 133.4, 0, 0, "Tartowers Sales Office"]
+      [-19.5, 23.711, 114.9, 0, 0, "Police Cordon V-Ex", "RUB", 20000],
+      [151.6, 24.6621, -97.5, 2, 0, "Emercom Checkpoint", "", 0],
+      [25.2, 24.5092, -79.5, 2, 0, "Scav Checkpoint (Co-op)", "", 0],
+      [-16.1, 14.7621, 335.1, 2, 0, "Nakatani Basement Stairs", "", 0],
+      [218.2, 17.9921, -38.5, 0, 0, "Mira Ave (Flare)", "", 0],
+      [190.8, 17.645, 133.4, 0, 0, "Tartowers Sales Office", "Code", 1]
     ],
     hz: [
       [227.9, 27.14, -42.1, 1], [-88.2, 31.41, 137.5, 1], [-45.8, 31.41, 295.7, 1], [-69.2, 31.41, 289.2, 1],
@@ -309,11 +314,11 @@ const MAP_MARKERS = {
   },
   Factory: {
     ex: [
-      [73.9, -3.2877, -29.1, 0, 0, "Cellars"], [58.7, 1.5923, 60.9, 1, 0, "Gate 3"],
-      [58.4, 3.1723, 63.3, 0, 0, "Gate 3"], [-15.7, -1.6477, 40.1, 1, 0, "Camera Bunker Door"],
-      [17.8, 8.7303, 39.9, 1, 0, "Office Window"], [-63.7, 2.8523, 55.9, 0, 0, "Gate 0"],
-      [-17.5, 1.9923, -61.3, 0, 0, "Med Tent Gate"], [23.8, 1.3623, 68.9, 0, 0, "Courtyard Gate"],
-      [48, -1.613, -28.9, 0, 0, "Smugglers' Passage"]
+      [73.9, -3.2877, -29.1, 0, 0, "Cellars", "", 0], [58.7, 1.5923, 60.9, 1, 0, "Gate 3", "", 0],
+      [58.4, 3.1723, 63.3, 0, 0, "Gate 3", "", 0], [-15.7, -1.6477, 40.1, 1, 0, "Camera Bunker Door", "", 0],
+      [17.8, 8.7303, 39.9, 1, 0, "Office Window", "", 0], [-63.7, 2.8523, 55.9, 0, 0, "Gate 0", "", 0],
+      [-17.5, 1.9923, -61.3, 0, 0, "Med Tent Gate", "", 0], [23.8, 1.3623, 68.9, 0, 0, "Courtyard Gate", "", 0],
+      [48, -1.613, -28.9, 0, 0, "Smugglers' Passage", "Code", 1]
     ],
     hz: [],
     lk: [
@@ -374,22 +379,28 @@ const MAP_MARKERS = {
   },
   Customs: {
     ex: [
-      [201, -1.1484, -153.1, 0, 1, "ZB-013"], [181.1, -0.71, 213.3, 0, 0, "Dorms V-Ex"],
-      [621.5, -2.07, -128.6, 0, 0, "ZB-1011"], [-334.8, 2.19, -88, 2, 0, "Crossroads"],
-      [309.5, -2.182, -174.3, 0, 0, "Old Gas Station"], [-313.7, -1.72, -233.3, 0, 0, "Trailer Park"],
-      [-10.3, 1.92, -138.5, 0, 0, "RUAF Roadblock"], [644.9, 2.4, 126.9, 1, 0, "Military Base CP"],
-      [539.4, 11.82, 200.3, 1, 0, "Passage Between Rocks"],
-      [489.1, 3.95, 221.4, 1, 0, "Railroad to Military Base"], [181.8, 1.5, 214, 1, 0, "Old Road Gate"],
-      [15.1, 0.14, 126.3, 1, 0, "Sniper Roadblock"], [-149.1, -0.63, 46.7, 1, 0, "Railroad to Port"],
-      [-248.5, 2.55, -233, 1, 0, "Trailer Park Workers' Shack"],
-      [-163.5, 3.39, -217.5, 1, 0, "Railroad to Tarkov"], [-9.4, 1.65, -138.7, 1, 0, "RUAF Roadblock"],
-      [50.7, 2.136, -69.8, 1, 0, "Warehouse 17"], [205.6, 3.72, 3.3, 1, 0, "Factory Shacks"],
-      [341.6, 3.55, -25.8, 1, 0, "Warehouse 4"], [300.5, 3.47, -198.5, 1, 0, "Old Gas Station Gate"],
-      [652.5, 3.2, -160.5, 1, 0, "Factory Far Corner"], [671.1, 3.2, -54.7, 1, 0, "Administration Gate"],
-      [139.6, 3.8, -324.7, 0, 0, "Railroad Passage (Flare)"], [652.2, 1.005, -27.1, 1, 0, "Scav Checkpoint"],
-      [100.6, -4.98, -44.4, 2, 0, "Boiler Room Basement (Co-op)"],
-      [-41.5, -12.633, 122.7, 0, 0, "Smugglers' Boat"],
-      [463.2, -1.46, -112.4, 0, 0, "Smugglers' Bunker (ZB-1012)"]
+      [201, -1.1484, -153.1, 0, 1, "ZB-013", "", 0], [181.1, -0.71, 213.3, 0, 0, "Dorms V-Ex", "RUB", 20000],
+      [621.5, -2.07, -128.6, 0, 0, "ZB-1011", "", 0], [-334.8, 2.19, -88, 2, 0, "Crossroads", "", 0],
+      [309.5, -2.182, -174.3, 0, 0, "Old Gas Station", "", 0],
+      [-313.7, -1.72, -233.3, 0, 0, "Trailer Park", "", 0],
+      [-10.3, 1.92, -138.5, 0, 0, "RUAF Roadblock", "", 0],
+      [644.9, 2.4, 126.9, 1, 0, "Military Base CP", "", 0],
+      [539.4, 11.82, 200.3, 1, 0, "Passage Between Rocks", "", 0],
+      [489.1, 3.95, 221.4, 1, 0, "Railroad to Military Base", "", 0],
+      [181.8, 1.5, 214, 1, 0, "Old Road Gate", "", 0], [15.1, 0.14, 126.3, 1, 0, "Sniper Roadblock", "", 0],
+      [-149.1, -0.63, 46.7, 1, 0, "Railroad to Port", "", 0],
+      [-248.5, 2.55, -233, 1, 0, "Trailer Park Workers' Shack", "", 0],
+      [-163.5, 3.39, -217.5, 1, 0, "Railroad to Tarkov", "", 0],
+      [-9.4, 1.65, -138.7, 1, 0, "RUAF Roadblock", "", 0], [50.7, 2.136, -69.8, 1, 0, "Warehouse 17", "", 0],
+      [205.6, 3.72, 3.3, 1, 0, "Factory Shacks", "", 0], [341.6, 3.55, -25.8, 1, 0, "Warehouse 4", "", 0],
+      [300.5, 3.47, -198.5, 1, 0, "Old Gas Station Gate", "", 0],
+      [652.5, 3.2, -160.5, 1, 0, "Factory Far Corner", "", 0],
+      [671.1, 3.2, -54.7, 1, 0, "Administration Gate", "", 0],
+      [139.6, 3.8, -324.7, 0, 0, "Railroad Passage (Flare)", "", 0],
+      [652.2, 1.005, -27.1, 1, 0, "Scav Checkpoint", "", 0],
+      [100.6, -4.98, -44.4, 2, 0, "Boiler Room Basement (Co-op)", "", 0],
+      [-41.5, -12.633, 122.7, 0, 0, "Smugglers' Boat", "Code", 1],
+      [463.2, -1.46, -112.4, 0, 0, "Smugglers' Bunker (ZB-1012)", "Code", 1]
     ],
     hz: [
       [155, 10.48, -257.8, 1], [171.6, 10.9, -284.8, 1], [195.1, 9.2, -287.2, 1], [51.1, -8.6, 187.3, 0],
@@ -648,17 +659,21 @@ const MAP_MARKERS = {
   },
   Woods: {
     ex: [
-      [93.2, 16.57, -844, 2, 0, "Friendship Bridge (Co-Op)"], [-141.7, -2.37, 446.8, 0, 0, "RUAF Gate"],
-      [-389.2, 4.147, 11, 0, 0, "ZB-016"], [447.2, -13.4635, 57.5, 0, 0, "ZB-014"],
-      [-536.1, 1.6813, 286.8, 0, 0, "UN Roadblock"], [-485.3, 15.5813, -504.1, 0, 0, "Bridge V-Ex"],
-      [347.2, -11.15, 360.1, 1, 0, "Outskirts"], [195.6, -16.6887, 259.2, 1, 0, "Dead Man's Place"],
-      [176.6, -20.72, 215.9, 1, 0, "Boat"], [413.7, -12.5587, 242.2, 1, 0, "Scav House"],
-      [220.4, 20.5383, -705.8, 1, 0, "Scav Bunker"], [-210.3, 31.4713, -213.5, 1, 0, "Mountain Stash"],
-      [-509.4, 23.9913, -35.3, 1, 0, "Eastern Rocks"], [-517.9, 10.67, 149.2, 1, 0, "Old Railway Depot"],
-      [-535.2, 1.4313, 287.1, 1, 0, "UN Roadblock"], [-135.8, 0.9713, 416.3, 1, 0, "RUAF Roadblock"],
-      [349, -9.1487, 358.6, 0, 0, "Outskirts"], [-557.3, 9.3213, -67, 0, 0, "Northern UN Roadblock"],
-      [574, -1.7487, -85.3, 0, 0, "Power Line Passage (Flare)"],
-      [-730.4, 8.7, 129.3, 0, 0, "Railway Bridge to Tarkov"]
+      [93.2, 16.57, -844, 2, 0, "Friendship Bridge (Co-Op)", "", 0],
+      [-141.7, -2.37, 446.8, 0, 0, "RUAF Gate", "", 0], [-389.2, 4.147, 11, 0, 0, "ZB-016", "", 0],
+      [447.2, -13.4635, 57.5, 0, 0, "ZB-014", "", 0], [-536.1, 1.6813, 286.8, 0, 0, "UN Roadblock", "", 0],
+      [-485.3, 15.5813, -504.1, 0, 0, "Bridge V-Ex", "RUB", 20000],
+      [347.2, -11.15, 360.1, 1, 0, "Outskirts", "", 0],
+      [195.6, -16.6887, 259.2, 1, 0, "Dead Man's Place", "", 0], [176.6, -20.72, 215.9, 1, 0, "Boat", "", 0],
+      [413.7, -12.5587, 242.2, 1, 0, "Scav House", "", 0], [220.4, 20.5383, -705.8, 1, 0, "Scav Bunker", "", 0],
+      [-210.3, 31.4713, -213.5, 1, 0, "Mountain Stash", "", 0],
+      [-509.4, 23.9913, -35.3, 1, 0, "Eastern Rocks", "", 0],
+      [-517.9, 10.67, 149.2, 1, 0, "Old Railway Depot", "", 0],
+      [-535.2, 1.4313, 287.1, 1, 0, "UN Roadblock", "", 0],
+      [-135.8, 0.9713, 416.3, 1, 0, "RUAF Roadblock", "", 0], [349, -9.1487, 358.6, 0, 0, "Outskirts", "", 0],
+      [-557.3, 9.3213, -67, 0, 0, "Northern UN Roadblock", "", 0],
+      [574, -1.7487, -85.3, 0, 0, "Power Line Passage (Flare)", "", 0],
+      [-730.4, 8.7, 129.3, 0, 0, "Railway Bridge to Tarkov", "Mines", 1]
     ],
     hz: [
       [565.5, -3, -159.4, 1], [-566.5, 5.44, 251.3, 1], [-653, 8.7, 224.1, 1], [-575, 13.3, 123.7, 1],
@@ -913,13 +928,17 @@ const MAP_MARKERS = {
   },
   Shoreline: {
     ex: [
-      [-543.3, -16.842, -379.7, 0, 0, "Road to North V-Ex"], [-859, -42.07, 0.5, 0, 0, "Road to Customs"],
-      [-1029.3, -60.79, 307.6, 0, 0, "Railway Bridge"], [376.4, -55.94, 319.3, 0, 0, "Tunnel"],
-      [448.9, -44.7, -254.6, 0, 0, "Path to Lighthouse"], [-859, -42.07, 0.5, 1, 0, "Road to Customs"],
-      [-458.2, -54.29, 567.3, 1, 0, "Lighthouse"], [366.6, -61.13, 332.5, 1, 0, "Ruined Road"],
-      [-296.9, -6.63, -100.9, 1, 0, "East Wing Gym Entrance"], [-256.9, -7.708, -149.8, 1, 0, "Admin Basement"],
-      [-729.4, -26, -255.1, 2, 0, "Smugglers' Path (Co-op)"], [-332.6, -66.12, 561.3, 0, 0, "Pier Boat"],
-      [-214.3, -1, -361.8, 0, 0, "Climber's Trail"], [-391, -2.55, -385.7, 0, 0, "Mountain Bunker"]
+      [-543.3, -16.842, -379.7, 0, 0, "Road to North V-Ex", "RUB", 20000],
+      [-859, -42.07, 0.5, 0, 0, "Road to Customs", "", 0],
+      [-1029.3, -60.79, 307.6, 0, 0, "Railway Bridge", "", 0], [376.4, -55.94, 319.3, 0, 0, "Tunnel", "", 0],
+      [448.9, -44.7, -254.6, 0, 0, "Path to Lighthouse", "", 0],
+      [-859, -42.07, 0.5, 1, 0, "Road to Customs", "", 0], [-458.2, -54.29, 567.3, 1, 0, "Lighthouse", "", 0],
+      [366.6, -61.13, 332.5, 1, 0, "Ruined Road", "", 0],
+      [-296.9, -6.63, -100.9, 1, 0, "East Wing Gym Entrance", "", 0],
+      [-256.9, -7.708, -149.8, 1, 0, "Admin Basement", "", 0],
+      [-729.4, -26, -255.1, 2, 0, "Smugglers' Path (Co-op)", "", 0],
+      [-332.6, -66.12, 561.3, 0, 0, "Pier Boat", "", 0], [-214.3, -1, -361.8, 0, 0, "Climber's Trail", "", 0],
+      [-391, -2.55, -385.7, 0, 0, "Mountain Bunker", "Code", 1]
     ],
     hz: [
       [110.8, -31.1, -418.9, 1], [190.5, -33.7, -382.5, 1], [236.4, -27.6, -357.2, 1],
@@ -1280,9 +1299,12 @@ const MAP_MARKERS = {
   },
   Interchange: {
     ex: [
-      [-321.6, 24.18, 266.7, 2, 0, "Emercom Checkpoint"], [472.3, 20.92, -429.7, 2, 0, "Railway Exfil"],
-      [-251.9, 21.72, -367.1, 0, 0, "Power Station V-Ex"], [278.7, 21.9495, -31, 2, 0, "Scav Camp (Co-Op)"],
-      [-219.9, 22.79, -37, 0, 0, "Hole in the Fence"], [-47.7, 22.97, 44.1, 0, 1, "Saferoom Exfil"]
+      [-321.6, 24.18, 266.7, 2, 0, "Emercom Checkpoint", "", 0],
+      [472.3, 20.92, -429.7, 2, 0, "Railway Exfil", "", 0],
+      [-251.9, 21.72, -367.1, 0, 0, "Power Station V-Ex", "RUB", 20000],
+      [278.7, 21.9495, -31, 2, 0, "Scav Camp (Co-Op)", "", 0],
+      [-219.9, 22.79, -37, 0, 0, "Hole in the Fence", "", 0],
+      [-47.7, 22.97, 44.1, 0, 1, "Saferoom Exfil", "", 0]
     ],
     hz: [],
     lk: [
@@ -1709,12 +1731,16 @@ const MAP_MARKERS = {
   },
   Reserve: {
     ex: [
-      [145, -3.92, -147.4, 2, 0, "Armored Train"], [-121.5, -17.001, 172.2, 0, 1, "D-2"],
-      [61.9, -5.257, -190.5, 2, 1, "Bunker Hermetic Door"], [-9.2, 20.93, 208.4, 0, 0, "Cliff Descent"],
-      [-127.9, -3.28, -142.6, 2, 0, "Scav Lands (Co-Op)"], [40.2, -5.12, 76.5, 2, 0, "Sewer Manhole"],
-      [-261.4, -6.34, 48.5, 1, 0, "Hole in the Wall by the Mountains"],
-      [-35.3, -5.15, -180.1, 1, 0, "Heating Pipe"], [120.8, -10.27, -120.4, 1, 0, "Depot Hermetic Door"],
-      [62, -4.43, 134.3, 1, 0, "Checkpoint Fence"], [36.5, -5.97, -221.6, 0, 0, "Exit to Woods"]
+      [145, -3.92, -147.4, 2, 0, "Armored Train", "", 0], [-121.5, -17.001, 172.2, 0, 1, "D-2", "", 0],
+      [61.9, -5.257, -190.5, 2, 1, "Bunker Hermetic Door", "", 0],
+      [-9.2, 20.93, 208.4, 0, 0, "Cliff Descent", "", 0],
+      [-127.9, -3.28, -142.6, 2, 0, "Scav Lands (Co-Op)", "", 0],
+      [40.2, -5.12, 76.5, 2, 0, "Sewer Manhole", "", 0],
+      [-261.4, -6.34, 48.5, 1, 0, "Hole in the Wall by the Mountains", "", 0],
+      [-35.3, -5.15, -180.1, 1, 0, "Heating Pipe", "", 0],
+      [120.8, -10.27, -120.4, 1, 0, "Depot Hermetic Door", "", 0],
+      [62, -4.43, 134.3, 1, 0, "Checkpoint Fence", "", 0],
+      [36.5, -5.97, -221.6, 0, 0, "Exit to Woods", "Mines", 1]
     ],
     hz: [
       [267.8, -2, -137.4, 1], [286.1, -2, -62.4, 1], [243.6, -2, -221, 1], [82.8, -22.0797, -298.2, 0]
@@ -2074,16 +2100,21 @@ const MAP_MARKERS = {
   },
   "Streets of Tarkov": {
     ex: [
-      [-249, 2.566, 243.8, 1, 0, "Entrance to Catacombs"], [-124.1, 3.114, 423.9, 1, 0, "Ventilation Shaft"],
-      [276.1, 5.356, 345.4, 1, 0, "Sewer Manhole"], [259.6, -3.929, 48.7, 1, 0, "Near Kamchatskaya Arch"],
-      [104.8, 0.13, -161.2, 1, 0, "Cardinal Apartment Complex Parking"],
-      [-163.8, 1.591, -5.7, 1, 0, "Klimov Shopping Mall Exfil"], [-148.9, 1.786, 500.2, 0, 0, "Courtyard"],
-      [-2.2, 3.2, 461.2, 0, 0, "Primorsky Ave Taxi V-Ex"],
-      [-44.7, 11.04, -72.2, 0, 0, "Stylobate Building Elevator"], [312.7, 6.8, 406, 0, 0, "Crash Site"],
-      [-267, -1.535, 219.5, 0, 0, "Sewer River"], [-249, 7.195, 344.3, 0, 0, "Damaged House"],
-      [216.1, 3.44, 272.7, 0, 0, "Collapsed Crane"], [-263.4, 2.9, 43.2, 0, 0, "Klimov Street (Flare)"],
-      [-114.3, -2.05, 64.9, 2, 0, "Pinewood Basement (Co-Op)"], [213.1, 0.09, -105, 0, 0, "Expo Checkpoint"],
-      [76, -0.603, 50, 0, 0, "Smugglers' Basement"]
+      [-249, 2.566, 243.8, 1, 0, "Entrance to Catacombs", "", 0],
+      [-124.1, 3.114, 423.9, 1, 0, "Ventilation Shaft", "", 0],
+      [276.1, 5.356, 345.4, 1, 0, "Sewer Manhole", "", 0],
+      [259.6, -3.929, 48.7, 1, 0, "Near Kamchatskaya Arch", "", 0],
+      [104.8, 0.13, -161.2, 1, 0, "Cardinal Apartment Complex Parking", "", 0],
+      [-163.8, 1.591, -5.7, 1, 0, "Klimov Shopping Mall Exfil", "", 0],
+      [-148.9, 1.786, 500.2, 0, 0, "Courtyard", "", 0],
+      [-2.2, 3.2, 461.2, 0, 0, "Primorsky Ave Taxi V-Ex", "RUB", 20000],
+      [-44.7, 11.04, -72.2, 0, 0, "Stylobate Building Elevator", "", 0],
+      [312.7, 6.8, 406, 0, 0, "Crash Site", "", 0], [-267, -1.535, 219.5, 0, 0, "Sewer River", "", 0],
+      [-249, 7.195, 344.3, 0, 0, "Damaged House", "", 0], [216.1, 3.44, 272.7, 0, 0, "Collapsed Crane", "", 0],
+      [-263.4, 2.9, 43.2, 0, 0, "Klimov Street (Flare)", "", 0],
+      [-114.3, -2.05, 64.9, 2, 0, "Pinewood Basement (Co-Op)", "", 0],
+      [213.1, 0.09, -105, 0, 0, "Expo Checkpoint", "", 0],
+      [76, -0.603, 50, 0, 0, "Smugglers' Basement", "Code", 1]
     ],
     hz: [
       [-262.3, 10.4, 438.7, 1], [5.1, 17, 497.2, 1], [16.3, 10.4, 472.4, 1], [-253.6, 10.4, 42.7, 1],
@@ -2728,15 +2759,19 @@ const MAP_MARKERS = {
   },
   Lighthouse: {
     ex: [
-      [6.3, 14.1133, -873.8, 2, 0, "Armored Train"], [-329, 16.73, -784.4, 0, 0, "Road to Military Base V-Ex"],
-      [-68.3, 6.83, 318.1, 2, 0, "Side Tunnel (Co-Op)"], [-172.3, 41.89, -6.4, 0, 0, "Mountain Pass"],
-      [-364.4, 28.758, -121.4, 0, 0, "Path to Shoreline"], [-364.4, 28.758, -121.4, 1, 0, "Path to Shoreline"],
-      [113.2, 11.86, -989.2, 0, 0, "Northern Checkpoint"], [-295.8, 11.86, 420.6, 0, 0, "Southern Road"],
-      [-281.3, 11.86, 420.8, 1, 0, "Southern Road Landslide"],
-      [133.1, -0.467, 286.8, 1, 0, "Hideout Under the Landing Stage"],
-      [180.7, 1.18, -485.9, 1, 0, "Scav Hideout at the Grotto"],
-      [-152.6, 12.25, -794.1, 1, 0, "Industrial Zone Gates"],
-      [-360, 27.19, -564.9, 0, 0, "Passage by the Lake"]
+      [6.3, 14.1133, -873.8, 2, 0, "Armored Train", "", 0],
+      [-329, 16.73, -784.4, 0, 0, "Road to Military Base V-Ex", "RUB", 20000],
+      [-68.3, 6.83, 318.1, 2, 0, "Side Tunnel (Co-Op)", "", 0],
+      [-172.3, 41.89, -6.4, 0, 0, "Mountain Pass", "", 0],
+      [-364.4, 28.758, -121.4, 0, 0, "Path to Shoreline", "", 0],
+      [-364.4, 28.758, -121.4, 1, 0, "Path to Shoreline", "", 0],
+      [113.2, 11.86, -989.2, 0, 0, "Northern Checkpoint", "", 0],
+      [-295.8, 11.86, 420.6, 0, 0, "Southern Road", "", 0],
+      [-281.3, 11.86, 420.8, 1, 0, "Southern Road Landslide", "", 0],
+      [133.1, -0.467, 286.8, 1, 0, "Hideout Under the Landing Stage", "", 0],
+      [180.7, 1.18, -485.9, 1, 0, "Scav Hideout at the Grotto", "", 0],
+      [-152.6, 12.25, -794.1, 1, 0, "Industrial Zone Gates", "", 0],
+      [-360, 27.19, -564.9, 0, 0, "Passage by the Lake", "Mines", 1]
     ],
     hz: [
       [-347.6, 26.7, -747.2, 1], [57.5, 18.9, -988.3, 1], [-21.7, 27.4, -998.7, 1], [-338.6, 27.2, -817.7, 1],
@@ -3191,10 +3226,12 @@ const MAP_MARKERS = {
   },
   "The Lab": {
     ex: [
-      [-112.4, -3.11, -344, 2, 1, "Medical Block Elevator"], [-112.2, 5.376, -408.6, 2, 1, "Cargo Elevator"],
-      [-282.3, -3.632, -334.9, 2, 1, "Main Elevator"], [-144.9, -2.37, -396.8, 0, 0, "Ventilation Shaft"],
-      [-122.9, -3.656, -258.3, 0, 1, "Sewage Conduit"], [-231.7, 0.7736, -434.8, 0, 1, "Parking Gate"],
-      [-170.7, 1.54, -245.9, 0, 1, "Hangar Gate"]
+      [-112.4, -3.11, -344, 2, 1, "Medical Block Elevator", "", 0],
+      [-112.2, 5.376, -408.6, 2, 1, "Cargo Elevator", "", 0],
+      [-282.3, -3.632, -334.9, 2, 1, "Main Elevator", "", 0],
+      [-144.9, -2.37, -396.8, 0, 0, "Ventilation Shaft", "", 0],
+      [-122.9, -3.656, -258.3, 0, 1, "Sewage Conduit", "", 0],
+      [-231.7, 0.7736, -434.8, 0, 1, "Parking Gate", "", 0], [-170.7, 1.54, -245.9, 0, 1, "Hangar Gate", "", 0]
     ],
     hz: [],
     lk: [
@@ -3346,6 +3383,6 @@ const MAP_MARKERS = {
 
 // When the API was read. Shown in the map's layer panel so a stale build after a
 // wipe or a patch is visible rather than merely wrong.
-const MARKER_BAKED_AT = 1784553141268;
+const MARKER_BAKED_AT = 1784554863240;
 
 if (typeof module !== 'undefined') module.exports = { MAP_MARKERS, MARKER_COLS, MARKER_BAKED_AT };
