@@ -102,7 +102,7 @@ any of the following, and the same list is in the app under **Settings → Credi
 
 | What | Who | Licence |
 |---|---|---|
-| Quest data, map geometry, floor extents and landmark names | [tarkov.dev](https://tarkov.dev) by [the-hideout](https://github.com/the-hideout/tarkov-dev) | MIT |
+| Quest data, map geometry, floor extents, landmark names, extracts, hazards, keyed doors and loot spawn points | [tarkov.dev](https://tarkov.dev) by [the-hideout](https://github.com/the-hideout/tarkov-dev) | MIT |
 | Map artwork — *Escape from Tarkov SVG Maps Project* | **Shebuka** — [tarkov-dev-svg-maps](https://github.com/the-hideout/tarkov-dev-svg-maps) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
 | Bender typeface | [Jovanny Lemonad](https://www.behance.net/jovanny) | [SIL Open Font License 1.1](bender/Bender/FREE%20FONT%20LICENSE.txt) |
 | Application framework | [Electron](https://www.electronjs.org) | MIT |

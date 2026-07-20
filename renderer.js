@@ -6,7 +6,7 @@ const backend = window.api || (() => {
   const store = {
     settings: JSON.parse(localStorage.getItem('tqt-settings') || 'null') || {
       trackingMode: 'manual', logsPath: 'C:\\Battlestate Games\\EFT\\Logs', filter: 'ALL', gameMode: 'regular',
-      hideCompleted: false, hideLocked: false,
+      hideCompleted: false, hideLocked: false, mapLayers: {}, mapLayersOpen: {},
     },
     progress: JSON.parse(localStorage.getItem('tqt-progress') || 'null') || { regular: emptyBucket(), pve: emptyBucket() },
   };
@@ -988,7 +988,11 @@ backend.onSettingsChanged((s) => {
 
 // `view` is the sub-rectangle of the map currently on screen, in viewBox units;
 // `zoom` is derived from it and kept only for display/assertions
-const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null, view: null, zoom: 1 };
+// `markers` holds the decoded mapmarkers.js rows for this map; `selectedMarker`
+// holds the marker OBJECT, not an index, because the drawn list is decimated and
+// an index into it would point at a different marker after any zoom.
+const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null,
+  markers: [], selectedMarker: null, view: null, zoom: 1 };
 
 const ZOOM_MIN = 1, ZOOM_MAX = 10;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -1250,6 +1254,412 @@ function collectMapPins(mapName) {
   return out;
 }
 
+// ---------- map layers ----------
+// Extracts, hazards, keyed doors and fixed loot spawns, drawn over the map and
+// toggled from the panel in the stage's top-right corner. Data comes from
+// mapmarkers.js — read its banner before touching any of this, especially the
+// part about why there is no "guaranteed spawn" layer.
+
+// "has markers" means has any, not merely has an entry: Terminal is in the file
+// with every list empty, and an all-disabled panel over an empty map is noise.
+const hasMapMarkers = (name) => typeof MAP_MARKERS !== 'undefined' && !!MAP_MARKERS[name]
+  && Object.values(MAP_MARKERS[name]).some((rows) => rows.length);
+
+// One row per checkbox. This is the single source of truth: it drives the panel,
+// the glyph, the legend swatch, the settings key and the filter, so none of
+// those can drift apart. `cat` indexes mapmarkers.js's category codes.
+const LOOT_CATS = [
+  { key: 'Keys', label: 'Keys & keycards', cls: 'mk-keys' },
+  { key: 'Intel', label: 'Intel & documents', cls: 'mk-intel' },
+  { key: 'Valuables', label: 'Valuables', cls: 'mk-val' },
+  { key: 'Medical', label: 'Medical', cls: 'mk-med' },
+  { key: 'Electronics', label: 'Electronics', cls: 'mk-elec' },
+  { key: 'Drink', label: 'Drinks & moonshine', cls: 'mk-drink' },
+];
+
+const MARKER_GROUPS = [
+  {
+    id: 'extracts', title: 'EXTRACTS',
+    note: 'Extracts usable by both are shown whenever either box is ticked.',
+    rows: [
+      { id: 'extractPmc', label: 'PMC', glyph: 'exit', cls: 'mk-pmc' },
+      { id: 'extractScav', label: 'Scav', glyph: 'exit', cls: 'mk-scav' },
+    ],
+  },
+  {
+    id: 'lootSole', title: 'LOOT · SOLE SPAWN POINTS',
+    note: 'Nothing else can spawn at that exact spot. Still not a guarantee that anything does.',
+    rows: LOOT_CATS.map((c) => ({ id: 'sole' + c.key, label: c.label, glyph: 'gem', cls: c.cls })),
+  },
+  {
+    id: 'lootShared', title: 'LOOT · SHARED SPAWN POINTS',
+    note: 'A fixed spot shared with up to 4 other items.',
+    rows: LOOT_CATS.map((c) => ({ id: 'shared' + c.key, label: c.label, glyph: 'gemHollow', cls: c.cls })),
+  },
+  {
+    id: 'marked', title: 'MARKED ROOMS',
+    note: 'High-value pool, but dozens to hundreds of possible items — click one to see how many.',
+    rows: [{ id: 'markedRooms', label: 'Marked rooms', glyph: 'marked', cls: 'mk-marked' }],
+  },
+  {
+    id: 'locks', title: 'LOCKED DOORS & CONTAINERS',
+    rows: [{ id: 'lockAll', label: 'Needs a key', glyph: 'key', cls: 'mk-lock' }],
+  },
+  {
+    id: 'hazards', title: 'HAZARDS',
+    // No "other hazards" row: upstream's third hazard type occurs only on The
+    // Labyrinth, which ships no artwork, so the box would be greyed out on every
+    // single map. build_mapmarkers.js drops those rows to match.
+    rows: [
+      { id: 'hazardMinefield', label: 'Minefields', glyph: 'mine', cls: 'mk-mine' },
+      { id: 'hazardSniper', label: 'Sniper zones', glyph: 'sniper', cls: 'mk-sniper' },
+    ],
+  },
+];
+const MARKER_ROWS = MARKER_GROUPS.flatMap((g) => g.rows);
+
+// Read defensively: settings.mapLayers can be missing on an install that predates
+// the feature, and drawMap() runs on every frame of a zoom.
+const layerOn = (id) => !!((state.settings && state.settings.mapLayers) || {})[id];
+
+// Both of these update local state SYNCHRONOUSLY before persisting. Ticking two
+// boxes in quick succession fires two of these before either save resolves; if
+// each one read state.settings only at call time, both would build on the same
+// stale object and the second write would drop the first box's change. Applying
+// it locally first means the later call already contains the earlier one.
+async function setLayer(id, on) {
+  const next = { ...((state.settings && state.settings.mapLayers) || {}), [id]: on };
+  state.settings = { ...state.settings, mapLayers: next };
+  drawMap();
+  state.settings = await backend.saveSettings({ mapLayers: next });
+}
+
+async function setGroupOpen(id, open) {
+  const next = { ...((state.settings && state.settings.mapLayersOpen) || {}), [id]: open };
+  state.settings = { ...state.settings, mapLayersOpen: next };
+  state.settings = await backend.saveSettings({ mapLayersOpen: next });
+}
+
+// Decode the packed rows into marker objects once per map open. Each marker
+// carries the list of layer ids that would show it — a shared extract belongs to
+// both PMC and Scav, so it appears once whichever of the two is ticked instead
+// of twice when both are.
+function collectMapMarkers(mapName) {
+  const md = MAP_DATA[mapName];
+  if (!md || !hasMapMarkers(mapName)) return [];
+  const M = MAP_MARKERS[mapName];
+  const out = [];
+  const add = (x, y, z, layers, glyph, cls, title, lines) => {
+    if (typeof x !== 'number' || typeof z !== 'number') return;
+    out.push({ x, y: y || 0, z, layers, glyph, cls, title, lines, floor: floorOf(md, x, y || 0, z) });
+  };
+
+  for (const [x, y, z, fac, sw, name] of M.ex || []) {
+    const layers = fac === 0 ? ['extractPmc'] : fac === 1 ? ['extractScav'] : ['extractPmc', 'extractScav'];
+    const who = fac === 0 ? 'PMC extract' : fac === 1 ? 'Scav extract' : 'PMC and Scav extract';
+    add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract',
+      [['', who]].concat(sw ? [['', 'Needs a switch or lever']] : []));
+  }
+  for (const [x, y, z, type] of M.hz || []) {
+    if (type !== 0 && type !== 1) continue;   // see the note on MARKER_GROUPS.hazards
+    const id = type === 0 ? 'hazardMinefield' : 'hazardSniper';
+    add(x, y, z, [id], type === 0 ? 'mine' : 'sniper', type === 0 ? 'mk-mine' : 'mk-sniper',
+      null, null);                            // no card: a mine point has nothing to say
+  }
+  for (const [x, y, z, type, short, full] of M.lk || []) {
+    const what = ['Locked door', 'Locked trunk', 'Locked container', 'Locked switch'][type] || 'Locked';
+    add(x, y, z, ['lockAll'], 'key', 'mk-lock', full || short || what, [['', what], ['Opens with', full || short]]);
+  }
+  for (const [x, y, z, cat, alts, item] of M.lt || []) {
+    const c = LOOT_CATS[cat];
+    if (!c) continue;
+    const sole = alts === 0;
+    add(x, y, z, [(sole ? 'sole' : 'shared') + c.key], sole ? 'gem' : 'gemHollow', c.cls, item || c.label,
+      [['', sole ? 'Nothing else spawns at this spot' : `Shares this spot with ${alts} other item${alts === 1 ? '' : 's'}`],
+        ['', 'A possible spawn — never guaranteed']]);
+  }
+  for (const [x, y, z, pool, keys] of M.mk || []) {
+    add(x, y, z, ['markedRooms'], 'marked', 'mk-marked', 'Marked room',
+      [['', `${pool} different items can spawn here`]].concat(keys ? [['Keys in the pool', keys]] : []));
+  }
+  return out;
+}
+
+// Per-layer totals for the panel labels, counted for the whole map rather than
+// the current floor so a number never changes under the user when they switch tabs.
+function mapLayerCounts() {
+  const n = {};
+  for (const m of mapView.markers || []) for (const id of m.layers) n[id] = (n[id] || 0) + 1;
+  return n;
+}
+
+// A group's total is the number of MARKERS it would show, which is not the sum of
+// its rows: a shared extract is filed under both PMC and Scav, so summing the two
+// rows claims 29 on Customs where only 27 glyphs ever appear.
+function mapGroupCount(grp) {
+  const ids = new Set(grp.rows.map((r) => r.id));
+  let n = 0;
+  for (const m of mapView.markers || []) if (m.layers.some((id) => ids.has(id))) n++;
+  return n;
+}
+
+// Glyph geometry, drawn in a box centred on the origin and sized in screen
+// pixels by the caller's scale(k). Shared by the map and the panel swatches so
+// the legend can never show a different shape from the map.
+const MARKER_GLYPHS = {
+  exit: 'M0 -7.5 L6.5 0 L3 0 L3 7 L-3 7 L-3 0 L-6.5 0 Z',
+  mine: 'M0 -4.6 L4.2 2.8 L-4.2 2.8 Z',
+  sniper: 'M0 -6.5 L0 6.5 M-6.5 0 L6.5 0 M0 -3.6 A3.6 3.6 0 1 1 0 3.6 A3.6 3.6 0 1 1 0 -3.6',
+  hazard: 'M0 -6.4 L6 4.4 L-6 4.4 Z',
+  key: 'M0 -6.2 A3 3 0 1 1 0 -0.2 A3 3 0 1 1 0 -6.2 M-1.4 -0.6 L-1.4 6.4 L1.4 6.4 L1.4 -0.6 M1.4 3 L3.4 3',
+  gem: 'M0 -6 L6 0 L0 6 L-6 0 Z',
+  gemHollow: 'M0 -6 L6 0 L0 6 L-6 0 Z',
+  marked: 'M-6.5 -6.5 L6.5 -6.5 L6.5 6.5 L-6.5 6.5 Z M-6.5 -2 L-6.5 -6.5 L-2 -6.5 M2 6.5 L6.5 6.5 L6.5 2',
+};
+// Which glyphs are outlines rather than solids. Kept here, not in CSS, because
+// the panel swatches build the same markup and must agree.
+const HOLLOW = new Set(['gemHollow', 'sniper', 'hazard', 'marked']);
+
+function markerSvg(glyph, cls, px) {
+  return `<svg class="ml-swatch" viewBox="-8 -8 16 16" width="${px}" height="${px}">`
+    + `<path class="mk ${cls}${HOLLOW.has(glyph) ? ' hollow' : ''}" d="${MARKER_GLYPHS[glyph]}"/></svg>`;
+}
+
+// The part of the current view a detail card may occupy. The layer panel floats
+// over the map's top-right corner and is opaque, so clamping a card to the SVG
+// alone lets it slide underneath — the card flips sides only when it would leave
+// the MAP, and the panel is well inside that. Reserve the panel's whole column
+// rather than just the rows it covers: cards pick x before y, so a height-aware
+// bound would have to be solved, and the strip is only ~218 px.
+function cardArea(md) {
+  const vb = currentView(md);
+  const panel = $('mapLayers');
+  const svg = $('mapRot').querySelector('svg');
+  if (!panel || panel.hidden || !svg) return vb;
+  const pr = panel.getBoundingClientRect();
+  const sr = svg.getBoundingClientRect();
+  if (!sr.width || !pr.width) return vb;
+  const panelLeft = vb.x + ((pr.left - sr.left) / sr.width) * vb.w;
+  const right = Math.min(vb.x + vb.w, panelLeft - (6 / sr.width) * vb.w);
+  // never squeeze the card area to nothing on a very narrow window
+  return { x: vb.x, y: vb.y, w: Math.max(vb.w * 0.3, right - vb.x), h: vb.h };
+}
+
+// Where a marker actually draws. A few real features sit just past the edge of
+// the drawn artwork — Customs' "Railroad Passage (Flare)" is 3.4% below it — and
+// the SVG viewport would clip them away entirely. Nudge those onto the border
+// rather than losing them; build_mapmarkers.js has already thrown out anything
+// far enough out to belong to a different map.
+function markerPoint(md, m, k) {
+  const box = fullView(md);
+  const i = 8 * k;
+  const p = mapPoint(md, m.x, m.z);
+  return {
+    x: clamp(p.x, box.x + i, box.x + box.w - i),
+    y: clamp(p.y, box.y + i, box.y + box.h - i),
+  };
+}
+
+// Thin out markers that would land on top of each other. The grid cell is in
+// SCREEN pixels (hence the k), so zooming in progressively reveals the rest:
+// Lighthouse's 344 mines read as a traced border when zoomed out and as
+// individual points when you go looking at one.
+function decimateMarkers(list, md, gapPx, k) {
+  const cell = gapPx * k;
+  if (!(cell > 0)) return list;
+  const seen = new Set();
+  const out = [];
+  for (const m of list) {
+    const p = mapPoint(md, m.x, m.z);
+    const key = Math.round(p.x / cell) + ',' + Math.round(p.y / cell);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(m);
+  }
+  return out;
+}
+
+function drawMapMarkers(md, svg, k) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const all = (mapView.markers || []).filter((m) => m.floor === mapView.floor && m.layers.some(layerOn));
+  if (!all.length) { mapView.selectedMarker = null; return; }
+
+  // Mines are the dense case and the least individually interesting, so they
+  // thin harder than everything else.
+  const dense = all.filter((m) => m.glyph === 'mine');
+  const rest = all.filter((m) => m.glyph !== 'mine');
+  const shown = decimateMarkers(dense, md, 9, k).concat(decimateMarkers(rest, md, 13, k));
+  // Never thin away the marker whose card is open: zooming out would leave the
+  // card gone but the selection still set, so the next click on it would read as
+  // a second click and do nothing.
+  const sel = mapView.selectedMarker;
+  if (sel && all.includes(sel) && !shown.includes(sel)) shown.push(sel);
+
+  // Build the whole group as one string and parse it once — hundreds of
+  // createElementNS calls per zoom frame is the one thing that would make this
+  // feel slow. DOMParser, not innerHTML: an SVG fragment set through the HTML
+  // parser lands in the wrong namespace and renders as nothing.
+  let s = '<defs>';
+  for (const [name, d] of Object.entries(MARKER_GLYPHS)) {
+    s += `<path id="mkdef-${name}" d="${d}"/>`;
+  }
+  s += '</defs>';
+  shown.forEach((m, i) => {
+    const p = markerPoint(md, m, k);
+    const hollow = HOLLOW.has(m.glyph) ? ' hollow' : '';
+    const hit = m.lines ? '' : ' noclick';
+    const sel = mapView.selectedMarker === m ? ' sel' : '';
+    // Unlike .qpin-dot, the glyph lives inside scale(k), so its own coordinates
+    // ARE screen pixels and the size/stroke can stay in CSS — see style.css.
+    s += `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}"`
+      + ` transform="translate(${p.x} ${p.y}) scale(${k})" data-mk="${i}"/>`;
+  });
+
+  const doc = new DOMParser().parseFromString(`<svg xmlns="${ns}">${s}</svg>`, 'image/svg+xml');
+  const g = document.createElementNS(ns, 'g');
+  g.setAttribute('id', 'mkpins');
+  for (const child of Array.from(doc.documentElement.childNodes)) g.appendChild(document.importNode(child, true));
+
+  // One delegated listener rather than one per marker.
+  g.addEventListener('click', (e) => {
+    const el = e.target.closest && e.target.closest('[data-mk]');
+    if (!el) return;
+    e.stopPropagation();
+    const m = shown[Number(el.dataset.mk)];
+    if (!m || !m.lines) return;
+    mapView.selectedMarker = (mapView.selectedMarker === m) ? null : m;
+    mapView.selected = null;             // only one card open at a time
+    drawMap();
+  });
+  // No mousedown handler on purpose: markers have no right-click action, so a
+  // right-drag starting on one should pan the map like anywhere else. (Quest pins
+  // do swallow it, because right-click ticks their objective off.)
+
+  svg.appendChild(g);
+  // Its layer was switched off, or its floor left the screen — drop the
+  // selection so no card is drawn for something that is no longer shown.
+  if (mapView.selectedMarker && !shown.includes(mapView.selectedMarker)) {
+    mapView.selectedMarker = null;
+  }
+  // The card itself is NOT drawn here. #mkpins sits under #qpins on purpose, so
+  // a card drawn into it would have quest pins painted across its text. drawMap()
+  // renders it into the pin group instead, once that group is in the document.
+}
+
+// The detail card for a selected marker. Same geometry as pinCard — see the
+// comment there about measuring rather than predicting the height.
+function markerCard(md, m, parent, k) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const vb = cardArea(md);                // keeps the card out from under the panel
+  const pin = markerPoint(md, m, k);      // same clamped spot the glyph drew at
+  const cardW = 240;
+  const gap = 14 * k, pad = 4 * k;
+  const wUnits = cardW * k;
+
+  let x = pin.x + gap;
+  if (x + wUnits > vb.x + vb.w - pad) x = pin.x - gap - wUnits;
+  x = Math.max(vb.x + pad, Math.min(x, vb.x + vb.w - wUnits - pad));
+
+  const ln = document.createElementNS(ns, 'line');
+  ln.setAttribute('x1', pin.x); ln.setAttribute('y1', pin.y);
+  ln.setAttribute('x2', x > pin.x ? x : x + wUnits);
+  ln.setAttribute('class', 'qpin-leader mk-leader');
+  ln.setAttribute('stroke-width', 1.5 * k);
+  parent.appendChild(ln);
+
+  const box = document.createElementNS(ns, 'g');
+  box.setAttribute('pointer-events', 'none');
+  const fo = document.createElementNS(ns, 'foreignObject');
+  fo.setAttribute('x', 0); fo.setAttribute('y', 0);
+  fo.setAttribute('width', cardW);
+  fo.setAttribute('height', vb.h / k);
+  const div = document.createElement('div');
+  div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+  div.className = 'qpin-card mk-card';
+  div.innerHTML =
+    `<div class="qpin-card-quest">${escapeHtml(m.title || '')}</div>` +
+    (m.lines || []).map(([label, value]) => (label
+      ? `<div class="qpin-card-need"><span>${escapeHtml(label)}</span> ${escapeHtml(value)}</div>`
+      : `<div class="qpin-card-desc">${escapeHtml(value)}</div>`)).join('');
+  fo.appendChild(div);
+  box.appendChild(fo);
+  box.setAttribute('transform', `translate(${x} ${vb.y}) scale(${k})`);
+  parent.appendChild(box);
+
+  const rect = fo.getBoundingClientRect();
+  const pxPerUnit = rect.width > 0 ? rect.width / cardW : 1;
+  const cardH = Math.min(Math.ceil(div.getBoundingClientRect().height / pxPerUnit) + 1, vb.h / k - 8);
+  const hUnits = cardH * k;
+  const y = Math.max(vb.y + pad, Math.min(pin.y - hUnits / 2, vb.y + vb.h - hUnits - pad));
+  fo.setAttribute('height', cardH);
+  box.setAttribute('transform', `translate(${x} ${y}) scale(${k})`);
+  ln.setAttribute('y2', Math.max(y + 8 * k, Math.min(pin.y, y + hUnits - 8 * k)));
+}
+
+// Every event the panel sits on top of is one the map stage also listens for.
+// Without this, ticking a box clears the selected pin, scrolling over the panel
+// zooms the map underneath it, double-clicking a label resets the view and
+// right-clicking starts a pan.
+// Attaches once per element: renderMapLayers() runs on every map open and only
+// replaces the panel's INNER markup, so the panel element itself survives and
+// would otherwise collect another five listeners each time.
+function stopMapEvents(el) {
+  if (el.dataset.guarded) return;
+  el.dataset.guarded = '1';
+  for (const ev of ['click', 'wheel', 'dblclick', 'mousedown', 'contextmenu']) {
+    el.addEventListener(ev, (e) => e.stopPropagation(), ev === 'wheel' ? { passive: true } : false);
+  }
+}
+
+function renderMapLayers() {
+  const host = $('mapLayers');
+  if (!host) return;
+  // Empty it as well as hiding it: a stale panel left in the DOM still answers
+  // querySelectorAll, so the previous map's checkboxes would linger invisibly.
+  if (!hasMapMarkers(mapView.name)) { host.hidden = true; host.innerHTML = ''; return; }
+  host.hidden = false;
+
+  const counts = mapLayerCounts();
+  const open = (state.settings && state.settings.mapLayersOpen) || {};
+  const groups = MARKER_GROUPS.map((grp) => {
+    const total = mapGroupCount(grp);
+    const rows = grp.rows.map((r) => {
+      const n = counts[r.id] || 0;
+      return `<label class="ml-row${n ? '' : ' off'}">`
+        + `<input type="checkbox" data-layer="${r.id}"${layerOn(r.id) ? ' checked' : ''}${n ? '' : ' disabled'}>`
+        + markerSvg(r.glyph, r.cls, 13)
+        + `<span class="ml-label">${escapeHtml(r.label)}</span>`
+        + `<span class="ml-n">${n || '–'}</span></label>`;
+    }).join('');
+    return `<details class="ml-group"${open[grp.id] ? ' open' : ''} data-group="${grp.id}">`
+      + `<summary class="ml-head">${escapeHtml(grp.title)}<span class="ml-n">${total || '–'}</span></summary>`
+      + (grp.note ? `<div class="ml-note">${escapeHtml(grp.note)}</div>` : '')
+      + rows + '</details>';
+  }).join('');
+
+  const baked = (typeof MARKER_BAKED_AT !== 'undefined' && MARKER_BAKED_AT)
+    ? new Date(MARKER_BAKED_AT).toISOString().slice(0, 10) : '';
+  host.innerHTML = '<button class="ml-toggle" type="button">LAYERS</button>'
+    + `<div class="ml-body">${groups}`
+    + `<div class="ml-foot">Tarkov publishes no spawn chances — every loot marker is a place an item <em>can</em> appear, never a promise.`
+    + (baked ? `<br>Marker data ${baked} · tarkov.dev` : '') + '</div></div>';
+
+  host.classList.toggle('collapsed', !!(state.settings && state.settings.mapLayersCollapsed));
+  host.querySelector('.ml-toggle').addEventListener('click', async () => {
+    const now = !host.classList.contains('collapsed');
+    host.classList.toggle('collapsed', now);
+    state.settings = await backend.saveSettings({ mapLayersCollapsed: now });
+  });
+  host.querySelectorAll('input[data-layer]').forEach((cb) => {
+    cb.addEventListener('change', () => setLayer(cb.dataset.layer, cb.checked));
+  });
+  host.querySelectorAll('details[data-group]').forEach((d) => {
+    d.addEventListener('toggle', () => setGroupOpen(d.dataset.group, d.open));
+  });
+  stopMapEvents(host);
+}
+// ---------- map layers end ----------
+
 function renderFloorTabs() {
   const md = MAP_DATA[mapView.name];
   // ordered bottom-to-top, so ground sits above the basement rather than first
@@ -1259,7 +1669,11 @@ function renderFloorTabs() {
     return `<button class="floor-tab${t.idx === mapView.floor ? ' active' : ''}" data-floor="${t.idx}">${escapeHtml(t.name)}${n ? ` (${n})` : ''}</button>`;
   }).join('');
   $('floorTabs').querySelectorAll('.floor-tab').forEach((b) => {
-    b.addEventListener('click', () => { mapView.floor = Number(b.dataset.floor); mapView.selected = null; drawMap(); });
+    b.addEventListener('click', () => {
+      mapView.floor = Number(b.dataset.floor);
+      mapView.selected = null; mapView.selectedMarker = null;
+      drawMap();
+    });
   });
 }
 
@@ -1291,6 +1705,16 @@ function drawMap() {
   // stays as context instead of competing with it. Walking the base layer's
   // siblings covers layers the data doesn't list (Customs and Shoreline both
   // carry a First_Floor group nothing references).
+  // Clear the previous draw's overlays FIRST. The dim loop below stamps opacity
+  // on every id'd sibling of the base layer, and #qpins/#mkpins are id'd
+  // siblings — leaving them in place until after the loop means they get dimmed
+  // on any map whose base layer sits directly under the <svg>. Harmless only
+  // because they are destroyed a moment later; not something to rely on.
+  const oldPins = svg.querySelector('#qpins');
+  if (oldPins) oldPins.remove();
+  const oldMk = svg.querySelector('#mkpins');
+  if (oldMk) oldMk.remove();
+
   const baseEl = svg.querySelector(`#${CSS.escape(md.baseLayer)}`);
   const selLayer = mapView.floor >= 0 && md.floors[mapView.floor] ? md.floors[mapView.floor].svgLayer : null;
   if (baseEl && baseEl.parentNode) {
@@ -1299,9 +1723,6 @@ function drawMap() {
       el.style.opacity = selLayer ? '.28' : '';
     }
   }
-
-  const old = svg.querySelector('#qpins');
-  if (old) old.remove();
   const ns = 'http://www.w3.org/2000/svg';
   const g = document.createElementNS(ns, 'g');
   g.setAttribute('id', 'qpins');
@@ -1334,6 +1755,7 @@ function drawMap() {
     c.addEventListener('click', (e) => {
       e.stopPropagation();
       mapView.selected = (mapView.selected === i) ? null : i;
+      mapView.selectedMarker = null;     // only one card open at a time
       drawMap();
     });
     // right-click ticks this one objective off by hand. Panning also uses the
@@ -1345,6 +1767,7 @@ function drawMap() {
       e.stopPropagation();
       if (!p.objId) return;
       mapView.selected = null;
+      mapView.selectedMarker = null;
       state.fullProgress = await backend.toggleObjective(p.objId, true, state.gameMode);
       applyMode();
       mapView.pins = collectMapPins(mapView.name);
@@ -1356,10 +1779,16 @@ function drawMap() {
     g.appendChild(c);
   });
 
+  // Layer markers go in first, so quest objectives — the point of the app —
+  // always draw on top of them (Lighthouse alone has 344 mine markers).
+  drawMapMarkers(md, svg, k);
   svg.appendChild(g);
-  // after g is in the document, so the card can measure itself
+  // after g is in the document, so the card can measure itself. Whichever card is
+  // open goes into the PIN group, the topmost one — only one can be open at a
+  // time, and neither should have pins or markers painted over its text.
   const sel = mapView.selected != null ? shown[mapView.selected] : null;
   if (sel) pinCard(md, sel, g, k);
+  else if (mapView.selectedMarker) markerCard(md, mapView.selectedMarker, g, k);
 
   $('mapPinCount').textContent = `${mapView.pins.length} objective${mapView.pins.length === 1 ? '' : 's'} · ${shown.length} on this floor`;
   $('mapHint').innerHTML = (md.approx
@@ -1375,7 +1804,7 @@ function drawMap() {
 // which is what makes the edge-clamping below mean what it says.
 function pinCard(md, p, parent, k) {
   const ns = 'http://www.w3.org/2000/svg';
-  const vb = currentView(md);                     // clamp the card to what is on screen
+  const vb = cardArea(md);                        // what is on screen, minus the layer panel
   const pin = mapPoint(md, p.x, p.z);
 
   const desc = p.desc || '';
@@ -1445,11 +1874,15 @@ async function openQuestMap(mapName) {
   mapView.name = mapName;
   mapView.floor = -1;
   mapView.selected = null;
+  mapView.selectedMarker = null;
   mapView.pins = collectMapPins(mapName);
+  mapView.markers = collectMapMarkers(mapName);
   renderMapLoadout(mapName);
+  renderMapLayers();
   resetMapView();
   $('mapTitle').textContent = mapName.toUpperCase();
-  $('mapCredit').innerHTML = 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0';
+  $('mapCredit').innerHTML = 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0'
+    + (hasMapMarkers(mapName) ? ' · markers tarkov.dev' : '');
   $('mapOverlay').classList.remove('hidden');
 
   const svgText = await backend.getMapSvg(md.svg);
@@ -1484,7 +1917,11 @@ async function openQuestMap(mapName) {
 
 // clicking the map away from a pin also clears the selection (pins stop propagation)
 $('mapStage').addEventListener('click', () => {
-  if (mapView.selected != null) { mapView.selected = null; drawMap(); }
+  if (mapView.selected != null || mapView.selectedMarker) {
+    mapView.selected = null;
+    mapView.selectedMarker = null;
+    drawMap();
+  }
 });
 
 // ---- zoom (wheel) and pan (right-drag) ----

@@ -46,6 +46,13 @@ const DEFAULT_SETTINGS = {
   // app estimates a floor from the hardest quest already finished; Tarkov never
   // writes your own level to the logs.
   playerLevel: {},        // { regular?: number, pve?: number }
+  // Which map overlay layers are ticked, keyed by the layer ids in renderer.js.
+  // Absent means off, so an install that predates the feature opens exactly as
+  // it did before. Unknown ids are kept, not pruned, so downgrading and
+  // upgrading again doesn't silently lose a layer a newer build added.
+  mapLayers: {},          // { extractPmc?: true, hazardMinefield?: true, ... }
+  mapLayersOpen: {},      // which panel groups are expanded { extracts?: true, ... }
+  mapLayersCollapsed: false, // the whole panel folded down to its title chip
 };
 
 // progress is per game mode:
@@ -105,6 +112,13 @@ function initStorage() {
   }
   settings = { ...DEFAULT_SETTINGS, ...(ownSettings || legacySettings || {}) };
   if (!MODES.includes(settings.gameMode)) settings.gameMode = 'regular';
+  // A hand-edited or truncated settings.json can carry anything here, and the
+  // renderer indexes these as objects on every map draw.
+  for (const k of ['mapLayers', 'mapLayersOpen']) {
+    const v = settings[k];
+    if (!v || typeof v !== 'object' || Array.isArray(v)) { settings[k] = {}; continue; }
+    for (const id of Object.keys(v)) if (typeof v[id] !== 'boolean') delete v[id];
+  }
   progress = normalizeProgress(ownProgress || legacyProgress);
   // persist the migrated data into the new location so it is owned here going forward
   if (freshLocation && (legacySettings || legacyProgress)) {
@@ -1064,6 +1078,14 @@ function createWindow() {
             const info = await win.webContents.executeJavaScript(`(async () => {
               await openQuestMap(${JSON.stringify(name)});
               await new Promise(r => setTimeout(r, 700));
+              // The layer panel floats over the map's top-right corner, so any
+              // landmark label underneath it would hit the panel instead of the
+              // artwork and score as a miss. This harness measures whether the
+              // COORDINATES are calibrated, which is a property of the data, not
+              // of the chrome drawn on top — so take the panel out while we look.
+              const panel = document.getElementById('mapLayers');
+              const panelWas = panel ? panel.style.display : null;
+              if (panel) panel.style.display = 'none';
               const svg = document.querySelector('#mapRot svg');
               const box = svg.getBoundingClientRect(), stage = document.getElementById('mapStage').getBoundingClientRect();
               const dots = [...document.querySelectorAll('.qpin-dot')];
@@ -1080,6 +1102,7 @@ function createWindow() {
                 return !!hit && hit !== svg && svg.contains(hit) && hit.tagName.toLowerCase() !== 'text';
               };
               const hits = labels.filter(onArt).length;
+              if (panel) panel.style.display = panelWas;
               return {
                 map: ${JSON.stringify(name)},
                 viewBox: svg.getAttribute('viewBox'),
@@ -1223,6 +1246,161 @@ function createWindow() {
           fs.writeFileSync(path.join(dir, '_zoomed_woods.png'), img2.toPNG());
         } catch (err) {
           console.error('TQT_MAPS failed:', err);
+        }
+        app.quit();
+      }, 7000);
+    });
+  }
+
+  // dev aid: TQT_PROBE_LAYERS=<map name> dumps where the markers actually landed
+  if (process.env.TQT_PROBE_LAYERS) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        try {
+          const mk = require('./_dev/probe_layers.js');
+          for (const n of process.env.TQT_PROBE_LAYERS.split('|')) {
+            console.log('PROBE', JSON.stringify(await win.webContents.executeJavaScript(mk(n))));
+          }
+        } catch (err) { console.error('probe failed:', err); }
+        app.quit();
+      }, 6000);
+    });
+  }
+
+  // dev aid: TQT_LAYERS=<dir> opens every map, ticks every layer checkbox through
+  // the real UI, and reports whether the markers drew where they should.
+  // Deliberately NOT folded into TQT_MAPS: that harness scores calibration by
+  // hit-testing landmark labels with elementFromPoint, and clickable markers
+  // sitting under a label would corrupt the score. Layers default to off, so the
+  // two runs stay independent.
+  if (process.env.TQT_LAYERS) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        const dir = process.env.TQT_LAYERS;
+        try {
+          fs.mkdirSync(dir, { recursive: true });
+          const names = await win.webContents.executeJavaScript('Object.keys(MAP_MARKERS)');
+          for (const name of names) {
+            const info = await win.webContents.executeJavaScript(`(async () => {
+              const r1 = (n) => Math.round(n * 10) / 10;
+              await openQuestMap(${JSON.stringify(name)});
+              await new Promise(r => setTimeout(r, 600));
+              const pinsBefore = document.querySelectorAll('.qpin-dot').length;
+
+              // tick everything through the real UI, exactly as a user would
+              const boxes = [...document.querySelectorAll('#mapLayers input[data-layer]')];
+              for (const c of boxes) if (!c.checked && !c.disabled) c.click();
+              // expand every group so the screenshot shows the panel as used
+              for (const d of document.querySelectorAll('#mapLayers details')) d.open = true;
+              await new Promise(r => setTimeout(r, 700));
+
+              const svg = document.querySelector('#mapRot svg');
+              const box = svg.getBoundingClientRect();
+              const uses = [...document.querySelectorAll('#mkpins use')];
+              const outside = (el) => { const r = el.getBoundingClientRect();
+                return r.right < box.left - 1 || r.left > box.right + 1
+                    || r.bottom < box.top - 1 || r.top > box.bottom + 1; };
+              // Measure NOW, while these nodes are still in the document. Every
+              // drawMap() rebuilds #mkpins from scratch, and a detached node
+              // reports a zero rect — which reads as "outside" for all of them.
+              const drawn = uses.length;
+              const drawnOutside = uses.filter(outside).length;
+              const glyphPx = () => { const u = document.querySelector('#mkpins use');
+                return u ? r1(u.getBoundingClientRect().width) : null; };
+              const at1 = glyphPx();
+
+              // zoom in: a glyph must stay the same size on screen
+              const st = document.getElementById('mapStage').getBoundingClientRect();
+              for (let i = 0; i < 8; i++) {
+                document.getElementById('mapStage').dispatchEvent(new WheelEvent('wheel',
+                  { deltaY: -120, clientX: st.left + st.width / 2, clientY: st.top + st.height / 2,
+                    bubbles: true, cancelable: true }));
+                await new Promise(r => setTimeout(r, 40));
+              }
+              await new Promise(r => setTimeout(r, 500));
+              const zoomed = mapView.zoom;
+              const at4 = glyphPx();
+              const denseZoomed = document.querySelectorAll('#mkpins use').length;
+              resetMapView(); drawMap();
+              await new Promise(r => setTimeout(r, 400));
+
+              // clicking a marker must open a readable card; clicking it again closes it
+              const card = await (async () => {
+                const u = [...document.querySelectorAll('#mkpins use')].find(e => !e.classList.contains('noclick'));
+                if (!u) return 'n/a (no clickable marker)';
+                u.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                await new Promise(r => setTimeout(r, 300));
+                const c = document.querySelector('.mk-card');   // lives in #qpins now, see drawMap
+                if (!c) return 'BAD no card after click';
+                const txt = (c.textContent || '').trim();
+                const r = c.getBoundingClientRect();
+                const fits = r.width > 40 && r.height > 10
+                  && r.left >= box.left - 2 && r.right <= box.right + 2
+                  && r.top >= box.top - 2 && r.bottom <= box.bottom + 2;
+                // a clipped foreignObject shows a partial card, so check it fits
+                if (!fits) return \`BAD card does not fit: \${Math.round(r.width)}x\${Math.round(r.height)}\`;
+                if (txt.length < 8) return \`BAD card text too short: "\${txt}"\`;
+                document.getElementById('mapStage').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                await new Promise(r => setTimeout(r, 250));
+                if (document.querySelector('.mk-card')) return 'BAD card did not close';
+                return 'ok: ' + txt.slice(0, 60);
+              })();
+
+              // Only ONE detail card may ever be open. Clicking a quest pin used
+              // to leave a marker card up, so both rendered with two leader lines.
+              const oneCard = await (async () => {
+                const u = [...document.querySelectorAll('#mkpins use')].find(e => !e.classList.contains('noclick'));
+                const dot = document.querySelector('.qpin-dot');
+                if (!u || !dot) return 'n/a';
+                u.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                await new Promise(r => setTimeout(r, 250));
+                dot.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                await new Promise(r => setTimeout(r, 300));
+                const n = document.querySelectorAll('.qpin-card').length;
+                const leaders = document.querySelectorAll('.qpin-leader').length;
+                document.getElementById('mapStage').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                await new Promise(r => setTimeout(r, 200));
+                return (n === 1 && leaders === 1) ? 'ok' : \`BAD \${n} cards, \${leaders} leaders\`;
+              })();
+
+              // the panel must not be transparent to the map's own listeners
+              const pr = document.getElementById('mapLayers').getBoundingClientRect();
+              const hit = document.elementFromPoint(pr.left + pr.width / 2, pr.top + 12);
+              const kids = [...svg.children].map(e => e.id);
+
+              return {
+                map: ${JSON.stringify(name)},
+                boxes: boxes.length, enabled: boxes.filter(c => !c.disabled).length,
+                markersDrawn: drawn,
+                markersOutside: drawnOutside,
+                totalMarkers: (mapView.markers || []).length,
+                onThisFloor: (mapView.markers || []).filter(m => m.floor === mapView.floor).length,
+                glyphPxAt1: at1, glyphPxAtZoom: at4, zoom: r1(zoomed),
+                constantSize: (at1 == null && at4 == null) ? 'n/a (no markers)'
+                  : (at1 && at4 && Math.abs(at1 - at4) <= 1) ? 'ok'
+                  : \`BAD \${at1} -> \${at4}\`,
+                decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
+                  : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
+                card, oneCard,
+                pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
+                  ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
+                zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0
+                  ? (kids.indexOf('mkpins') < kids.indexOf('qpins') ? 'ok' : 'BAD markers over pins')
+                  : 'n/a',
+                panelInsideStage: !pr.width ? 'n/a (no panel on this map)'
+                  : pr.left >= st.left - 1 && pr.right <= st.right + 1
+                  && pr.top >= st.top - 1 && pr.bottom <= st.bottom + 1 ? 'ok' : 'BAD',
+                panelSwallowsEvents: !pr.width ? 'n/a (no panel on this map)'
+                  : hit && document.getElementById('mapLayers').contains(hit)
+                  ? 'ok' : 'BAD map is reachable through the panel',
+              };
+            })()`);
+            console.log('TQT_LAYERS', JSON.stringify(info));
+            const img = await win.webContents.capturePage();
+            fs.writeFileSync(path.join(dir, name.replace(/\W+/g, '_') + '.png'), img.toPNG());
+          }
+        } catch (err) {
+          console.error('TQT_LAYERS failed:', err);
         }
         app.quit();
       }, 7000);
@@ -1540,7 +1718,8 @@ function createWindow() {
 function refuseIfRealProfile() {
   // every harness that drives the real UI, not just the first two
   if (!process.env.TQT_SHOOT && !process.env.TQC_TEST_APPLY
-      && !process.env.TQT_MAPS && !process.env.TQT_HERO) return;
+      && !process.env.TQT_MAPS && !process.env.TQT_HERO && !process.env.TQT_LAYERS
+      && !process.env.TQT_PROBE_LAYERS) return;
   const real = path.join(app.getPath('appData'), app.getName());
   if (path.resolve(app.getPath('userData')) !== path.resolve(real)) return;
   console.error(

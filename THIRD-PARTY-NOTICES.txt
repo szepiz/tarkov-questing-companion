@@ -5,11 +5,13 @@ Tarkov Questing Companion bundles or derives from the works below. Each is
 credited in the app (Settings -> Credits) and in README.md.
 
 
-1. tarkov.dev  --  quest data, map geometry, floor extents, landmark names
+1. tarkov.dev  --  quest data, map geometry, floor extents, landmark names,
+   extracts, hazards, keyed doors and loot spawn points
    https://github.com/the-hideout/tarkov-dev
 
-   `mapdata.js` is generated from this project's public map data, and
-   `quests_cache.json` is a cached copy of its API responses.
+   `mapdata.js` is generated from this project's public map data,
+   `mapmarkers.js` from its public map feature data, and `quests_cache.json`
+   is a cached copy of its API responses.
 
 MIT License
 

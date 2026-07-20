@@ -134,7 +134,7 @@
         <div class="setting-group" id="creditsGroup">
           <div class="setting-label">CREDITS</div>
           <div class="credit">
-            <span class="credit-what">Quest data, map geometry &amp; landmark names</span>
+            <span class="credit-what">Quest data, map geometry, landmark names, extracts, hazards &amp; loot spawns</span>
             <a href="#" data-url="https://tarkov.dev">tarkov.dev</a> by
             <a href="#" data-url="https://github.com/the-hideout/tarkov-dev">the-hideout</a>
             <span class="credit-lic">MIT</span>
@@ -186,7 +186,7 @@
             </div>
             <div id="mapLoadoutList"></div>
           </aside>
-          <div id="mapStage"><div id="mapRot"></div></div>
+          <div id="mapStage"><div id="mapRot"></div><div id="mapLayers" hidden></div></div>
         </div>
         <div id="mapFooter">
           <span id="mapHint">Pins show objectives for your unfinished quests here. Click a pin for details, click it again to hide them.</span>
@@ -198,6 +198,7 @@
     <div id="toasts"></div>
   </div>
   <script src="mapdata.js"></script>
+  <script src="mapmarkers.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

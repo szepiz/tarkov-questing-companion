@@ -992,6 +992,130 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   letter-spacing: 1.5px;
 }
 
+/* ---- map layer markers ---- */
+/* Unlike .qpin-dot above, a marker glyph is drawn inside a
+   <use transform="translate(..) scale(k)">, so its own coordinates already ARE
+   screen pixels: a 13-unit path is 13 px at every zoom, and stroke-width
+   belongs here rather than being recomputed per draw. Do NOT "fix" this by
+   moving it into drawMapMarkers() — that is the opposite of the pin rule. */
+.mk {
+  stroke: #14140f;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  cursor: pointer;
+  opacity: .92;
+}
+.mk.hollow { fill: none; stroke-width: 1.8; }
+.mk.noclick { pointer-events: none; }          /* a mine point has nothing to say */
+.mk:hover { opacity: 1; }
+.mk.sel { stroke: #ff6a3d; stroke-width: 2.2; opacity: 1; }
+/* hollow glyphs carry their colour on the stroke, solid ones on the fill */
+.mk-pmc    { fill: #5fbf5f; }
+.mk-scav   { fill: #c98a3d; }
+.mk-lock   { fill: #6fa8dc; }
+.mk-keys   { fill: #d0a943; }
+.mk-intel  { fill: #7fb2e5; }
+.mk-val    { fill: #b06fd0; }
+.mk-med    { fill: #d96e8f; }
+.mk-elec   { fill: #6fc3b0; }
+.mk-drink  { fill: #7a9a5a; }
+.mk-mine   { fill: #e0533f; }
+.mk-keys.hollow   { stroke: #d0a943; }
+.mk-intel.hollow  { stroke: #7fb2e5; }
+.mk-val.hollow    { stroke: #b06fd0; }
+.mk-med.hollow    { stroke: #d96e8f; }
+.mk-elec.hollow   { stroke: #6fc3b0; }
+.mk-drink.hollow  { stroke: #7a9a5a; }
+.mk-sniper.hollow { stroke: #e0533f; }
+.mk-hazard.hollow { stroke: #e8c14a; }
+.mk-marked.hollow { stroke: #b06fd0; stroke-width: 2.2; }
+.mk-card { border-left-color: #6fa8dc; }
+.mk-leader { stroke: #6fa8dc; }
+
+/* ---- the layer panel ---- */
+/* `display: flex` below outranks the UA stylesheet's [hidden] { display: none },
+   so setting .hidden in JS would otherwise leave an empty 218 px-wide box sitting
+   over the map's corner, still swallowing clicks. */
+#mapLayers[hidden] { display: none; }
+#mapLayers {
+  position: absolute;
+  top: 8px; right: 8px;
+  z-index: 3;
+  width: 218px;
+  max-height: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 20, 15, .94);
+  border: 1px solid #26261f;
+  border-radius: 2px;
+  font-size: 11px;
+}
+.ml-toggle {
+  flex: none;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #26261f;
+  color: #d0a943;
+  font: 900 11px/1 'Bender', sans-serif;
+  letter-spacing: 1.4px;
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.ml-toggle::before { content: '▾ '; }
+#mapLayers.collapsed .ml-toggle { border-bottom: 0; }
+#mapLayers.collapsed .ml-toggle::before { content: '▸ '; }
+#mapLayers.collapsed .ml-body { display: none; }
+.ml-body { overflow-y: auto; padding-bottom: 2px; }
+.ml-group { border-bottom: 1px solid #1e1e18; }
+.ml-group:last-of-type { border-bottom: 0; }
+.ml-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  color: #8a877e;
+  font-weight: 900;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  list-style: none;
+}
+.ml-head::-webkit-details-marker { display: none; }
+.ml-head::before { content: '▸'; color: #55524a; }
+.ml-group[open] > .ml-head::before { content: '▾'; }
+.ml-head:hover { color: #cfccc3; }
+.ml-head .ml-n { margin-left: auto; }
+.ml-note {
+  padding: 0 10px 6px 22px;
+  color: #55524a;
+  font-size: 10px;
+  line-height: 1.35;
+}
+.ml-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 18px;
+  cursor: pointer;
+  color: #cfccc3;
+}
+.ml-row:hover { background: rgba(255,255,255,.05); }
+.ml-row.off { color: #45433d; cursor: default; }
+.ml-row.off:hover { background: none; }
+.ml-row input { accent-color: #d0a943; margin: 0; cursor: inherit; }
+.ml-swatch { flex: none; overflow: visible; }
+.ml-label { flex: 1; }
+.ml-n { color: #55524a; font-variant-numeric: tabular-nums; }
+.ml-foot {
+  padding: 7px 10px 8px;
+  border-top: 1px solid #1e1e18;
+  color: #55524a;
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+.ml-foot em { color: #8a877e; font-style: normal; }
+
 /* toasts */
 #toasts {
   position: fixed;
