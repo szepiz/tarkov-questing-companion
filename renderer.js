@@ -985,24 +985,103 @@ function objectiveNeeds(o) {
   return out;
 }
 
+// Every point this objective puts on the given map. Shared by the pins and the
+// loadout list so the two can never disagree about what is "on this map".
+function objectiveMapPoints(o, mapName) {
+  const pts = [];
+  for (const z of o.zones || []) {
+    if (z && z.position && normMapName(z.map && z.map.name) === mapName) pts.push(z.position);
+  }
+  for (const l of o.possibleLocations || []) {
+    if (normMapName(l.map && l.map.name) !== mapName) continue;
+    for (const p of l.positions || []) pts.push(p);
+  }
+  return pts;
+}
+
+// The tasks whose objectives should appear for this map: same filter the pins use
+// (current tab, not done, not failed, locked only if not hidden).
+function* mapTasks() {
+  for (const t of state.tasks) {
+    if (!taskPassesFilter(t) || isDone(t.id) || isFailed(t.id)) continue;
+    const locked = isLocked(t);
+    if (locked && state.settings && state.settings.hideLocked) continue;
+    yield [t, locked];
+  }
+}
+
+// Everything you would have to carry in to clear this map in one raid, from the
+// same task set the pins use — so switching to KAPPA narrows both together.
+//
+// Two rules the raw data does not state:
+//  * Keys are not consumed. Seven objectives behind the Dorm overseer door still
+//    need exactly ONE key, so keys are deduplicated and never counted.
+//  * An objective's `items` list is ALTERNATIVES — bring one of them — not a
+//    shopping list. Listing each separately would invent a dozen requirements
+//    out of one "stash any of these rifles" objective.
+const BRING_TYPES = new Set(['plantItem', 'plantQuestItem', 'useItem']);
+
+function collectMapLoadout(mapName) {
+  if (!MAP_DATA[mapName]) return { keys: [], bring: [] };
+  const keys = new Map();     // name -> Set of quest names
+  const bring = new Map();    // label -> { qty, quests:Set }
+  const addBring = (label, qty, quest) => {
+    if (!label) return;
+    const e = bring.get(label) || { qty: 0, quests: new Set() };
+    e.qty += qty; e.quests.add(quest);
+    bring.set(label, e);
+  };
+
+  for (const [t] of mapTasks()) {
+    for (const o of t.objectives || []) {
+      if (!objectiveMapPoints(o, mapName).length) continue;
+      // a key opens the door however many objectives are behind it
+      for (const k of [].concat(...(o.requiredKeys || []))) {
+        if (!k || !k.name) continue;
+        if (!keys.has(k.name)) keys.set(k.name, new Set());
+        keys.get(k.name).add(t.name);
+      }
+      if (o.markerItem && o.markerItem.name) addBring(o.markerItem.name, o.count || 1, t.name);
+      if (BRING_TYPES.has(o.type)) {
+        const alts = [...new Set((o.items || []).concat(o.useAny || []).map((i) => i && i.name).filter(Boolean))];
+        if (alts.length) {
+          addBring(alts.length > 2 ? `${alts[0]} (or ${alts.length - 1} alternatives)` : alts.join(' or '),
+            o.count || 1, t.name);
+        }
+      }
+    }
+  }
+
+  const bySize = (a, b) => b.qty - a.qty || a.name.localeCompare(b.name);
+  return {
+    keys: [...keys].map(([name, quests]) => ({ name, qty: 1, quests: [...quests] }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    bring: [...bring].map(([name, e]) => ({ name, qty: e.qty, quests: [...e.quests] })).sort(bySize),
+  };
+}
+
+function renderMapLoadout(mapName) {
+  const load = collectMapLoadout(mapName);
+  const row = (i) => `<li title="${escapeHtml(i.quests.slice(0, 6).join(' · '))}">`
+    + `<span class="ld-name">${escapeHtml(i.name)}</span>`
+    + (i.qty > 1 ? `<span class="ld-qty">×${i.qty}</span>` : '') + '</li>';
+  const section = (title, items) => (items.length
+    ? `<div class="ld-group"><div class="ld-head">${title}</div><ul>${items.map(row).join('')}</ul></div>` : '');
+
+  const html = section('KEYS', load.keys) + section('TAKE WITH YOU', load.bring);
+  $('mapLoadoutList').innerHTML = html
+    || '<div class="ld-empty">Nothing needs bringing for these objectives.</div>';
+  const n = load.keys.length + load.bring.reduce((a, i) => a + i.qty, 0);
+  $('mapLoadoutCount').textContent = n ? `${n} item${n === 1 ? '' : 's'}` : '';
+}
+
 function collectMapPins(mapName) {
   const md = MAP_DATA[mapName];
   if (!md) return [];
   const out = [];
-  for (const t of state.tasks) {
-    if (!taskPassesFilter(t) || isDone(t.id)) continue;
-    if (isFailed(t.id)) continue;   // can't be handed in — don't clutter the map with it
-    const locked = isLocked(t);
-    if (locked && state.settings && state.settings.hideLocked) continue;
+  for (const [t, locked] of mapTasks()) {
     for (const o of t.objectives || []) {
-      const pts = [];
-      for (const z of o.zones || []) {
-        if (z && z.position && normMapName(z.map && z.map.name) === mapName) pts.push(z.position);
-      }
-      for (const l of o.possibleLocations || []) {
-        if (normMapName(l.map && l.map.name) !== mapName) continue;
-        for (const p of l.positions || []) pts.push(p);
-      }
+      const pts = objectiveMapPoints(o, mapName);
       const needs = objectiveNeeds(o);
       for (const p of pts) {
         if (typeof p.x !== 'number' || typeof p.z !== 'number') continue;
@@ -1192,6 +1271,7 @@ async function openQuestMap(mapName) {
   mapView.floor = -1;
   mapView.selected = null;
   mapView.pins = collectMapPins(mapName);
+  renderMapLoadout(mapName);
   resetMapView();
   $('mapTitle').textContent = mapName.toUpperCase();
   $('mapCredit').innerHTML = 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0';

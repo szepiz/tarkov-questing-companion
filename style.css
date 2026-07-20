@@ -818,6 +818,56 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 #closeMapBtn:hover { filter: brightness(1.25); }
 
+#mapBody {
+  flex: 1;
+  display: flex;
+  min-height: 0;      /* let the stage shrink instead of overflowing the panel */
+}
+#mapLoadout {
+  width: 232px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #26261f;
+  background: #14140f;
+}
+#mapLoadoutHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid #26261f;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: #8a877e;
+}
+#mapLoadoutCount { font-weight: 400; letter-spacing: .3px; color: #55524a; }
+#mapLoadoutList { flex: 1; overflow-y: auto; padding: 6px 0 10px; }
+.ld-group { margin-top: 6px; }
+.ld-head {
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: #d0a943;
+}
+#mapLoadoutList ul { list-style: none; }
+#mapLoadoutList li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #cfccc3;
+}
+#mapLoadoutList li:hover { background: rgba(255,255,255,.05); }
+.ld-name { flex: 1; }
+.ld-qty { flex: none; font-weight: 900; color: #d0a943; }
+.ld-empty { padding: 10px; font-size: 11px; line-height: 1.5; color: #6e6b62; }
+
 #mapStage {
   flex: 1;
   overflow: hidden;

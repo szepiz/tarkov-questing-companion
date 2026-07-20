@@ -1340,9 +1340,39 @@ function createWindow() {
               pinsOnGround: pins.length,
               floorTabs: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
               count: document.getElementById('mapPinCount').textContent,
+              loadout: {
+                total: document.getElementById('mapLoadoutCount').textContent,
+                groups: [...document.querySelectorAll('#mapLoadoutList .ld-head')].map(h => h.textContent),
+                items: [...document.querySelectorAll('#mapLoadoutList li')].map(li => li.textContent.trim()),
+              },
             };
           })()`);
           console.log('TQT_MAP', JSON.stringify(mapChk));
+          // the loadout must follow the tab filter, not just the pins
+          const tabChk = await win.webContents.executeJavaScript(`(async () => {
+            const wait = (ms) => new Promise(r => setTimeout(r, ms));
+            const read = () => ({
+              items: [...document.querySelectorAll('#mapLoadoutList li .ld-name')].map(n => n.textContent),
+              pins: mapView.pins.length,
+            });
+            const all = read();
+            document.getElementById('closeMapBtn').click();
+            document.querySelector('.tab[data-filter="KAPPA"]').click();
+            await wait(400);
+            const row = [...document.querySelectorAll('.map-row')].find(r => r.textContent.includes('CUSTOMS'));
+            row.querySelector('.map-btn').click();
+            await wait(900);
+            const kappa = read();
+            const subset = kappa.items.every(i => all.items.includes(i));
+            return {
+              allItems: all.items.length, allPins: all.pins,
+              kappaItems: kappa.items.length, kappaPins: kappa.pins,
+              narrowed: kappa.items.length < all.items.length && kappa.pins < all.pins,
+              kappaIsSubsetOfAll: subset,
+              dropped: all.items.filter(i => !kappa.items.includes(i)).slice(0, 4),
+            };
+          })()`);
+          console.log('TQT_LOADOUT', JSON.stringify(tabChk));
           await new Promise((r) => setTimeout(r, 500));
           await shoot(process.env.TQT_SHOOT.replace('.png', '_map.png'));
           // switch to 2nd floor and click a pin
