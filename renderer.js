@@ -1336,32 +1336,32 @@ const LOOT_CATS = [
   { id: 'lootKeycards', label: 'Keycards', glyph: 'card', cls: 'mk-keycard' },
   { id: 'lootValuables', label: 'Valuables', glyph: 'gem', cls: 'mk-val' },
   { id: 'lootMedical', label: 'Medical', glyph: 'cross', cls: 'mk-med' },
-  { id: 'lootStims', label: 'Stims & injectors', glyph: 'syringe', cls: 'mk-stim' },
+  { id: 'lootStims', label: 'Stims & injectors', glyph: 'stim', cls: 'mk-stim' },
   { id: 'lootElectronics', label: 'Electronics', glyph: 'chip', cls: 'mk-elec' },
   { id: 'lootIntel', label: 'Intel & documents', glyph: 'folder', cls: 'mk-intel' },
-  { id: 'lootTools', label: 'Tools & materials', glyph: 'wrench', cls: 'mk-tool' },
+  { id: 'lootTools', label: 'Tools & materials', glyph: 'nut', cls: 'mk-tool' },
 ];
 
 // Every static container type, grouped the way a player thinks about them. Keyed
 // by normalizedName so it lines up with CONTAINER_TYPES by name, never position.
 const CONTAINER_UI = {
-  'weapon-box': ['Weapon box', 'pistol', 'mk-weapon'],
-  'wooden-ammo-box': ['Wooden ammo box', 'ammo', 'mk-weapon'],
-  'grenade-box': ['Grenade box', 'ammo', 'mk-weapon'],
+  'weapon-box': ['Weapon box', 'bullet', 'mk-weapon'],
+  'wooden-ammo-box': ['Wooden ammo box', 'rounds', 'mk-weapon'],
+  'grenade-box': ['Grenade box', 'grenade', 'mk-weapon'],
   'medcase': ['Medcase', 'cross', 'mk-med'],
   'medbag-smu06': ['Medbag SMU06', 'cross', 'mk-med'],
   'medical-supply-crate': ['Medical supply crate', 'cross', 'mk-med'],
   'toolbox': ['Toolbox', 'toolbox', 'mk-tool'],
-  'technical-supply-crate': ['Technical supply crate', 'wrench', 'mk-tool'],
-  'ration-supply-crate': ['Ration supply crate', 'food', 'mk-food'],
+  'technical-supply-crate': ['Technical supply crate', 'gear', 'mk-tool'],
+  'ration-supply-crate': ['Ration supply crate', 'cutlery', 'mk-food'],
   'safe': ['Safe', 'safe', 'mk-safe'],
   'bank-safe': ['Bank safe', 'safe', 'mk-safe'],
   'cash-register': ['Cash register', 'rouble', 'mk-till'],
   'bank-cash-register': ['Bank cash register', 'rouble', 'mk-till'],
   'pc-block': ['PC block', 'pcblock', 'mk-pc'],
-  'jacket': ['Jacket', 'jacket', 'mk-jacket'],
-  'plastic-suitcase': ['Plastic suitcase', 'jacket', 'mk-jacket'],
-  'duffle-bag': ['Duffle bag', 'jacket', 'mk-common'],
+  'jacket': ['Jacket', 'shirt', 'mk-jacket'],
+  'plastic-suitcase': ['Plastic suitcase', 'shirt', 'mk-jacket'],
+  'duffle-bag': ['Duffle bag', 'shirt', 'mk-common'],
   'drawer': ['Drawer', 'drawers', 'mk-common'],
   'wooden-crate': ['Wooden crate', 'crate', 'mk-common'],
   'buried-barrel-cache': ['Buried barrel cache', 'cache', 'mk-cache'],
@@ -1612,7 +1612,7 @@ function mapGroupCount(grp) {
 // Glyphs are authored in a ~13 px box and then scaled up here, so the shapes and
 // the CSS stroke widths stay in one readable unit while the drawn size can be
 // tuned in one place.
-const GLYPH_SCALE = 1.3;
+const GLYPH_SCALE = 1.55;
 
 const MARKER_GLYPHS = {
   // map features
@@ -1626,24 +1626,34 @@ const MARKER_GLYPHS = {
   // one shape per loot type, so a marker is recognisable without the panel
   gem: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
   cross: 'M-2.3 -6.4 L2.3 -6.4 L2.3 -2.3 L6.4 -2.3 L6.4 2.3 L2.3 2.3 L2.3 6.4 L-2.3 6.4 L-2.3 2.3 L-6.4 2.3 L-6.4 -2.3 L-2.3 -2.3 Z',
-  syringe: 'M-5.6 5.6 L1.4 -1.4 M-3.5 3.5 L-6.3 6.3 M0.7 -2.1 L3.5 0.7 M2.1 -3.5 L4.9 -0.7 M1.4 -4.9 L4.9 -1.4',
-  chip: 'M-4.6 -4.6 L4.6 -4.6 L4.6 4.6 L-4.6 4.6 Z M-6.6 -2.3 L-4.6 -2.3 M-6.6 2.3 L-4.6 2.3 M6.6 -2.3 L4.6 -2.3 M6.6 2.3 L4.6 2.3 M-2.3 -6.6 L-2.3 -4.6 M2.3 -6.6 L2.3 -4.6 M-2.3 6.6 L-2.3 4.6 M2.3 6.6 L2.3 4.6',
+
+  // pins down two sides only, not all four: with pins all round it read as a
+  // cog at map size, which is the technical-supply-crate glyph
+  chip: 'M-4.2 -5 L4.2 -5 L4.2 5 L-4.2 5 Z M-6.9 -2.6 L-4.2 -2.6 M-6.9 0 L-4.2 0 M-6.9 2.6 L-4.2 2.6 M6.9 -2.6 L4.2 -2.6 M6.9 0 L4.2 0 M6.9 2.6 L4.2 2.6',
   folder: 'M-6.4 -4.4 L-1 -4.4 L0.4 -2.6 L6.4 -2.6 L6.4 4.8 L-6.4 4.8 Z',
-  wrench: 'M4.4 -5.6 A3.4 3.4 0 1 0 1.6 -0.6 L-4.4 5.4 A1.9 1.9 0 0 0 -2.6 7.2 L3.4 1.2 A3.4 3.4 0 0 0 6.4 -3.6 L4 -1.2 L1.8 -3.4 Z',
+  // hex nut — hardware, and crisp at any size where a spanner is a smudge
+  nut: 'M0 -6.8 L5.9 -3.4 L5.9 3.4 L0 6.8 L-5.9 3.4 L-5.9 -3.4 Z M0 -3 A3 3 0 1 1 -0.01 -3',
+  // a plain barrel with two bands: a stim, not a syringe
+  stim: 'M-2.1 -6.6 L2.1 -6.6 L2.1 6.6 L-2.1 6.6 Z M-2.1 -3 L2.1 -3 M-2.1 2.6 L2.1 2.6',
   card: 'M-6.4 -4.2 L6.4 -4.2 L6.4 4.2 L-6.4 4.2 Z M-6.4 -1.4 L6.4 -1.4 M-4 1.4 L-0.6 1.4',
   fuelCan: 'M-4.6 -4 L3 -4 L3 5.4 L-4.6 5.4 Z M3 -1.6 L5.6 -1.6 L5.6 5.4 L3 5.4 M-2.6 -4 L-2.6 -6 L1 -6 L1 -4',
 
   // containers
   crate: 'M-6 -4.5 L6 -4.5 L6 4.5 L-6 4.5 Z M-6 0 L6 0',
-  pistol: 'M-6.2 -3.4 L4.6 -3.4 L4.6 0 L1.2 0 L-0.6 2 L-2.4 2 L-2.4 6 L-4.8 6 L-4.8 2 L-6.2 2 Z',
-  ammo: 'M-5.8 -2 A2.6 2.6 0 0 1 -3.2 -4.6 L3.2 -4.6 L5.8 -2 L5.8 2 L3.2 4.6 L-3.2 4.6 A2.6 2.6 0 0 1 -5.8 2 Z',
+  // one cartridge, three cartridges, a grenade — unmistakable even tiny
+  bullet: 'M0 -7 L3 -2.6 L3 6.8 L-3 6.8 L-3 -2.6 Z M-3 1.6 L3 1.6',
+  rounds: 'M-4.4 -6.6 L-3.2 -4.2 L-3.2 6.4 L-5.6 6.4 L-5.6 -4.2 Z M0 -6.6 L1.2 -4.2 L1.2 6.4 L-1.2 6.4 L-1.2 -4.2 Z M4.4 -6.6 L5.6 -4.2 L5.6 6.4 L3.2 6.4 L3.2 -4.2 Z',
+  grenade: 'M0 6.7 A4.9 4.9 0 1 1 0.01 6.7 M-1.9 -3.2 L-1.9 -5.9 L1.9 -5.9 L1.9 -3.2 M1.9 -5.1 L5.3 -5.1 L5.3 -1.5',
+  // cog for technical supplies — "machinery", where a wrench read as a blob
+  gear: 'M0 -7 L0 -4.6 M4.95 -4.95 L3.25 -3.25 M7 0 L4.6 0 M4.95 4.95 L3.25 3.25 M0 7 L0 4.6 M-4.95 4.95 L-3.25 3.25 M-7 0 L-4.6 0 M-4.95 -4.95 L-3.25 -3.25 M0 -4.6 A4.6 4.6 0 1 1 -0.01 -4.6 M0 -1.9 A1.9 1.9 0 1 1 -0.01 -1.9',
   toolbox: 'M-6 -2.5 L6 -2.5 L6 5 L-6 5 Z M-2.6 -2.5 L-2.6 -5.6 L2.6 -5.6 L2.6 -2.5',
-  food: 'M-1.4 -5.6 A3.4 3.4 0 1 1 2.4 -0.4 L-3.6 5.6 A1.8 1.8 0 0 1 -6.2 3 L-0.2 -3 A3.4 3.4 0 0 1 -1.4 -5.6 Z',
+  // knife and fork — the one food symbol nobody has to decode
+  cutlery: 'M-4.8 -6.8 L-4.8 -2.6 M-3.4 -6.8 L-3.4 -2.6 M-2 -6.8 L-2 -2.6 M-5.4 -2.6 L-1.4 -2.6 M-3.4 -2.6 L-3.4 6.8 M2.2 -6.8 L4.8 -4.6 L4.8 -0.6 L2.2 -0.2 M3.5 -0.2 L3.5 6.8',
   rouble: 'M-2.4 6 L-2.4 -5.6 L1.6 -5.6 A3 3 0 1 1 1.6 0.4 L-4.6 0.4 M-4.6 3 L1.4 3',
   pcblock: 'M-4.6 -6 L4.6 -6 L4.6 6 L-4.6 6 Z M-2.2 -3.6 L2.2 -3.6 M-2.2 -1.2 L2.2 -1.2',
   drawers: 'M-6 -5 L6 -5 L6 5 L-6 5 Z M-6 0 L6 0 M-1.6 -2.6 L1.6 -2.6 M-1.6 2.4 L1.6 2.4',
   safe: 'M-6 -6 L6 -6 L6 6 L-6 6 Z M0 -2.5 A2.5 2.5 0 1 1 0 2.5 A2.5 2.5 0 1 1 0 -2.5',
-  jacket: 'M-4.8 -5.5 L4.8 -5.5 L6.4 5.5 L-6.4 5.5 Z',
+  shirt: 'M-2.5 -5.8 L-6 -3.6 L-4.6 -0.6 L-3.2 -1.5 L-3.2 6.2 L3.2 6.2 L3.2 -1.5 L4.6 -0.6 L6 -3.6 L2.5 -5.8 A2.5 2.5 0 0 1 -2.5 -5.8 Z',
   cache: 'M0 6.4 L-4.6 -0.8 A4.6 4.6 0 1 1 4.6 -0.8 Z',
   body: 'M0 -5.4 A5.4 5.4 0 1 0 0 5.4 A5.4 5.4 0 1 0 0 -5.4 M-3 -3 L3 3 M3 -3 L-3 3',
 };
@@ -1653,8 +1663,8 @@ const MARKER_GLYPHS = {
 // built from open strokes MUST be listed here or it fills into a blob.
 const HOLLOW = new Set([
   'sniper', 'marked', 'text',
-  'syringe', 'chip', 'card', 'fuelCan',
-  'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'jacket', 'cache', 'body', 'rouble',
+  'stim', 'chip', 'card', 'fuelCan', 'nut', 'gear', 'cutlery', 'grenade',
+  'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'shirt', 'cache', 'body', 'rouble',
 ]);
 
 // Every glyph is drawn twice: a dark, wide, unpainted-fill "halo" underneath and

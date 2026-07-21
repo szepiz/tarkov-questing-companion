@@ -1004,7 +1004,7 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    moving it into drawMapMarkers() — that is the opposite of the pin rule. */
 .mk {
   stroke: #14140f;
-  stroke-width: 1.7;
+  stroke-width: 1.15;
   stroke-linejoin: round;
   stroke-linecap: round;
   cursor: pointer;
@@ -1015,14 +1015,14 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
      like the rest of it. */
   pointer-events: all;
 }
-.mk.hollow { fill: none; stroke-width: 1.9; }
+.mk.hollow { fill: none; stroke-width: 1.45; }
 /* Dark halo drawn under every glyph. Solid glyphs got an edge from .mk's stroke;
    outline glyphs replace that stroke with their category colour and so had none
    at all, which is what made them vanish over pale artwork. */
 .mk.halo {
   fill: none;
   stroke: #0a0a08;
-  stroke-width: 4.6;
+  stroke-width: 3.4;
   opacity: .8;
   pointer-events: none;
 }
@@ -1032,12 +1032,12 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk.halo.light { stroke: #f4f1e8; opacity: .85; }
 .mk.noclick { pointer-events: none; }          /* a mine point has nothing to say */
 .mk:hover { opacity: 1; }
-.mk.sel { stroke: #ff6a3d; stroke-width: 2.4; opacity: 1; }
+.mk.sel { stroke: #ff6a3d; stroke-width: 1.9; opacity: 1; }
 /* An extract that belongs to a different floor. Still readable, still clickable,
    obviously not on this one. */
 .mk.offfloor { opacity: .38; }
 .mk.halo.offfloor { opacity: .3; }
-.mk-pmc.offfloor, .mk-scav.offfloor { fill: #8f8c83; }
+.mk-pmc.offfloor, .mk-scav.offfloor { fill: #9a927c; }
 /* hollow glyphs carry their colour on the stroke, solid ones on the fill */
 .mk-pmc    { fill: #5fbf5f; }
 .mk-scav   { fill: #c98a3d; }
@@ -1057,7 +1057,7 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-drink.hollow  { stroke: #7a9a5a; }
 .mk-sniper.hollow { stroke: #e0533f; }
 .mk-hazard.hollow { stroke: #e8c14a; }
-.mk-marked.hollow { stroke: #b06fd0; stroke-width: 2.4; }
+.mk-marked.hollow { stroke: #b06fd0; stroke-width: 1.8; }
 .mk-keycard { fill: #e0b84a; }
 .mk-stim   { fill: #cf7fd0; }
 .mk-stim.hollow   { stroke: #cf7fd0; }
@@ -1065,7 +1065,7 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-food.hollow   { stroke: #c8a05a; }
 .mk-keycard.hollow { stroke: #e0b84a; }
 .mk-ration.hollow { stroke: #b3a25e; }
-.mk-label.hollow  { stroke: #cfccc3; }
+.mk-label.hollow  { stroke: #86b0c6; }
 
 /* Landmark names drawn on the map. Sized per draw (they scale with the map);
    the halo is what keeps them readable over pale artwork — they used to be a
@@ -1083,16 +1083,17 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   letter-spacing: .4px;
 }
 /* static containers — always present, so they read as steady outlines */
-.mk-safe.hollow   { stroke: #e6e2d6; }
+.mk-safe.hollow   { stroke: #6fc2d8; }
 .mk-medbox.hollow { stroke: #e2718f; }
-.mk-weapon.hollow { stroke: #c08f52; }
+.mk-weapon        { fill: #d09a52; }
+.mk-weapon.hollow { stroke: #d09a52; }
 .mk-tool.hollow   { stroke: #e0883a; }
 .mk-pc.hollow     { stroke: #5f92c9; }
 .mk-till.hollow   { stroke: #4fae95; }
 .mk-jacket.hollow { stroke: #9b83c4; }
 .mk-cache.hollow  { stroke: #93a55e; }
 .mk-body.hollow   { stroke: #b56a6a; }
-.mk-common.hollow { stroke: #8d8a80; }
+.mk-common.hollow { stroke: #b09a72; }
 /* extract names, drawn above their icon. font-size and stroke-width are set per
    draw (they scale with the map); everything else lives here. */
 .mk-name {
