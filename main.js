@@ -1327,9 +1327,22 @@ function createWindow() {
                     bubbles: true, cancelable: true }));
                 await new Promise(r => setTimeout(r, 40));
               }
-              await new Promise(r => setTimeout(r, 500));
+              // Wait for the redraw rather than guessing at it. drawMap() is
+              // scheduled on a rAF by applyView, and on a busy machine a fixed
+              // sleep expires first — the glyph is then still carrying the old
+              // scale and measures ~4x too big, which reads as a real failure.
+              const settled = async () => {
+                let last = null;
+                for (let i = 0; i < 40; i++) {
+                  await new Promise(r => setTimeout(r, 50));
+                  const v = glyphPx();
+                  if (v !== null && v === last) return v;
+                  last = v;
+                }
+                return last;
+              };
+              const at4 = await settled();
               const zoomed = mapView.zoom;
-              const at4 = glyphPx();
               const denseZoomed = document.querySelectorAll('#mkpins use[data-mk]').length;
               resetMapView(); drawMap();
               await new Promise(r => setTimeout(r, 400));

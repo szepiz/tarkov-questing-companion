@@ -1345,7 +1345,7 @@ const LOOT_CATS = [
 // Every static container type, grouped the way a player thinks about them. Keyed
 // by normalizedName so it lines up with CONTAINER_TYPES by name, never position.
 const CONTAINER_UI = {
-  'weapon-box': ['Weapon box', 'bullet', 'mk-weapon'],
+  'weapon-box': ['Weapon box', 'pistol', 'mk-weapon'],
   'wooden-ammo-box': ['Wooden ammo box', 'rounds', 'mk-weapon'],
   'grenade-box': ['Grenade box', 'grenade', 'mk-weapon'],
   'medcase': ['Medcase', 'cross', 'mk-med'],
@@ -1360,8 +1360,8 @@ const CONTAINER_UI = {
   'bank-cash-register': ['Bank cash register', 'rouble', 'mk-till'],
   'pc-block': ['PC block', 'pcblock', 'mk-pc'],
   'jacket': ['Jacket', 'shirt', 'mk-jacket'],
-  'plastic-suitcase': ['Plastic suitcase', 'shirt', 'mk-jacket'],
-  'duffle-bag': ['Duffle bag', 'shirt', 'mk-common'],
+  'plastic-suitcase': ['Plastic suitcase', 'bag', 'mk-jacket'],
+  'duffle-bag': ['Duffle bag', 'bag', 'mk-common'],
   'drawer': ['Drawer', 'drawers', 'mk-common'],
   'wooden-crate': ['Wooden crate', 'crate', 'mk-common'],
   'buried-barrel-cache': ['Buried barrel cache', 'cache', 'mk-cache'],
@@ -1641,9 +1641,11 @@ const MARKER_GLYPHS = {
   // containers
   crate: 'M-6 -4.5 L6 -4.5 L6 4.5 L-6 4.5 Z M-6 0 L6 0',
   // one cartridge, three cartridges, a grenade — unmistakable even tiny
-  bullet: 'M0 -7 L3 -2.6 L3 6.8 L-3 6.8 L-3 -2.6 Z M-3 1.6 L3 1.6',
+  pistol: 'M-7 -4.2 L5.8 -4.2 L5.8 -0.6 L-7 -0.6 Z M-6.4 -0.6 L-2.2 -0.6 L-3.6 6.8 L-7 6.8 Z',
   rounds: 'M-4.4 -6.6 L-3.2 -4.2 L-3.2 6.4 L-5.6 6.4 L-5.6 -4.2 Z M0 -6.6 L1.2 -4.2 L1.2 6.4 L-1.2 6.4 L-1.2 -4.2 Z M4.4 -6.6 L5.6 -4.2 L5.6 6.4 L3.2 6.4 L3.2 -4.2 Z',
-  grenade: 'M0 6.7 A4.9 4.9 0 1 1 0.01 6.7 M-1.9 -3.2 L-1.9 -5.9 L1.9 -5.9 L1.9 -3.2 M1.9 -5.1 L5.3 -5.1 L5.3 -1.5',
+  // both arcs sweep the same way (1 1). With opposite sweeps the winding
+  // cancels and the body fills as a ring, which is exactly what it did.
+  grenade: 'M-4.9 1.7 A4.9 4.9 0 1 1 4.9 1.7 A4.9 4.9 0 1 1 -4.9 1.7 Z M-2.1 -6.2 L2.1 -6.2 L2.1 -2.6 L-2.1 -2.6 Z M2.1 -6 L5.6 -6 L5.6 -4.5 L3.5 -4.5 L3.5 -1.4 L2.1 -1.4 Z',
   // cog for technical supplies — "machinery", where a wrench read as a blob
   gear: 'M0 -7 L0 -4.6 M4.95 -4.95 L3.25 -3.25 M7 0 L4.6 0 M4.95 4.95 L3.25 3.25 M0 7 L0 4.6 M-4.95 4.95 L-3.25 3.25 M-7 0 L-4.6 0 M-4.95 -4.95 L-3.25 -3.25 M0 -4.6 A4.6 4.6 0 1 1 -0.01 -4.6 M0 -1.9 A1.9 1.9 0 1 1 -0.01 -1.9',
   toolbox: 'M-6 -2.5 L6 -2.5 L6 5 L-6 5 Z M-2.6 -2.5 L-2.6 -5.6 L2.6 -5.6 L2.6 -2.5',
@@ -1653,6 +1655,7 @@ const MARKER_GLYPHS = {
   pcblock: 'M-4.6 -6 L4.6 -6 L4.6 6 L-4.6 6 Z M-2.2 -3.6 L2.2 -3.6 M-2.2 -1.2 L2.2 -1.2',
   drawers: 'M-6 -5 L6 -5 L6 5 L-6 5 Z M-6 0 L6 0 M-1.6 -2.6 L1.6 -2.6 M-1.6 2.4 L1.6 2.4',
   safe: 'M-6 -6 L6 -6 L6 6 L-6 6 Z M0 -2.5 A2.5 2.5 0 1 1 0 2.5 A2.5 2.5 0 1 1 0 -2.5',
+  bag: 'M-6.6 -1.4 L6.6 -1.4 L6.6 4.6 L-6.6 4.6 Z M-2.8 -1.4 A2.8 2.8 0 0 1 2.8 -1.4 M-3.6 -1.4 L-3.6 4.6 M3.6 -1.4 L3.6 4.6',
   shirt: 'M-2.5 -5.8 L-6 -3.6 L-4.6 -0.6 L-3.2 -1.5 L-3.2 6.2 L3.2 6.2 L3.2 -1.5 L4.6 -0.6 L6 -3.6 L2.5 -5.8 A2.5 2.5 0 0 1 -2.5 -5.8 Z',
   cache: 'M0 6.4 L-4.6 -0.8 A4.6 4.6 0 1 1 4.6 -0.8 Z',
   body: 'M0 -5.4 A5.4 5.4 0 1 0 0 5.4 A5.4 5.4 0 1 0 0 -5.4 M-3 -3 L3 3 M3 -3 L-3 3',
@@ -1663,8 +1666,8 @@ const MARKER_GLYPHS = {
 // built from open strokes MUST be listed here or it fills into a blob.
 const HOLLOW = new Set([
   'sniper', 'marked', 'text',
-  'stim', 'chip', 'card', 'fuelCan', 'nut', 'gear', 'cutlery', 'grenade',
-  'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'shirt', 'cache', 'body', 'rouble',
+  'stim', 'chip', 'card', 'fuelCan', 'nut', 'gear', 'cutlery',
+  'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'shirt', 'bag', 'cache', 'body', 'rouble',
 ]);
 
 // Every glyph is drawn twice: a dark, wide, unpainted-fill "halo" underneath and
