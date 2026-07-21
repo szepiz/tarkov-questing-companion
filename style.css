@@ -1049,6 +1049,26 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-sniper.hollow { stroke: #e0533f; }
 .mk-hazard.hollow { stroke: #e8c14a; }
 .mk-marked.hollow { stroke: #b06fd0; stroke-width: 2.4; }
+.mk-keycard { fill: #e0b84a; }
+.mk-keycard.hollow { stroke: #e0b84a; }
+.mk-ration.hollow { stroke: #b3a25e; }
+.mk-label.hollow  { stroke: #cfccc3; }
+
+/* Landmark names drawn on the map. Sized per draw (they scale with the map);
+   the halo is what keeps them readable over pale artwork — they used to be a
+   thin outline at .45 opacity and disappeared on several maps. */
+.map-label {
+  text-anchor: middle;
+  font-family: 'Bender', sans-serif;
+  font-weight: 700;
+  fill: #efece3;
+  stroke: #0a0a08;
+  paint-order: stroke;
+  stroke-linejoin: round;
+  opacity: .92;
+  pointer-events: none;
+  letter-spacing: .4px;
+}
 /* static containers — always present, so they read as steady outlines */
 .mk-safe.hollow   { stroke: #e6e2d6; }
 .mk-medbox.hollow { stroke: #e2718f; }

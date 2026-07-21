@@ -1096,9 +1096,19 @@ function createWindow() {
               // most of them should sit ON drawn geometry rather than empty
               // background. Labels are pointer-events:none, so hit-testing at
               // their centre reports whatever artwork is underneath.
+              // Sample the label's ANCHOR — its x/y attributes are the landmark's own
+              // coordinate — not the centre of its rendered box. The box centre moves
+              // when the font size changes, which made this gate wobble by a few
+              // percent purely because the labels were made more legible; the thing
+              // being measured is whether the COORDINATE lands on drawn artwork.
               const onArt = (el) => {
-                const r = el.getBoundingClientRect();
-                const hit = document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2);
+                const m = el.getScreenCTM();
+                if (!m) return false;
+                const p = svg.createSVGPoint();
+                p.x = Number(el.getAttribute('x'));
+                p.y = Number(el.getAttribute('y'));
+                const s = p.matrixTransform(m);
+                const hit = document.elementFromPoint(s.x, s.y);
                 return !!hit && hit !== svg && svg.contains(hit) && hit.tagName.toLowerCase() !== 'text';
               };
               const hits = labels.filter(onArt).length;
@@ -1421,6 +1431,24 @@ function createWindow() {
                   : \`BAD view can leave the artwork: \${worst.join('/')}%\`;
               })();
 
+              // the location-names toggle must actually hide them, and default to ON
+              const labelToggle = await (async () => {
+                const host = document.getElementById('mapLayers');
+                if (!host || host.hidden) return 'n/a (no panel on this map)';
+                const cb = host.querySelector('input[data-layer="mapLabels"]');
+                if (!cb) return 'BAD no location-names checkbox';
+                if (!cb.checked) return 'BAD location names default to off';
+                const before = document.querySelectorAll('#qpins text').length;
+                cb.click(); await new Promise(r => setTimeout(r, 350));
+                const off = document.querySelectorAll('#qpins text').length;
+                cb.click(); await new Promise(r => setTimeout(r, 350));
+                const back = document.querySelectorAll('#qpins text').length;
+                if (before === 0) return 'n/a (map has no labels)';
+                return (off === 0 && back === before)
+                  ? \`ok \${before} -> 0 -> \${back}\`
+                  : \`BAD \${before} -> \${off} -> \${back}\`;
+              })();
+
               // landmark names must thin out on an upper floor, not follow you up
               const floorLabels = await (async () => {
                 const tabs = [...document.querySelectorAll('.floor-tab')];
@@ -1472,7 +1500,7 @@ function createWindow() {
                   : \`BAD \${at1} -> \${at4}\`,
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
-                card, oneCard, narrow, floorLabels, resizeKeepsZoom, panStaysOnMap,
+                card, oneCard, narrow, floorLabels, labelToggle, resizeKeepsZoom, panStaysOnMap,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
                 zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0
