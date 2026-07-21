@@ -1062,14 +1062,17 @@ function applyView(redraw) {
   const cx = prev ? prev.x + prev.w / 2 : base.x + base.w / 2;
   const cy = prev ? prev.y + prev.h / 2 : base.y + base.h / 2;
 
-  // Clamp against the ARTWORK, not the padded base. The padding either side of a
-  // map narrower than the pane is empty stage; allowing the view into it let a
-  // zoomed-in map be dragged entirely off screen, leaving a black rectangle with
-  // no pin or marker left to say where it went. Where the view is bigger than the
-  // map there is nothing to pan, so centre it — that is what draws the letterbox.
+  // What is clamped is the view's CENTRE, and it is clamped to the artwork. That
+  // lets you drag any corner of the map into the middle of the screen — the whole
+  // point of panning at high zoom — while still making it impossible to lose the
+  // map altogether, because the centre of the pane is always over it. Clamping the
+  // whole rectangle inside the map (the obvious version) stops the edges ever
+  // reaching the middle; clamping to the padded base instead let the map be
+  // dragged completely off screen. Where the view is bigger than the map in an
+  // axis there is nothing to pan, so centre it — that is what draws the letterbox.
   const axis = (c, size, fp, fs) => (size >= fs
     ? fp + fs / 2 - size / 2
-    : clamp(c - size / 2, fp, fp + fs - size));
+    : clamp(c, fp, fp + fs) - size / 2);
 
   const v = { x: axis(cx, w, full.x, full.w), y: axis(cy, h, full.y, full.h), w, h };
   mapView.view = v;
@@ -1324,42 +1327,43 @@ const hasMapMarkers = (name) => typeof MAP_MARKERS !== 'undefined' && !!MAP_MARK
 // those can drift apart. `cat` indexes mapmarkers.js's category codes.
 // Loose-loot categories, in panel order. The codes are indexes into CAT_NAMES in
 // mapmarkers.js, so this list must stay in that order.
+// Loose-loot categories, in the order of CAT_NAMES in mapmarkers.js — the code in
+// each row is an index into that, so this list must not be reordered
+// independently. One glyph per type: you should be able to tell what a marker is
+// without reading the panel.
 const LOOT_CATS = [
-  { id: 'lootKeys', label: 'Keys', cls: 'mk-keys' },
-  { id: 'lootKeycards', label: 'Keycards', cls: 'mk-keycard' },
-  { id: 'lootIntel', label: 'Intel & documents', cls: 'mk-intel' },
-  { id: 'lootValuables', label: 'Valuables', cls: 'mk-val' },
-  { id: 'lootMedical', label: 'Medical', cls: 'mk-med' },
-  { id: 'lootElectronics', label: 'Electronics', cls: 'mk-elec' },
-  { id: 'lootDrink', label: 'Drinks & moonshine', cls: 'mk-drink' },
+  { id: 'lootKeys', label: 'Keys', glyph: 'key', cls: 'mk-keys' },
+  { id: 'lootKeycards', label: 'Keycards', glyph: 'card', cls: 'mk-keycard' },
+  { id: 'lootValuables', label: 'Valuables', glyph: 'gem', cls: 'mk-val' },
+  { id: 'lootMedical', label: 'Medical', glyph: 'cross', cls: 'mk-med' },
+  { id: 'lootStims', label: 'Stims & injectors', glyph: 'syringe', cls: 'mk-stim' },
+  { id: 'lootElectronics', label: 'Electronics', glyph: 'chip', cls: 'mk-elec' },
+  { id: 'lootIntel', label: 'Intel & documents', glyph: 'folder', cls: 'mk-intel' },
+  { id: 'lootTools', label: 'Tools & materials', glyph: 'wrench', cls: 'mk-tool' },
 ];
 
-// Every static container type upstream publishes, with a readable name, a shape
-// and a colour. Keyed by the normalizedName so it lines up with CONTAINER_TYPES in
-// mapmarkers.js by name rather than by position — a reorder there cannot silently
-// relabel a marker here. Shape groups the family, colour separates it; the tick
-// box is per type, because "is that a medbag or a medical supply crate" is
-// exactly the question the old nine buckets threw away.
+// Every static container type, grouped the way a player thinks about them. Keyed
+// by normalizedName so it lines up with CONTAINER_TYPES by name, never position.
 const CONTAINER_UI = {
+  'weapon-box': ['Weapon box', 'pistol', 'mk-weapon'],
+  'wooden-ammo-box': ['Wooden ammo box', 'ammo', 'mk-weapon'],
+  'grenade-box': ['Grenade box', 'ammo', 'mk-weapon'],
+  'medcase': ['Medcase', 'cross', 'mk-med'],
+  'medbag-smu06': ['Medbag SMU06', 'cross', 'mk-med'],
+  'medical-supply-crate': ['Medical supply crate', 'cross', 'mk-med'],
+  'toolbox': ['Toolbox', 'toolbox', 'mk-tool'],
+  'technical-supply-crate': ['Technical supply crate', 'wrench', 'mk-tool'],
+  'ration-supply-crate': ['Ration supply crate', 'food', 'mk-food'],
   'safe': ['Safe', 'safe', 'mk-safe'],
   'bank-safe': ['Bank safe', 'safe', 'mk-safe'],
-  'weapon-box': ['Weapon box', 'crate', 'mk-weapon'],
-  'wooden-ammo-box': ['Wooden ammo box', 'crate', 'mk-weapon'],
-  'grenade-box': ['Grenade box', 'crate', 'mk-weapon'],
-  'medcase': ['Medcase', 'medbox', 'mk-medbox'],
-  'medbag-smu06': ['Medbag SMU06', 'medbox', 'mk-medbox'],
-  'medical-supply-crate': ['Medical supply crate', 'medbox', 'mk-medbox'],
-  'toolbox': ['Toolbox', 'toolbox', 'mk-tool'],
-  'technical-supply-crate': ['Technical supply crate', 'toolbox', 'mk-tool'],
-  'ration-supply-crate': ['Ration supply crate', 'crate', 'mk-ration'],
+  'cash-register': ['Cash register', 'rouble', 'mk-till'],
+  'bank-cash-register': ['Bank cash register', 'rouble', 'mk-till'],
+  'pc-block': ['PC block', 'pcblock', 'mk-pc'],
   'jacket': ['Jacket', 'jacket', 'mk-jacket'],
   'plastic-suitcase': ['Plastic suitcase', 'jacket', 'mk-jacket'],
   'duffle-bag': ['Duffle bag', 'jacket', 'mk-common'],
   'drawer': ['Drawer', 'drawers', 'mk-common'],
   'wooden-crate': ['Wooden crate', 'crate', 'mk-common'],
-  'cash-register': ['Cash register', 'till', 'mk-till'],
-  'bank-cash-register': ['Bank cash register', 'till', 'mk-till'],
-  'pc-block': ['PC block', 'pcblock', 'mk-pc'],
   'buried-barrel-cache': ['Buried barrel cache', 'cache', 'mk-cache'],
   'ground-cache': ['Ground cache', 'cache', 'mk-cache'],
   'shturmans-stash': ["Shturman's stash", 'cache', 'mk-cache'],
@@ -1369,13 +1373,31 @@ const CONTAINER_UI = {
   'civilian-body': ['Civilian body', 'body', 'mk-body'],
   'lab-technician-body': ['Lab technician body', 'body', 'mk-body'],
 };
+// Sub-headings inside the container group, and which types sit under each.
+const CONTAINER_SUBS = [
+  ['Weapons & ammo', ['weapon-box', 'wooden-ammo-box', 'grenade-box']],
+  ['Medical', ['medcase', 'medbag-smu06', 'medical-supply-crate']],
+  ['Tools & materials', ['toolbox', 'technical-supply-crate']],
+  ['Provisions', ['ration-supply-crate']],
+  ['Valuables', ['safe', 'bank-safe']],
+  ['Money', ['cash-register', 'bank-cash-register']],
+  ['Electronics', ['pc-block']],
+  ['Clothing & bags', ['jacket', 'plastic-suitcase', 'duffle-bag']],
+  ['Crates & drawers', ['drawer', 'wooden-crate']],
+  ['Caches & stashes', ['buried-barrel-cache', 'ground-cache', 'shturmans-stash']],
+  ['Bodies', ['dead-scav', 'scav-body', 'pmc-body', 'civilian-body', 'lab-technician-body']],
+];
 const containerTypes = () => (typeof CONTAINER_TYPES !== 'undefined' ? CONTAINER_TYPES : []);
 const containerLayerId = (normalizedName) => 'cont:' + normalizedName;
+function containerRow(n) {
+  const ui = CONTAINER_UI[n] || [n, 'crate', 'mk-common'];
+  return { id: containerLayerId(n), label: ui[0], glyph: ui[1], cls: ui[2], container: true };
+}
 
 const MARKER_GROUPS = [
   {
     id: 'extracts', title: 'EXTRACTS',
-    note: 'Extracts usable by both are shown whenever either box is ticked.',
+    note: 'Extracts usable by both show whenever either box is ticked. Ones on another floor are greyed out.',
     rows: [
       { id: 'extractPmc', label: 'PMC', glyph: 'exit', cls: 'mk-pmc' },
       { id: 'extractScav', label: 'Scav', glyph: 'exit', cls: 'mk-scav' },
@@ -1383,34 +1405,34 @@ const MARKER_GROUPS = [
   },
   {
     id: 'keys', title: 'KEYS & KEYCARDS',
-    note: 'Fixed spots a key can turn up at. None of them is a guaranteed spawn.',
-    rows: LOOT_CATS.slice(0, 2).map((c) => ({ id: c.id, label: c.label, glyph: 'gem', cls: c.cls })),
+    note: 'Spots a key can turn up at. None of them is a guaranteed spawn.',
+    rows: LOOT_CATS.slice(0, 2),
   },
   {
-    id: 'loot', title: 'LOOT SPAWNS',
-    // One list, not two. Splitting "sole" from "shared" implied the sole ones were
-    // a sure thing; they are not — nothing in this data is. The distinction is
-    // still worth seeing, so it lives in the glyph and on the card instead of
-    // doubling the number of tick boxes.
-    note: 'Fixed spots, never guaranteed. A solid marker means nothing else can spawn there; a hollow one shares the spot.',
-    rows: LOOT_CATS.slice(2).map((c) => ({ id: c.id, label: c.label, glyph: 'gem', cls: c.cls })),
+    id: 'loot', title: 'LOOSE LOOT SPAWNS',
+    // Every marker means the same thing, so every marker reads the same. Whether
+    // one or four other items compete for the exact spot changes nothing a player
+    // can act on, and dressing it up as two tiers implied one of them was reliable.
+    note: 'Spots where that kind of item can turn up. Nothing here is guaranteed.',
+    rows: LOOT_CATS.slice(2),
   },
   {
     id: 'containers', title: 'CONTAINERS',
-    note: 'The container itself is part of the map and is there every raid. What is inside it is not.',
-    rows: containerTypes().map((n) => {
-      const ui = CONTAINER_UI[n] || [n, 'crate', 'mk-common'];
-      return { id: containerLayerId(n), label: ui[0], glyph: ui[1], cls: ui[2] };
-    }),
+    note: 'The container is part of the map and is there every raid. What is inside it is not.',
+    subs: CONTAINER_SUBS
+      .map(function (e) {
+        return { title: e[0], rows: e[1].filter(function (n) { return containerTypes().indexOf(n) >= 0; }).map(containerRow) };
+      })
+      .filter(function (sub) { return sub.rows.length; }),
   },
   {
     id: 'marked', title: 'MARKED ROOMS',
     note: 'High-value pool, but dozens to hundreds of possible items — click one to see how many.',
-    rows: [{ id: 'markedRooms', label: 'Marked rooms', glyph: 'marked', cls: 'mk-marked' }],
+    rows: [{ id: 'markedRooms', label: 'Marked rooms', glyph: 'marked', cls: 'mk-marked', container: true }],
   },
   {
     id: 'locks', title: 'LOCKED DOORS & CONTAINERS',
-    rows: [{ id: 'lockAll', label: 'Needs a key', glyph: 'key', cls: 'mk-lock' }],
+    rows: [{ id: 'lockAll', label: 'Needs a key', glyph: 'key', cls: 'mk-lock', container: true }],
   },
   {
     id: 'hazards', title: 'HAZARDS',
@@ -1427,7 +1449,9 @@ const MARKER_GROUPS = [
     rows: [{ id: 'mapLabels', label: 'Location names', glyph: 'text', cls: 'mk-label', always: true }],
   },
 ];
-const MARKER_ROWS = MARKER_GROUPS.flatMap((g) => g.rows);
+// A group holds rows directly, or sub-headed blocks of them.
+const groupRows = (g) => (g.rows || []).concat((g.subs || []).reduce(function (a, sub) { return a.concat(sub.rows); }, []));
+const MARKER_ROWS = MARKER_GROUPS.reduce(function (a, g) { return a.concat(groupRows(g)); }, []);
 
 // Read defensively: settings.mapLayers can be missing on an install that predates
 // the feature, and drawMap() runs on every frame of a zoom.
@@ -1493,9 +1517,10 @@ function collectMapMarkers(mapName) {
   if (!md || !hasMapMarkers(mapName)) return [];
   const M = MAP_MARKERS[mapName];
   const out = [];
-  const add = (x, y, z, layers, glyph, cls, title, lines) => {
+  const add = (x, y, z, layers, glyph, cls, title, lines, extra) => {
     if (typeof x !== 'number' || typeof z !== 'number') return;
-    out.push({ x, y: y || 0, z, layers, glyph, cls, title, lines, floor: floorOf(md, x, y || 0, z) });
+    out.push(Object.assign({ x, y: y || 0, z, layers, glyph, cls, title, lines,
+      floor: floorOf(md, x, y || 0, z) }, extra || {}));
   };
 
   for (const [x, y, z, fac, sw, name, toll, tollN] of M.ex || []) {
@@ -1509,7 +1534,11 @@ function collectMapMarkers(mapName) {
     if (sw) lines.push(['Needs', 'a switch or lever thrown first']);
     for (const g of extractGear(mapName, name)) lines.push(['Needs', g]);
     const m = out.length;
-    add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract', lines);
+    // anyFloor: an extract you cannot see is worse than one drawn in the wrong
+    // place. They stay on screen whatever floor you are on, greyed when they
+    // belong to another one.
+    add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract', lines,
+      { anyFloor: true });
     if (out.length > m) out[out.length - 1].label = name || '';   // drawn above the icon
   }
   for (const [x, y, z, type] of M.hz || []) {
@@ -1525,12 +1554,12 @@ function collectMapMarkers(mapName) {
   for (const [x, y, z, cat, alts, item] of M.lt || []) {
     const c = LOOT_CATS[cat];
     if (!c) continue;
-    // One layer per category now; solid vs hollow still carries whether anything
-    // else competes for the exact spot, which is the only real distinction here.
-    const sole = alts === 0;
-    add(x, y, z, [c.id], sole ? 'gem' : 'gemHollow', c.cls, item || c.label,
-      [['', sole ? 'Nothing else can spawn at this exact spot' : `Shares this spot with ${alts} other item${alts === 1 ? '' : 's'}`],
-        ['', 'A possible spawn — never guaranteed']]);
+    // Every loose-loot marker means exactly one thing, so every one of them looks
+    // and reads the same. How many other items share the exact spot is not
+    // something a player can act on, and showing it as two tiers made one of them
+    // look reliable.
+    add(x, y, z, [c.id], c.glyph, c.cls, item || c.label,
+      [['', 'This item has a chance to spawn here']], { loose: true });
   }
   // The only layer that is genuinely always there: the container is level
   // geometry, so it is in that spot every raid. Its CONTENTS are still a roll,
@@ -1541,7 +1570,8 @@ function collectMapMarkers(mapName) {
     if (!name) continue;
     const ui = CONTAINER_UI[name] || [name, 'crate', 'mk-common'];
     add(x, y, z, [containerLayerId(name)], ui[1], ui[2], ui[0],
-      [['', 'The container is here every raid'], ['', 'What is inside it is not']]);
+      [['', 'The container is here every raid'], ['', 'What is inside it is not']],
+      { container: true });
   }
   for (const [x, y, z, pool, keys] of M.mk || []) {
     add(x, y, z, ['markedRooms'], 'marked', 'mk-marked', 'Marked room',
@@ -1570,7 +1600,7 @@ function labelCount() {
 }
 
 function mapGroupCount(grp) {
-  const ids = new Set(grp.rows.map((r) => r.id));
+  const ids = new Set(groupRows(grp).map((r) => r.id));
   let n = 0;
   for (const m of mapView.markers || []) if (m.layers.some((id) => ids.has(id))) n++;
   return n;
@@ -1585,47 +1615,61 @@ function mapGroupCount(grp) {
 const GLYPH_SCALE = 1.3;
 
 const MARKER_GLYPHS = {
+  // map features
   exit: 'M0 -7.5 L6.5 0 L3 0 L3 7 L-3 7 L-3 0 L-6.5 0 Z',
   mine: 'M0 -5.2 L4.8 3.2 L-4.8 3.2 Z',
   sniper: 'M0 -6.5 L0 6.5 M-6.5 0 L6.5 0 M0 -3.6 A3.6 3.6 0 1 1 0 3.6 A3.6 3.6 0 1 1 0 -3.6',
-  hazard: 'M0 -6.4 L6 4.4 L-6 4.4 Z',
   key: 'M0 -6.2 A3 3 0 1 1 0 -0.2 A3 3 0 1 1 0 -6.2 M-1.4 -0.6 L-1.4 6.4 L1.4 6.4 L1.4 -0.6 M1.4 3 L3.4 3',
-  gem: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
-  gemHollow: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
   marked: 'M-6.5 -6.5 L6.5 -6.5 L6.5 6.5 L-6.5 6.5 Z M-6.5 -2 L-6.5 -6.5 L-2 -6.5 M2 6.5 L6.5 6.5 L6.5 2',
-  // static containers — five of these are box-shaped, so each gets its own
-  // silhouette rather than relying on colour alone to tell them apart
+  text: 'M-6 -3.6 L6 -3.6 M-6 0 L3 0 M-6 3.6 L4.6 3.6',
+
+  // one shape per loot type, so a marker is recognisable without the panel
+  gem: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
+  cross: 'M-2.3 -6.4 L2.3 -6.4 L2.3 -2.3 L6.4 -2.3 L6.4 2.3 L2.3 2.3 L2.3 6.4 L-2.3 6.4 L-2.3 2.3 L-6.4 2.3 L-6.4 -2.3 L-2.3 -2.3 Z',
+  syringe: 'M-5.6 5.6 L1.4 -1.4 M-3.5 3.5 L-6.3 6.3 M0.7 -2.1 L3.5 0.7 M2.1 -3.5 L4.9 -0.7 M1.4 -4.9 L4.9 -1.4',
+  chip: 'M-4.6 -4.6 L4.6 -4.6 L4.6 4.6 L-4.6 4.6 Z M-6.6 -2.3 L-4.6 -2.3 M-6.6 2.3 L-4.6 2.3 M6.6 -2.3 L4.6 -2.3 M6.6 2.3 L4.6 2.3 M-2.3 -6.6 L-2.3 -4.6 M2.3 -6.6 L2.3 -4.6 M-2.3 6.6 L-2.3 4.6 M2.3 6.6 L2.3 4.6',
+  folder: 'M-6.4 -4.4 L-1 -4.4 L0.4 -2.6 L6.4 -2.6 L6.4 4.8 L-6.4 4.8 Z',
+  wrench: 'M4.4 -5.6 A3.4 3.4 0 1 0 1.6 -0.6 L-4.4 5.4 A1.9 1.9 0 0 0 -2.6 7.2 L3.4 1.2 A3.4 3.4 0 0 0 6.4 -3.6 L4 -1.2 L1.8 -3.4 Z',
+  card: 'M-6.4 -4.2 L6.4 -4.2 L6.4 4.2 L-6.4 4.2 Z M-6.4 -1.4 L6.4 -1.4 M-4 1.4 L-0.6 1.4',
+  fuelCan: 'M-4.6 -4 L3 -4 L3 5.4 L-4.6 5.4 Z M3 -1.6 L5.6 -1.6 L5.6 5.4 L3 5.4 M-2.6 -4 L-2.6 -6 L1 -6 L1 -4',
+
+  // containers
   crate: 'M-6 -4.5 L6 -4.5 L6 4.5 L-6 4.5 Z M-6 0 L6 0',
+  pistol: 'M-6.2 -3.4 L4.6 -3.4 L4.6 0 L1.2 0 L-0.6 2 L-2.4 2 L-2.4 6 L-4.8 6 L-4.8 2 L-6.2 2 Z',
+  ammo: 'M-5.8 -2 A2.6 2.6 0 0 1 -3.2 -4.6 L3.2 -4.6 L5.8 -2 L5.8 2 L3.2 4.6 L-3.2 4.6 A2.6 2.6 0 0 1 -5.8 2 Z',
   toolbox: 'M-6 -2.5 L6 -2.5 L6 5 L-6 5 Z M-2.6 -2.5 L-2.6 -5.6 L2.6 -5.6 L2.6 -2.5',
+  food: 'M-1.4 -5.6 A3.4 3.4 0 1 1 2.4 -0.4 L-3.6 5.6 A1.8 1.8 0 0 1 -6.2 3 L-0.2 -3 A3.4 3.4 0 0 1 -1.4 -5.6 Z',
+  rouble: 'M-2.4 6 L-2.4 -5.6 L1.6 -5.6 A3 3 0 1 1 1.6 0.4 L-4.6 0.4 M-4.6 3 L1.4 3',
   pcblock: 'M-4.6 -6 L4.6 -6 L4.6 6 L-4.6 6 Z M-2.2 -3.6 L2.2 -3.6 M-2.2 -1.2 L2.2 -1.2',
-  till: 'M-6 -1 L6 -1 L6 5 L-6 5 Z M-3.6 -1 L-3.6 -5.2 L3.6 -5.2 L3.6 -1',
   drawers: 'M-6 -5 L6 -5 L6 5 L-6 5 Z M-6 0 L6 0 M-1.6 -2.6 L1.6 -2.6 M-1.6 2.4 L1.6 2.4',
   safe: 'M-6 -6 L6 -6 L6 6 L-6 6 Z M0 -2.5 A2.5 2.5 0 1 1 0 2.5 A2.5 2.5 0 1 1 0 -2.5',
-  medbox: 'M-6 -5 L6 -5 L6 5 L-6 5 Z M0 -2.8 L0 2.8 M-2.8 0 L2.8 0',
   jacket: 'M-4.8 -5.5 L4.8 -5.5 L6.4 5.5 L-6.4 5.5 Z',
   cache: 'M0 6.4 L-4.6 -0.8 A4.6 4.6 0 1 1 4.6 -0.8 Z',
   body: 'M0 -5.4 A5.4 5.4 0 1 0 0 5.4 A5.4 5.4 0 1 0 0 -5.4 M-3 -3 L3 3 M3 -3 L-3 3',
-  // not a marker — the swatch beside the location-names toggle
-  text: 'M-6 -3.6 L6 -3.6 M-6 0 L3 0 M-6 3.6 L4.6 3.6',
 };
 // Which glyphs are outlines rather than solids. Kept here, not in CSS, because
 // the panel swatches build the same markup and must agree.
-const HOLLOW = new Set(['gemHollow', 'sniper', 'hazard', 'marked',
-  'crate', 'toolbox', 'pcblock', 'till', 'drawers', 'safe', 'medbox', 'jacket', 'cache', 'body', 'text']);
+// Which glyphs are drawn as outlines (fill: none) rather than solids. A shape
+// built from open strokes MUST be listed here or it fills into a blob.
+const HOLLOW = new Set([
+  'sniper', 'marked', 'text',
+  'syringe', 'chip', 'card', 'fuelCan',
+  'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'jacket', 'cache', 'body', 'rouble',
+]);
 
 // Every glyph is drawn twice: a dark, wide, unpainted-fill "halo" underneath and
 // the real thing on top. Without it an outline glyph has no dark edge at all —
 // only solids got one from `.mk`'s stroke — and pale artwork swallows them.
-function glyphMarkup(glyph, cls, extra) {
+function glyphMarkup(glyph, cls, extra, light) {
   const d = MARKER_GLYPHS[glyph];
   const hollow = HOLLOW.has(glyph) ? ' hollow' : '';
-  return `<path class="mk halo" d="${d}"/>`
+  return `<path class="mk halo${light ? ' light' : ''}" d="${d}"/>`
     + `<path class="mk ${cls}${hollow}${extra || ''}" d="${d}"/>`;
 }
 
-function markerSvg(glyph, cls, px) {
+function markerSvg(glyph, cls, px, dark) {
   return `<svg class="ml-swatch" viewBox="-9 -9 18 18" width="${px}" height="${px}">`
-    + glyphMarkup(glyph, cls) + '</svg>';
+    + glyphMarkup(glyph, cls, '', !dark) + '</svg>';
 }
 
 // The part of the current view a detail card may occupy. The layer panel floats
@@ -1684,7 +1728,8 @@ function decimateMarkers(list, md, gapPx, k) {
 
 function drawMapMarkers(md, svg, k) {
   const ns = 'http://www.w3.org/2000/svg';
-  const all = (mapView.markers || []).filter((m) => m.floor === mapView.floor && m.layers.some(layerOn));
+  const all = (mapView.markers || [])
+    .filter((m) => (m.anyFloor || m.floor === mapView.floor) && m.layers.some(layerOn));
   if (!all.length) { mapView.selectedMarker = null; return; }
 
   // Mines are the dense case and the least individually interesting, so they
@@ -1713,13 +1758,18 @@ function drawMapMarkers(md, svg, k) {
     const hollow = HOLLOW.has(m.glyph) ? ' hollow' : '';
     const hit = m.lines ? '' : ' noclick';
     const sel = mapView.selectedMarker === m ? ' sel' : '';
+    // Loose loot gets a pale halo, everything static a dark one — that alone tells
+    // "an item might be lying here" apart from "there is a container here".
+    const halo = m.loose ? 'mk halo light' : 'mk halo';
+    // An extract belonging to another floor stays visible but steps back.
+    const off = (m.anyFloor && m.floor !== mapView.floor) ? ' offfloor' : '';
     // Unlike .qpin-dot, the glyph lives inside scale(k), so its own coordinates
     // ARE screen pixels and the size/stroke can stay in CSS — see style.css.
     // Drawn twice: dark halo underneath, then the glyph. The halo is what makes
     // an outline glyph readable over pale artwork, and it takes no clicks.
     const t = `transform="translate(${p.x} ${p.y}) scale(${gs})"`;
-    s += `<use href="#mkdef-${m.glyph}" class="mk halo" ${t}/>`
-      + `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}" ${t} data-mk="${i}"/>`;
+    s += `<use href="#mkdef-${m.glyph}" class="${halo}${off}" ${t}/>`
+      + `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}${off}" ${t} data-mk="${i}"/>`;
     // Extracts carry their name above the icon at all times — which one it is
     // matters more than that one exists. Escaped because these strings come
     // from the API, and drawn with a stroke behind the fill so they read over
@@ -1836,9 +1886,7 @@ function renderMapLayers() {
 
   const counts = mapLayerCounts();
   const open = (state.settings && state.settings.mapLayersOpen) || {};
-  const groups = MARKER_GROUPS.map((grp) => {
-    const total = mapGroupCount(grp);
-    const rows = grp.rows.map((r) => {
+  const rowHtml = (rows) => rows.map((r) => {
       // `always` rows aren't markers, so they have no marker count and must never
       // be disabled — that is the location-names toggle, which counts labels and
       // is on unless explicitly turned off.
@@ -1847,15 +1895,25 @@ function renderMapLayers() {
       const dead = !n && !r.always;
       return `<label class="ml-row${dead ? ' off' : ''}">`
         + `<input type="checkbox" data-layer="${r.id}"${on ? ' checked' : ''}${dead ? ' disabled' : ''}>`
-        + markerSvg(r.glyph, r.cls, 16)
+        + markerSvg(r.glyph, r.cls, 16, r.container)
         + `<span class="ml-label">${escapeHtml(r.label)}</span>`
         + `<span class="ml-n">${n || '–'}</span></label>`;
-    }).join('');
-    const head = grp.rows.some((r) => r.always) ? '' : `<span class="ml-n">${total || '–'}</span>`;
+  }).join('');
+
+  const groups = MARKER_GROUPS.map((grp) => {
+    const total = mapGroupCount(grp);
+    // A sub-headed block is hidden entirely when this map has none of its types,
+    // rather than showing a heading over nothing.
+    const body = rowHtml(grp.rows || [])
+      + (grp.subs || []).map((sub) => {
+        const n = sub.rows.reduce((a, r) => a + (counts[r.id] || 0), 0);
+        return n ? `<div class="ml-sub">${escapeHtml(sub.title)}</div>` + rowHtml(sub.rows) : '';
+      }).join('');
+    const head = groupRows(grp).some((r) => r.always) ? '' : `<span class="ml-n">${total || '–'}</span>`;
     return `<details class="ml-group"${open[grp.id] ? ' open' : ''} data-group="${grp.id}">`
       + `<summary class="ml-head">${escapeHtml(grp.title)}${head}</summary>`
       + (grp.note ? `<div class="ml-note">${escapeHtml(grp.note)}</div>` : '')
-      + rows + '</details>';
+      + body + '</details>';
   }).join('');
 
   const baked = (typeof MARKER_BAKED_AT !== 'undefined' && MARKER_BAKED_AT)

@@ -1420,15 +1420,40 @@ function createWindow() {
                   const rot = ((md.rotate || 0) % 360 + 360) % 360;
                   const fb = (rot === 90 || rot === 270)
                     ? { x: (f.w - f.h) / 2, y: (f.h - f.w) / 2, w: f.h, h: f.w } : f;
-                  const overlapX = Math.min(v.x + v.w, fb.x + fb.w) - Math.max(v.x, fb.x);
-                  const overlapY = Math.min(v.y + v.h, fb.y + fb.h) - Math.max(v.y, fb.y);
-                  worst.push(Math.round(Math.min(overlapX / v.w, overlapY / v.h) * 100));
+                  // The contract is that the CENTRE of the pane stays over the
+                  // artwork: that lets any corner of the map be dragged into the
+                  // middle of the screen, while making it impossible to lose the
+                  // map entirely. Measure exactly that, in map units.
+                  const cx = v.x + v.w / 2, cy = v.y + v.h / 2;
+                  const inX = cx >= fb.x - 0.5 && cx <= fb.x + fb.w + 0.5;
+                  const inY = cy >= fb.y - 0.5 && cy <= fb.y + fb.h + 0.5;
+                  worst.push(inX && inY ? 1 : 0);
                 }
                 resetMapView(); drawMap();
                 await new Promise(r => setTimeout(r, 250));
-                const min = Math.min(...worst);
-                return min > 50 ? \`ok (worst \${min}% of the view still on the map)\`
-                  : \`BAD view can leave the artwork: \${worst.join('/')}%\`;
+                return worst.every(Boolean)
+                  ? 'ok (pane centre stays over the map in all four directions)'
+                  : \`BAD the map can be panned off screen: \${worst.join('/')}\`;
+              })();
+
+              // Extracts must stay on screen whatever floor you are on, and the ones
+              // belonging to another floor must be visibly stepped back.
+              const extractsAcrossFloors = await (async () => {
+                const tabs = [...document.querySelectorAll('.floor-tab')];
+                const ground = tabs.find(t => Number(t.dataset.floor) === -1);
+                const upper = tabs.find(t => Number(t.dataset.floor) >= 0);
+                const count = () => document.querySelectorAll('#mkpins use.mk-pmc[data-mk], #mkpins use.mk-scav[data-mk]').length;
+                const dimmed = () => document.querySelectorAll('#mkpins use[data-mk].offfloor').length;
+                if (!ground || !upper) return count() > 0 ? 'n/a (no floors)' : 'n/a (no extracts)';
+                ground.click(); await new Promise(r => setTimeout(r, 300));
+                const g = count();
+                upper.click(); await new Promise(r => setTimeout(r, 300));
+                const u = count(), d = dimmed();
+                ground.click(); await new Promise(r => setTimeout(r, 300));
+                if (!g) return 'n/a (no extracts drawn)';
+                if (u !== g) return \`BAD extracts vanish on an upper floor: \${g} -> \${u}\`;
+                return d > 0 ? \`ok \${u} shown on the upper floor, \${d} greyed\`
+                  : \`BAD none greyed on the upper floor (\${u} shown)\`;
               })();
 
               // the location-names toggle must actually hide them, and default to ON
@@ -1500,7 +1525,8 @@ function createWindow() {
                   : \`BAD \${at1} -> \${at4}\`,
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
-                card, oneCard, narrow, floorLabels, labelToggle, resizeKeepsZoom, panStaysOnMap,
+                card, oneCard, narrow, floorLabels, labelToggle, extractsAcrossFloors,
+                resizeKeepsZoom, panStaysOnMap,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
                 zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0
