@@ -579,7 +579,6 @@ function scanStoryState(folders) {
   const chapters = getStoryChapterIds();
   if (!chapters.size) return false;
   const next = { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } };
-  const everActive = { regular: new Set(), pve: new Set() };
   for (const folder of folders) { // folders arrive chronological
     const events = folderStoryEvents(folder.dir, chapters);
     if (!events.length) continue; // silent session proves nothing
@@ -599,12 +598,15 @@ function scanStoryState(folders) {
     for (const mode of MODES) {
       const p = per[mode];
       if (!p.any) continue; // this mode saw no story warnings this session
-      for (const id of p.owner) { next[mode].chapters[id] = 'active'; everActive[mode].add(id); }
-      for (const id of p.target) if (!p.owner.has(id)) next[mode].chapters[id] = 'locked';
-      // active before, absent from an informative session now -> completed
-      for (const id of everActive[mode]) {
-        if (!p.owner.has(id) && !p.target.has(id)) next[mode].chapters[id] = 'done';
-      }
+      // A chapter that stops warning is NOT completed — the warning only fires
+      // while some condition references a still-locked quest, and a chapter can
+      // run out of those with objectives left (proven by the user's own Tour:
+      // silent since Jun 22 yet visibly unfinished in game, incl. a scripted
+      // FAILED objective). Once seen active, a chapter stays active until the
+      // player ticks its main objectives off; there is no sound "done" signal
+      // in any log.
+      for (const id of p.owner) next[mode].chapters[id] = 'active';
+      for (const id of p.target) if (next[mode].chapters[id] !== 'active') next[mode].chapters[id] = 'locked';
       // latest informative session wins wholesale — sub-quests unlock over time
       next[mode].subs = {};
       for (const id of p.subs) next[mode].subs[id] = true;
