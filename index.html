@@ -183,11 +183,14 @@
         </div>
         <div id="mapBody">
           <aside id="mapLoadout">
-            <div id="mapLoadoutHead">
-              <span>TAKE INTO THE RAID</span>
-              <span id="mapLoadoutCount"></span>
-            </div>
-            <div id="mapLoadoutList"></div>
+            <details id="mapStorySec" open>
+              <summary><span>STORY OBJECTIVES HERE</span><span id="mapStoryCount"></span></summary>
+              <div id="mapStoryList"></div>
+            </details>
+            <details id="mapRaidSec" open>
+              <summary><span>TAKE INTO THE RAID</span><span id="mapLoadoutCount"></span></summary>
+              <div id="mapLoadoutList"></div>
+            </details>
           </aside>
           <div id="mapStage"><div id="mapRot"></div><div id="mapLayers" hidden></div></div>
         </div>

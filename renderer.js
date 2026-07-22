@@ -1528,11 +1528,13 @@ function renderMapLoadout(mapName) {
   const section = (title, items) => (items.length
     ? `<div class="ld-group"><div class="ld-head">${title}</div><ul>${items.map(row).join('')}</ul></div>` : '');
 
-  // story objectives on this map (no coordinates exist, so a list, not pins);
-  // ticking one here uses the same store as the story tab
+  // story objectives on this map (no coordinates exist, so a list, not pins) —
+  // rendered into their own collapsible section; ticking one here uses the
+  // same store as the story tab
   const story = collectMapStory(mapName);
-  const storyHtml = story.length ? `<div class="ld-group ld-story">
-      <div class="ld-head">STORY OBJECTIVES HERE (${story.length})</div>
+  $('mapStorySec').hidden = !story.length;
+  $('mapStoryCount').textContent = story.length ? String(story.length) : '';
+  $('mapStoryList').innerHTML = story.length ? `<div class="ld-group ld-story">
       <ul>${story.map((o) => `<li data-story-obj="${escapeHtml(o.id)}" title="${escapeHtml(o.chapter)} — click to tick this story objective off">
         <span class="ld-name">${escapeHtml(o.desc)}</span></li>`).join('')}</ul>
     </div>` : '';
@@ -1545,10 +1547,10 @@ function renderMapLoadout(mapName) {
         <span class="ld-name">${escapeHtml(o.desc || o.quest)}</span></li>`).join('')}</ul>
     </div>` : '';
 
-  $('mapLoadoutList').innerHTML = storyHtml + ((html || story.length) ? html
-    : (ticked.length ? '' : '<div class="ld-empty">Nothing needs bringing for these objectives.</div>')) + tickedHtml;
+  $('mapLoadoutList').innerHTML = (html
+    || (ticked.length ? '' : '<div class="ld-empty">Nothing needs bringing for these objectives.</div>')) + tickedHtml;
 
-  for (const li of $('mapLoadoutList').querySelectorAll('li[data-story-obj]')) {
+  for (const li of $('mapStoryList').querySelectorAll('li[data-story-obj]')) {
     li.addEventListener('click', async () => {
       state.fullProgress = await backend.toggleObjective(li.dataset.storyObj, true, state.gameMode);
       applyMode();
@@ -2369,7 +2371,7 @@ function drawMap() {
   const defs = document.createElementNS(ns, 'defs');
   const grad = document.createElementNS(ns, 'radialGradient');
   grad.setAttribute('id', 'qglowGrad');
-  for (const [off, col, op] of [['0%', '#7dff96', '0.55'], ['45%', '#5fe07c', '0.30'], ['100%', '#5fe07c', '0']]) {
+  for (const [off, col, op] of [['0%', '#7dff96', '0.72'], ['45%', '#5fe07c', '0.42'], ['100%', '#5fe07c', '0']]) {
     const st = document.createElementNS(ns, 'stop');
     st.setAttribute('offset', off); st.setAttribute('stop-color', col); st.setAttribute('stop-opacity', op);
     grad.appendChild(st);
@@ -2386,7 +2388,7 @@ function drawMap() {
 
     const glow = document.createElementNS(ns, 'circle');
     glow.setAttribute('cx', s.x); glow.setAttribute('cy', s.y);
-    glow.setAttribute('r', (isHl ? 19 : 14) * k);
+    glow.setAttribute('r', (isHl ? 23 : 17) * k);
     glow.setAttribute('fill', 'url(#qglowGrad)');
     glow.setAttribute('class', 'qpin-glow' + (isHl ? ' hl' : '') + (faded ? ' off' : ''));
     g.appendChild(glow);
