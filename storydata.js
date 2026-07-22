@@ -193,7 +193,22 @@ const STORY_DATA = {
      "description": "Locate the entrance to the port Terminal",
      "sourceQuestId": "68c6a4ece3e3d7f69d0a5bd9",
      "maps": [
-      "Terminal"
+      "Terminal",
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -916.92,
+         "z": 265.62
+        }
+       ]
+      }
      ]
     },
     {
@@ -202,7 +217,22 @@ const STORY_DATA = {
      "description": "Find a way to contact the soldiers at the Terminal",
      "sourceQuestId": "68c6a4ece3e3d7f69d0a5bd9",
      "maps": [
-      "Terminal"
+      "Terminal",
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -917.03,
+         "z": 265.62
+        }
+       ]
+      }
      ]
     },
     {
@@ -210,7 +240,23 @@ const STORY_DATA = {
      "type": "main",
      "description": "Use the intercom to contact the port garrison",
      "sourceQuestId": "68c6a4ece3e3d7f69d0a5bd9",
-     "maps": []
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -917.35,
+         "z": 265.83
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "6903530e3e35f80b678161fc",
@@ -272,6 +318,76 @@ const STORY_DATA = {
      "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
      "maps": [
       "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": 1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -174.64,
+         "z": -275.04
+        },
+        {
+         "x": -174.79,
+         "z": -268.09
+        },
+        {
+         "x": -139.61,
+         "z": -268
+        },
+        {
+         "x": -135.56,
+         "z": -267.08
+        },
+        {
+         "x": -132.78,
+         "z": -265.32
+        },
+        {
+         "x": -130.83,
+         "z": -262.31
+        },
+        {
+         "x": -129.82,
+         "z": -256.06
+        },
+        {
+         "x": -123.97,
+         "z": -255.65
+        },
+        {
+         "x": -124.12,
+         "z": -261.34
+        },
+        {
+         "x": -125.1,
+         "z": -265.53
+        },
+        {
+         "x": -127.12,
+         "z": -269.88
+        },
+        {
+         "x": -129.52,
+         "z": -272.56
+        },
+        {
+         "x": -136.8,
+         "z": -275.24
+        },
+        {
+         "x": -152.47,
+         "z": -275.33
+        },
+        {
+         "x": -174.61,
+         "z": -275.25
+        }
+       ]
+      }
      ]
     },
     {
@@ -281,6 +397,36 @@ const STORY_DATA = {
      "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
      "maps": [
       "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -127.84,
+         "z": -279.24
+        },
+        {
+         "x": -127.71,
+         "z": -332.8
+        },
+        {
+         "x": -101.06,
+         "z": -332.5
+        },
+        {
+         "x": -100.92,
+         "z": -279.08
+        },
+        {
+         "x": -127.84,
+         "z": -279.39
+        }
+       ]
+      }
      ]
     },
     {
@@ -290,6 +436,36 @@ const STORY_DATA = {
      "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
      "maps": [
       "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -169.2,
+         "z": -340.68
+        },
+        {
+         "x": -149.55,
+         "z": -340.76
+        },
+        {
+         "x": -149.55,
+         "z": -359.1
+        },
+        {
+         "x": -169.05,
+         "z": -359.1
+        },
+        {
+         "x": -169.35,
+         "z": -340.76
+        }
+       ]
+      }
      ]
     },
     {
@@ -313,6 +489,20 @@ const STORY_DATA = {
      "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
      "maps": [
       "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 212.02,
+         "z": 83.49
+        }
+       ]
+      }
      ]
     },
     {
@@ -322,6 +512,20 @@ const STORY_DATA = {
      "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
      "maps": [
       "Factory"
+     ],
+     "points": [
+      {
+       "map": "Factory",
+       "floor": 2,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -26.62,
+         "z": -41.95
+        }
+       ]
+      }
      ]
     },
     {

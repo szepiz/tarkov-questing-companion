@@ -786,6 +786,18 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   border-bottom: 1px solid #000;
 }
 #mapTitle { font-weight: 900; letter-spacing: 2px; font-size: 15px; color: #e4e1d8; }
+#rotateMapBtn {
+  background: rgba(255,255,255,.06);
+  border: 1px solid #4a4a44;
+  color: #cfccc3;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+#rotateMapBtn:hover { background: rgba(255,255,255,.12); color: #fff; }
 #mapPinCount { margin-left: auto; font-size: 12px; color: #8a877e; letter-spacing: .5px; }
 #floorTabs { display: flex; gap: 3px; }
 .floor-tab {
@@ -967,6 +979,12 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 .qpin-dot:hover { fill: #ffd764; }
 .qpin-dot.sel { fill: #ff6a3d; }
+/* hand-placed story locations: blue dot, blue halo (gradient set in drawMap),
+   and dashed area outlines like the game draws minefields */
+.qpin-dot.story { fill: #5aa0c8; }
+.qpin-dot.story:hover { fill: #7dc4ec; }
+.qpin-dot.story.sel { fill: #ff6a3d; }
+.story-area { fill: #5aa0c8; fill-opacity: .12; stroke: #5aa0c8; pointer-events: none; }
 .qpin-leader {
   stroke: #ff6a3d;
   opacity: .8;
@@ -1082,7 +1100,8 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    obviously not on this one. */
 .mk.offfloor { opacity: .38; }
 .mk.halo.offfloor { opacity: .3; }
-.mk-pmc.offfloor, .mk-scav.offfloor { fill: #9a927c; }
+.mk-pmc.offfloor, .mk-scav.offfloor, .mk-transit.offfloor { fill: #9a927c; }
+.mk-transit { fill: #b08ad0; }   /* purple — freed up when story went blue */
 /* hollow glyphs carry their colour on the stroke, solid ones on the fill */
 .mk-pmc    { fill: #5fbf5f; }
 .mk-scav   { fill: #c98a3d; }

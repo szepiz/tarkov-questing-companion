@@ -1617,6 +1617,37 @@ function collectMapPins(mapName) {
       }
     }
   }
+
+  // Hand-placed STORY objective locations (baked from the dev map editor into
+  // storydata.js — no public source carries these). Blue pins; areas keep their
+  // outline and pin at the centroid so clicking and right-click ticking work
+  // exactly like any other pin. The floor is the one chosen at placement, not
+  // derived from a height (annotations carry no y on purpose).
+  if (mapView.sets && mapView.sets.story) {
+    const statuses = chapterStatuses();
+    for (const c of storyChapters()) {
+      if (statuses[c.id] !== 'active') continue;
+      const mains = chapterMainObjectives(c);
+      const objDone = mains.filter((o) => isObjectiveDone(o.id)).length;
+      for (const o of c.objectives) {
+        if (!o.points || storyObjectiveStatus(o, 'active') !== 'open') continue;
+        for (const pt of o.points) {
+          if (pt.map !== mapName || !(pt.pts || []).length) continue;
+          const cx = pt.pts.reduce((a, q) => a + q.x, 0) / pt.pts.length;
+          const cz = pt.pts.reduce((a, q) => a + q.z, 0) / pt.pts.length;
+          out.push({
+            x: cx, y: 0, z: cz,
+            quest: `STORY — ${c.name}`, trader: '',
+            desc: o.description + (o.needs ? ` (needs: ${o.needs})` : ''),
+            optional: o.type === 'optional', locked: false, needs: o.needs ? [o.needs] : [],
+            objId: o.id, objDone, objTotal: mains.length,
+            floor: typeof pt.floor === 'number' ? pt.floor : -1,
+            story: true, area: pt.kind === 'area' ? pt.pts : null,
+          });
+        }
+      }
+    }
+  }
   return out;
 }
 
@@ -1711,6 +1742,11 @@ const MARKER_GROUPS = [
       { id: 'extractPmc', label: 'PMC', glyph: 'exit', cls: 'mk-pmc' },
       { id: 'extractScav', label: 'Scav', glyph: 'exit', cls: 'mk-scav' },
     ],
+  },
+  {
+    id: 'transits', title: 'TRANSITS',
+    note: 'Walk in to travel to another map instead of extracting.',
+    rows: [{ id: 'transitAll', label: 'To another map', glyph: 'arrow', cls: 'mk-transit' }],
   },
   {
     id: 'keys', title: 'KEYS & KEYCARDS',
@@ -1850,6 +1886,16 @@ function collectMapMarkers(mapName) {
       { anyFloor: true });
     if (out.length > m) out[out.length - 1].label = name || '';   // drawn above the icon
   }
+  // Transits behave like extracts for the player (a way OUT of the raid), so
+  // they get the same treatment: name above the icon, visible on every floor,
+  // greyed when theirs is another one.
+  for (const [x, y, z, desc, dest] of M.tr || []) {
+    const m2 = out.length;
+    add(x, y, z, ['transitAll'], 'arrow', 'mk-transit', `Transit to ${dest}`,
+      [['', `Moves you to ${dest} instead of extracting`]].concat(desc && desc !== `Transit to ${dest}` ? [['', desc]] : []),
+      { anyFloor: true });
+    if (out.length > m2) out[out.length - 1].label = `To ${dest}`;
+  }
   for (const [x, y, z, type] of M.hz || []) {
     if (type !== 0 && type !== 1) continue;   // see the note on MARKER_GROUPS.hazards
     const id = type === 0 ? 'hazardMinefield' : 'hazardSniper';
@@ -1905,7 +1951,7 @@ function mapLayerCounts() {
 function labelCount() {
   const md = MAP_DATA[mapView.name];
   if (!md) return 0;
-  return (md.labels || []).filter(([lx, lz]) => labelOnFloor(md, lx, lz)).length;
+  return (md.labels || []).filter((l) => labelOnFloor(md, l)).length;
 }
 
 function mapGroupCount(grp) {
@@ -1926,6 +1972,9 @@ const GLYPH_SCALE = 1.55;
 const MARKER_GLYPHS = {
   // map features
   exit: 'M0 -7.5 L6.5 0 L3 0 L3 7 L-3 7 L-3 0 L-6.5 0 Z',
+  // transit: a solid right-pointing arrow — one subpath, so the winding rule
+  // that once hollowed the grenade cannot bite here
+  arrow: 'M-7 -2.6 L1.2 -2.6 L1.2 -6.5 L7.5 0 L1.2 6.5 L1.2 2.6 L-7 2.6 Z',
   mine: 'M0 -5.2 L4.8 3.2 L-4.8 3.2 Z',
   sniper: 'M0 -6.5 L0 6.5 M-6.5 0 L6.5 0 M0 -3.6 A3.6 3.6 0 1 1 0 3.6 A3.6 3.6 0 1 1 0 -3.6',
   key: 'M0 -6.2 A3 3 0 1 1 0 -0.2 A3 3 0 1 1 0 -6.2 M-1.4 -0.6 L-1.4 6.4 L1.4 6.4 L1.4 -0.6 M1.4 3 L3.4 3',
@@ -2298,7 +2347,14 @@ function svgUnitsPerPx(svg, md) {
 // once you are looking at the third floor of Dorms, "Old Gas Station" across the
 // map is noise. Ground shows everything, because ground is the whole map. A floor
 // whose extent has no bounds genuinely covers the map, so it keeps every label.
-function labelOnFloor(md, lx, lz) {
+function labelOnFloor(md, l) {
+  const [lx, lz, , lb, lt] = l;
+  // A label with a height band (upstream's bottom/top — The Lab has them on
+  // every label) is assigned to a floor EXACTLY like a marker is: floorOf at
+  // the band's midpoint. x/z rectangles cannot tell stacked floors apart.
+  if (typeof lb === 'number' && typeof lt === 'number') {
+    return floorOf(md, lx, (lb + lt) / 2, lz) === mapView.floor;
+  }
   if (mapView.floor < 0) return true;
   const f = md.floors[mapView.floor];
   if (!f || !f.extents || !f.extents.length) return true;
@@ -2353,7 +2409,7 @@ function drawMap() {
   // several maps — now full strength with a proper dark halo behind, the same
   // trick the markers use.
   if (labelsOn()) {
-    for (const [lx, lz, text] of (md.labels || []).filter(([lx, lz]) => labelOnFloor(md, lx, lz))) {
+    for (const [lx, lz, text] of (md.labels || []).filter((l) => labelOnFloor(md, l))) {
       const p = mapPoint(md, lx, lz);
       const t = document.createElementNS(ns, 'text');
       t.setAttribute('x', p.x); t.setAttribute('y', p.y);
@@ -2369,18 +2425,30 @@ function drawMap() {
   // viewBox units, which differ 10x between maps, while a gradient scales with
   // its circle for free. Pulsing is done with opacity alone, which is cheap.
   const defs = document.createElementNS(ns, 'defs');
-  const grad = document.createElementNS(ns, 'radialGradient');
-  grad.setAttribute('id', 'qglowGrad');
-  for (const [off, col, op] of [['0%', '#7dff96', '0.72'], ['45%', '#5fe07c', '0.42'], ['100%', '#5fe07c', '0']]) {
-    const st = document.createElementNS(ns, 'stop');
-    st.setAttribute('offset', off); st.setAttribute('stop-color', col); st.setAttribute('stop-opacity', op);
-    grad.appendChild(st);
+  for (const [id, inner, outer] of [['qglowGrad', '#7dff96', '#5fe07c'], ['qglowGradStory', '#7dc4ec', '#5aa0c8']]) {
+    const grad = document.createElementNS(ns, 'radialGradient');
+    grad.setAttribute('id', id);
+    for (const [off, col, op] of [['0%', inner, '0.72'], ['45%', outer, '0.42'], ['100%', outer, '0']]) {
+      const st = document.createElementNS(ns, 'stop');
+      st.setAttribute('offset', off); st.setAttribute('stop-color', col); st.setAttribute('stop-opacity', op);
+      grad.appendChild(st);
+    }
+    defs.appendChild(grad);
   }
-  defs.appendChild(grad);
   g.appendChild(defs);
 
   const hlObjs = mapView.highlight ? mapView.highlight.objs : null;
   const shown = mapView.pins.filter((p) => p.floor === mapView.floor);
+  // hand-placed story AREAS first, so their outlines sit under every pin
+  for (const p of shown) {
+    if (!p.story || !p.area) continue;
+    const poly = document.createElementNS(ns, 'polygon');
+    poly.setAttribute('points', p.area.map((q) => { const sp = mapPoint(md, q.x, q.z); return sp.x + ',' + sp.y; }).join(' '));
+    poly.setAttribute('class', 'story-area');
+    poly.setAttribute('stroke-width', 2.2 * k);
+    poly.setAttribute('stroke-dasharray', `${6 * k} ${5 * k}`);
+    g.appendChild(poly);
+  }
   shown.forEach((p, i) => {
     const s = mapPoint(md, p.x, p.z);
     const isHl = hlObjs && hlObjs.has(p.objId);
@@ -2389,13 +2457,13 @@ function drawMap() {
     const glow = document.createElementNS(ns, 'circle');
     glow.setAttribute('cx', s.x); glow.setAttribute('cy', s.y);
     glow.setAttribute('r', (isHl ? 23 : 17) * k);
-    glow.setAttribute('fill', 'url(#qglowGrad)');
+    glow.setAttribute('fill', p.story ? 'url(#qglowGradStory)' : 'url(#qglowGrad)');
     glow.setAttribute('class', 'qpin-glow' + (isHl ? ' hl' : '') + (faded ? ' off' : ''));
     g.appendChild(glow);
 
     const c = document.createElementNS(ns, 'circle');
     c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 6.5 * k);
-    c.setAttribute('class', 'qpin-dot' + (mapView.selected === i ? ' sel' : '') + (faded ? ' faded' : ''));
+    c.setAttribute('class', 'qpin-dot' + (p.story ? ' story' : '') + (mapView.selected === i ? ' sel' : '') + (faded ? ' faded' : ''));
     c.setAttribute('stroke-width', 2 * k);
     if (p.locked) c.setAttribute('opacity', '.5');
     // clicking the selected pin again clears it
@@ -2666,6 +2734,31 @@ if (typeof ResizeObserver !== 'undefined') {
   new ResizeObserver(onStageResized).observe($('mapStage'));
 }
 window.addEventListener('resize', onStageResized);
+// Rotate the open map 90°. Rotation is per-map DATA (md.rotate baked into the
+// SVG + md.orient calibrating game->svg axes), so a quarter turn must change
+// both in step: rotate +90, and orient becomes comp(o[1]) + o[0] — the +90
+// rotation in normalized coords is (x,y) -> (1-y, x), and complementing the
+// char flips u<->U / v<->V. Everything downstream (pins, markers, labels,
+// clicks, the editor's inverse) reads these two fields, so nothing else moves.
+// Runtime-only: reopening the map from the list restores the shipped rotation.
+async function rotateMap() {
+  if (!mapView.name) return;
+  const name = mapView.name;
+  const md = MAP_DATA[name];
+  const o = md.orient || 'UV';
+  const comp = (c) => ({ u: 'U', U: 'u', v: 'V', V: 'v' }[c]);
+  MAP_DATA[name] = { ...md, rotate: ((md.rotate || 0) + 90) % 360, orient: comp(o[1]) + o[0] };
+  const keep = { sets: mapView.sets, floor: mapView.floor };
+  await openQuestMap(name);
+  mapView.sets = keep.sets;
+  renderMapSets();
+  mapView.pins = collectMapPins(name);
+  renderMapLoadout(name);
+  if (keep.floor !== -1) mapView.floor = keep.floor;
+  drawMap();
+}
+$('rotateMapBtn').addEventListener('click', rotateMap);
+
 $('closeMapBtn').addEventListener('click', () => $('mapOverlay').classList.add('hidden'));
 $('mapOverlay').addEventListener('click', (e) => {
   if (e.target === $('mapOverlay')) $('mapOverlay').classList.add('hidden');

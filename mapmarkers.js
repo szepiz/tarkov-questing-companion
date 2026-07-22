@@ -40,6 +40,9 @@
 //                                                     spawn at that exact point (0..4)
 //   mk  [x, y, z, poolSize, keysInPool]              keysInPool = key names in that pool, "" if none
 //   co  [x, y, z, type]                              type = index into CONTAINER_TYPES
+//   tr  [x, y, z, desc, dest]                        transit to another map; dest = map name.
+//                                                     Sourced from json.tarkov.dev (GraphQL
+//                                                     never carried them here).
 //
 // A static container is part of the level geometry, so it is in that spot every
 // raid — only its CONTENTS are a roll. Worth saying on the card; NOT a title,
@@ -61,6 +64,7 @@ const MARKER_COLS = {
   lt: ['x', 'y', 'z', 'cat', 'alts', 'item'],
   mk: ['x', 'y', 'z', 'pool', 'keys'],
   co: ['x', 'y', 'z', 'type'],
+  tr: ['x', 'y', 'z', 'desc', 'dest'],
 };
 
 
@@ -504,6 +508,9 @@ const MAP_MARKERS = {
       [143, 14.061, 66.4, 13], [157.1, 17.628, 60.2, 13], [0.5, 24.3483, 19, 13], [83.6, 14.3371, 116.9, 13],
       [54.4, 14.555, -29.3, 13], [83.8, 14.1541, 182, 13], [97, 14.41, -5.2, 13], [87.7, 23.091, -8.4, 22]
     ],
+    tr: [
+      [222.8, 15.993, 65.7, "Transit to Streets of Tarkov", "Streets of Tarkov"]
+    ],
   },
   Factory: {
     ex: [
@@ -607,6 +614,10 @@ const MAP_MARKERS = {
       [53.9, -1.186, -17.7, 15], [14.1, -1.219, -25.7, 15], [30.3, -2.262, -33.9, 15], [18, -1.322, -32.7, 15],
       [34, -2.294, -25.8, 15], [13.9, -1.321, 1.3, 15], [26.3, -1.318, 1.1, 15], [19.7, -2.294, -10.2, 15],
       [8.2, -1.303, -0.6, 15], [-16.2, -2.384, -31.6, 15], [2.8, -3.509, -23.8, 15], [3.4, -3.473, -8.7, 15]
+    ],
+    tr: [
+      [23.7, 0.84, 61.6, "Transit to Woods", "Woods"], [18.5, -0.423, -48.3, "Transit to Customs", "Customs"],
+      [-26.5, -4.085, -42, "Transit to The Lab", "The Lab (Dark)"]
     ],
   },
   Customs: {
@@ -1005,6 +1016,12 @@ const MAP_MARKERS = {
       [211.1, 1.1404, 12.3, 19], [179.4, 3.9227, 151.1, 11], [178.9, 3.9227, 151.2, 11],
       [27.6, 1.0981, -110, 22], [174, 0.3194, 124.9, 16], [15.7, -0.049, 35.4, 16], [170.9, 4.3792, 149.3, 0]
     ],
+    tr: [
+      [651.7, 1.99, 124.6, "Transit to Reserve", "Reserve"],
+      [354.3, 2.31, -190.1, "Transit to Factory", "Factory"],
+      [-335.2, 2.11, -205.7, "Transit to Interchange", "Interchange"],
+      [23.7, -1.4, 139.5, "Transit to Shoreline", "Shoreline"]
+    ],
   },
   Woods: {
     ex: [
@@ -1344,6 +1361,12 @@ const MAP_MARKERS = {
       [-283.1, 47.4817, -226.8, 15], [-167.8, 46.2883, -235.2, 15], [-169.3, 50.4653, -237, 15],
       [54.4, -2.2872, -45.7, 2], [56.7, -2.093, -48.7, 2], [109.2, 7.2799, -601.4, 22],
       [25.1, -1.472, -29.6, 21], [-565.8, 10.3958, -59.1, 15], [-23.7, -16.2308, 156.4, 22]
+    ],
+    tr: [
+      [-362.4, 0.8213, 360.8, "Transit to Factory", "Factory"],
+      [246.1, -10.22, 369.9, "Transit to Reserve", "Reserve"],
+      [494.3, -16.77, 345.4, "Transit to Lighthouse", "Lighthouse"],
+      [-153.1, 1.07, 402.1, "Transit to Customs", "Customs"]
     ],
   },
   Shoreline: {
@@ -1874,6 +1897,11 @@ const MAP_MARKERS = {
       [-613.3, -28.788, -176.1, 10], [-649.5, -26.2815, -224, 8], [-636.6, -26.1089, -245.1, 8],
       [-613.5, -26.4825, -211.7, 8], [-680.1, -25.854, -246.1, 7], [-655.7, -26.05, -217.7, 7],
       [221.4, -54.0136, -162.6, 12], [-500.5, -23.8451, 243.5, 15]
+    ],
+    tr: [
+      [417.2, -56.1, -217.5, "Transit to Lighthouse", "Lighthouse"],
+      [-965.8, -57.52, 364.5, "Transit to Terminal", "Terminal"],
+      [-198, -9.867, -81.1, "Transit to Labyrinth?", "The Labyrinth"]
     ],
   },
   Interchange: {
@@ -2444,6 +2472,10 @@ const MAP_MARKERS = {
       [86.9, 24.8878, 365.6, 13], [-210.6, 21.479, -158.7, 13], [34.2, 23.628, 253.5, 2],
       [-47.1, 22.7662, 45.1, 2], [-44.9, 21.78, 45.3, 2], [-54, 22.2218, -400.6, 2], [-259.5, 21.773, 215.1, 2],
       [396.8, 20.3246, -369.9, 11], [-256.5, 22.066, 119.8, 2], [382.2, 18.5781, -371.4, 13]
+    ],
+    tr: [
+      [274.3, 23.28, 395.9, "Transit to Customs", "Customs"],
+      [263.1, 24.1, -444.4, "Transit to Streets of Tarkov", "Streets of Tarkov"]
     ],
   },
   Reserve: {
@@ -3023,6 +3055,11 @@ const MAP_MARKERS = {
       [39.2, -6.123, -159.2, 15], [37.7, -6.123, -165, 15], [19, -4.565, -81.9, 15], [20.6, -3.9358, -78.2, 15],
       [17.2, -4.732, -76, 15], [-58.5, -9.505, -27.2, 15], [-54.2, -9.505, -31.6, 15],
       [-58.4, -9.1074, -28.9, 15]
+    ],
+    tr: [
+      [-196.7, -4.5442, -117.8, "Transit to Customs", "Customs"],
+      [216.9, -6.3442, -201, "Transit to Woods", "Woods"],
+      [238.8, -6.2542, -128, "Transit to Lighthouse", "Lighthouse"]
     ],
   },
   "Streets of Tarkov": {
@@ -3963,6 +4000,11 @@ const MAP_MARKERS = {
       [236.2, 4.7589, 495.2, 13], [232.1, 4.8719, 495.7, 2], [268.4, 5.3679, 511.4, 2],
       [221.7, 4.9378, 485.2, 8], [227.8, 5.796, 489.2, 11], [268.7, 5.7879, 512.8, 11], [232, 4.4224, 500.3, 8]
     ],
+    tr: [
+      [-260.1, 2.185, 103.6, "Transit to Ground Zero", "Ground Zero"],
+      [286.7, 3.3935, 505.5, "Transit to Interchange", "Interchange"],
+      [207, -8.382, 82.2, "Transit to The Lab", "The Lab (Dark)"]
+    ],
   },
   Lighthouse: {
     ex: [
@@ -4625,6 +4667,11 @@ const MAP_MARKERS = {
       [-223.6, 0.334, -415.8, 13], [-102.1, 13.933, -152.1, 22], [-87.9, 4.611, -439.8, 22],
       [0.7, 0.282, -343.9, 15], [-210.2, 5.8595, -426.1, 8], [-322.8, 10.4217, -217.6, 13]
     ],
+    tr: [
+      [-338.6, 17.5, -168.9, "Transit to Shoreline", "Shoreline"],
+      [-294.6, 15.2591, -780.1, "Transit to Reserve", "Reserve"],
+      [106.3, 6.74, -958.1, "Transit to Woods", "Woods"]
+    ],
   },
   "The Lab": {
     ex: [
@@ -4840,6 +4887,7 @@ const MAP_MARKERS = {
       [-163.1, 4.5148, -347.6, 0], [-257, 0.4795, -323.2, 0], [-141.5, 4.5594, -400.2, 0],
       [-112.7, 4.9491, -409.6, 5], [-139.5, 0.1778, -361.1, 5]
     ],
+    tr: [],
   },
   Terminal: {
     ex: [],
@@ -4848,6 +4896,7 @@ const MAP_MARKERS = {
     lt: [],
     mk: [],
     co: [],
+    tr: [],
   },
 };
 

@@ -1192,6 +1192,52 @@ function createWindow() {
           console.log('TQT_MAPSETS', JSON.stringify(sets));
           const shot2 = await win.webContents.capturePage();
           fs.writeFileSync(path.join(dir, 'map-sets.png'), shot2.toPNG());
+
+          // 4) rotate 90°: same markers, swapped canvas, nothing off the map
+          const rot = await win.webContents.executeJavaScript(`(async () => {
+            const svg = () => document.querySelector('#mapRot svg');
+            // the VIEW is always stage-shaped, so measure the ARTWORK's aspect;
+            // drawn-marker counts vary with screen-space decimation, so compare
+            // the COLLECTED marker data instead
+            const art = () => { const r = svg().querySelector('g').getBoundingClientRect(); return r.width / r.height; };
+            const marks = () => [...document.querySelectorAll('#mkpins use[data-mk]')];
+            const inside = () => {
+              const r = svg().getBoundingClientRect();
+              return marks().every(u => { const b = u.getBoundingClientRect();
+                return b.left >= r.left - 2 && b.right <= r.right + 2 && b.top >= r.top - 2 && b.bottom <= r.bottom + 2; });
+            };
+            const before = { aspect: art(), n: mapView.markers.length, rot: MAP_DATA['Woods'].rotate || 0, in: inside() };
+            document.getElementById('rotateMapBtn').click();
+            ${settle(1200)}
+            const after = { aspect: art(), n: mapView.markers.length, rot: MAP_DATA['Woods'].rotate || 0, in: inside() };
+            return { markersKept: before.n === after.n ? 'ok ' + after.n : 'BAD ' + before.n + '->' + after.n,
+              rotated: after.rot === (before.rot + 90) % 360 ? 'ok ' + before.rot + '->' + after.rot : 'BAD',
+              aspectFlipped: Math.abs(after.aspect - 1 / before.aspect) < 0.15 * (1 / before.aspect)
+                ? 'ok ' + before.aspect.toFixed(2) + '->' + after.aspect.toFixed(2) : 'BAD ' + before.aspect.toFixed(2) + '->' + after.aspect.toFixed(2),
+              allInside: before.in && after.in ? 'ok' : 'BAD before=' + before.in + ' after=' + after.in };
+          })()`);
+          console.log('TQT_ROTATE', JSON.stringify(rot));
+          const shot3 = await win.webContents.capturePage();
+          fs.writeFileSync(path.join(dir, 'map-rotated.png'), shot3.toPNG());
+
+          // 5) hand-placed story locations draw as blue pins/areas (Shoreline
+          // carries Tour placements from the dev editor)
+          const sp = await win.webContents.executeJavaScript(`(async () => {
+            document.getElementById('closeMapBtn').click();
+            ${settle(200)}
+            await openQuestMap('Shoreline');
+            ${settle(1000)}
+            mapView.sets = { story: true, side: false, kappa: false, lightkeeper: false };
+            mapView.pins = collectMapPins('Shoreline');
+            renderMapSets(); renderMapLoadout('Shoreline'); drawMap();
+            ${settle(400)}
+            return { storyPins: document.querySelectorAll('.qpin-dot.story').length,
+              areas: document.querySelectorAll('.story-area').length,
+              collected: mapView.pins.filter(p => p.story).length };
+          })()`);
+          console.log('TQT_STORYPINS', JSON.stringify(sp));
+          const shot4 = await win.webContents.capturePage();
+          fs.writeFileSync(path.join(dir, 'story-pins.png'), shot4.toPNG());
         } catch (e) {
           console.log('TQT_STORY_ERR', String((e && e.message) || e));
         }
