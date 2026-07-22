@@ -986,6 +986,15 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       offscreen: shooting,
+      // Chromium stops requestAnimationFrame and throttles setTimeout to ~1/sec
+      // for OCCLUDED windows, and the harnesses often run with another window
+      // stacked on top of theirs. That one environmental fact produced three
+      // separate "bugs" over time: glyphs measuring 4x too big after a zoom (the
+      // rAF-scheduled drawMap never ran), a landmark hit-rate that wobbled
+      // between runs, and per-map times tripling. Harness runs therefore opt out
+      // of throttling; real users keep it — an occluded window SHOULD idle.
+      backgroundThrottling: !(process.env.TQT_LAYERS || process.env.TQT_MAPS
+        || process.env.TQT_HERO || process.env.TQT_PROBE_LAYERS || process.env.TQT_SHOOT),
     },
   });
   win.loadFile(path.join(APP_DIR, 'index.html'));
@@ -1449,6 +1458,35 @@ function createWindow() {
                   : \`BAD the map can be panned off screen: \${worst.join('/')}\`;
               })();
 
+              // Every objective pin carries a pulsing glow, and clicking a loadout
+              // item must light exactly its own objectives and fade the rest.
+              const objGlow = await (async () => {
+                const dots = document.querySelectorAll('.qpin-dot').length;
+                const glows = document.querySelectorAll('.qpin-glow').length;
+                if (!dots) return 'n/a (no objectives on this map)';
+                if (glows !== dots) return \`BAD \${dots} pins but \${glows} glows\`;
+                const anim = getComputedStyle(document.querySelector('.qpin-glow')).animationName;
+                if (!/qpulse/.test(anim)) return \`BAD glow does not pulse (\${anim})\`;
+                const li = document.querySelector('#mapLoadoutList li.ld-link');
+                if (!li) return \`ok \${dots} glowing, no loadout item to test highlight\`;
+                li.click(); await new Promise(r => setTimeout(r, 300));
+                if (!mapView.highlight) return 'BAD clicking the item set no highlight';
+                if (!li.classList.contains('ld-on') &&
+                    !document.querySelector('#mapLoadoutList li.ld-on')) {
+                  return 'BAD the active item row is not marked';
+                }
+                const hl = document.querySelectorAll('.qpin-glow.hl').length;
+                const faded = document.querySelectorAll('.qpin-dot.faded').length;
+                // its objectives may live on another floor; the state still has to be set
+                const row = document.querySelector('#mapLoadoutList li.ld-on');
+                row.click(); await new Promise(r => setTimeout(r, 300));
+                if (mapView.highlight) return 'BAD second click did not clear the highlight';
+                if (document.querySelector('.qpin-glow.hl, .qpin-dot.faded')) {
+                  return 'BAD highlight classes survived clearing';
+                }
+                return \`ok \${dots} glowing; highlight lit \${hl}, faded \${faded}, cleared cleanly\`;
+              })();
+
               // Extracts must stay on screen whatever floor you are on, and the ones
               // belonging to another floor must be visibly stepped back.
               const extractsAcrossFloors = await (async () => {
@@ -1538,7 +1576,7 @@ function createWindow() {
                   : \`BAD \${at1} -> \${at4}\`,
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
-                card, oneCard, narrow, floorLabels, labelToggle, extractsAcrossFloors,
+                card, oneCard, narrow, floorLabels, labelToggle, extractsAcrossFloors, objGlow,
                 resizeKeepsZoom, panStaysOnMap,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,

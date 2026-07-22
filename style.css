@@ -882,6 +882,14 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   letter-spacing: .5px; text-transform: none; cursor: pointer;
 }
 .ld-ticked .ld-head button:hover { text-decoration: underline; }
+/* loadout rows that can light their objectives up on the map */
+#mapLoadoutList li.ld-link { cursor: pointer; }
+#mapLoadoutList li.ld-link:hover { background: rgba(255,255,255,.06); }
+#mapLoadoutList li.ld-on {
+  background: rgba(95, 224, 124, .13);
+  box-shadow: inset 2px 0 0 #5fe07c;
+}
+#mapLoadoutList li.ld-on .ld-name { color: #a8e8b6; }
 .ld-ticked li { cursor: pointer; color: #6e6b62; }
 .ld-ticked .ld-name { text-decoration: line-through; }
 .ld-ticked li:hover .ld-name { text-decoration: none; color: #cfccc3; }
@@ -919,6 +927,33 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   fill: #d0a943;
   stroke: #14140f;
   cursor: pointer;
+}
+/* When a loadout item is active, everything it does NOT need steps back. CSS
+   opacity beats the presentation attribute, so this also overrides the .5 that
+   locked pins carry. */
+.qpin-dot.faded { opacity: .25; }
+
+/* The breathing green halo behind every objective. Radial-gradient circles, not
+   blur filters (filter units are viewBox units and differ 10x between maps).
+   The pulse is opacity-only and slow, so it catches the eye without nagging it.
+   Objectives are the one thing on the map that moves — nothing else animates. */
+.qpin-glow {
+  pointer-events: none;
+  animation: qpulse 2.6s ease-in-out infinite;
+}
+.qpin-glow.off { display: none; }        /* not this item's objective */
+.qpin-glow.hl { animation: qpulse-hl 1.6s ease-in-out infinite; }
+@keyframes qpulse {
+  0%, 100% { opacity: .35; }
+  50%      { opacity: .8; }
+}
+@keyframes qpulse-hl {
+  0%, 100% { opacity: .7; }
+  50%      { opacity: 1; }
+}
+/* If the OS asks for reduced motion, hold the halo steady instead of pulsing. */
+@media (prefers-reduced-motion: reduce) {
+  .qpin-glow, .qpin-glow.hl { animation: none; opacity: .6; }
 }
 .qpin-dot:hover { fill: #ffd764; }
 .qpin-dot.sel { fill: #ff6a3d; }

@@ -999,7 +999,8 @@ backend.onSettingsChanged((s) => {
 // holds the marker OBJECT, not an index, because the drawn list is decimated and
 // an index into it would point at a different marker after any zoom.
 const mapView = { name: null, svgLoaded: false, floor: -1, pins: [], selected: null,
-  markers: [], selectedMarker: null, view: null, zoom: 1 };
+  markers: [], selectedMarker: null, view: null, zoom: 1,
+  highlight: null };   // { item, objs:Set } — set by clicking a loadout item
 
 const ZOOM_MAX = 10;   // zoom 1 is the whole map; the floor is implicit in baseView
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -1196,12 +1197,12 @@ const BRING_TYPES = new Set(['plantItem', 'plantQuestItem', 'useItem']);
 
 function collectMapLoadout(mapName) {
   if (!MAP_DATA[mapName]) return { keys: [], bring: [] };
-  const keys = new Map();     // name -> Set of quest names
-  const bring = new Map();    // label -> { qty, quests:Set }
-  const addBring = (label, qty, quest) => {
+  const keys = new Map();     // name -> { quests:Set, objs:Set }
+  const bring = new Map();    // label -> { qty, quests:Set, objs:Set }
+  const addBring = (label, qty, quest, objId) => {
     if (!label) return;
-    const e = bring.get(label) || { qty: 0, quests: new Set() };
-    e.qty += qty; e.quests.add(quest);
+    const e = bring.get(label) || { qty: 0, quests: new Set(), objs: new Set() };
+    e.qty += qty; e.quests.add(quest); e.objs.add(objId);
     bring.set(label, e);
   };
 
@@ -1212,15 +1213,16 @@ function collectMapLoadout(mapName) {
       // a key opens the door however many objectives are behind it
       for (const k of [].concat(...(o.requiredKeys || []))) {
         if (!k || !k.name) continue;
-        if (!keys.has(k.name)) keys.set(k.name, new Set());
-        keys.get(k.name).add(t.name);
+        if (!keys.has(k.name)) keys.set(k.name, { quests: new Set(), objs: new Set() });
+        keys.get(k.name).quests.add(t.name);
+        keys.get(k.name).objs.add(o.id);
       }
-      if (o.markerItem && o.markerItem.name) addBring(o.markerItem.name, o.count || 1, t.name);
+      if (o.markerItem && o.markerItem.name) addBring(o.markerItem.name, o.count || 1, t.name, o.id);
       if (BRING_TYPES.has(o.type)) {
         const alts = [...new Set((o.items || []).concat(o.useAny || []).map((i) => i && i.name).filter(Boolean))];
         if (alts.length) {
           addBring(alts.length > 2 ? `${alts[0]} (or ${alts.length - 1} alternatives)` : alts.join(' or '),
-            o.count || 1, t.name);
+            o.count || 1, t.name, o.id);
         }
       }
     }
@@ -1228,9 +1230,10 @@ function collectMapLoadout(mapName) {
 
   const bySize = (a, b) => b.qty - a.qty || a.name.localeCompare(b.name);
   return {
-    keys: [...keys].map(([name, quests]) => ({ name, qty: 1, quests: [...quests] }))
+    keys: [...keys].map(([name, e]) => ({ name, qty: 1, quests: [...e.quests], objs: [...e.objs] }))
       .sort((a, b) => a.name.localeCompare(b.name)),
-    bring: [...bring].map(([name, e]) => ({ name, qty: e.qty, quests: [...e.quests] })).sort(bySize),
+    bring: [...bring].map(([name, e]) => ({ name, qty: e.qty, quests: [...e.quests], objs: [...e.objs] }))
+      .sort(bySize),
   };
 }
 
@@ -1250,7 +1253,13 @@ function handTickedOnMap(mapName) {
 
 function renderMapLoadout(mapName) {
   const load = collectMapLoadout(mapName);
-  const row = (i) => `<li title="${escapeHtml(i.quests.slice(0, 6).join(' · '))}">`
+  // The item's row remembers which objectives want it; clicking lights those
+  // pins up on the map. The active row is marked so the link is visible from
+  // both ends.
+  const hl = mapView.highlight;
+  const row = (i) => `<li data-objs="${escapeHtml(i.objs.join(','))}" data-item="${escapeHtml(i.name)}"`
+    + ` class="ld-link${hl && hl.item === i.name ? ' ld-on' : ''}"`
+    + ` title="${escapeHtml(i.quests.slice(0, 6).join(' · '))} — click to show these objectives on the map">`
     + `<span class="ld-name">${escapeHtml(i.name)}</span>`
     + (i.qty > 1 ? `<span class="ld-qty">×${i.qty}</span>` : '') + '</li>';
   const section = (title, items) => (items.length
@@ -1278,6 +1287,23 @@ function renderMapLoadout(mapName) {
     drawMap();
     renderAll();
   };
+  // If the highlighted item no longer exists (its last objective was ticked
+  // off), the highlight must not linger invisibly.
+  if (mapView.highlight
+    && ![...load.keys, ...load.bring].some((i) => i.name === mapView.highlight.item)) {
+    mapView.highlight = null;
+  }
+  for (const li of $('mapLoadoutList').querySelectorAll('li.ld-link')) {
+    li.addEventListener('click', () => {
+      const item = li.dataset.item;
+      mapView.highlight = (mapView.highlight && mapView.highlight.item === item)
+        ? null
+        : { item, objs: new Set(li.dataset.objs.split(',').filter(Boolean)) };
+      renderMapLoadout(mapName);   // repaint the active row
+      drawMap();
+    });
+  }
+
   const all = $('ldRestoreAll');
   if (all) all.addEventListener('click', (e) => { e.stopPropagation(); restore(ticked.map((o) => o.id)); });
   for (const li of $('mapLoadoutList').querySelectorAll('.ld-ticked li[data-obj]')) {
@@ -2055,12 +2081,38 @@ function drawMap() {
     }
   }
 
+  // The soft green halo that makes an objective unmistakable among the layer
+  // markers. A radial gradient, not a blur filter: filter units are the map's
+  // viewBox units, which differ 10x between maps, while a gradient scales with
+  // its circle for free. Pulsing is done with opacity alone, which is cheap.
+  const defs = document.createElementNS(ns, 'defs');
+  const grad = document.createElementNS(ns, 'radialGradient');
+  grad.setAttribute('id', 'qglowGrad');
+  for (const [off, col, op] of [['0%', '#7dff96', '0.55'], ['45%', '#5fe07c', '0.30'], ['100%', '#5fe07c', '0']]) {
+    const st = document.createElementNS(ns, 'stop');
+    st.setAttribute('offset', off); st.setAttribute('stop-color', col); st.setAttribute('stop-opacity', op);
+    grad.appendChild(st);
+  }
+  defs.appendChild(grad);
+  g.appendChild(defs);
+
+  const hlObjs = mapView.highlight ? mapView.highlight.objs : null;
   const shown = mapView.pins.filter((p) => p.floor === mapView.floor);
   shown.forEach((p, i) => {
     const s = mapPoint(md, p.x, p.z);
+    const isHl = hlObjs && hlObjs.has(p.objId);
+    const faded = hlObjs && !isHl;
+
+    const glow = document.createElementNS(ns, 'circle');
+    glow.setAttribute('cx', s.x); glow.setAttribute('cy', s.y);
+    glow.setAttribute('r', (isHl ? 19 : 14) * k);
+    glow.setAttribute('fill', 'url(#qglowGrad)');
+    glow.setAttribute('class', 'qpin-glow' + (isHl ? ' hl' : '') + (faded ? ' off' : ''));
+    g.appendChild(glow);
+
     const c = document.createElementNS(ns, 'circle');
     c.setAttribute('cx', s.x); c.setAttribute('cy', s.y); c.setAttribute('r', 6.5 * k);
-    c.setAttribute('class', 'qpin-dot' + (mapView.selected === i ? ' sel' : ''));
+    c.setAttribute('class', 'qpin-dot' + (mapView.selected === i ? ' sel' : '') + (faded ? ' faded' : ''));
     c.setAttribute('stroke-width', 2 * k);
     if (p.locked) c.setAttribute('opacity', '.5');
     // clicking the selected pin again clears it
@@ -2187,6 +2239,7 @@ async function openQuestMap(mapName) {
   mapView.floor = -1;
   mapView.selected = null;
   mapView.selectedMarker = null;
+  mapView.highlight = null;
   mapView.pins = collectMapPins(mapName);
   mapView.markers = collectMapMarkers(mapName);
   renderMapLoadout(mapName);
