@@ -10,7 +10,7 @@ const OLD_PRODUCT_NAME = 'Tarkov Quest Tracker'; // pre-rebrand userData folder
 // Read-only quest data shipped inside the app bundle (first-run + offline seed).
 const BUNDLED_CACHE = path.join(APP_DIR, 'quests_cache.json');
 const DEFAULT_LOGS_PATH = 'C:\\Battlestate Games\\EFT\\Logs';
-const API_URL = 'https://api.tarkov.dev/graphql';
+const jsonapi = require('./jsonapi'); // tarkov.dev JSON API (GraphQL is deprecated)
 const POLL_MS = 5000;
 const MODES = ['regular', 'pve']; // EFT has two separate profiles: PvP (regular) and PvE
 
@@ -131,65 +131,17 @@ function saveProgress() { writeJson(PROGRESS_FILE, progress); }
 
 // ---------- quest data ----------
 
-// Verified live against api.tarkov.dev. Task `id` is the BSG MongoDB id — the
-// same id that appears in the game's notifications log. Fetched per game mode
-// because PvE and PvP have slightly different quest lists.
-const TASK_FIELDS = `
-    id
-    name
-    kappaRequired
-    lightkeeperRequired
-    minPlayerLevel
-    restartable
-    wikiLink
-    trader { name }
-    map { name }
-    taskRequirements { task { id name } status }
-    objectives {
-      id
-      type
-      description
-      optional
-      maps { name }
-      ... on TaskObjectiveItem { items { name } count foundInRaid requiredKeys { name } zones { map { name } position { x y z } } }
-      ... on TaskObjectiveQuestItem {
-        questItem { name }
-        count
-        requiredKeys { name }
-        zones { map { name } position { x y z } }
-        possibleLocations { map { name } positions { x y z } }
-      }
-      ... on TaskObjectiveShoot { count requiredKeys { name } zones { map { name } position { x y z } } }
-      ... on TaskObjectiveExtract { exitName requiredKeys { name } }
-      ... on TaskObjectiveMark { markerItem { name } requiredKeys { name } zones { map { name } position { x y z } } }
-      ... on TaskObjectiveBasic { requiredKeys { name } zones { map { name } position { x y z } } }
-      ... on TaskObjectiveUseItem { useAny { name } count requiredKeys { name } }
-      ... on TaskObjectiveBuildItem { item { name } }
-    }`;
-const TASKS_QUERY = `{
-  regular: tasks(lang: en, gameMode: regular) { ${TASK_FIELDS} }
-  pve: tasks(lang: en, gameMode: pve) { ${TASK_FIELDS} }
-}`;
-
+// Task `id` is the BSG MongoDB id — the same id that appears in the game's
+// notifications log. Fetched per game mode because PvE and PvP have slightly
+// different quest lists. Since 2026-07-22 the data comes from the JSON API
+// (json.tarkov.dev) via jsonapi.js, which adapts it to the exact shape the
+// old GraphQL query produced — cache format and renderer are unchanged.
+// The adapter was proven against the last GraphQL cache field-by-field
+// (see DEV-NOTES §2/§12).
 async function fetchTasksOnline() {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: TASKS_QUERY }),
-      signal: controller.signal,
-    });
-    if (!res.ok) throw new Error(`API responded ${res.status}`);
-    const json = await res.json();
-    if (json.errors) throw new Error('GraphQL error: ' + JSON.stringify(json.errors).slice(0, 300));
-    const data = json.data || {};
-    if (!Array.isArray(data.regular) || !data.regular.length) throw new Error('API returned no tasks');
-    return { regular: data.regular, pve: Array.isArray(data.pve) ? data.pve : [] };
-  } finally {
-    clearTimeout(timeout);
-  }
+  const modes = await jsonapi.fetchAllModes();
+  if (!Array.isArray(modes.regular) || !modes.regular.length) throw new Error('API returned no tasks');
+  return modes;
 }
 
 // accept both the new {regular,pve} cache shape and the old {tasks} one
@@ -535,6 +487,10 @@ function scanLogs() {
     }
   }
 
+  // story chapters never reach notifications.log — they get their own pass
+  // over the output logs (size-cached, so steady-state cost is one file)
+  if (scanStoryState(folders)) sendToRenderer('story-state', storyState);
+
   // a completion just imported can prove earlier ones the logs never recorded
   for (const m of MODES) applyImpliedCompletions(m, newByMode[m]);
 
@@ -546,6 +502,117 @@ function scanLogs() {
   isInitialScan = false;
   sendToRenderer('watcher-status', watcherStatus);
   return { regular: newByMode.regular.length, pve: newByMode.pve.length };
+}
+
+// ---------- story chapter state (from output logs) ----------
+//
+// Story chapters are quests on a hidden narrator trader; they produce NO trader
+// chat messages, so notifications.log never sees them. What the client DOES
+// write, at every main-menu load, is a Warn line per unresolved story condition:
+//   <b>Quest.</b> Can't find condition for target <lockedQuestId> quest id: <ownerQuestId>
+// A chapter id in the OWNER position is in the profile (active); an id only in
+// the TARGET position is still locked; a previously-active id that stops
+// appearing while other chapters still warn has been completed. Verified against
+// this machine's own history (Tour: active every session for months, silent
+// after Jun 22 — the session the wiki dates its completion). Chapter ids come
+// from storydata.js (baked by _dev/build_storydata.js).
+// LIMIT: per-objective progress never reaches any log — objectives stay manual.
+
+let storyChapterIds = null; // Set of chapter quest ids
+function getStoryChapterIds() {
+  if (storyChapterIds) return storyChapterIds;
+  storyChapterIds = new Set();
+  try {
+    const src = fs.readFileSync(path.join(APP_DIR, 'storydata.js'), 'utf8');
+    const m = src.match(/const STORY_DATA = ([\s\S]*?);\nconst STORY_BAKED_AT/);
+    if (m) for (const c of (JSON.parse(m[1]).chapters || [])) if (c.questId) storyChapterIds.add(c.questId);
+  } catch {}
+  return storyChapterIds;
+}
+
+const storyFileCache = new Map(); // output log path -> { size, events }
+// per mode: chapters = chapterQuestId -> 'locked'|'active'|'done';
+// subs = still-locked story SUB-quest ids (warning targets owned by a chapter),
+// from the latest informative session — objectives from those sub-quests render
+// as locked in the story tab.
+let storyState = { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } };
+
+function parseStoryWarnings(text, chapters) {
+  // one entry per warning line that involves a known chapter id
+  const events = [];
+  const re = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})[^\n]*Can't find condition for target ([0-9a-f]{24}) quest id: ([0-9a-f]{24})/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const target = m[2], owner = m[3];
+    if (!chapters.has(target) && !chapters.has(owner)) continue;
+    events.push({ ts: parseLogTs(m[1]), target, owner });
+  }
+  return events;
+}
+
+function folderStoryEvents(dir, chapters) {
+  let inner;
+  try { inner = fs.readdirSync(dir); } catch { return []; }
+  const out = [];
+  for (const f of inner) {
+    // filenames carry the session stamp as a prefix ("<stamp> output_000.log"),
+    // same reason the notifications match uses includes() and not startsWith()
+    const lf = f.toLowerCase();
+    if (!lf.includes('output') || !lf.endsWith('.log')) continue;
+    const p = path.join(dir, f);
+    let stat;
+    try { stat = fs.statSync(p); } catch { continue; }
+    const cached = storyFileCache.get(p);
+    if (cached && cached.size === stat.size) { out.push(...cached.events); continue; }
+    let text;
+    try { text = fs.readFileSync(p, 'utf8'); } catch { continue; } // locked: retry next scan
+    const events = parseStoryWarnings(text, chapters);
+    storyFileCache.set(p, { size: stat.size, events });
+    out.push(...events);
+  }
+  return out;
+}
+
+// Recompute chapter states from the full folder history (files are size-cached,
+// so only new/grown logs are actually re-read). Returns true when changed.
+function scanStoryState(folders) {
+  const chapters = getStoryChapterIds();
+  if (!chapters.size) return false;
+  const next = { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } };
+  const everActive = { regular: new Set(), pve: new Set() };
+  for (const folder of folders) { // folders arrive chronological
+    const events = folderStoryEvents(folder.dir, chapters);
+    if (!events.length) continue; // silent session proves nothing
+    const segs = folderModeSegments(folder.dir);
+    const per = { regular: { owner: new Set(), target: new Set(), subs: new Set(), any: false }, pve: { owner: new Set(), target: new Set(), subs: new Set(), any: false } };
+    for (const ev of events) {
+      const mode = segs.length ? modeAtTime(segs, ev.ts) : 'regular';
+      per[mode].any = true;
+      if (chapters.has(ev.owner)) {
+        per[mode].owner.add(ev.owner);
+        // a non-chapter target owned by a chapter = one of its still-locked
+        // sub-quests -> that sub-quest's story objectives are locked
+        if (!chapters.has(ev.target)) per[mode].subs.add(ev.target);
+      }
+      if (chapters.has(ev.target)) per[mode].target.add(ev.target);
+    }
+    for (const mode of MODES) {
+      const p = per[mode];
+      if (!p.any) continue; // this mode saw no story warnings this session
+      for (const id of p.owner) { next[mode].chapters[id] = 'active'; everActive[mode].add(id); }
+      for (const id of p.target) if (!p.owner.has(id)) next[mode].chapters[id] = 'locked';
+      // active before, absent from an informative session now -> completed
+      for (const id of everActive[mode]) {
+        if (!p.owner.has(id) && !p.target.has(id)) next[mode].chapters[id] = 'done';
+      }
+      // latest informative session wins wholesale — sub-quests unlock over time
+      next[mode].subs = {};
+      for (const id of p.subs) next[mode].subs[id] = true;
+    }
+  }
+  const changed = JSON.stringify(next) !== JSON.stringify(storyState);
+  storyState = next;
+  return changed;
 }
 
 // Drop auto-detected entries (keeping manual ticks) so a fresh mode-aware scan
@@ -824,7 +891,7 @@ function applyUpdateAndRestart() {
 
 // ---------- ipc ----------
 
-ipcMain.handle('get-init', () => ({ settings, progress, watcherStatus, version: currentVersion() }));
+ipcMain.handle('get-init', () => ({ settings, progress, watcherStatus, storyState, version: currentVersion() }));
 
 ipcMain.handle('check-update', async () => {
   try { return await checkForUpdate(); }
@@ -994,7 +1061,8 @@ function createWindow() {
       // between runs, and per-map times tripling. Harness runs therefore opt out
       // of throttling; real users keep it — an occluded window SHOULD idle.
       backgroundThrottling: !(process.env.TQT_LAYERS || process.env.TQT_MAPS
-        || process.env.TQT_HERO || process.env.TQT_PROBE_LAYERS || process.env.TQT_SHOOT),
+        || process.env.TQT_HERO || process.env.TQT_PROBE_LAYERS || process.env.TQT_SHOOT
+        || process.env.TQT_STORY),
     },
   });
   win.loadFile(path.join(APP_DIR, 'index.html'));
@@ -1025,6 +1093,110 @@ function createWindow() {
         .catch(() => {});
     }
   });
+
+  // dev aid: TQT_STORY=<dir> drives the story tab, the MAPS browser and the
+  // map quest-set tickboxes through the real UI, screenshots, and asserts.
+  if (process.env.TQT_STORY) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        const dir = process.env.TQT_STORY;
+        try {
+          fs.mkdirSync(dir, { recursive: true });
+          const settle = (ms) => `await new Promise(r => setTimeout(r, ${ms}));`;
+          // 1) story tab: chapters render, expand one, tick + untick an objective
+          const story = await win.webContents.executeJavaScript(`(async () => {
+            // fresh harness profiles migrate the REAL legacy settings (see
+            // initStorage) — hide toggles may be ON; turn them off via the UI
+            document.getElementById('settingsBtn').click();
+            ${settle(150)}
+            for (const id of ['hideCompletedBtn', 'hideLockedBtn', 'hideFailedBtn']) {
+              if (document.getElementById(id).classList.contains('on')) { document.getElementById(id).click(); ${settle(120)} }
+            }
+            document.getElementById('closeSettingsBtn').click();
+            ${settle(150)}
+            document.querySelector('.tab[data-filter="STORY"]').click();
+            ${settle(300)}
+            const chapters = document.querySelectorAll('.chapter-row').length;
+            const expected = STORY_DATA.chapters.length;
+            const diag = { mode: state.gameMode, hideC: !!state.settings.hideCompleted,
+              hideL: !!state.settings.hideLocked, statuses: chapterStatuses(),
+              auto: storyAuto().chapters, subs: Object.keys(storyAuto().subs).length };
+            const first = document.querySelector('.chapter-row');
+            first.querySelector('.row-toggle').click();
+            ${settle(200)}
+            const objRows = document.querySelectorAll('.quest-row.story-obj').length;
+            const objExpected = STORY_DATA.chapters[0].objectives.length;
+            const tags = { done: document.querySelectorAll('.story-tag.done').length,
+                           locked: document.querySelectorAll('.story-tag.locked').length,
+                           mapHints: document.querySelectorAll('.story-map').length };
+            // tick the first untipped open objective through the real checkbox
+            const row = [...document.querySelectorAll('.quest-row.story-obj')]
+              .find(r => !r.classList.contains('completed') && !r.classList.contains('locked'));
+            let tick = 'n/a (all done or locked)';
+            if (row) {
+              const name = row.querySelector('.quest-name').textContent;
+              row.querySelector('.quest-check').click();
+              ${settle(250)}
+              const after = [...document.querySelectorAll('.quest-row.story-obj')]
+                .find(r => r.querySelector('.quest-name').textContent === name);
+              const ticked = !!(after && after.classList.contains('completed'));
+              if (after) after.querySelector('.quest-check').click();
+              ${settle(250)}
+              const restored = ![...document.querySelectorAll('.quest-row.story-obj')]
+                .find(r => r.querySelector('.quest-name').textContent === name)
+                ?.classList.contains('completed');
+              tick = ticked && restored ? 'ok tick + untick' : 'BAD tick=' + ticked + ' restored=' + restored;
+            }
+            // chapter details pane
+            first.click();
+            ${settle(250)}
+            const details = document.getElementById('questName').textContent;
+            return { chapters, expected, objRows, objExpected, tags, tick, details, diag };
+          })()`);
+          console.log('TQT_STORY', JSON.stringify(story));
+          const shot1 = await win.webContents.capturePage();
+          fs.writeFileSync(path.join(dir, 'story-tab.png'), shot1.toPNG());
+
+          // 2) MAPS browser opens any map, quests on it or not
+          const maps = await win.webContents.executeJavaScript(`(async () => {
+            document.getElementById('mapsBtn').click();
+            ${settle(200)}
+            const btns = document.querySelectorAll('.maps-grid-btn').length;
+            const target = [...document.querySelectorAll('.maps-grid-btn')].find(b => b.dataset.map === 'Woods');
+            target.click();
+            ${settle(1200)}
+            const open = !document.getElementById('mapOverlay').classList.contains('hidden');
+            return { gridButtons: btns, opened: open, title: document.getElementById('mapTitle').textContent };
+          })()`);
+          console.log('TQT_MAPSBTN', JSON.stringify(maps));
+
+          // 3) quest-set tickboxes on the open map (Woods)
+          const sets = await win.webContents.executeJavaScript(`(async () => {
+            const boxes = [...document.querySelectorAll('#mapSets input[data-set]')];
+            const pins0 = document.querySelectorAll('.qpin-dot').length;
+            for (const b of boxes) if (b.checked) { b.click(); ${settle(120)} }
+            const pinsNone = document.querySelectorAll('.qpin-dot').length;
+            const kappa = boxes.find(b => b.dataset.set === 'kappa');
+            kappa.click(); ${settle(200)}
+            const pinsKappa = document.querySelectorAll('.qpin-dot').length;
+            const storyBox = document.querySelector('#mapSets input[data-set="story"]');
+            storyBox.click(); ${settle(200)}
+            const storyList = document.querySelectorAll('.ld-story li').length;
+            return { boxes: boxes.length, pins0, pinsNone, pinsKappa,
+                     storyListed: storyList,
+                     noneOk: pinsNone === 0 ? 'ok' : 'BAD ' + pinsNone + ' pins with nothing ticked',
+                     kappaOk: pinsKappa <= pins0 ? 'ok subset' : 'BAD kappa ' + pinsKappa + ' > all ' + pins0 };
+          })()`);
+          console.log('TQT_MAPSETS', JSON.stringify(sets));
+          const shot2 = await win.webContents.capturePage();
+          fs.writeFileSync(path.join(dir, 'map-sets.png'), shot2.toPNG());
+        } catch (e) {
+          console.log('TQT_STORY_ERR', String((e && e.message) || e));
+        }
+        app.quit();
+      }, 1500);
+    });
+  }
 
   // dev aid: TQT_HERO=<dir> selects each trader in turn and screenshots the hero,
   // to check the map/trader blend has no visible seam and the trader stays visible
@@ -1915,7 +2087,7 @@ function refuseIfRealProfile() {
   // every harness that drives the real UI, not just the first two
   if (!process.env.TQT_SHOOT && !process.env.TQC_TEST_APPLY
       && !process.env.TQT_MAPS && !process.env.TQT_HERO && !process.env.TQT_LAYERS
-      && !process.env.TQT_PROBE_LAYERS) return;
+      && !process.env.TQT_PROBE_LAYERS && !process.env.TQT_STORY) return;
   const real = path.join(app.getPath('appData'), app.getName());
   if (path.resolve(app.getPath('userData')) !== path.resolve(real)) return;
   console.error(

@@ -55,6 +55,7 @@ const backend = window.api || (() => {
     downloadUpdate: async () => ({ staged: false, error: 'not supported in browser' }),
     applyUpdate: async () => ({ applying: false }),
     onAutoCompletions: () => {},
+    onStoryState: () => {},
     onWatcherStatus: () => {},
     onSettingsChanged: () => {},
     onUpdateAvailable: () => {},
@@ -181,6 +182,10 @@ const state = {
   selMap: null,
   selTrader: null,
   selQuestId: null,
+  // story campaign (chapters from storydata.js; auto state from the log watcher)
+  storyState: { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } },
+  expandedChapters: new Set(),
+  selChapter: null,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -355,11 +360,204 @@ function orderedKeys(keys, orderList) {
   return result;
 }
 
+// ---------- story campaign ----------
+//
+// The in-game Tasks screen separates the STORY campaign (chapters of
+// objectives on a hidden narrator "trader") from trader side tasks. tarkov.dev
+// has no story data; STORY_DATA is baked from the community tarkov-data-overlay
+// (see _dev/build_storydata.js). Chapter state is read from the game's own
+// output logs by main.js (locked / active / done); per-OBJECTIVE progress never
+// reaches any log, so objectives are ticked by hand, stored in the same
+// progress.objectives bucket the quest-map right-click uses (BSG condition ids
+// are globally unique, so the buckets cannot collide).
+
+function storyChapters() {
+  return (typeof STORY_DATA !== 'undefined' && STORY_DATA.chapters) || [];
+}
+
+function storyAuto() {
+  const s = state.storyState && state.storyState[state.gameMode];
+  return (s && s.chapters) ? s : { chapters: {}, subs: {} };
+}
+
+function chapterMainObjectives(c) { return c.objectives.filter((o) => o.type !== 'optional'); }
+
+// chapter slug -> 'done' | 'active' | 'locked'
+// done: the logs say so, or every main objective is ticked.
+// locked: the logs say so, or (no log signal) a required prior chapter is not done.
+// active: everything else — chapters are discovery-triggered, and we cannot see
+// triggers, so absent any signal a chapter counts as reachable, not locked.
+function chapterStatuses() {
+  const auto = storyAuto();
+  const done = new Set();
+  for (const c of storyChapters()) {
+    const mains = chapterMainObjectives(c);
+    if (auto.chapters[c.questId] === 'done'
+      || (mains.length && mains.every((o) => isObjectiveDone(o.id)))) done.add(c.id);
+  }
+  const st = {};
+  for (const c of storyChapters()) {
+    const a = auto.chapters[c.questId];
+    st[c.id] = done.has(c.id) ? 'done'
+      : a === 'active' ? 'active'
+      : a === 'locked' ? 'locked'
+      : c.autoStart ? 'active'
+      : (c.requires || []).every((slug) => done.has(slug)) ? 'active'
+      : 'locked';
+  }
+  return st;
+}
+
+// objective -> 'done' | 'locked' | 'open'
+function storyObjectiveStatus(o, chapterState) {
+  if (isObjectiveDone(o.id)) return 'done';
+  if (chapterState === 'locked') return 'locked';
+  if (storyAuto().subs[o.sourceQuestId]) return 'locked';
+  return 'open';
+}
+
+function renderStoryTree(tree) {
+  if (!storyChapters().length) {
+    const msg = document.createElement('div');
+    msg.className = 'tree-message';
+    msg.textContent = 'No story data bundled with this build.';
+    tree.appendChild(msg);
+    return;
+  }
+  const hideC = !!(state.settings && state.settings.hideCompleted);
+  const hideL = !!(state.settings && state.settings.hideLocked);
+  const statuses = chapterStatuses();
+
+  for (const c of storyChapters()) {
+    const cState = statuses[c.id];
+    if (hideC && cState === 'done') continue;
+    if (hideL && cState === 'locked') continue;
+    const mains = chapterMainObjectives(c);
+    const doneCount = mains.filter((o) => isObjectiveDone(o.id)).length;
+    const expanded = state.expandedChapters.has(c.id);
+
+    const row = document.createElement('div');
+    row.className = 'map-row chapter-row' + (state.selChapter === c.id ? ' selected' : '')
+      + (cState === 'locked' ? ' chapter-locked' : '');
+    row.innerHTML = `
+      <span class="row-name">${escapeHtml(c.name.toUpperCase())}</span>
+      <span class="row-toggle">${expanded ? '−' : '+'}</span>
+      ${cState === 'done' ? '<span class="story-tag done">DONE</span>'
+        : cState === 'locked' ? '<span class="story-tag locked">LOCKED</span>' : ''}
+      <span class="row-count${cState === 'done' ? ' done' : ''}">${doneCount}/${mains.length}</span>`;
+    row.querySelector('.row-toggle').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (state.expandedChapters.has(c.id)) state.expandedChapters.delete(c.id);
+      else state.expandedChapters.add(c.id);
+      renderAll();
+    });
+    row.addEventListener('click', () => {
+      if (state.selChapter === c.id && state.expandedChapters.has(c.id)) {
+        state.expandedChapters.delete(c.id);
+      } else {
+        state.expandedChapters.add(c.id);
+      }
+      state.selChapter = c.id;
+      state.selQuestId = null;
+      renderAll();
+    });
+    tree.appendChild(row);
+    if (!expanded) continue;
+
+    for (const o of c.objectives) {
+      const oState = storyObjectiveStatus(o, cState);
+      if (hideC && oState === 'done') continue;
+      if (hideL && oState === 'locked') continue;
+      const orow = document.createElement('div');
+      orow.className = 'quest-row story-obj'
+        + (oState === 'done' ? ' completed' : '')
+        + (oState === 'locked' ? ' locked' : '')
+        + (o.type === 'optional' ? ' optional' : '');
+      // an OPEN objective says which map it is on (when its own text names one)
+      const mapTag = oState === 'open' && o.maps.length
+        ? `<span class="story-map">${escapeHtml(o.maps.join(' / ').toUpperCase())}</span>` : '';
+      orow.innerHTML = `
+        <span class="quest-name" title="${escapeHtml(o.description)}">${escapeHtml(o.description.toUpperCase())}</span>
+        ${o.type === 'optional' ? '<span class="story-tag optional">OPTIONAL</span>' : ''}
+        ${mapTag}
+        ${oState === 'locked' ? '<span class="locked-tag">LOCKED</span>' : ''}
+        <span class="quest-check" title="${oState === 'done' ? 'ticked off — click to undo'
+          : 'The game never logs story objective progress — tick it off here yourself.'}"></span>`;
+      orow.querySelector('.quest-name').addEventListener('click', () => {
+        state.selChapter = c.id;
+        state.selQuestId = null;
+        renderAll();
+      });
+      orow.querySelector('.quest-check').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        state.fullProgress = await backend.toggleObjective(o.id, oState !== 'done', state.gameMode);
+        applyMode();
+        renderAll();
+      });
+      tree.appendChild(orow);
+    }
+  }
+}
+
+// chapter details in the right-hand pane (reuses the quest-details containers)
+function renderStoryChapter() {
+  const c = storyChapters().find((x) => x.id === state.selChapter);
+  $('questPlaceholder').style.display = c ? 'none' : '';
+  $('questDetails').classList.toggle('hidden', !c);
+  if (!c) return;
+  const cState = chapterStatuses()[c.id];
+  $('questName').textContent = c.name.toUpperCase();
+  $('questBadges').innerHTML = [
+    '<span class="badge story">STORY CHAPTER</span>',
+    cState === 'done' ? '<span class="badge done">COMPLETED</span>' : '',
+    cState === 'locked' ? '<span class="badge locked">NOT DISCOVERED</span>' : '',
+  ].join('');
+  const mains = chapterMainObjectives(c);
+  $('questMeta').textContent =
+    `CHAPTER ${c.order} OF ${storyChapters().length}  ·  ${mains.length} OBJECTIVES`
+    + (c.objectives.length > mains.length ? ` (+${c.objectives.length - mains.length} OPTIONAL)` : '');
+
+  const objectives = c.objectives.map((o) => {
+    const oState = storyObjectiveStatus(o, cState);
+    const maps = oState !== 'done' && o.maps.length ? ` — ${o.maps.join(' / ')}` : '';
+    return `
+    <div class="objective${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}"
+         data-obj="${escapeHtml(o.id)}"
+         title="${oState === 'done' ? 'ticked off by hand — click to undo' : 'click to tick this objective off by hand'}">
+      <span class="bullet">${oState === 'done' ? '✔' : oState === 'locked' ? '🔒' : '▪'}</span>
+      <span>${escapeHtml(o.description)}${o.type === 'optional' ? ' (optional)' : ''}${escapeHtml(maps)}</span>
+    </div>`;
+  }).join('');
+  const doneCount = c.objectives.filter((o) => isObjectiveDone(o.id)).length;
+  $('questObjectives').innerHTML =
+    `<h3>OBJECTIVES ${doneCount ? `<span class="obj-count">${doneCount}/${c.objectives.length} done</span>` : ''}</h3>`
+    + `<div class="setting-hint">Chapter state (active / completed) is read from your game logs automatically; the game never logs per-objective progress, so tick objectives off here as you do them.</div>`
+    + objectives;
+  for (const el of $('questObjectives').querySelectorAll('.objective[data-obj]')) {
+    el.addEventListener('click', async () => {
+      const id = el.dataset.obj;
+      state.fullProgress = await backend.toggleObjective(id, !isObjectiveDone(id), state.gameMode);
+      applyMode();
+      renderAll();
+    });
+  }
+  $('questRequirements').innerHTML = (c.requires || []).length
+    ? `<h3>REQUIREMENTS</h3>${c.requires.map((slug) => {
+        const rc = storyChapters().find((x) => x.id === slug);
+        const met = rc && chapterStatuses()[rc.id] === 'done';
+        return `<div class="req-line${met ? ' prereq-done' : ''}"><span class="req-tag">CHAPTER</span><span>${escapeHtml(rc ? rc.name : slug)}</span></div>`;
+      }).join('')}` : '';
+  const wikiBtn = $('wikiBtn');
+  wikiBtn.classList.toggle('hidden', !c.wikiLink);
+  wikiBtn.onclick = () => backend.openWiki(c.wikiLink);
+}
+
 // ---------- tree rendering ----------
 
 function renderTree() {
   const tree = $('tree');
   tree.innerHTML = '';
+  if (state.filter === 'STORY') { renderStoryTree(tree); return; }
   if (!state.tasks.length) {
     const msg = document.createElement('div');
     msg.className = 'tree-message error';
@@ -550,6 +748,7 @@ function renderHero() {
 // ---------- quest details ----------
 
 function renderQuest() {
+  if (state.filter === 'STORY') { renderStoryChapter(); return; }
   const t = state.selQuestId ? state.byId.get(state.selQuestId) : null;
   $('questPlaceholder').style.display = t ? 'none' : '';
   $('questDetails').classList.toggle('hidden', !t);
@@ -839,6 +1038,24 @@ document.querySelectorAll('.mode-btn-top').forEach((el) => {
   el.addEventListener('click', () => setGameMode(el.dataset.mode));
 });
 
+// MAPS browser: every map with artwork, quests on it or not
+$('mapsBtn').addEventListener('click', () => {
+  const names = orderedKeys(Object.keys(MAP_DATA).filter(hasMapData), MAP_ORDER);
+  $('mapsGrid').innerHTML = names.map((n) =>
+    `<button class="maps-grid-btn" data-map="${escapeHtml(n)}">${escapeHtml(n.toUpperCase())}</button>`).join('');
+  for (const b of $('mapsGrid').querySelectorAll('button[data-map]')) {
+    b.addEventListener('click', () => {
+      $('mapsOverlay').classList.add('hidden');
+      openQuestMap(b.dataset.map);
+    });
+  }
+  $('mapsOverlay').classList.remove('hidden');
+});
+$('closeMapsBtn').addEventListener('click', () => $('mapsOverlay').classList.add('hidden'));
+$('mapsOverlay').addEventListener('click', (e) => {
+  if (e.target === $('mapsOverlay')) $('mapsOverlay').classList.add('hidden');
+});
+
 $('settingsBtn').addEventListener('click', () => {
   $('settingsOverlay').classList.remove('hidden');
   renderSettingsPanel();
@@ -941,6 +1158,14 @@ $('rescanBtn').addEventListener('click', async () => {
   btn.textContent = label;
   btn.disabled = false;
   renderAll();
+});
+
+// story chapter state, re-derived by the watcher from the output logs
+backend.onStoryState((data) => {
+  if (data && data.regular) {
+    state.storyState = data;
+    if (state.filter === 'STORY') renderAll();
+  }
 });
 
 backend.onAutoCompletions((data) => {
@@ -1173,15 +1398,53 @@ function objectiveMapPoints(o, mapName) {
   return pts;
 }
 
-// The tasks whose objectives should appear for this map: same filter the pins use
-// (current tab, not done, not failed, locked only if not hidden).
+// Which quest sets the open map shows. Defaults follow the tab that opened it
+// (the old behaviour), then the tickboxes in the map header override freely.
+// "side" = neither kappa- nor lightkeeper-required.
+function defaultMapSets() {
+  if (state.filter === 'KAPPA') return { story: false, side: false, kappa: true, lightkeeper: false };
+  if (state.filter === 'LIGHTKEEPER') return { story: false, side: false, kappa: false, lightkeeper: true };
+  if (state.filter === 'STORY') return { story: true, side: false, kappa: false, lightkeeper: false };
+  return { story: false, side: true, kappa: true, lightkeeper: true }; // SIDE TASKS tab = everything trader
+}
+
+function mapSetPass(t) {
+  const s = mapView.sets;
+  if (!s) return taskPassesFilter(t);
+  if (s.kappa && t.kappaRequired) return true;
+  if (s.lightkeeper && t.lightkeeperRequired) return true;
+  if (s.side && !t.kappaRequired && !t.lightkeeperRequired) return true;
+  return false;
+}
+
+// The tasks whose objectives should appear for this map: the map's tickbox
+// sets (seeded from the tab that opened it), not done, not failed, locked only
+// if not hidden.
 function* mapTasks() {
   for (const t of state.tasks) {
-    if (!taskPassesFilter(t) || isDone(t.id) || isFailed(t.id)) continue;
+    if (!mapSetPass(t) || isDone(t.id) || isFailed(t.id)) continue;
     const locked = isLocked(t);
     if (locked && state.settings && state.settings.hideLocked) continue;
     yield [t, locked];
   }
+}
+
+// Story objectives that name this map in their text. Story data has no
+// coordinates (see build_storydata.js), so these list in the side panel
+// rather than pin on the map.
+function collectMapStory(mapName) {
+  if (!mapView.sets || !mapView.sets.story) return [];
+  const out = [];
+  const statuses = chapterStatuses();
+  for (const c of storyChapters()) {
+    if (statuses[c.id] !== 'active') continue;
+    for (const o of c.objectives) {
+      if (storyObjectiveStatus(o, 'active') !== 'open') continue;
+      if (!o.maps.includes(mapName)) continue;
+      out.push({ id: o.id, chapter: c.name, desc: o.description });
+    }
+  }
+  return out;
 }
 
 // Everything you would have to carry in to clear this map in one raid, from the
@@ -1265,6 +1528,15 @@ function renderMapLoadout(mapName) {
   const section = (title, items) => (items.length
     ? `<div class="ld-group"><div class="ld-head">${title}</div><ul>${items.map(row).join('')}</ul></div>` : '');
 
+  // story objectives on this map (no coordinates exist, so a list, not pins);
+  // ticking one here uses the same store as the story tab
+  const story = collectMapStory(mapName);
+  const storyHtml = story.length ? `<div class="ld-group ld-story">
+      <div class="ld-head">STORY OBJECTIVES HERE (${story.length})</div>
+      <ul>${story.map((o) => `<li data-story-obj="${escapeHtml(o.id)}" title="${escapeHtml(o.chapter)} — click to tick this story objective off">
+        <span class="ld-name">${escapeHtml(o.desc)}</span></li>`).join('')}</ul>
+    </div>` : '';
+
   const html = section('KEYS', load.keys) + section('TAKE WITH YOU', load.bring);
   const ticked = handTickedOnMap(mapName);
   const tickedHtml = ticked.length ? `<div class="ld-group ld-ticked">
@@ -1273,8 +1545,17 @@ function renderMapLoadout(mapName) {
         <span class="ld-name">${escapeHtml(o.desc || o.quest)}</span></li>`).join('')}</ul>
     </div>` : '';
 
-  $('mapLoadoutList').innerHTML = (html || (ticked.length ? ''
-    : '<div class="ld-empty">Nothing needs bringing for these objectives.</div>')) + tickedHtml;
+  $('mapLoadoutList').innerHTML = storyHtml + ((html || story.length) ? html
+    : (ticked.length ? '' : '<div class="ld-empty">Nothing needs bringing for these objectives.</div>')) + tickedHtml;
+
+  for (const li of $('mapLoadoutList').querySelectorAll('li[data-story-obj]')) {
+    li.addEventListener('click', async () => {
+      state.fullProgress = await backend.toggleObjective(li.dataset.storyObj, true, state.gameMode);
+      applyMode();
+      renderMapLoadout(mapName);
+      renderAll();
+    });
+  }
 
   const n = load.keys.length + load.bring.reduce((a, i) => a + i.qty, 0);
   $('mapLoadoutCount').textContent = n ? `${n} item${n === 1 ? '' : 's'}` : '';
@@ -2240,6 +2521,8 @@ async function openQuestMap(mapName) {
   mapView.selected = null;
   mapView.selectedMarker = null;
   mapView.highlight = null;
+  mapView.sets = defaultMapSets();   // seeded from the tab, then free to change
+  renderMapSets();
   mapView.pins = collectMapPins(mapName);
   mapView.markers = collectMapMarkers(mapName);
   renderMapLoadout(mapName);
@@ -2286,6 +2569,30 @@ async function openQuestMap(mapName) {
   // final layout rather than leaving the ResizeObserver to correct it a moment
   // later, which showed up as the map twitching on open.
   applyView(false);
+}
+
+// the map header's quest-set tickboxes: which sets of tasks pin on this map
+function renderMapSets() {
+  const s = mapView.sets || defaultMapSets();
+  $('mapSets').innerHTML = [
+    ['story', 'STORY'], ['side', 'SIDE TASKS'], ['kappa', 'KAPPA'], ['lightkeeper', 'LIGHTKEEPER'],
+  ].map(([key, label]) => `
+    <label class="map-set${s[key] ? ' on' : ''}" title="${key === 'story'
+      ? 'Story objectives have no exact positions — ticking this lists the ones on this map in the side panel'
+      : `Show ${label.toLowerCase()} quest pins`}">
+      <input type="checkbox" data-set="${key}" ${s[key] ? 'checked' : ''}>${label}
+    </label>`).join('');
+  for (const box of $('mapSets').querySelectorAll('input[data-set]')) {
+    box.addEventListener('change', () => {
+      mapView.sets[box.dataset.set] = box.checked;
+      mapView.selected = null;
+      mapView.highlight = null;
+      mapView.pins = collectMapPins(mapView.name);
+      renderMapSets();
+      renderMapLoadout(mapView.name);
+      drawMap();
+    });
+  }
 }
 
 // clicking the map away from a pin also clears the selection (pins stop propagation)
@@ -2472,7 +2779,8 @@ backend.onUpdateAvailable((r) => {
   state.gameMode = ['regular', 'pve'].includes(init.settings.gameMode) ? init.settings.gameMode : 'regular';
   if (init.progress && (init.progress.regular || init.progress.pve)) state.fullProgress = init.progress;
   state.watcherStatus = init.watcherStatus || state.watcherStatus;
-  state.filter = ['ALL', 'KAPPA', 'LIGHTKEEPER'].includes(init.settings.filter) ? init.settings.filter : 'ALL';
+  if (init.storyState && init.storyState.regular) state.storyState = init.storyState;
+  state.filter = ['STORY', 'ALL', 'KAPPA', 'LIGHTKEEPER'].includes(init.settings.filter) ? init.settings.filter : 'ALL';
   applyMode();
   renderModeSwitch();
   renderAll();

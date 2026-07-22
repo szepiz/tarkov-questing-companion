@@ -11,13 +11,15 @@
     <aside id="sidebar">
       <header id="titlebar">
         <span id="titleText">TARKOV QUESTING COMPANION</span>
+        <button id="mapsBtn" title="Browse all maps — including ones you have no quests on">MAPS</button>
         <div class="mode-switch" title="Switch between your PvP and PvE profiles">
           <button class="mode-btn-top" data-mode="regular">PvP</button>
           <button class="mode-btn-top" data-mode="pve">PvE</button>
         </div>
       </header>
       <nav id="tabs">
-        <button class="tab" data-filter="ALL">ALL</button>
+        <button class="tab" data-filter="STORY">STORY</button>
+        <button class="tab" data-filter="ALL">SIDE TASKS</button>
         <button class="tab" data-filter="KAPPA">KAPPA</button>
         <button class="tab" data-filter="LIGHTKEEPER">LIGHTKEEPER</button>
       </nav>
@@ -174,6 +176,7 @@
       <div id="mapPanel">
         <div id="mapHeader">
           <span id="mapTitle">CUSTOMS</span>
+          <div id="mapSets"></div>
           <div id="floorTabs"></div>
           <span id="mapPinCount"></span>
           <button id="closeMapBtn">CLOSE</button>
@@ -195,10 +198,20 @@
       </div>
     </div>
 
+    <div id="mapsOverlay" class="hidden">
+      <div id="mapsPanel">
+        <h2>MAPS</h2>
+        <div class="setting-hint">Every map — including ones you have no quests on. Use the tickboxes on the map screen to choose which quest pins to show.</div>
+        <div id="mapsGrid"></div>
+        <button id="closeMapsBtn">CLOSE</button>
+      </div>
+    </div>
+
     <div id="toasts"></div>
   </div>
   <script src="mapdata.js"></script>
   <script src="mapmarkers.js"></script>
+  <script src="storydata.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>
