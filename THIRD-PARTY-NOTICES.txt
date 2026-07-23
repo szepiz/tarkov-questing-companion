@@ -81,7 +81,7 @@ SOFTWARE.
    Run `npx electron --version` and see that project for its own notices.
 
 
-5. Escape from Tarkov, the trader portraits and the location screenshots are
-   the property of Battlestate Games Limited, used here for identification in
-   a free, non-commercial fan tool. Not affiliated with, endorsed by, or
-   sponsored by Battlestate Games.
+5. Escape from Tarkov, the trader portraits, the location screenshots and the
+   story chapter banners/icons are the property of Battlestate Games Limited,
+   used here for identification in a free, non-commercial fan tool. Not
+   affiliated with, endorsed by, or sponsored by Battlestate Games.

@@ -807,12 +807,45 @@ function renderTree() {
 
 // ---------- hero (map + trader crossfade) ----------
 
+// A missing image must never show as a broken frame: chapters without an icon
+// (most, so far) just don't get one, and a banner that fails to load falls
+// back to the empty-pane look. Wired once — renderHero only swaps src/class.
+for (const [id, cls] of [['heroMap', 'visible'], ['heroChapterIcon', 'visible']]) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('error', () => el.classList.remove(cls));
+}
+
 function renderHero() {
   const heroMap = $('heroMap');
   const heroTrader = $('heroTrader');
   const heroEmpty = $('heroEmpty');
   const heroLabel = $('heroLabel');
   const heroTraderName = $('heroTraderName');
+  const heroIcon = $('heroChapterIcon');
+
+  // STORY: a chapter has no map or trader — show ITS banner and logo instead.
+  // Paths derive from the chapter slug (images/story_<slug>_banner.png /
+  // _icon.png), so art added later under that scheme appears with no code
+  // change; a missing file just never gets the .visible class (onerror below).
+  const chapter = state.filter === 'STORY' && state.selChapter
+    ? storyChapters().find((c) => c.id === state.selChapter) : null;
+  if (chapter) {
+    const banner = `${IMG_DIR}story_${chapter.id}_banner.png`;
+    const icon = `${IMG_DIR}story_${chapter.id}_icon.png`;
+    heroEmpty.style.display = 'none';
+    heroLabel.textContent = chapter.name.toUpperCase();
+    if (heroMap.getAttribute('src') !== banner) heroMap.src = banner;
+    heroMap.classList.add('visible', 'banner');
+    if (heroIcon.getAttribute('src') !== icon) heroIcon.src = icon;
+    heroIcon.classList.add('visible');
+    heroTrader.classList.remove('visible');
+    heroTrader.removeAttribute('src');
+    heroTraderName.classList.add('hidden');
+    return;
+  }
+  heroMap.classList.remove('banner');
+  heroIcon.classList.remove('visible');
+  heroIcon.removeAttribute('src');
 
   const mapName = state.selMap ? MAP_IMAGES[state.selMap.toLowerCase()] : null;
   const traderName = state.selTrader ? TRADER_IMAGES[state.selTrader.toLowerCase()] : null;

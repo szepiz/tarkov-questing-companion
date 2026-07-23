@@ -1213,7 +1213,17 @@ function createWindow() {
             first.click();
             ${settle(250)}
             const details = document.getElementById('questName').textContent;
-            return { chapters, expected, objRows, objExpected, tags, tick, fail, miss, details, diag };
+            // the hero pane must show the chapter's banner (and its icon where
+            // one exists — Tour has one) instead of map/trader art
+            const hm = document.getElementById('heroMap');
+            const hi = document.getElementById('heroChapterIcon');
+            const banner = hm.classList.contains('visible') && hm.classList.contains('banner')
+              && hm.naturalWidth > 0
+              && (hm.getAttribute('src') || '').includes('story_')
+              && document.getElementById('heroLabel').textContent.length > 0
+              ? 'ok' + (hi.classList.contains('visible') && hi.naturalWidth > 0 ? ' + icon' : '')
+              : 'BAD src=' + hm.getAttribute('src') + ' vis=' + hm.classList.contains('visible');
+            return { chapters, expected, objRows, objExpected, tags, tick, fail, miss, details, banner, diag };
           })()`);
           console.log('TQT_STORY', JSON.stringify(story));
           const shot1 = await win.webContents.capturePage();

@@ -107,7 +107,7 @@ any of the following, and the same list is in the app under **Settings → Credi
 | The Labyrinth map tiles | [tarkov.dev](https://tarkov.dev) | game-derived imagery · fan use |
 | Bender typeface | [Jovanny Lemonad](https://www.behance.net/jovanny) | [SIL Open Font License 1.1](bender/Bender/FREE%20FONT%20LICENSE.txt) |
 | Application framework | [Electron](https://www.electronjs.org) | MIT |
-| Escape from Tarkov, trader portraits, location screenshots | [Battlestate Games](https://www.escapefromtarkov.com) | all rights reserved |
+| Escape from Tarkov, trader portraits, location screenshots, story chapter art | [Battlestate Games](https://www.escapefromtarkov.com) | all rights reserved |
 
 Full licence texts — including tarkov.dev's MIT notice — are in
 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which also ships inside the app.
