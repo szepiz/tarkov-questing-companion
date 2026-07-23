@@ -1731,7 +1731,9 @@ function collectMapPins(mapName) {
           quest: t.name, trader: (t.trader && t.trader.name) || '',
           desc: o.description || '', optional: !!o.optional, locked, needs,
           objId: o.id, objDone, objTotal,
-          floor: floorOf(md, p.x, typeof p.y === 'number' ? p.y : 0, p.z),
+          // a hand-moved position (p._o = pristine coords) keeps its original
+          // floor — the move corrects the artwork spot, not the storey
+          floor: floorOf(md, p._o ? p._o[0] : p.x, typeof p.y === 'number' ? p.y : 0, p._o ? p._o[1] : p.z),
         });
       }
     }
@@ -1787,15 +1789,21 @@ function collectMapPins(mapName) {
 (function applyMapFixes() {
   if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
   const lbl = MAP_FIXES.labels || {}, exm = MAP_FIXES.extracts || {};
+  // Moved rows keep their PRISTINE coords in `_o`: floor membership must stay
+  // decided by the original position. A move is an artwork correction — the
+  // upstream coords sit visibly off the drawing — so re-deriving the floor
+  // from the corrected spot files the thing on the wrong floor tab and it
+  // "disappears" (this happened with fixes dragged left across a floor
+  // boundary rectangle).
   for (const [name, md] of Object.entries(MAP_DATA)) {
     for (const l of md.labels || []) {
       const m = lbl[`${name}|${l[2]}|${Math.round(l[0])}|${Math.round(l[1])}`];
-      if (m) { l[0] = m.x; l[1] = m.z; }
+      if (m) { l._o = [l[0], l[1]]; l[0] = m.x; l[1] = m.z; }
     }
     if (typeof MAP_MARKERS === 'undefined' || !MAP_MARKERS[name]) continue;
     for (const r of MAP_MARKERS[name].ex || []) {
       const m = exm[`${name}|${r[5]}|${r[3]}`];
-      if (m) { r[0] = m.x; r[2] = m.z; }
+      if (m) { r._o = [r[0], r[2]]; r[0] = m.x; r[2] = m.z; }
     }
   }
 })();
@@ -1812,7 +1820,9 @@ function applyObjectiveFixes() {
   const apply = (mapName, oid, p) => {
     if (!mapName || !p) return;
     const m = fx[`${mapName}|${oid}|${Math.round(p.x)}|${Math.round(p.z)}`];
-    if (m) { p.x = m.x; p.z = m.z; }
+    // keep the pristine coords: floor membership stays decided by them (see
+    // applyMapFixes) — and they are also what the override key derives from
+    if (m) { p._o = [p.x, p.z]; p.x = m.x; p.z = m.z; }
   };
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) for (const o of t.objectives || []) {
@@ -2037,7 +2047,8 @@ function collectMapMarkers(mapName) {
       floor: floorOf(md, x, y || 0, z) }, extra || {}));
   };
 
-  for (const [x, y, z, fac, sw, name, toll, tollN] of M.ex || []) {
+  for (const r of M.ex || []) {
+    const [x, y, z, fac, sw, name, toll, tollN] = r;
     const layers = fac === 0 ? ['extractPmc'] : fac === 1 ? ['extractScav'] : ['extractPmc', 'extractScav'];
     const who = fac === 0 ? 'PMC extract' : fac === 1 ? 'Scav extract' : 'PMC and Scav extract';
     const lines = [['', who]];
@@ -2050,9 +2061,12 @@ function collectMapMarkers(mapName) {
     const m = out.length;
     // anyFloor: an extract you cannot see is worse than one drawn in the wrong
     // place. They stay on screen whatever floor you are on, greyed when they
-    // belong to another one.
+    // belong to another one. A hand-moved row (r._o = pristine coords, see
+    // applyMapFixes) keeps the floor its ORIGINAL position implies — the move
+    // corrects the artwork spot, not the storey.
     add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract', lines,
-      { anyFloor: true });
+      Object.assign({ anyFloor: true },
+        r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : {}));
     if (out.length > m) out[out.length - 1].label = name || '';   // drawn above the icon
   }
   // Transits behave like extracts for the player (a way OUT of the raid), so
@@ -2548,7 +2562,12 @@ function svgUnitsPerPx(svg, md) {
 // map is noise. Ground shows everything, because ground is the whole map. A floor
 // whose extent has no bounds genuinely covers the map, so it keeps every label.
 function labelOnFloor(md, l) {
-  const [lx, lz, , lb, lt] = l;
+  // A hand-moved label (l._o = pristine coords, see applyMapFixes) keeps the
+  // floor its ORIGINAL position implies — the move corrects where the name
+  // sits on the artwork, not which storey it belongs to. Deriving the floor
+  // from the corrected spot made moved labels vanish off their floor.
+  const lx = l._o ? l._o[0] : l[0], lz = l._o ? l._o[1] : l[1];
+  const lb = l[3], lt = l[4];
   // A label with a height band (upstream's bottom/top — The Lab has them on
   // every label) is assigned to a floor EXACTLY like a marker is: floorOf at
   // the band's midpoint. x/z rectangles cannot tell stacked floors apart.
