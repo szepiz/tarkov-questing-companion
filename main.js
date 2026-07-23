@@ -1770,12 +1770,26 @@ function createWindow() {
                   : \`BAD \${before} -> \${off} -> \${back}\`;
               })();
 
-              // landmark names must thin out on an upper floor, not follow you up
+              // landmark names must FILTER per floor, not follow you around.
+              // Footprint-filtered labels can only thin out upstairs, but maps
+              // whose labels carry height bands (The Lab, Interchange since the
+              // v1.11.3 rebake) assign each label to exactly one storey — and an
+              // indoor mall legitimately has MORE names on its main floor than
+              // outside on the ground. So the assertion is: switching floors
+              // changes the set, no floor shows every label, and coming back to
+              // ground reproduces the same count.
               const floorLabels = await (async () => {
                 const tabs = [...document.querySelectorAll('.floor-tab')];
                 const ground = tabs.find(t => Number(t.dataset.floor) === -1);
                 const upper = tabs.find(t => Number(t.dataset.floor) >= 0);
                 if (!ground || !upper) return 'n/a (no floors)';
+                const md2 = MAP_DATA[mapView.name];
+                const total = (md2.labels || []).length;
+                // filtering is only POSSIBLE with banded labels or bounded floor
+                // extents — Streets has neither (every floor covers the whole
+                // map), so all labels on every floor is the documented behaviour
+                const canFilter = (md2.labels || []).some(l => l.length > 3)
+                  || md2.floors.some(f => (f.extents || []).some(e => e.bounds && e.bounds.length));
                 const count = () => document.querySelectorAll('#qpins text').length;
                 ground.click(); await new Promise(r => setTimeout(r, 250));
                 const g = count();
@@ -1783,7 +1797,11 @@ function createWindow() {
                 const u = count();
                 ground.click(); await new Promise(r => setTimeout(r, 250));
                 if (count() !== g) return \`BAD ground count changed \${g} -> \${count()}\`;
-                return u <= g ? \`ok ground \${g} -> floor \${u}\` : \`BAD floor shows MORE: \${g} -> \${u}\`;
+                if (!canFilter) return u === total ? \`n/a (every floor covers the map, \${total} labels)\`
+                  : \`BAD unfilterable map dropped labels: \${u}/\${total}\`;
+                if (u === g && g === total) return \`BAD not filtering: all \${total} on both floors\`;
+                if (u > g && u >= total) return \`BAD floor shows every label: \${g} -> \${u}/\${total}\`;
+                return \`ok ground \${g} -> floor \${u}\`;
               })();
 
               // the panel must survive a small window without leaving the stage

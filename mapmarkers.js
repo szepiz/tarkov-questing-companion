@@ -44,6 +44,12 @@
 //                                                     Sourced from json.tarkov.dev (GraphQL
 //                                                     never carried them here).
 //
+// LOOT_VALUE prices every lt item: name -> [rouble value, value per slot], from
+// json.tarkov.dev at bake time — max(flea avg24h, flea last-low, best trader
+// sell) across both modes, per inventory slot. LOOT_HV_MIN is the per-slot bar
+// the renderer's "high value" layer applies. Data-driven by design: whatever
+// clears the bar is flagged, never a hand list of item names.
+//
 // A static container is part of the level geometry, so it is in that spot every
 // raid — only its CONTENTS are a roll. Worth saying on the card; NOT a title,
 // because "always here" reads as a promise of loot and it is not one.
@@ -70,6 +76,9 @@ const MARKER_COLS = {
 
 const CAT_NAMES = ["keys","keycards","valuables","medical","stims","electronics","intel","tools"];
 const CONTAINER_TYPES = ["safe","bank-safe","weapon-box","wooden-ammo-box","grenade-box","medcase","medbag-smu06","medical-supply-crate","toolbox","technical-supply-crate","ration-supply-crate","jacket","plastic-suitcase","duffle-bag","drawer","wooden-crate","cash-register","bank-cash-register","pc-block","buried-barrel-cache","ground-cache","shturmans-stash","dead-scav","scav-body","pmc-body","civilian-body","lab-technician-body"];
+// item -> [rouble value, value per slot] when baked; keys match lt rows' item names
+const LOOT_VALUE = {"GoldChain":[46000,46000],"Horse":[14640,7320],"GPU":[622427,311214],"Dorm 306":[599999,599999],"Dorm 214":[17240,17240],"Dorm 220":[33650,33650],"Director's":[32000,32000],"Flash drive":[49999,49999],"Manual":[44196,22098],"Diary":[29651,14826],"SDiary":[56666,56666],"Car":[14875,14875],"Vase":[57135,14284],"Armor repair kit":[1205494,200916],"Weapon repair kit":[407980,67997],"Dorm 110":[375000,375000],"Checkpoint":[45400,45400],"WSafe":[23511,23511],"Dorm 203":[22478,22478],"Dorm 303":[19693,19693],"Lion":[184999,30833],"Clock":[154444,38611],"Cat":[69255,34628],"Roler":[77663,77663],"0.2BTC":[533379,533379],"W104 San":[90000,90000],"W112 San":[78840,78840],"E107 San":[54802,54802],"Cottage":[169185,169185],"W216 San":[443333,443333],"W220 San":[130000,130000],"W221 San":[106982,106982],"E206 San":[218001,218001],"E310 San":[187000,187000],"E314 San":[57541,57541],"E328 San":[163479,163479],"Gas safe":[117023,117023],"W218 San":[197883,197883],"W219 San":[135000,135000],"E222 San":[121869,121869],"E205 San":[83505,83505],"W203 San":[114325,114325],"E306 San":[160000,160000],"E308 San":[660000,660000],"E316 San":[35198,35198],"OLI Log.":[90233,90233],"OLI util.":[28446,28446],"EMC":[92322,92322],"OLI reg.":[36062,36062],"IDEA reg.":[61537,61537],"OScope":[74231,74231],"Powerbank":[63563,63563],"Rooster":[1000000,250000],"Badge":[330131,330131],"Defib":[620500,620500],"SG-C10":[110561,55281],"RFIDR":[158821,158821],"VPX":[220000,220000],"LEDX":[886664,886664],"Propital":[58264,58264],"SJ1":[31262,31262],"SJ6":[99999,99999],"Zagustin":[28284,28284],"eTG-c":[88786,88786],"Intelligence":[340786,170393],"Tetriz":[110543,55272],"Prokill":[104364,104364],"Paracord":[45696,22848],"Blue":[568051,568051],"Yellow":[227667,227667],"Green":[1081246,1081246],"Red":[1114083,1114083],"TGL MO":[44003,44003],"TGL WT":[1400000,1400000],"Violet":[394526,394526],"TGL ASR":[1372021,1372021],"Access":[119996,119996],"MCable":[38265,19133],"AESA":[132820,33205],"Iridium":[74892,74892],"MGT":[122958,61479],"PFilter":[92100,92100],"Fuel":[500000,125000],"Moonshine":[428952,214476],"WFilter":[200649,100325],"RB-OB":[241156,241156],"RB-TB":[77391,77391],"RB-AM":[2950000,2950000],"RB-MP21":[54575,54575],"RB-PSV1":[45683,45683],"RB-ORB1":[2800000,2800000],"RB-ORB2":[180856,180856],"RB-ORB3":[330218,330218],"RB-ST":[110106,110106],"GreenBat":[219990,219990],"Cyclon":[202740,101370],"3-(b-TG)":[33138,33138],"L1":[24000,24000],"P22":[25389,25389],"Meldonin":[69999,69999],"M.U.L.E.":[148626,148626],"Obdolbos":[39518,39518],"Veritas":[42000,42000],"OR":[67080,67080],"Egg":[42999,42999],"PNB":[41139,41139],"Trimadol":[68957,68957],"Perfotoran":[55000,55000],"Blue Folders":[379768,189884],"Skybridge 46-48":[3235,3235],"X-ray":[82858,82858],"Rusted":[4199,4199],"Negotiations":[14693,14693],"Relax":[333259,333259],"REA":[180000,180000],"Overseer":[154408,154408],"2A2-(b-TG)":[70791,70791],"Res. unit":[122269,122269],"Company":[46667,46667],"Knossos":[77681,77681],"Data":[4500,4500]};
+const LOOT_HV_MIN = 150000;   // per-slot bar for the high-value layer
 
 const MAP_MARKERS = {
   "Ground Zero": {
@@ -4904,4 +4913,4 @@ const MAP_MARKERS = {
 // wipe or a patch is visible rather than merely wrong.
 const MARKER_BAKED_AT = 1784554863240;
 
-if (typeof module !== 'undefined') module.exports = { MAP_MARKERS, MARKER_COLS, MARKER_BAKED_AT, CAT_NAMES, CONTAINER_TYPES };
+if (typeof module !== 'undefined') module.exports = { MAP_MARKERS, MARKER_COLS, MARKER_BAKED_AT, CAT_NAMES, CONTAINER_TYPES, LOOT_VALUE, LOOT_HV_MIN };

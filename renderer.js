@@ -1672,6 +1672,28 @@ function collectMapPins(mapName) {
 
 // "has markers" means has any, not merely has an entry: Terminal is in the file
 // with every list empty, and an all-disabled panel over an empty map is noise.
+// Hand-corrected positions from the dev map editor, baked through storydata.js
+// (MAP_FIXES). Some upstream label/extract coordinates sit visibly off on some
+// maps; the owner drags them right in the editor and the moves land here. Keys
+// are built from the PRISTINE baked coords, so this must run before anything
+// reads or copies the data — it mutates the shared row arrays in place, once,
+// at load. Guarded: storydata.js may predate the constant.
+(function applyMapFixes() {
+  if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
+  const lbl = MAP_FIXES.labels || {}, exm = MAP_FIXES.extracts || {};
+  for (const [name, md] of Object.entries(MAP_DATA)) {
+    for (const l of md.labels || []) {
+      const m = lbl[`${name}|${l[2]}|${Math.round(l[0])}|${Math.round(l[1])}`];
+      if (m) { l[0] = m.x; l[1] = m.z; }
+    }
+    if (typeof MAP_MARKERS === 'undefined' || !MAP_MARKERS[name]) continue;
+    for (const r of MAP_MARKERS[name].ex || []) {
+      const m = exm[`${name}|${r[5]}|${r[3]}`];
+      if (m) { r[0] = m.x; r[2] = m.z; }
+    }
+  }
+})();
+
 const hasMapMarkers = (name) => typeof MAP_MARKERS !== 'undefined' && !!MAP_MARKERS[name]
   && Object.values(MAP_MARKERS[name]).some((rows) => rows.length);
 
@@ -1772,7 +1794,11 @@ const MARKER_GROUPS = [
     // one or four other items compete for the exact spot changes nothing a player
     // can act on, and dressing it up as two tiers implied one of them was reliable.
     note: 'Spots where that kind of item can turn up. Nothing here is guaranteed.',
-    rows: LOOT_CATS.slice(2),
+    // High value is data-driven, never a hand list: whatever cleared the
+    // value-per-slot bar (LOOT_HV_MIN) when the marker data was baked. Those
+    // spots draw the gold star INSTEAD of their category glyph and show under
+    // either tick box — see collectMapMarkers.
+    rows: [{ id: 'lootHighValue', label: 'High value', glyph: 'star', cls: 'mk-hv' }].concat(LOOT_CATS.slice(2)),
   },
   {
     id: 'containers', title: 'CONTAINERS',
@@ -1926,8 +1952,23 @@ function collectMapMarkers(mapName) {
     // and reads the same. How many other items share the exact spot is not
     // something a player can act on, and showing it as two tiers made one of them
     // look reliable.
-    add(x, y, z, [c.id], c.glyph, c.cls, item || c.label,
-      [['', 'This item has a chance to spawn here']], { loose: true });
+    //
+    // The one sanctioned exception: an item whose baked value-per-slot clears
+    // LOOT_HV_MIN draws as the gold star and belongs to BOTH its category layer
+    // and the high-value one (either box shows it, it appears once). That is a
+    // statement about the item's price, not about the spawn — the card keeps the
+    // same chance sentence and adds what it is worth. Guarded: the layer tests
+    // run this without the generated constants.
+    const lv = (typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[item]) || null;
+    const hv = !!lv && typeof LOOT_HV_MIN !== 'undefined' && lv[1] >= LOOT_HV_MIN;
+    const lines = [['', 'This item has a chance to spawn here']];
+    if (hv) {
+      const fv = (n) => Math.round(n).toLocaleString('en-US');
+      lines.push(['Worth', `≈ ${fv(lv[0])} roubles`
+        + (lv[0] !== lv[1] ? ` (${fv(lv[1])} per slot)` : '')]);
+    }
+    add(x, y, z, hv ? [c.id, 'lootHighValue'] : [c.id], hv ? 'star' : c.glyph,
+      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv });
   }
   // The only layer that is genuinely always there: the container is level
   // geometry, so it is in that spot every raid. Its CONTENTS are still a roll,
@@ -2009,6 +2050,9 @@ const MARKER_GLYPHS = {
 
   // one shape per loot type, so a marker is recognisable without the panel
   gem: 'M0 -6.4 L6.4 0 L0 6.4 L-6.4 0 Z',
+  // high value: a solid five-point star — nothing else on the map is one. All
+  // one subpath, so the winding rule that hollowed the grenade cannot bite.
+  star: 'M0 -7.2 L1.76 -2.43 L6.85 -2.22 L2.85 0.93 L4.23 5.83 L0 3 L-4.23 5.83 L-2.85 0.93 L-6.85 -2.22 L-1.76 -2.43 Z',
   cross: 'M-2.3 -6.4 L2.3 -6.4 L2.3 -2.3 L6.4 -2.3 L6.4 2.3 L2.3 2.3 L2.3 6.4 L-2.3 6.4 L-2.3 2.3 L-6.4 2.3 L-6.4 -2.3 L-2.3 -2.3 Z',
 
   // pins down two sides only, not all four: with pins all round it read as a

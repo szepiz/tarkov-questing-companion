@@ -1114,6 +1114,9 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-elec   { fill: #6fc3b0; }
 .mk-drink  { fill: #7a9a5a; }
 .mk-mine   { fill: #e0533f; }
+/* high value: the brightest thing on the map on purpose — a gold star that is
+   deliberately lighter than the keys/keycards ambers around it */
+.mk-hv     { fill: #ffd75a; }
 .mk-keys.hollow   { stroke: #d0a943; }
 .mk-intel.hollow  { stroke: #7fb2e5; }
 .mk-val.hollow    { stroke: #b06fd0; }

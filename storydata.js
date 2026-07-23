@@ -5804,3 +5804,4 @@ const STORY_HAZARDS = [
   ]
  }
 ];
+const MAP_FIXES = {"labels":{},"extracts":{}};
