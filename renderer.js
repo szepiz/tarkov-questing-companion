@@ -1790,22 +1790,42 @@ function collectMapPins(mapName) {
 // at load. Guarded: storydata.js may predate the constant.
 (function applyMapFixes() {
   if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
-  const lbl = MAP_FIXES.labels || {}, exm = MAP_FIXES.extracts || {};
+  const F = (k) => MAP_FIXES[k] || {};
   // Moved rows keep their PRISTINE coords in `_o`: floor membership must stay
   // decided by the original position. A move is an artwork correction — the
   // upstream coords sit visibly off the drawing — so re-deriving the floor
   // from the corrected spot files the thing on the wrong floor tab and it
   // "disappears" (this happened with fixes dragged left across a floor
-  // boundary rectangle).
+  // boundary rectangle). A hand FLOOR override (`_floor`) beats even that.
   for (const [name, md] of Object.entries(MAP_DATA)) {
     for (const l of md.labels || []) {
-      const m = lbl[`${name}|${l[2]}|${Math.round(l[0])}|${Math.round(l[1])}`];
+      const key = `${name}|${l[2]}|${Math.round(l[0])}|${Math.round(l[1])}`;
+      const m = F('labels')[key];
       if (m) { l._o = [l[0], l[1]]; l[0] = m.x; l[1] = m.z; }
+      const f = F('labelFloors')[key];
+      if (typeof f === 'number') l._floor = f;
     }
     if (typeof MAP_MARKERS === 'undefined' || !MAP_MARKERS[name]) continue;
     for (const r of MAP_MARKERS[name].ex || []) {
-      const m = exm[`${name}|${r[5]}|${r[3]}`];
+      const key = `${name}|${r[5]}|${r[3]}`;
+      const m = F('extracts')[key];
       if (m) { r._o = [r[0], r[2]]; r[0] = m.x; r[2] = m.z; }
+      const f = F('extractFloors')[key];
+      if (typeof f === 'number') r._floor = f;
+    }
+    for (const r of MAP_MARKERS[name].tr || []) {
+      const key = `${name}|${r[4]}|${Math.round(r[0])}|${Math.round(r[2])}`;
+      const m = F('transits')[key];
+      if (m) { r._o = [r[0], r[2]]; r[0] = m.x; r[2] = m.z; }
+      const f = F('transitFloors')[key];
+      if (typeof f === 'number') r._floor = f;
+    }
+    for (const r of MAP_MARKERS[name].sw || []) {
+      const key = `${name}|${Math.round(r[0])}|${Math.round(r[2])}`;
+      const m = F('switches')[key];
+      if (m) { r._o = [r[0], r[2]]; r[0] = m.x; r[2] = m.z; }
+      const f = F('switchFloors')[key];
+      if (typeof f === 'number') r._floor = f;
     }
   }
   // Hand-ADDED location names (the data is missing some): appended as normal
@@ -2108,19 +2128,27 @@ function collectMapMarkers(mapName) {
   }
   // Transits behave like extracts for the player (a way OUT of the raid), so
   // they get the same treatment: name above the icon, visible on every floor,
-  // greyed when theirs is another one.
-  for (const [x, y, z, desc, dest] of M.tr || []) {
+  // greyed when theirs is another one — and the same hand corrections
+  // (`_floor` override wins, a moved row keeps its original floor via `_o`).
+  for (const r of M.tr || []) {
+    const [x, y, z, desc, dest] = r;
     const m2 = out.length;
     add(x, y, z, ['transitAll'], 'arrow', 'mk-transit', `Transit to ${dest}`,
       [['', `Moves you to ${dest} instead of extracting`]].concat(desc && desc !== `Transit to ${dest}` ? [['', desc]] : []),
-      { anyFloor: true });
+      Object.assign({ anyFloor: true },
+        typeof r._floor === 'number' ? { floor: r._floor }
+          : r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : {}));
     if (out.length > m2) out[out.length - 1].label = `To ${dest}`;
   }
   // Switches / levers. `what` was resolved into a sentence at bake time
-  // ("Opens the D-2 extract · Needs another switch thrown first").
-  for (const [x, y, z, what] of M.sw || []) {
+  // ("Opens the D-2 extract · Needs another switch thrown first"). Same hand
+  // corrections as extracts: `_floor` override, original floor for moved rows.
+  for (const r of M.sw || []) {
+    const [x, y, z, what] = r;
     add(x, y, z, ['switchAll'], 'lever', 'mk-switch', 'Switch / lever',
-      [['', what || 'Operates something on this map']]);
+      [['', what || 'Operates something on this map']],
+      typeof r._floor === 'number' ? { floor: r._floor }
+        : r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : undefined);
   }
   for (const [x, y, z, type] of M.hz || []) {
     if (type !== 0 && type !== 1) continue;   // see the note on MARKER_GROUPS.hazards
