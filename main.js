@@ -1062,6 +1062,7 @@ function createWindow() {
     backgroundColor: '#0d0d0d',
     autoHideMenuBar: true,
     title: 'Tarkov Questing Companion',
+    icon: path.join(APP_DIR, 'icon.ico'),   // packaged exe carries it too (--icon)
     show: !shooting,
     webPreferences: {
       preload: path.join(APP_DIR, 'preload.js'),
