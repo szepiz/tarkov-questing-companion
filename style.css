@@ -295,23 +295,24 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .quest-row.selected .quest-check { border-color: #55524a; }
 .quest-row.locked.selected .quest-check { border-color: #8a7127; }
 .quest-check:hover { border-color: #d8d5cd; }
+/* completed: a white tick on green (used to be a white cross on red, which
+   read as "removed" rather than "done") */
 .quest-row.completed .quest-check {
-  background: #c03a3a;
-  border-color: #7e2626;
+  background: #55964d;
+  border-color: #35672f;
 }
-.quest-row.completed .quest-check::before,
-.quest-row.completed .quest-check::after {
+.quest-row.completed .quest-check::before {
   content: '';
   position: absolute;
-  left: 1.5px;
-  right: 1.5px;
-  top: 50%;
-  height: 2px;
-  margin-top: -1px;
-  background: #f2f0ea;
+  left: 2.5px;
+  top: 3px;
+  width: 7px;
+  height: 4px;
+  border-left: 2px solid #f2f0ea;
+  border-bottom: 2px solid #f2f0ea;
+  transform: rotate(-45deg);
 }
-.quest-row.completed .quest-check::before { transform: rotate(45deg); }
-.quest-row.completed .quest-check::after { transform: rotate(-45deg); }
+.quest-row.completed .quest-check::after { content: none; }
 
 /* sidebar footer */
 #sidebarFooter {
