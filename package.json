@@ -1,7 +1,7 @@
 {
   "name": "tarkov-questing-companion",
   "productName": "Tarkov Questing Companion",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Escape from Tarkov quest tracker (PvP/PvE, Kappa / Lightkeeper)",
   "author": "szepiz",
   "main": "main.js",
