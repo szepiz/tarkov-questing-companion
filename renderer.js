@@ -442,6 +442,7 @@ function renderStoryTree(tree) {
     row.innerHTML = `
       <span class="row-name">${escapeHtml(c.name.toUpperCase())}</span>
       <span class="row-toggle">${expanded ? '−' : '+'}</span>
+      ${c.wip ? '<span class="story-tag wip" title="Map locations for this chapter are not placed yet — expect no pins or areas">WIP</span>' : ''}
       ${cState === 'done' ? '<span class="story-tag done">DONE</span>'
         : cState === 'locked' ? '<span class="story-tag locked">LOCKED</span>' : ''}
       <span class="row-count${cState === 'done' ? ' done' : ''}">${doneCount}/${mains.length}</span>`;
@@ -518,6 +519,7 @@ function renderStoryChapter() {
   $('questName').textContent = c.name.toUpperCase();
   $('questBadges').innerHTML = [
     '<span class="badge story">STORY CHAPTER</span>',
+    c.wip ? '<span class="badge wip" title="Map locations for this chapter are not placed yet">MAP LOCATIONS WIP</span>' : '',
     cState === 'done' ? '<span class="badge done">COMPLETED</span>' : '',
     cState === 'locked' ? '<span class="badge locked">NOT DISCOVERED</span>' : '',
   ].join('');
@@ -2621,6 +2623,7 @@ function pinCard(md, p, parent, k) {
 
 async function openQuestMap(mapName) {
   if (!hasMapData(mapName)) return;
+  applyMapRotation(mapName);   // saved quarter-turns, applied to the pristine entry
   const md = MAP_DATA[mapName];
   mapView.name = mapName;
   mapView.floor = -1;
@@ -2776,22 +2779,42 @@ window.addEventListener('resize', onStageResized);
 // rotation in normalized coords is (x,y) -> (1-y, x), and complementing the
 // char flips u<->U / v<->V. Everything downstream (pins, markers, labels,
 // clicks, the editor's inverse) reads these two fields, so nothing else moves.
-// Runtime-only: reopening the map from the list restores the shipped rotation.
+//
+// PERSISTED as a quarter-turn count per map (settings.mapRotation). MAP_BASE
+// keeps each map's pristine shipped entry, and the stored offset is applied to
+// that on every open — never cumulatively to an already-mutated entry.
+const MAP_BASE = {};
+function quarterTurn(md) {
+  const o = md.orient || 'UV';
+  const comp = (c) => ({ u: 'U', U: 'u', v: 'V', V: 'v' }[c]);
+  return { ...md, rotate: ((md.rotate || 0) + 90) % 360, orient: comp(o[1]) + o[0] };
+}
+function mapRotOffset(name) {
+  const r = ((state.settings && state.settings.mapRotation) || {})[name];
+  return typeof r === 'number' ? ((r % 4) + 4) % 4 : 0;
+}
+function applyMapRotation(name) {
+  if (!MAP_BASE[name]) MAP_BASE[name] = MAP_DATA[name];
+  let md = MAP_BASE[name];
+  for (let i = 0; i < mapRotOffset(name); i++) md = quarterTurn(md);
+  MAP_DATA[name] = md;
+}
 async function rotateMap() {
   if (!mapView.name) return;
   const name = mapView.name;
-  const md = MAP_DATA[name];
-  const o = md.orient || 'UV';
-  const comp = (c) => ({ u: 'U', U: 'u', v: 'V', V: 'v' }[c]);
-  MAP_DATA[name] = { ...md, rotate: ((md.rotate || 0) + 90) % 360, orient: comp(o[1]) + o[0] };
+  // local-first then persist, same reason as setLayer: two quick clicks must
+  // not build on the same stale settings object
+  const next = { ...((state.settings && state.settings.mapRotation) || {}), [name]: (mapRotOffset(name) + 1) % 4 };
+  state.settings = { ...state.settings, mapRotation: next };
   const keep = { sets: mapView.sets, floor: mapView.floor };
-  await openQuestMap(name);
+  await openQuestMap(name);   // re-applies rotation from settings
   mapView.sets = keep.sets;
   renderMapSets();
   mapView.pins = collectMapPins(name);
   renderMapLoadout(name);
   if (keep.floor !== -1) mapView.floor = keep.floor;
   drawMap();
+  state.settings = await backend.saveSettings({ mapRotation: next });
 }
 $('rotateMapBtn').addEventListener('click', rotateMap);
 

@@ -585,7 +585,8 @@ const STORY_DATA = {
      ],
      "indent": 1
     }
-   ]
+   ],
+   "wip": false
   },
   {
    "id": "falling-skies",
@@ -923,7 +924,8 @@ const STORY_DATA = {
      "sourceQuestId": "68cd7d6d9510d63fdb05a76a",
      "maps": []
     }
-   ]
+   ],
+   "wip": false
   },
   {
    "id": "batya",
@@ -2251,7 +2253,8 @@ const STORY_DATA = {
      "maps": [],
      "indent": 1
     }
-   ]
+   ],
+   "wip": false
   },
   {
    "id": "the-unheard",
@@ -2608,7 +2611,8 @@ const STORY_DATA = {
      "sourceQuestId": "67ced01df816f16d9a00d586",
      "maps": []
     }
-   ]
+   ],
+   "wip": true
   },
   {
    "id": "blue-fire",
@@ -2700,7 +2704,8 @@ const STORY_DATA = {
      "sourceQuestId": "67b892bd55eaf7b06d011436",
      "maps": []
     }
-   ]
+   ],
+   "wip": true
   },
   {
    "id": "they-are-already-here",
@@ -3001,7 +3006,8 @@ const STORY_DATA = {
      "sourceQuestId": "68588ee109509e9fa1045b38",
      "maps": []
     }
-   ]
+   ],
+   "wip": true
   },
   {
    "id": "accidental-witness",
@@ -3227,7 +3233,8 @@ const STORY_DATA = {
      "sourceQuestId": "68f0f55ea607c91a6006cebb",
      "maps": []
     }
-   ]
+   ],
+   "wip": true
   },
   {
    "id": "the-labyrinth",
@@ -3363,7 +3370,8 @@ const STORY_DATA = {
      "maps": [],
      "indent": 1
     }
-   ]
+   ],
+   "wip": true
   },
   {
    "id": "the-ticket",
@@ -4789,7 +4797,8 @@ const STORY_DATA = {
      "synthetic": true,
      "indent": 1
     }
-   ]
+   ],
+   "wip": true
   },
   {
    "id": "boreas",
@@ -5650,7 +5659,8 @@ const STORY_DATA = {
      "maps": [],
      "synthetic": true
     }
-   ]
+   ],
+   "wip": true
   }
  ]
 };

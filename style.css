@@ -1374,6 +1374,8 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 .story-tag.done { color: #7a9a5a; }
 .story-tag.locked { color: #d0a943; }
+.story-tag.wip { color: #8a877e; opacity: .8; }
+.badge.wip { color: #8a877e; border-color: #55524a; background: rgba(138,135,126,.1); }
 .story-tag.optional { color: #8a877e; }
 .chapter-row.chapter-locked .row-name { color: #8a877e; }
 /* the map an open story objective is on, right after its name */

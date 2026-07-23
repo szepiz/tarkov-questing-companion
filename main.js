@@ -39,6 +39,7 @@ const DEFAULT_SETTINGS = {
   filter: 'ALL',          // last selected tab
   gameMode: 'regular',    // 'regular' (PvP) | 'pve' — which profile is being viewed
   modeAutoResolved: false, // has the initial "open on the populated mode" decision been made
+  mapRotation: {},        // per-map quarter-turn count (0-3) from the rotate button
   hideCompleted: false,   // hide completed quests from the list
   hideLocked: false,      // hide locked quests from the list (auto mode only)
   hideFailed: false,      // hide failed quests from the list
@@ -118,6 +119,11 @@ function initStorage() {
     const v = settings[k];
     if (!v || typeof v !== 'object' || Array.isArray(v)) { settings[k] = {}; continue; }
     for (const id of Object.keys(v)) if (typeof v[id] !== 'boolean') delete v[id];
+  }
+  {
+    const v = settings.mapRotation;
+    if (!v || typeof v !== 'object' || Array.isArray(v)) settings.mapRotation = {};
+    else for (const id of Object.keys(v)) if (!Number.isInteger(v[id]) || v[id] < 0 || v[id] > 3) delete v[id];
   }
   progress = normalizeProgress(ownProgress || legacyProgress);
   // persist the migrated data into the new location so it is owned here going forward
@@ -1130,6 +1136,7 @@ function createWindow() {
             const objExpected = STORY_DATA.chapters[0].objectives.length;
             const tags = { done: document.querySelectorAll('.story-tag.done').length,
                            locked: document.querySelectorAll('.story-tag.locked').length,
+                           wip: document.querySelectorAll('.story-tag.wip').length,
                            mapHints: document.querySelectorAll('.story-map').length };
             // tick the first untipped open objective through the real checkbox
             const row = [...document.querySelectorAll('.quest-row.story-obj')]
@@ -1210,7 +1217,15 @@ function createWindow() {
             document.getElementById('rotateMapBtn').click();
             ${settle(1200)}
             const after = { aspect: art(), n: mapView.markers.length, rot: MAP_DATA['Woods'].rotate || 0, in: inside() };
-            return { markersKept: before.n === after.n ? 'ok ' + after.n : 'BAD ' + before.n + '->' + after.n,
+            // the quarter-turn must survive closing and reopening the map
+            document.getElementById('closeMapBtn').click();
+            ${settle(200)}
+            await openQuestMap('Woods');
+            ${settle(1000)}
+            const persisted = MAP_DATA['Woods'].rotate === after.rot
+              && typeof (state.settings.mapRotation || {})['Woods'] === 'number' ? 'ok' : 'BAD';
+            return { persisted,
+              markersKept: before.n === after.n ? 'ok ' + after.n : 'BAD ' + before.n + '->' + after.n,
               rotated: after.rot === (before.rot + 90) % 360 ? 'ok ' + before.rot + '->' + after.rot : 'BAD',
               aspectFlipped: Math.abs(after.aspect - 1 / before.aspect) < 0.15 * (1 / before.aspect)
                 ? 'ok ' + before.aspect.toFixed(2) + '->' + after.aspect.toFixed(2) : 'BAD ' + before.aspect.toFixed(2) + '->' + after.aspect.toFixed(2),
