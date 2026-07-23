@@ -1806,6 +1806,17 @@ function collectMapPins(mapName) {
       if (m) { r._o = [r[0], r[2]]; r[0] = m.x; r[2] = m.z; }
     }
   }
+  // Hand-ADDED location names (the data is missing some): appended as normal
+  // label rows carrying the floor they were placed on (`_floor`), which
+  // labelOnFloor checks first — added names have no height band or extent
+  // membership to derive one from.
+  for (const nl of MAP_FIXES.newLabels || []) {
+    const md = MAP_DATA[nl.map];
+    if (!md) continue;
+    const row = [nl.x, nl.z, nl.text];
+    row._floor = typeof nl.floor === 'number' ? nl.floor : -1;
+    (md.labels = md.labels || []).push(row);
+  }
 })();
 
 // Objective-position fixes (MAP_FIXES.objectives) work on the TASK data, which
@@ -1922,6 +1933,11 @@ const MARKER_GROUPS = [
     id: 'transits', title: 'TRANSITS',
     note: 'Walk in to travel to another map instead of extracting.',
     rows: [{ id: 'transitAll', label: 'To another map', glyph: 'arrow', cls: 'mk-transit' }],
+  },
+  {
+    id: 'interact', title: 'INTERACTABLES',
+    note: 'Levers and switches you can operate — they open doors, power extracts or start something.',
+    rows: [{ id: 'switchAll', label: 'Levers & switches', glyph: 'lever', cls: 'mk-switch' }],
   },
   {
     id: 'keys', title: 'KEYS & KEYCARDS',
@@ -2079,6 +2095,12 @@ function collectMapMarkers(mapName) {
       { anyFloor: true });
     if (out.length > m2) out[out.length - 1].label = `To ${dest}`;
   }
+  // Switches / levers. `what` was resolved into a sentence at bake time
+  // ("Opens the D-2 extract · Needs another switch thrown first").
+  for (const [x, y, z, what] of M.sw || []) {
+    add(x, y, z, ['switchAll'], 'lever', 'mk-switch', 'Switch / lever',
+      [['', what || 'Operates something on this map']]);
+  }
   for (const [x, y, z, type] of M.hz || []) {
     if (type !== 0 && type !== 1) continue;   // see the note on MARKER_GROUPS.hazards
     const id = type === 0 ? 'hazardMinefield' : 'hazardSniper';
@@ -2143,6 +2165,17 @@ function collectMapMarkers(mapName) {
       h.label, [['', 'Marked by hand — not in the API data']],
       { floor: typeof h.floor === 'number' ? h.floor : -1 });
   }
+  // Hand-placed interactables (dev editor -> storydata.js): the API misses
+  // some levers/buttons, so the owner marks them; they share the switch layer.
+  const handSw = typeof HAND_INTERACTABLES !== 'undefined' ? HAND_INTERACTABLES : [];
+  for (const h of handSw) {
+    if (h.map !== mapName || !(h.pts || []).length) continue;
+    const cx = h.pts.reduce((a, q) => a + q.x, 0) / h.pts.length;
+    const cz = h.pts.reduce((a, q) => a + q.z, 0) / h.pts.length;
+    add(cx, 0, cz, ['switchAll'], 'lever', 'mk-switch',
+      h.label || 'Interactable', [['', 'Marked by hand — not in the API data']],
+      { floor: typeof h.floor === 'number' ? h.floor : -1 });
+  }
   return out;
 }
 
@@ -2187,6 +2220,8 @@ const MARKER_GLYPHS = {
   // that once hollowed the grenade cannot bite here
   arrow: 'M-7 -2.6 L1.2 -2.6 L1.2 -6.5 L7.5 0 L1.2 6.5 L1.2 2.6 L-7 2.6 Z',
   mine: 'M0 -5.2 L4.8 3.2 L-4.8 3.2 Z',
+  // a lever: base plate, angled stick, round knob — open strokes, so HOLLOW
+  lever: 'M-6 6 L6 6 M-1 6 L3.6 -3.4 M3.6 -3.4 A2.1 2.1 0 1 1 3.61 -3.41',
   sniper: 'M0 -6.5 L0 6.5 M-6.5 0 L6.5 0 M0 -3.6 A3.6 3.6 0 1 1 0 3.6 A3.6 3.6 0 1 1 0 -3.6',
   key: 'M0 -6.2 A3 3 0 1 1 0 -0.2 A3 3 0 1 1 0 -6.2 M-1.4 -0.6 L-1.4 6.4 L1.4 6.4 L1.4 -0.6 M1.4 3 L3.4 3',
   marked: 'M-6.5 -6.5 L6.5 -6.5 L6.5 6.5 L-6.5 6.5 Z M-6.5 -2 L-6.5 -6.5 L-2 -6.5 M2 6.5 L6.5 6.5 L6.5 2',
@@ -2237,7 +2272,7 @@ const MARKER_GLYPHS = {
 // Which glyphs are drawn as outlines (fill: none) rather than solids. A shape
 // built from open strokes MUST be listed here or it fills into a blob.
 const HOLLOW = new Set([
-  'sniper', 'marked', 'text',
+  'sniper', 'marked', 'text', 'lever',
   'stim', 'chip', 'card', 'fuelCan', 'nut', 'gear', 'cutlery',
   'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'shirt', 'bag', 'cache', 'body', 'rouble',
 ]);
@@ -2562,6 +2597,8 @@ function svgUnitsPerPx(svg, md) {
 // map is noise. Ground shows everything, because ground is the whole map. A floor
 // whose extent has no bounds genuinely covers the map, so it keeps every label.
 function labelOnFloor(md, l) {
+  // A hand-ADDED label carries the floor it was placed on outright.
+  if (typeof l._floor === 'number') return l._floor === mapView.floor;
   // A hand-moved label (l._o = pristine coords, see applyMapFixes) keeps the
   // floor its ORIGINAL position implies — the move corrects where the name
   // sits on the artwork, not which storey it belongs to. Deriving the floor

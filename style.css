@@ -1160,6 +1160,7 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-elec   { fill: #6fc3b0; }
 .mk-drink  { fill: #7a9a5a; }
 .mk-mine   { fill: #e0533f; }
+.mk-switch.hollow { stroke: #b8d84a; }   /* lime — levers & switches, nothing else uses it */
 /* high value: the brightest thing on the map on purpose — a gold star that is
    deliberately lighter than the keys/keycards ambers around it */
 .mk-hv     { fill: #ffd75a; }

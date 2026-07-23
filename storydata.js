@@ -481,23 +481,23 @@ const STORY_DATA = {
        "color": "blue",
        "pts": [
         {
-         "x": -127.84,
+         "x": -127.54,
          "z": -279.24
         },
         {
-         "x": -127.71,
+         "x": -127.41,
          "z": -332.8
         },
         {
-         "x": -101.06,
+         "x": -100.76,
          "z": -332.5
         },
         {
-         "x": -100.92,
+         "x": -100.62,
          "z": -279.08
         },
         {
-         "x": -127.84,
+         "x": -127.54,
          "z": -279.39
         }
        ]
@@ -5816,4 +5816,5 @@ const STORY_HAZARDS = [
   ]
  }
 ];
-const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-222.9,"z":-262.3},"The Lab|Men's Locker Room|-241|-280":{"x":-231.6,"z":-262.7},"The Lab|Gym|-236|-302":{"x":-229.4,"z":-297.9},"The Lab|Warehouse|-163|-269":{"x":-159,"z":-252},"The Lab|Warehouse Gate|-170|-248":{"x":-159.2,"z":-209.6},"The Lab|Main Working Area|-172|-342":{"x":-161.8,"z":-349.6}},"extracts":{"The Lab|Hangar Gate|0":{"x":-159.9,"z":-224.6},"The Lab|Cargo Elevator|2":{"x":-112.1,"z":-412.3}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-132,"z":-354.9}}};
+const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-222.9,"z":-262.3},"The Lab|Men's Locker Room|-241|-280":{"x":-231.6,"z":-262.7},"The Lab|Gym|-236|-302":{"x":-229.4,"z":-297.9},"The Lab|Warehouse|-163|-269":{"x":-159,"z":-252},"The Lab|Warehouse Gate|-170|-248":{"x":-159.2,"z":-209.6},"The Lab|Main Working Area|-172|-342":{"x":-161.8,"z":-349.6},"The Lab|Control Room|-169|-288":{"x":-160.2,"z":-276.9},"The Lab|Infirmary Lvl 1|-130|-398":{"x":-117.2,"z":-421.6},"The Lab|Negotiation Room|-148|-398":{"x":-139.1,"z":-423.2},"The Lab|Test Room|-130|-356":{"x":-117.1,"z":-366.4},"The Lab|Server Room|-125|-308":{"x":-113.2,"z":-306},"The Lab|Warehouse Tunnels|-116|-266":{"x":-104.2,"z":-248.4},"The Lab|Lecture Hall|-207|-305":{"x":-200.5,"z":-299.5},"The Lab|Security Barracks|-260|-319":{"x":-252.3,"z":-323.8},"The Lab|Reception|-260|-342":{"x":-256.1,"z":-349.2},"The Lab|Vestibules #1|-246|-379":{"x":-239.4,"z":-396.7},"The Lab|Parking|-230|-400":{"x":-222.9,"z":-427.9},"The Lab|Vestibules #2|-216|-379":{"x":-205.5,"z":-397.1},"The Lab|Recreation Area|-221|-343":{"x":-217.6,"z":-349.8},"The Lab|Offices #2|-149|-401":{"x":-138.3,"z":-426.4},"The Lab|Infirmary Lvl 2|-130|-401":{"x":-116.6,"z":-423},"The Lab|Sterile Laboratory|-130|-361":{"x":-117.5,"z":-377.2},"The Lab|Cafeteria|-219|-302":{"x":-212.5,"z":-296},"The Lab|Security Office|-254|-320":{"x":-252.9,"z":-324.4},"The Lab|Corridor To Building #2|-250|-281":{"x":-247.8,"z":-272.1},"The Lab|Security #1|-244|-378":{"x":-239.6,"z":-397.1},"The Lab|Administrative Office|-260|-364":{"x":-253.3,"z":-376.2},"The Lab|Security #2|-215|-379":{"x":-206.3,"z":-398.2},"The Lab|Offices #1|-189|-401":{"x":-182.1,"z":-426},"The Lab|Boiler Room|-259|-366":{"x":-260.1,"z":-377.2}},"extracts":{"The Lab|Hangar Gate|0":{"x":-159.2,"z":-224.1},"The Lab|Cargo Elevator|2":{"x":-99.1,"z":-435.7},"The Lab|Main Elevator|2":{"x":-278.9,"z":-337.3},"The Lab|Medical Block Elevator|2":{"x":-98.5,"z":-352.2},"The Lab|Ventilation Shaft|0":{"x":-128.8,"z":-420.8},"The Lab|Sewage Conduit|0":{"x":-121.2,"z":-253.8},"The Lab|Parking Gate|0":{"x":-223.2,"z":-452.9}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-132,"z":-354.9},"The Lab|66b10eef0951e90ec383850b|-171|-283":{"x":-160.7,"z":-278.7}},"newLabels":[]};
+const HAND_INTERACTABLES = [];
