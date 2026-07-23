@@ -2322,21 +2322,113 @@ const STORY_DATA = {
      "type": "main",
      "description": "Learn more about the \"fuel\" mentioned in the note",
      "sourceQuestId": "67ced00eceefc356a10fd405",
-     "maps": []
+     "maps": [
+      "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -165.91,
+         "z": -377.17
+        },
+        {
+         "x": -166.11,
+         "z": -371.84
+        },
+        {
+         "x": -154.66,
+         "z": -371.31
+        },
+        {
+         "x": -154.26,
+         "z": -376.63
+        },
+        {
+         "x": -165.91,
+         "z": -377.34
+        }
+       ]
+      },
+      {
+       "map": "The Lab",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -160.19,
+         "z": -411.43
+        },
+        {
+         "x": -159.99,
+         "z": -391.9
+        },
+        {
+         "x": -140.84,
+         "z": -392.08
+        },
+        {
+         "x": -140.84,
+         "z": -410.54
+        },
+        {
+         "x": -160.58,
+         "z": -410.9
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68ec579e6fee9c2b91240914",
      "type": "main",
      "description": "Find more information about the special catalyst shipment",
      "sourceQuestId": "67ced00fd47d32692302aca6",
-     "maps": []
+     "maps": [
+      "Factory"
+     ],
+     "points": [
+      {
+       "map": "Factory",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -5.55,
+         "z": -16.01
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "67e560b517db48126aa3489b",
      "type": "main",
      "description": "Locate Rzhevsky's service vehicle",
      "sourceQuestId": "67ced012152372f12708b7b6",
-     "maps": []
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 21.33,
+         "z": 356.24
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "690963f5722bb1c0bb8747ec",
@@ -2373,7 +2465,39 @@ const STORY_DATA = {
      "type": "main",
      "description": "Locate and obtain the documents on the Blue Ice fuel catalyst research",
      "sourceQuestId": "67ced014c43709665f0fbe46",
-     "maps": []
+     "maps": [
+      "Factory"
+     ],
+     "points": [
+      {
+       "map": "Factory",
+       "floor": 2,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -17.54,
+         "z": 49.61
+        },
+        {
+         "x": -17.54,
+         "z": 43.77
+        },
+        {
+         "x": -25.14,
+         "z": 43.77
+        },
+        {
+         "x": -25.14,
+         "z": 49.41
+        },
+        {
+         "x": -17.49,
+         "z": 49.66
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68ec665bcd1c8c1d5fa37586",
@@ -2410,6 +2534,92 @@ const STORY_DATA = {
      "sourceQuestId": "67ced0157844ea90d80fd6a5",
      "maps": [
       "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -220.56,
+         "z": -311.24
+        },
+        {
+         "x": -220.29,
+         "z": -297.82
+        },
+        {
+         "x": -200.57,
+         "z": -298.29
+        },
+        {
+         "x": -200.3,
+         "z": -311
+        },
+        {
+         "x": -220.56,
+         "z": -311.47
+        }
+       ]
+      },
+      {
+       "map": "The Lab",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -160.43,
+         "z": -411.25
+        },
+        {
+         "x": -160.05,
+         "z": -391.5
+        },
+        {
+         "x": -140.79,
+         "z": -391.97
+        },
+        {
+         "x": -140.78,
+         "z": -411.02
+        },
+        {
+         "x": -160.44,
+         "z": -411.25
+        }
+       ]
+      },
+      {
+       "map": "The Lab",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -271.92,
+         "z": -368.84
+        },
+        {
+         "x": -271.83,
+         "z": -356.42
+        },
+        {
+         "x": -248.52,
+         "z": -356.51
+        },
+        {
+         "x": -248.43,
+         "z": -368.67
+        },
+        {
+         "x": -272.11,
+         "z": -369
+        }
+       ]
+      }
      ]
     },
     {
@@ -2417,7 +2627,87 @@ const STORY_DATA = {
      "type": "main",
      "description": "Locate A.P.'s room in the Health Resort",
      "sourceQuestId": "67ced017029b9dbe190f3c77",
-     "maps": []
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": 2,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -268.75,
+         "z": -105.83
+        },
+        {
+         "x": -299.8,
+         "z": -105.49
+        },
+        {
+         "x": -299.97,
+         "z": -92.2
+        },
+        {
+         "x": -306.87,
+         "z": -93.24
+        },
+        {
+         "x": -363.62,
+         "z": -93.41
+        },
+        {
+         "x": -363.62,
+         "z": -72.36
+        },
+        {
+         "x": -299.8,
+         "z": -72.36
+        },
+        {
+         "x": -299.8,
+         "z": -84.27
+        },
+        {
+         "x": -268.41,
+         "z": -84.96
+        },
+        {
+         "x": -268.23,
+         "z": -105.83
+        }
+       ]
+      },
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -188.29,
+         "z": -92.91
+        },
+        {
+         "x": -204.9,
+         "z": -93.17
+        },
+        {
+         "x": -204.52,
+         "z": -72.85
+        },
+        {
+         "x": -187.01,
+         "z": -72.72
+        },
+        {
+         "x": -187.91,
+         "z": -93.29
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68ec687577b0c308f98a95d6",
@@ -2504,7 +2794,63 @@ const STORY_DATA = {
      "type": "main",
      "description": "Access A.P.'s corporate apartment",
      "sourceQuestId": "67ced01bc23108bd9e031725",
-     "maps": []
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": 1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 133.79,
+         "z": -15.36
+        },
+        {
+         "x": 139.92,
+         "z": -41.86
+        },
+        {
+         "x": 147.41,
+         "z": -50.69
+        },
+        {
+         "x": 147.07,
+         "z": -60.2
+        },
+        {
+         "x": 142.64,
+         "z": -69.37
+        },
+        {
+         "x": 138.56,
+         "z": -71.07
+        },
+        {
+         "x": 123.93,
+         "z": -63.94
+        },
+        {
+         "x": 106.57,
+         "z": -45.25
+        },
+        {
+         "x": 100.45,
+         "z": -28.27
+        },
+        {
+         "x": 101.13,
+         "z": -14
+        },
+        {
+         "x": 133.79,
+         "z": -14
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68efb271fd3876d3ce82595e",
@@ -2573,7 +2919,67 @@ const STORY_DATA = {
      "type": "main",
      "description": "Talk to Mechanic about the EMP blast",
      "sourceQuestId": "67b892b338076c36e50abfb5",
-     "maps": []
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": 1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 70.51,
+         "z": 301.77
+        },
+        {
+         "x": 60.71,
+         "z": 301.61
+        },
+        {
+         "x": 60.55,
+         "z": 325.52
+        },
+        {
+         "x": 70.19,
+         "z": 325.52
+        },
+        {
+         "x": 70.49,
+         "z": 301.89
+        }
+       ]
+      },
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 190.3,
+         "z": 224.13
+        },
+        {
+         "x": 185.59,
+         "z": 224.23
+        },
+        {
+         "x": 185.69,
+         "z": 230.27
+        },
+        {
+         "x": 190.3,
+         "z": 230.06
+        },
+        {
+         "x": 190.51,
+         "z": 224.33
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68e7909afdbe5686163f0808",
@@ -2604,7 +3010,22 @@ const STORY_DATA = {
      "sourceQuestId": "67b892b6b4c09aae5309c275",
      "maps": [
       "The Lab"
-     ]
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -121.9,
+         "z": -328.97
+        }
+       ]
+      }
+     ],
+     "needs": "Local network hacking device"
     },
     {
      "id": "67dc00dfbb13159031c752a6",
@@ -2625,21 +3046,159 @@ const STORY_DATA = {
      "type": "main",
      "description": "Find a lead on Item 1156",
      "sourceQuestId": "67b892bb1c013f0fcb058246",
-     "maps": []
+     "maps": [
+      "Ground Zero",
+      "Lighthouse",
+      "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -140.61,
+         "z": -410.92
+        },
+        {
+         "x": -160.53,
+         "z": -411.13
+        },
+        {
+         "x": -160.04,
+         "z": -391.47
+        },
+        {
+         "x": -140.79,
+         "z": -391.96
+        },
+        {
+         "x": -140.64,
+         "z": -410.92
+        }
+       ]
+      },
+      {
+       "map": "Lighthouse",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -73.15,
+         "z": -98.98
+        },
+        {
+         "x": -92.01,
+         "z": -98.1
+        },
+        {
+         "x": -91.57,
+         "z": -44.19
+        },
+        {
+         "x": -72.72,
+         "z": -45.5
+        },
+        {
+         "x": -71.4,
+         "z": -100.29
+        }
+       ]
+      },
+      {
+       "map": "Ground Zero",
+       "floor": 1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -19.69,
+         "z": 58.59
+        },
+        {
+         "x": -2.81,
+         "z": 58.23
+        },
+        {
+         "x": -7.99,
+         "z": 39.16
+        },
+        {
+         "x": -19.69,
+         "z": 39.47
+        },
+        {
+         "x": -19.78,
+         "z": 58.52
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68e8d86c4164b921197ef0af",
      "type": "main",
      "description": "Investigate the Rus Post office",
      "sourceQuestId": "67b892bd55eaf7b06d011436",
-     "maps": []
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 42.83,
+         "z": 127.15
+        },
+        {
+         "x": 42.95,
+         "z": 105.51
+        },
+        {
+         "x": 32.35,
+         "z": 105.16
+        },
+        {
+         "x": 32.71,
+         "z": 127.03
+        },
+        {
+         "x": 43.07,
+         "z": 126.79
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68e8d8c79a957773413b115f",
      "type": "main",
      "description": "Locate the Rus Post car",
      "sourceQuestId": "67b892bd55eaf7b06d011436",
-     "maps": []
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 25.2,
+         "z": 111.22
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68e8da01fdb6719b81d22ab9",
@@ -5748,5 +6307,5 @@ const STORY_HAZARDS = [
   ]
  }
 ];
-const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-229.5,"z":-276.1},"The Lab|Men's Locker Room|-241|-280":{"x":-237.7,"z":-276.4},"The Lab|Warehouse|-163|-269":{"x":-169.2,"z":-268.3},"The Lab|Warehouse Gate|-170|-248":{"x":-169.4,"z":-236},"The Lab|Security Barracks|-260|-319":{"x":-257.2,"z":-322.9},"The Lab|Recreation Area|-221|-343":{"x":-224.5,"z":-342.6},"The Lab|Security Office|-254|-320":{"x":-257.8,"z":-323.3},"The Lab|Corridor To Building #2|-250|-281":{"x":-253,"z":-283.5},"The Lab|Boiler Room|-259|-366":{"x":-264.6,"z":-363.4},"Ground Zero|TerraGroup|-50|0":{"x":-32.3,"z":32.8},"Ground Zero|Tarbank|43|150":{"x":60,"z":158},"Ground Zero|Empire|14|201":{"x":40.5,"z":141.3},"Ground Zero|Nakatani|2|324":{"x":6.7,"z":330},"Ground Zero|Skyside|150|1":{"x":147.2,"z":9.5},"Ground Zero|Fusion|141|142":{"x":152.4,"z":97.3},"Factory|Heli Crash|30|-8":{"x":24.4,"z":-6.5},"Factory|Rafters|18|4":{"x":20.3,"z":7.9},"Factory|Office Building|21|39":{"x":21.4,"z":44.4},"Factory|Main Office|16|39":{"x":17.3,"z":38.7}},"extracts":{"The Lab|Ventilation Shaft|0":{"x":-140.7,"z":-396.6},"The Lab|Sewage Conduit|0":{"x":-133.5,"z":-269.6},"The Lab|Parking Gate|0":{"x":-229.8,"z":-421},"The Lab|Main Elevator|2":{"x":-281.6,"z":-333.5},"Factory|Camera Bunker Door|1":{"x":-19.7,"z":42.4},"Factory|Courtyard Gate|0":{"x":18.5,"z":62.8},"Factory|Med Tent Gate|0":{"x":-18.9,"z":-54.7},"Factory|Gate 3|1":{"x":60.5,"z":59.5},"Factory|Gate 3|0":{"x":56.8,"z":59.4},"Customs|Sniper Roadblock|1":{"x":7.7,"z":129.5},"Customs|Crossroads|2":{"x":-328.6,"z":-84.8},"Customs|Trailer Park|0":{"x":-319.4,"z":-231.4},"Customs|ZB-013|0":{"x":201.9,"z":-150.6},"Customs|Railroad Passage (Flare)|0":{"x":167.6,"z":-294.2},"Customs|ZB-1011|0":{"x":632.6,"z":-137.5},"Customs|Smugglers' Bunker (ZB-1012)|0":{"x":469.5,"z":-122},"Woods|Scav Bunker|1":{"x":226.8,"z":-700},"Woods|Power Line Passage (Flare)|0":{"x":484.2,"z":-55.6},"Woods|ZB-014|0":{"x":434.9,"z":67.3},"Shoreline|Climber's Trail|0":{"x":-214.6,"z":-346.2}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-143.7,"z":-346.5},"The Lab|66b10eef0951e90ec383850b|-171|-283":{"x":-170.8,"z":-288.6},"Factory|66c2331d75e8aa67fbf65930|58|59":{"x":57.6,"z":57.2}},"transits":{"Customs|Shoreline|24|140":{"x":14.5,"z":124.6},"Woods|Reserve|246|370":{"x":249.2,"z":356.3},"Lighthouse|Shoreline|-339|-169":{"x":-310,"z":-141.9}},"switches":{},"objectiveFloors":{},"extractFloors":{"Factory|Gate 3|0":-1,"Customs|Boiler Room Basement (Co-op)|2":-1,"Customs|ZB-013|0":-1,"Customs|Old Gas Station|0":-1,"Customs|Smugglers' Bunker (ZB-1012)|0":-1,"Customs|ZB-1011|0":-1,"Shoreline|Admin Basement|1":-1,"Shoreline|Climber's Trail|0":-1},"labelFloors":{},"transitFloors":{"Shoreline|The Labyrinth|-198|-81":-1},"switchFloors":{},"newLabels":[{"map":"The Lab","x":-266.8,"z":-342.7,"text":"Switchboard","floor":1},{"map":"The Lab","x":-238.6,"z":-294.6,"text":"Switchboard","floor":1},{"map":"The Lab","x":-220.8,"z":-298.7,"text":"Offline Power Plant","floor":1},{"map":"The Lab","x":-191.9,"z":-321.7,"text":"Ventillation","floor":1},{"map":"The Lab","x":-231,"z":-399.7,"text":"Heat Station","floor":1},{"map":"The Lab","x":-202,"z":-377.8,"text":"Dry Room","floor":1},{"map":"The Lab","x":-182.1,"z":-378.7,"text":"Desalinator","floor":1},{"map":"The Lab","x":-161.1,"z":-342.3,"text":"Central Discharge Collector","floor":1},{"map":"The Lab","x":-160.8,"z":-353,"text":"Store Room","floor":1},{"map":"The Lab","x":-129.4,"z":-357.1,"text":"Offline Power Plant","floor":1},{"map":"The Lab","x":-119.2,"z":-311.3,"text":"Switchboard","floor":1},{"map":"The Lab","x":-139.2,"z":-267.9,"text":"Pumping Station","floor":1},{"map":"The Lab","x":-185.2,"z":-311.5,"text":"Weapon Testing Area","floor":-1},{"map":"The Lab","x":-104.9,"z":-431.6,"text":"Residential","floor":-1},{"map":"The Lab","x":-261.9,"z":-362.5,"text":"Boiler Room","floor":-1},{"map":"The Lab","x":-170.1,"z":-342.4,"text":"Board Room","floor":0},{"map":"Ground Zero","x":9.2,"z":-41,"text":"TerraGroup Garage","floor":-1},{"map":"Ground Zero","x":19,"z":70,"text":"Coffee Maniac","floor":-1},{"map":"Ground Zero","x":112.1,"z":-3.4,"text":"Skyside Business","floor":-1},{"map":"Ground Zero","x":175.4,"z":-0.7,"text":"Reception","floor":-1},{"map":"Ground Zero","x":175.1,"z":7.9,"text":"Skyside Hotel","floor":-1},{"map":"Ground Zero","x":176.1,"z":31,"text":"Coffee Joy","floor":-1},{"map":"Ground Zero","x":153.4,"z":36.3,"text":"Norvair","floor":-1},{"map":"Ground Zero","x":111.3,"z":148.7,"text":"Olive Restaurant","floor":-1},{"map":"Ground Zero","x":117.5,"z":190.1,"text":"Kyshperski","floor":-1},{"map":"Ground Zero","x":139.8,"z":204.2,"text":"Golden World","floor":-1},{"map":"Ground Zero","x":194.5,"z":134.1,"text":"Tartowers","floor":-1},{"map":"Ground Zero","x":69.4,"z":313.5,"text":"Giovanni Teducci","floor":-1},{"map":"Ground Zero","x":72.4,"z":318.6,"text":"Budda Lounge","floor":-1},{"map":"Ground Zero","x":112.4,"z":-5.3,"text":"Skyside Business","floor":0},{"map":"Ground Zero","x":115,"z":30.3,"text":"ASAP Winery","floor":0},{"map":"Ground Zero","x":98.7,"z":-64.4,"text":"Ramp","floor":-1},{"map":"Ground Zero","x":164.9,"z":-89.4,"text":"Coffee Joy","floor":-1},{"map":"Ground Zero","x":107.7,"z":-93.8,"text":"Kostin","floor":-1},{"map":"Ground Zero","x":135.6,"z":-101,"text":"Unity Credit Bank","floor":-1},{"map":"Ground Zero","x":99,"z":-69.7,"text":"Ramp","floor":0},{"map":"Ground Zero","x":80.5,"z":133.9,"text":"Coffee Vice","floor":-1},{"map":"Ground Zero","x":117.4,"z":190.9,"text":"Kyshperski","floor":0},{"map":"Ground Zero","x":112,"z":150.6,"text":"Olive Restaurant","floor":0},{"map":"Ground Zero","x":2304.7,"z":-120.9,"text":"Ramp","floor":0},{"map":"Ground Zero","x":1985,"z":76.5,"text":"Ramp","floor":0},{"map":"Ground Zero","x":110.9,"z":147.2,"text":"Olive Restaurant","floor":1},{"map":"Factory","x":-19.5,"z":43.6,"text":"Bunker Red Light","floor":2}],"newExtracts":[{"map":"Interchange","x":500.6,"z":84.1,"name":"Path to river","faction":0,"floor":-1}]};
+const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-229.5,"z":-276.1},"The Lab|Men's Locker Room|-241|-280":{"x":-237.7,"z":-276.4},"The Lab|Warehouse|-163|-269":{"x":-169.2,"z":-268.3},"The Lab|Warehouse Gate|-170|-248":{"x":-169.4,"z":-236},"The Lab|Security Barracks|-260|-319":{"x":-257.2,"z":-322.9},"The Lab|Recreation Area|-221|-343":{"x":-224.5,"z":-342.6},"The Lab|Security Office|-254|-320":{"x":-257.8,"z":-323.3},"The Lab|Corridor To Building #2|-250|-281":{"x":-253,"z":-283.5},"The Lab|Boiler Room|-259|-366":{"x":-264.6,"z":-363.4},"Ground Zero|TerraGroup|-50|0":{"x":-32.3,"z":32.8},"Ground Zero|Tarbank|43|150":{"x":60,"z":158},"Ground Zero|Empire|14|201":{"x":40.5,"z":141.3},"Ground Zero|Nakatani|2|324":{"x":6.7,"z":330},"Ground Zero|Skyside|150|1":{"x":147.2,"z":9.5},"Ground Zero|Fusion|141|142":{"x":152.4,"z":97.3},"Factory|Heli Crash|30|-8":{"x":24.4,"z":-6.5},"Factory|Rafters|18|4":{"x":20.3,"z":7.9},"Factory|Office Building|21|39":{"x":21.4,"z":44.4},"Factory|Main Office|16|39":{"x":17.3,"z":38.7},"Streets of Tarkov|Prestigio Cafe|39|230":{"x":44,"z":232.9},"Streets of Tarkov|Tarbank|67|230":{"x":65.3,"z":236.4},"Streets of Tarkov|Zmejskij Alley|140|150":{"x":157.4,"z":181.2},"Streets of Tarkov|Kamchatskaya St.|232|100":{"x":237.9,"z":128.8},"Streets of Tarkov|Lexos|66|305":{"x":57.6,"z":296.2},"Streets of Tarkov|Family Market|-223|279":{"x":-222.6,"z":284},"Streets of Tarkov|Marked Hotel|-200|248":{"x":-200.6,"z":251.6},"Streets of Tarkov|Office|-173|226":{"x":-173.1,"z":229.6},"Streets of Tarkov|Shestyorochka|-218|135":{"x":-202.8,"z":188.8},"Streets of Tarkov|Pinewood Hotel|-35|64":{"x":-32.9,"z":109.7},"Streets of Tarkov|Kilmov Shopping Mall|-128|-35":{"x":-94.1,"z":-2.2},"Streets of Tarkov|Beluga|-45|-52":{"x":-35,"z":-44.3},"Streets of Tarkov|Cardinal Apartments|99|-71":{"x":94.6,"z":-55.8},"Streets of Tarkov|Cardinal Bank|89|-20":{"x":98.3,"z":-16.4},"Streets of Tarkov|Concordia|140|362":{"x":203.4,"z":381.8},"Streets of Tarkov|Post Office|42|97":{"x":39.9,"z":118.5}},"extracts":{"The Lab|Ventilation Shaft|0":{"x":-140.7,"z":-396.6},"The Lab|Sewage Conduit|0":{"x":-133.5,"z":-269.6},"The Lab|Parking Gate|0":{"x":-229.8,"z":-421},"The Lab|Main Elevator|2":{"x":-281.6,"z":-333.5},"Factory|Camera Bunker Door|1":{"x":-19.7,"z":42.4},"Factory|Courtyard Gate|0":{"x":18.5,"z":62.8},"Factory|Med Tent Gate|0":{"x":-18.9,"z":-54.7},"Factory|Gate 3|1":{"x":60.5,"z":59.5},"Factory|Gate 3|0":{"x":56.8,"z":59.4},"Customs|Sniper Roadblock|1":{"x":7.7,"z":129.5},"Customs|Crossroads|2":{"x":-328.6,"z":-84.8},"Customs|Trailer Park|0":{"x":-319.4,"z":-231.4},"Customs|ZB-013|0":{"x":201.9,"z":-150.6},"Customs|Railroad Passage (Flare)|0":{"x":167.6,"z":-294.2},"Customs|ZB-1011|0":{"x":632.6,"z":-137.5},"Customs|Smugglers' Bunker (ZB-1012)|0":{"x":469.5,"z":-122},"Woods|Scav Bunker|1":{"x":226.8,"z":-700},"Woods|Power Line Passage (Flare)|0":{"x":484.2,"z":-55.6},"Woods|ZB-014|0":{"x":434.9,"z":67.3},"Shoreline|Climber's Trail|0":{"x":-214.6,"z":-346.2},"Streets of Tarkov|Sewer River|0":{"x":-260.1,"z":211.8},"Streets of Tarkov|Klimov Shopping Mall Exfil|1":{"x":-163.4,"z":-2.3},"Streets of Tarkov|Stylobate Building Elevator|0":{"x":-53.4,"z":-79.3}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-143.7,"z":-346.5},"The Lab|66b10eef0951e90ec383850b|-171|-283":{"x":-170.8,"z":-288.6},"Factory|66c2331d75e8aa67fbf65930|58|59":{"x":57.6,"z":57.2}},"transits":{"Customs|Shoreline|24|140":{"x":14.5,"z":124.6},"Woods|Reserve|246|370":{"x":249.2,"z":356.3},"Lighthouse|Shoreline|-339|-169":{"x":-310,"z":-141.9}},"switches":{},"objectiveFloors":{},"extractFloors":{"Factory|Gate 3|0":-1,"Customs|Boiler Room Basement (Co-op)|2":-1,"Customs|ZB-013|0":-1,"Customs|Old Gas Station|0":-1,"Customs|Smugglers' Bunker (ZB-1012)|0":-1,"Customs|ZB-1011|0":-1,"Shoreline|Admin Basement|1":-1,"Shoreline|Climber's Trail|0":-1,"Streets of Tarkov|Stylobate Building Elevator|0":-1},"labelFloors":{},"transitFloors":{"Shoreline|The Labyrinth|-198|-81":-1,"Streets of Tarkov|The Lab (Dark)|207|82":-1},"switchFloors":{},"newLabels":[{"map":"The Lab","x":-266.8,"z":-342.7,"text":"Switchboard","floor":1},{"map":"The Lab","x":-238.6,"z":-294.6,"text":"Switchboard","floor":1},{"map":"The Lab","x":-220.8,"z":-298.7,"text":"Offline Power Plant","floor":1},{"map":"The Lab","x":-191.9,"z":-321.7,"text":"Ventillation","floor":1},{"map":"The Lab","x":-231,"z":-399.7,"text":"Heat Station","floor":1},{"map":"The Lab","x":-202,"z":-377.8,"text":"Dry Room","floor":1},{"map":"The Lab","x":-182.1,"z":-378.7,"text":"Desalinator","floor":1},{"map":"The Lab","x":-161.1,"z":-342.3,"text":"Central Discharge Collector","floor":1},{"map":"The Lab","x":-160.8,"z":-353,"text":"Store Room","floor":1},{"map":"The Lab","x":-129.4,"z":-357.1,"text":"Offline Power Plant","floor":1},{"map":"The Lab","x":-119.2,"z":-311.3,"text":"Switchboard","floor":1},{"map":"The Lab","x":-139.2,"z":-267.9,"text":"Pumping Station","floor":1},{"map":"The Lab","x":-185.2,"z":-311.5,"text":"Weapon Testing Area","floor":-1},{"map":"The Lab","x":-104.9,"z":-431.6,"text":"Residential","floor":-1},{"map":"The Lab","x":-261.9,"z":-362.5,"text":"Boiler Room","floor":-1},{"map":"The Lab","x":-170.1,"z":-342.4,"text":"Board Room","floor":0},{"map":"Ground Zero","x":9.2,"z":-41,"text":"TerraGroup Garage","floor":-1},{"map":"Ground Zero","x":19,"z":70,"text":"Coffee Maniac","floor":-1},{"map":"Ground Zero","x":112.1,"z":-3.4,"text":"Skyside Business","floor":-1},{"map":"Ground Zero","x":175.4,"z":-0.7,"text":"Reception","floor":-1},{"map":"Ground Zero","x":175.1,"z":7.9,"text":"Skyside Hotel","floor":-1},{"map":"Ground Zero","x":176.1,"z":31,"text":"Coffee Joy","floor":-1},{"map":"Ground Zero","x":153.4,"z":36.3,"text":"Norvair","floor":-1},{"map":"Ground Zero","x":111.3,"z":148.7,"text":"Olive Restaurant","floor":-1},{"map":"Ground Zero","x":117.5,"z":190.1,"text":"Kyshperski","floor":-1},{"map":"Ground Zero","x":139.8,"z":204.2,"text":"Golden World","floor":-1},{"map":"Ground Zero","x":194.5,"z":134.1,"text":"Tartowers","floor":-1},{"map":"Ground Zero","x":69.4,"z":313.5,"text":"Giovanni Teducci","floor":-1},{"map":"Ground Zero","x":72.4,"z":318.6,"text":"Budda Lounge","floor":-1},{"map":"Ground Zero","x":112.4,"z":-5.3,"text":"Skyside Business","floor":0},{"map":"Ground Zero","x":115,"z":30.3,"text":"ASAP Winery","floor":0},{"map":"Ground Zero","x":98.7,"z":-64.4,"text":"Ramp","floor":-1},{"map":"Ground Zero","x":164.9,"z":-89.4,"text":"Coffee Joy","floor":-1},{"map":"Ground Zero","x":107.7,"z":-93.8,"text":"Kostin","floor":-1},{"map":"Ground Zero","x":135.6,"z":-101,"text":"Unity Credit Bank","floor":-1},{"map":"Ground Zero","x":99,"z":-69.7,"text":"Ramp","floor":0},{"map":"Ground Zero","x":80.5,"z":133.9,"text":"Coffee Vice","floor":-1},{"map":"Ground Zero","x":117.4,"z":190.9,"text":"Kyshperski","floor":0},{"map":"Ground Zero","x":112,"z":150.6,"text":"Olive Restaurant","floor":0},{"map":"Ground Zero","x":2304.7,"z":-120.9,"text":"Ramp","floor":0},{"map":"Ground Zero","x":1985,"z":76.5,"text":"Ramp","floor":0},{"map":"Ground Zero","x":110.9,"z":147.2,"text":"Olive Restaurant","floor":1},{"map":"Factory","x":-19.5,"z":43.6,"text":"Bunker Red Light","floor":2},{"map":"The Labyrinth","x":-22.4,"z":20.7,"text":"Shrine of the Minotaur","floor":-1},{"map":"The Labyrinth","x":22.1,"z":6.9,"text":"Torture Room","floor":-1},{"map":"The Labyrinth","x":9.8,"z":4.4,"text":"Observation Room","floor":-1},{"map":"The Labyrinth","x":11,"z":-14.1,"text":"Corpse Room","floor":-1},{"map":"Streets of Tarkov","x":87.4,"z":341.5,"text":"BEAR Camp","floor":-1},{"map":"Streets of Tarkov","x":210,"z":417.2,"text":"Barber Shop","floor":-1},{"map":"Streets of Tarkov","x":189.8,"z":400.6,"text":"Concordia 7-1","floor":-1},{"map":"Streets of Tarkov","x":265.1,"z":410.5,"text":"Concordia 7-2","floor":-1},{"map":"Streets of Tarkov","x":270.7,"z":361.4,"text":"Concordia 7-3","floor":-1},{"map":"Streets of Tarkov","x":207.1,"z":362.6,"text":"Basketball Court","floor":-1},{"map":"Streets of Tarkov","x":176,"z":237.2,"text":"Bakery","floor":-1},{"map":"Streets of Tarkov","x":195,"z":229.3,"text":"Chekannaya 13","floor":-1},{"map":"Streets of Tarkov","x":204.7,"z":202.3,"text":"Playground","floor":-1},{"map":"Streets of Tarkov","x":185.2,"z":88.8,"text":"Astronaut Mural","floor":-1},{"map":"Streets of Tarkov","x":246.6,"z":61.5,"text":"Museum","floor":-1},{"map":"Streets of Tarkov","x":184.2,"z":38.4,"text":"MissClick","floor":-1},{"map":"Streets of Tarkov","x":147.8,"z":36.2,"text":"Papillon","floor":-1},{"map":"Streets of Tarkov","x":187.7,"z":116.7,"text":"Children's Clinic","floor":-1},{"map":"Streets of Tarkov","x":163.1,"z":152.5,"text":"IT Firm Office","floor":-1},{"map":"Streets of Tarkov","x":115,"z":122.8,"text":"Brodian Pub","floor":-1},{"map":"Streets of Tarkov","x":81.4,"z":135.6,"text":"Census Building","floor":-1},{"map":"Streets of Tarkov","x":77.2,"z":157.1,"text":"Playground","floor":-1},{"map":"Streets of Tarkov","x":38.4,"z":147.3,"text":"IDEA Billboard","floor":-1},{"map":"Streets of Tarkov","x":41.2,"z":205.3,"text":"Aba","floor":-1},{"map":"Streets of Tarkov","x":38,"z":219.8,"text":"Voyage","floor":-1},{"map":"Streets of Tarkov","x":80.1,"z":236.2,"text":"Father and Signs","floor":-1},{"map":"Streets of Tarkov","x":129.7,"z":227.5,"text":"Chekannaya 15","floor":-1},{"map":"Streets of Tarkov","x":66.2,"z":309.9,"text":"Closed Section","floor":-1},{"map":"Streets of Tarkov","x":-32.7,"z":454.9,"text":"Kostin","floor":-1},{"map":"Streets of Tarkov","x":-56.7,"z":465.7,"text":"Rus Real Estate Fund","floor":-1},{"map":"Streets of Tarkov","x":-92,"z":456.3,"text":"Gagarin Hotel","floor":-1},{"map":"Streets of Tarkov","x":-144.7,"z":458.9,"text":"FCK","floor":-1},{"map":"Streets of Tarkov","x":-167.3,"z":460.4,"text":"Trynhyrd","floor":-1},{"map":"Streets of Tarkov","x":-171.9,"z":485.8,"text":"Adult Store","floor":-1},{"map":"Streets of Tarkov","x":-135.1,"z":343,"text":"Petersen Center","floor":-1},{"map":"Streets of Tarkov","x":-212.4,"z":303.8,"text":"Relax Room","floor":-1},{"map":"Streets of Tarkov","x":-223,"z":278.2,"text":"ALCO-Point","floor":-1},{"map":"Streets of Tarkov","x":-199.8,"z":248.1,"text":"Dostoevsky","floor":-1},{"map":"Streets of Tarkov","x":-173.3,"z":223,"text":"Finance","floor":-1},{"map":"Streets of Tarkov","x":-40.7,"z":222,"text":"Theater","floor":-1},{"map":"Streets of Tarkov","x":-161,"z":181.2,"text":"Nikita Cafe","floor":-1},{"map":"Streets of Tarkov","x":-253.1,"z":137.8,"text":"MVD Academy","floor":-1},{"map":"Streets of Tarkov","x":-103.7,"z":112.5,"text":"Pinewood Hotel","floor":-1},{"map":"Streets of Tarkov","x":-52.7,"z":57.2,"text":"Dental","floor":-1},{"map":"Streets of Tarkov","x":-153.2,"z":-16.5,"text":"Adik","floor":-1},{"map":"Streets of Tarkov","x":-130.9,"z":-42.6,"text":"G Phone","floor":-1},{"map":"Streets of Tarkov","x":-158.1,"z":-33.8,"text":"Bear Hunting and Fishing Shop","floor":-1},{"map":"Streets of Tarkov","x":-91.8,"z":-27.7,"text":"World of Childhood","floor":-1},{"map":"Streets of Tarkov","x":-11.9,"z":-132.6,"text":"Tonni Hellfinger","floor":-1},{"map":"Streets of Tarkov","x":59.4,"z":-127.6,"text":"Cardinal NE","floor":-1},{"map":"Streets of Tarkov","x":133,"z":-115.6,"text":"Art Structure","floor":-1},{"map":"Streets of Tarkov","x":170.5,"z":-130.5,"text":"Cardinal NW","floor":-1},{"map":"Streets of Tarkov","x":125.9,"z":-68.7,"text":"CleverLand","floor":-1},{"map":"Streets of Tarkov","x":139.5,"z":-22.8,"text":"Cardinal SW","floor":-1},{"map":"Streets of Tarkov","x":54.1,"z":-31,"text":"Cardinal SE","floor":-1},{"map":"Streets of Tarkov","x":54.4,"z":-62.2,"text":"TerraGroup Offices","floor":-1},{"map":"Streets of Tarkov","x":137,"z":-273.8,"text":"Panda Supermarket","floor":-1},{"map":"Streets of Tarkov","x":217.7,"z":378.6,"text":"Concordia Basement","floor":0},{"map":"Streets of Tarkov","x":141.7,"z":367.1,"text":"Concordia 9","floor":-1},{"map":"Streets of Tarkov","x":271.3,"z":384.4,"text":"Goshan","floor":-1},{"map":"Streets of Tarkov","x":137.6,"z":347.3,"text":"Polygon","floor":-1},{"map":"Streets of Tarkov","x":143.7,"z":382.3,"text":"Gale","floor":-1},{"map":"Streets of Tarkov","x":49.6,"z":142.4,"text":"Skybridge","floor":3},{"map":"Streets of Tarkov","x":50.1,"z":141.8,"text":"Skybridge","floor":-1},{"map":"Streets of Tarkov","x":185.9,"z":105.1,"text":"X-Ray","floor":1},{"map":"Streets of Tarkov","x":186.5,"z":105.1,"text":"X-Ray","floor":-1},{"map":"Streets of Tarkov","x":237.1,"z":-97.7,"text":"Coffee Joy","floor":-1},{"map":"Streets of Tarkov","x":-71.3,"z":-55.8,"text":"Telespot","floor":1},{"map":"Streets of Tarkov","x":-22.3,"z":-68.7,"text":"Kitchen","floor":1},{"map":"Streets of Tarkov","x":-86.3,"z":-38.8,"text":"Father and Sons","floor":1},{"map":"Streets of Tarkov","x":-72,"z":-28.9,"text":"World of Childhood 2F","floor":1},{"map":"Streets of Tarkov","x":-115.5,"z":-16.9,"text":"Unagi","floor":1},{"map":"Streets of Tarkov","x":-115.5,"z":-21.7,"text":"Kroener","floor":1},{"map":"Streets of Tarkov","x":-131.3,"z":-21.5,"text":"Pizza","floor":1},{"map":"Streets of Tarkov","x":-129.5,"z":-10.7,"text":"Coffee 'n Ice","floor":1},{"map":"Streets of Tarkov","x":-152.1,"z":-20.8,"text":"Bilbo Coffee","floor":1},{"map":"Streets of Tarkov","x":-149.8,"z":-7.7,"text":"Underway","floor":1},{"map":"Streets of Tarkov","x":-166.5,"z":-10.4,"text":"Burger Spot","floor":1},{"map":"Streets of Tarkov","x":-136.9,"z":-33.1,"text":"Revi's","floor":1},{"map":"Streets of Tarkov","x":-115.4,"z":-17.1,"text":"Burger House","floor":2},{"map":"Streets of Tarkov","x":-114.9,"z":-24.4,"text":"FCK","floor":2},{"map":"Streets of Tarkov","x":-165.8,"z":-8.8,"text":"Don't Panic","floor":2},{"map":"Streets of Tarkov","x":-165.5,"z":-16.1,"text":"Midnight Crunch","floor":2},{"map":"Streets of Tarkov","x":65,"z":313.5,"text":"Closed Section","floor":1}],"newExtracts":[{"map":"Interchange","x":500.6,"z":84.1,"name":"Path to river","faction":0,"floor":-1}]};
 const HAND_INTERACTABLES = [];
