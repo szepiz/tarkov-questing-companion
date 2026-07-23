@@ -2014,12 +2014,13 @@ const MARKER_GROUPS = [
   },
   {
     id: 'hazards', title: 'HAZARDS',
-    // No "other hazards" row: upstream's third hazard type occurs only on The
-    // Labyrinth, which ships no artwork, so the box would be greyed out on every
-    // single map. build_mapmarkers.js drops those rows to match.
+    // hazardOther is upstream's third type — The Labyrinth's traps (toxic
+    // pools, steam, fire, shotgun traps). Amber, so it reads apart from the
+    // red minefield triangle; greyed out on maps that have none, like any row.
     rows: [
       { id: 'hazardMinefield', label: 'Minefields', glyph: 'mine', cls: 'mk-mine' },
       { id: 'hazardSniper', label: 'Sniper zones', glyph: 'sniper', cls: 'mk-sniper' },
+      { id: 'hazardOther', label: 'Traps & hazards', glyph: 'mine', cls: 'mk-hazard' },
     ],
   },
   {
@@ -2151,10 +2152,11 @@ function collectMapMarkers(mapName) {
         : r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : undefined);
   }
   for (const [x, y, z, type] of M.hz || []) {
-    if (type !== 0 && type !== 1) continue;   // see the note on MARKER_GROUPS.hazards
-    const id = type === 0 ? 'hazardMinefield' : 'hazardSniper';
-    add(x, y, z, [id], type === 0 ? 'mine' : 'sniper', type === 0 ? 'mk-mine' : 'mk-sniper',
-      null, null);                            // no card: a mine point has nothing to say
+    if (type !== 0 && type !== 1 && type !== 2) continue;   // see the note on MARKER_GROUPS.hazards
+    const id = ['hazardMinefield', 'hazardSniper', 'hazardOther'][type];
+    add(x, y, z, [id], type === 1 ? 'sniper' : 'mine',
+      ['mk-mine', 'mk-sniper', 'mk-hazard'][type],
+      null, null);                            // no card: a hazard point has nothing to say
   }
   for (const [x, y, z, type, short, full] of M.lk || []) {
     const what = ['Locked door', 'Locked trunk', 'Locked container', 'Locked switch'][type] || 'Locked';
@@ -2917,7 +2919,9 @@ async function openQuestMap(mapName) {
   renderMapLayers();
   resetMapView();
   $('mapTitle').textContent = mapName.toUpperCase();
-  $('mapCredit').innerHTML = 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0'
+  // per-map artwork credit (The Labyrinth is re3mr's map); same licence family
+  $('mapCredit').innerHTML = (md.credit || 'Map by Shebuka · tarkov-dev-svg-maps')
+    + ' · CC BY-NC-SA 4.0'
     + (hasMapMarkers(mapName) ? ' · markers tarkov.dev' : '');
   $('mapOverlay').classList.remove('hidden');
 

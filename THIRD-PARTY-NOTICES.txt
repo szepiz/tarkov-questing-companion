@@ -53,6 +53,21 @@ SOFTWARE.
    it plots public quest data on a static map.
 
 
+2b. The Labyrinth map by re3mr  --  maps/Labyrinth.svg
+   https://reemr.se
+
+   Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+   International (CC BY-NC-SA 4.0), as printed in the map's own footer.
+   https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+   No SVG of The Labyrinth exists; re3mr's community map is the source
+   tarkov.dev's own 2D map page credits. The image content is unmodified;
+   for distribution it was losslessly recompressed (PNG -> WebP) and wrapped
+   in an SVG shell so the app can treat it like its other maps. This app is
+   free and non-commercial. If re3mr would prefer it not ship this artwork,
+   it comes out on request.
+
+
 3. Bender typeface by Jovanny Lemonad  --  bender/
    Licensed under the SIL Open Font License 1.1. The full licence ships
    alongside the fonts in `bender/Bender/FREE FONT LICENSE.txt`.
