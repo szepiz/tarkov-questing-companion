@@ -2209,8 +2209,9 @@ function collectMapMarkers(mapName) {
     // statement about the item's price, not about the spawn — the card keeps the
     // same chance sentence and adds what it is worth. Guarded: the layer tests
     // run this without the generated constants.
+    // the bar is the item's own worth (lv[0]); lv[1] (per slot) is card detail
     const lv = (typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[item]) || null;
-    const hv = !!lv && typeof LOOT_HV_MIN !== 'undefined' && lv[1] >= LOOT_HV_MIN;
+    const hv = !!lv && typeof LOOT_HV_MIN !== 'undefined' && lv[0] >= LOOT_HV_MIN;
     const lines = [['', 'This item has a chance to spawn here']];
     if (hv) {
       const fv = (n) => Math.round(n).toLocaleString('en-US');

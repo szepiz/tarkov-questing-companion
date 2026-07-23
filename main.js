@@ -1848,10 +1848,14 @@ function createWindow() {
                 if (!ground || !upper) return 'n/a (no floors)';
                 const md2 = MAP_DATA[mapView.name];
                 const total = (md2.labels || []).length;
-                // filtering is only POSSIBLE with banded labels or bounded floor
-                // extents — Streets has neither (every floor covers the whole
-                // map), so all labels on every floor is the documented behaviour
-                const canFilter = (md2.labels || []).some(l => l.length > 3)
+                // filtering is only POSSIBLE with banded labels, bounded floor
+                // extents, or hand-ADDED names (which carry their own _floor —
+                // that is what made Streets filterable once the owner started
+                // placing names on it). Without any of those, every floor
+                // showing every label is the documented behaviour.
+                // (NO BACKTICKS IN HERE — this whole harness is a template
+                // literal; one backtick ends the string and breaks main.js.)
+                const canFilter = (md2.labels || []).some(l => l.length > 3 || typeof l._floor === 'number')
                   || md2.floors.some(f => (f.extents || []).some(e => e.bounds && e.bounds.length));
                 const count = () => document.querySelectorAll('#qpins text').length;
                 ground.click(); await new Promise(r => setTimeout(r, 250));
