@@ -37,7 +37,8 @@ const backend = window.api || (() => {
     toggleObjective: async (objectiveId, done, mode) => {
       const b = bucket(mode);
       if (!b.objectives) b.objectives = {};
-      if (done) b.objectives[objectiveId] = { at: Date.now() };
+      if (done === 'failed') b.objectives[objectiveId] = { at: Date.now(), failed: true };
+      else if (done) b.objectives[objectiveId] = { at: Date.now() };
       else delete b.objectives[objectiveId];
       persist(); return store.progress;
     },
@@ -216,8 +217,17 @@ function isDone(taskId) {
 // An objective the player ticked off by hand. Tarkov reports no partial quest
 // progress, so a quest spread over three maps otherwise keeps showing all three
 // pins after you have done one.
+// A failed mark lives on the SAME record ({at, failed: true}) — story branches
+// (The Ticket's endings) make objectives failable, also only by hand — so done
+// must exclude it: a failed objective is resolved, not achieved.
 function isObjectiveDone(objectiveId) {
-  return !!(objectiveId && state.progress.objectives && state.progress.objectives[objectiveId]);
+  const r = objectiveId && state.progress.objectives && state.progress.objectives[objectiveId];
+  return !!(r && !r.failed);
+}
+
+function isObjectiveFailed(objectiveId) {
+  const r = objectiveId && state.progress.objectives && state.progress.objectives[objectiveId];
+  return !!(r && r.failed);
 }
 
 function isFailed(taskId) {
@@ -383,7 +393,12 @@ function storyAuto() {
 function chapterMainObjectives(c) { return c.objectives.filter((o) => o.type !== 'optional' && o.type !== 'section'); }
 
 // chapter slug -> 'done' | 'active' | 'locked'
-// done: the logs say so, or every main objective is ticked.
+// done: the logs say so, or every main objective is RESOLVED (ticked or marked
+// failed) with at least one actually ticked. Failed counts as resolved because
+// branching chapters (The Ticket) list every ending's objectives as mains —
+// only one branch is achievable, so demanding all of them ticked would make
+// the chapter uncompletable; demanding "resolved" means you mark the endings
+// you didn't take as failed and the one you did as done.
 // locked: the logs say so, or (no log signal) a required prior chapter is not done.
 // active: everything else — chapters are discovery-triggered, and we cannot see
 // triggers, so absent any signal a chapter counts as reachable, not locked.
@@ -393,7 +408,8 @@ function chapterStatuses() {
   for (const c of storyChapters()) {
     const mains = chapterMainObjectives(c);
     if (auto.chapters[c.questId] === 'done'
-      || (mains.length && mains.every((o) => isObjectiveDone(o.id)))) done.add(c.id);
+      || (mains.length && mains.every((o) => isObjectiveDone(o.id) || isObjectiveFailed(o.id))
+        && mains.some((o) => isObjectiveDone(o.id)))) done.add(c.id);
   }
   const st = {};
   for (const c of storyChapters()) {
@@ -408,9 +424,12 @@ function chapterStatuses() {
   return st;
 }
 
-// objective -> 'done' | 'locked' | 'open'
+// objective -> 'done' | 'failed' | 'locked' | 'open'
+// failed outranks locked: a hand-set failed mark is the player's own statement,
+// and hiding it behind LOCKED would make the mark look lost.
 function storyObjectiveStatus(o, chapterState) {
   if (isObjectiveDone(o.id)) return 'done';
+  if (isObjectiveFailed(o.id)) return 'failed';
   if (chapterState === 'locked') return 'locked';
   if (storyAuto().subs[o.sourceQuestId]) return 'locked';
   return 'open';
@@ -476,11 +495,12 @@ function renderStoryTree(tree) {
       }
       const oState = storyObjectiveStatus(o, cState);
       if (hideC && oState === 'done') continue;
-      if (hideL && oState === 'locked') continue;
+      if (hideL && (oState === 'locked' || oState === 'failed')) continue;
       const orow = document.createElement('div');
       orow.className = 'quest-row story-obj'
         + (o.indent ? ' sub' : '')
         + (oState === 'done' ? ' completed' : '')
+        + (oState === 'failed' ? ' failed' : '')
         + (oState === 'locked' ? ' locked' : '')
         + (o.type === 'optional' ? ' optional' : '');
       // an OPEN objective says which map it is on (when its own text names one)
@@ -490,9 +510,11 @@ function renderStoryTree(tree) {
         <span class="quest-name" title="${escapeHtml(o.description)}">${escapeHtml(o.description.toUpperCase())}</span>
         ${o.type === 'optional' ? '<span class="story-tag optional">OPTIONAL</span>' : ''}
         ${mapTag}
+        ${oState === 'failed' ? '<span class="failed-tag" title="marked failed by hand — right-click the box to undo">FAILED</span>' : ''}
         ${oState === 'locked' ? '<span class="locked-tag">LOCKED</span>' : ''}
         <span class="quest-check" title="${oState === 'done' ? 'ticked off — click to undo'
-          : 'The game never logs story objective progress — tick it off here yourself.'}"></span>`;
+          : oState === 'failed' ? 'marked failed — right-click to undo, click to tick it done instead'
+          : 'The game never logs story objective progress — tick it off here yourself. Right-click to mark it FAILED (an ending you did not take).'}"></span>`;
       orow.querySelector('.quest-name').addEventListener('click', () => {
         state.selChapter = c.id;
         state.selQuestId = null;
@@ -501,6 +523,15 @@ function renderStoryTree(tree) {
       orow.querySelector('.quest-check').addEventListener('click', async (e) => {
         e.stopPropagation();
         state.fullProgress = await backend.toggleObjective(o.id, oState !== 'done', state.gameMode);
+        applyMode();
+        renderAll();
+      });
+      // right-click marks the objective FAILED (or clears the mark) — story
+      // branches mean some objectives genuinely cannot be completed, and the
+      // logs say nothing about that either
+      orow.querySelector('.quest-check').addEventListener('contextmenu', async (e) => {
+        e.preventDefault(); e.stopPropagation();
+        state.fullProgress = await backend.toggleObjective(o.id, oState === 'failed' ? false : 'failed', state.gameMode);
         applyMode();
         renderAll();
       });
@@ -533,22 +564,32 @@ function renderStoryChapter() {
     const oState = storyObjectiveStatus(o, cState);
     const maps = oState !== 'done' && o.maps.length ? ` — ${o.maps.join(' / ')}` : '';
     return `
-    <div class="objective${o.indent ? ' sub' : ''}${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}"
+    <div class="objective${o.indent ? ' sub' : ''}${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}${oState === 'failed' ? ' failedmark' : ''}"
          data-obj="${escapeHtml(o.id)}"
-         title="${oState === 'done' ? 'ticked off by hand — click to undo' : 'click to tick this objective off by hand'}">
-      <span class="bullet">${oState === 'done' ? '✔' : oState === 'locked' ? '🔒' : '▪'}</span>
+         title="${oState === 'done' ? 'ticked off by hand — click to undo'
+           : oState === 'failed' ? 'marked failed by hand — right-click to undo, click to tick it done instead'
+           : 'click to tick this objective off by hand · right-click to mark it FAILED'}">
+      <span class="bullet">${oState === 'done' ? '✔' : oState === 'failed' ? '✖' : oState === 'locked' ? '🔒' : '▪'}</span>
       <span>${escapeHtml(o.description)}${o.type === 'optional' ? ' (optional)' : ''}${escapeHtml(maps)}</span>
     </div>`;
   }).join('');
   const doneCount = c.objectives.filter((o) => isObjectiveDone(o.id)).length;
+  const failCount = c.objectives.filter((o) => isObjectiveFailed(o.id)).length;
   $('questObjectives').innerHTML =
-    `<h3>OBJECTIVES ${doneCount ? `<span class="obj-count">${doneCount}/${c.objectives.length} done</span>` : ''}</h3>`
-    + `<div class="setting-hint">Chapter state (active / completed) is read from your game logs automatically; the game never logs per-objective progress, so tick objectives off here as you do them.</div>`
+    `<h3>OBJECTIVES ${doneCount || failCount ? `<span class="obj-count">${doneCount}/${c.objectives.length} done${failCount ? ` · ${failCount} failed` : ''}</span>` : ''}</h3>`
+    + `<div class="setting-hint">Chapter state (active / completed) is read from your game logs automatically; the game never logs per-objective progress, so tick objectives off here as you do them. Right-click an objective to mark it FAILED — for endings and branches you did not take.</div>`
     + objectives;
   for (const el of $('questObjectives').querySelectorAll('.objective[data-obj]')) {
     el.addEventListener('click', async () => {
       const id = el.dataset.obj;
       state.fullProgress = await backend.toggleObjective(id, !isObjectiveDone(id), state.gameMode);
+      applyMode();
+      renderAll();
+    });
+    el.addEventListener('contextmenu', async (e) => {
+      e.preventDefault();
+      const id = el.dataset.obj;
+      state.fullProgress = await backend.toggleObjective(id, isObjectiveFailed(id) ? false : 'failed', state.gameMode);
       applyMode();
       renderAll();
     });

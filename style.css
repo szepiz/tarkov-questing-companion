@@ -894,6 +894,10 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .objective.ticked { color: #6e6b62; }
 .objective.ticked span:last-child { text-decoration: line-through; opacity: .7; }
 .objective.ticked .bullet { color: #7a9a5a; }
+/* hand-marked FAILED story objectives (endings/branches not taken) */
+.objective.failedmark { color: #6e6b62; }
+.objective.failedmark span:last-child { text-decoration: line-through; opacity: .6; }
+.objective.failedmark .bullet { color: #c96a5a; }
 .obj-count { font-weight: 400; font-size: 11px; letter-spacing: .5px; color: #6e6b62; }
 
 .ld-ticked { border-top: 1px solid #26261f; margin-top: 10px; padding-top: 4px; }

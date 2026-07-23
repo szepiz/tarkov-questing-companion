@@ -949,11 +949,15 @@ ipcMain.handle('toggle-task', (_e, { taskId, done, mode }) => {
 
 // Tick a single objective off by hand. The logs carry no per-objective progress,
 // so this is the only way a multi-objective quest can show partial completion.
+// `done` is true | false | 'failed' — story branches (The Ticket's endings) make
+// objectives failable, and nothing logs that either, so it is a hand-mark too.
+// One record per objective: done and failed replace each other, false clears.
 ipcMain.handle('toggle-objective', (_e, { objectiveId, done, mode }) => {
   const m = MODES.includes(mode) ? mode : settings.gameMode;
   const bucket = progress[m];
   if (!bucket.objectives) bucket.objectives = {};
-  if (done) bucket.objectives[objectiveId] = { at: Date.now() };
+  if (done === 'failed') bucket.objectives[objectiveId] = { at: Date.now(), failed: true };
+  else if (done) bucket.objectives[objectiveId] = { at: Date.now() };
   else delete bucket.objectives[objectiveId];
   saveProgress();
   return progress;
@@ -1156,11 +1160,32 @@ function createWindow() {
                 ?.classList.contains('completed');
               tick = ticked && restored ? 'ok tick + untick' : 'BAD tick=' + ticked + ' restored=' + restored;
             }
+            // right-click marks FAILED (endings you did not take), right-click
+            // again clears it — through the real checkbox, like the tick test
+            let fail = 'n/a';
+            {
+              const row2 = [...document.querySelectorAll('.quest-row.story-obj')]
+                .find(r => !r.classList.contains('completed') && !r.classList.contains('locked'));
+              if (row2) {
+                const name = row2.querySelector('.quest-name').textContent;
+                const rclick = (el) => el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+                const find2 = () => [...document.querySelectorAll('.quest-row.story-obj')]
+                  .find(r => r.querySelector('.quest-name').textContent === name);
+                rclick(row2.querySelector('.quest-check'));
+                ${settle(250)}
+                const marked = !!(find2() && find2().classList.contains('failed'))
+                  && !!find2().querySelector('.failed-tag');
+                rclick(find2().querySelector('.quest-check'));
+                ${settle(250)}
+                const cleared = !!find2() && !find2().classList.contains('failed');
+                fail = marked && cleared ? 'ok fail + clear' : 'BAD marked=' + marked + ' cleared=' + cleared;
+              }
+            }
             // chapter details pane
             first.click();
             ${settle(250)}
             const details = document.getElementById('questName').textContent;
-            return { chapters, expected, objRows, objExpected, tags, tick, details, diag };
+            return { chapters, expected, objRows, objExpected, tags, tick, fail, details, diag };
           })()`);
           console.log('TQT_STORY', JSON.stringify(story));
           const shot1 = await win.webContents.capturePage();
