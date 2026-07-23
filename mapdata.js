@@ -376,7 +376,7 @@ const MAP_DATA = {
   "The Lab": {
     svg: "maps/Labs.svg",
     viewBox: { w: 720, h: 586 },
-    bounds: [[-80, -477], [-287, -193]], // [[x,z],[x,z]] in game coords
+    bounds: [[-94.62, -439.31], [-290, -223.42]], // [[x,z],[x,z]] in game coords
     rotate: 270,
     baseLayer: "First_Level",
     approx: true,   // pin positions unverified — see _dev/build_mapdata.js
