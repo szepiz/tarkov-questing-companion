@@ -1231,9 +1231,19 @@ function createWindow() {
             mapView.pins = collectMapPins('Shoreline');
             renderMapSets(); renderMapLoadout('Shoreline'); drawMap();
             ${settle(400)}
+            // hand-marked hazard (the Shoreline "Snipers" area) + list font size
+            state.settings.mapLayers = { ...(state.settings.mapLayers || {}), hazardSniper: true };
+            drawMap();
+            ${settle(300)}
+            const li = document.querySelector('#mapStoryList li');
+            const raidLi = document.querySelector('#mapLoadoutList li');
             return { storyPins: document.querySelectorAll('.qpin-dot.story').length,
               areas: document.querySelectorAll('.story-area').length,
-              collected: mapView.pins.filter(p => p.story).length };
+              collected: mapView.pins.filter(p => p.story).length,
+              hazardAreas: document.querySelectorAll('.hz-area').length,
+              hazardGlyphs: mapView.markers.filter(m => m.title === 'Snipers').length,
+              storyFontPx: li ? getComputedStyle(li).fontSize : 'n/a',
+              raidFontPx: raidLi ? getComputedStyle(raidLi).fontSize : 'n/a (empty)' };
           })()`);
           console.log('TQT_STORYPINS', JSON.stringify(sp));
           const shot4 = await win.webContents.capturePage();

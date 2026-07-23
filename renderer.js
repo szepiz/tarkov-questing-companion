@@ -380,7 +380,7 @@ function storyAuto() {
   return (s && s.chapters) ? s : { chapters: {}, subs: {} };
 }
 
-function chapterMainObjectives(c) { return c.objectives.filter((o) => o.type !== 'optional'); }
+function chapterMainObjectives(c) { return c.objectives.filter((o) => o.type !== 'optional' && o.type !== 'section'); }
 
 // chapter slug -> 'done' | 'active' | 'locked'
 // done: the logs say so, or every main objective is ticked.
@@ -465,11 +465,20 @@ function renderStoryTree(tree) {
     if (!expanded) continue;
 
     for (const o of c.objectives) {
+      // section headers: the wiki's conditional / ending blocks, not tickable
+      if (o.type === 'section') {
+        const sec = document.createElement('div');
+        sec.className = 'story-sec';
+        sec.textContent = o.description.toUpperCase();
+        tree.appendChild(sec);
+        continue;
+      }
       const oState = storyObjectiveStatus(o, cState);
       if (hideC && oState === 'done') continue;
       if (hideL && oState === 'locked') continue;
       const orow = document.createElement('div');
       orow.className = 'quest-row story-obj'
+        + (o.indent ? ' sub' : '')
         + (oState === 'done' ? ' completed' : '')
         + (oState === 'locked' ? ' locked' : '')
         + (o.type === 'optional' ? ' optional' : '');
@@ -518,10 +527,11 @@ function renderStoryChapter() {
     + (c.objectives.length > mains.length ? ` (+${c.objectives.length - mains.length} OPTIONAL)` : '');
 
   const objectives = c.objectives.map((o) => {
+    if (o.type === 'section') return `<div class="story-sec pane">${escapeHtml(o.description)}</div>`;
     const oState = storyObjectiveStatus(o, cState);
     const maps = oState !== 'done' && o.maps.length ? ` — ${o.maps.join(' / ')}` : '';
     return `
-    <div class="objective${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}"
+    <div class="objective${o.indent ? ' sub' : ''}${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}"
          data-obj="${escapeHtml(o.id)}"
          title="${oState === 'done' ? 'ticked off by hand — click to undo' : 'click to tick this objective off by hand'}">
       <span class="bullet">${oState === 'done' ? '✔' : oState === 'locked' ? '🔒' : '▪'}</span>
@@ -1439,6 +1449,7 @@ function collectMapStory(mapName) {
   for (const c of storyChapters()) {
     if (statuses[c.id] !== 'active') continue;
     for (const o of c.objectives) {
+      if (o.type === 'section') continue;
       if (storyObjectiveStatus(o, 'active') !== 'open') continue;
       if (!o.maps.includes(mapName)) continue;
       out.push({ id: o.id, chapter: c.name, desc: o.description });
@@ -1931,6 +1942,19 @@ function collectMapMarkers(mapName) {
   for (const [x, y, z, pool, keys] of M.mk || []) {
     add(x, y, z, ['markedRooms'], 'marked', 'mk-marked', 'Marked room',
       [['', `${pool} different items can spawn here`]].concat(keys ? [['Keys in the pool', keys]] : []));
+  }
+  // Hand-marked hazards (dev editor -> storydata.js): a glyph at the centroid,
+  // filed under the layer its label implies; the drawn AREA outline is added by
+  // drawMap. Guarded: the layer tests eval this block without storydata.js.
+  const handHz = typeof STORY_HAZARDS !== 'undefined' ? STORY_HAZARDS : [];
+  for (const h of handHz) {
+    if (h.map !== mapName || !(h.pts || []).length) continue;
+    const cx = h.pts.reduce((a, q) => a + q.x, 0) / h.pts.length;
+    const cz = h.pts.reduce((a, q) => a + q.z, 0) / h.pts.length;
+    const sniper = h.layer === 'hazardSniper';
+    add(cx, 0, cz, [h.layer], sniper ? 'sniper' : 'mine', sniper ? 'mk-sniper' : 'mk-mine',
+      h.label, [['', 'Marked by hand — not in the API data']],
+      { floor: typeof h.floor === 'number' ? h.floor : -1 });
   }
   return out;
 }
@@ -2445,6 +2469,18 @@ function drawMap() {
     const poly = document.createElementNS(ns, 'polygon');
     poly.setAttribute('points', p.area.map((q) => { const sp = mapPoint(md, q.x, q.z); return sp.x + ',' + sp.y; }).join(' '));
     poly.setAttribute('class', 'story-area');
+    poly.setAttribute('stroke-width', 2.2 * k);
+    poly.setAttribute('stroke-dasharray', `${6 * k} ${5 * k}`);
+    g.appendChild(poly);
+  }
+  // hand-marked hazard AREAS, dashed red like the game draws minefields,
+  // showing with the hazard layer their centroid glyph is filed under
+  for (const h of (typeof STORY_HAZARDS !== 'undefined' ? STORY_HAZARDS : [])) {
+    if (h.map !== mapView.name || h.kind !== 'area' || !layerOn(h.layer)) continue;
+    if ((typeof h.floor === 'number' ? h.floor : -1) !== mapView.floor) continue;
+    const poly = document.createElementNS(ns, 'polygon');
+    poly.setAttribute('points', h.pts.map((q) => { const sp = mapPoint(md, q.x, q.z); return sp.x + ',' + sp.y; }).join(' '));
+    poly.setAttribute('class', 'hz-area');
     poly.setAttribute('stroke-width', 2.2 * k);
     poly.setAttribute('stroke-dasharray', `${6 * k} ${5 * k}`);
     g.appendChild(poly);

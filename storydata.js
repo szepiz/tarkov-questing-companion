@@ -23,13 +23,6 @@ const STORY_DATA = {
      ]
     },
     {
-     "id": "6895c24ec097ed522295a05d",
-     "type": "main",
-     "description": "Hand over the cash to Therapist",
-     "sourceQuestId": "6895bed8e7dac53c7c08797d",
-     "maps": []
-    },
-    {
      "id": "68c81d6e82b7593afaa638e0",
      "type": "main",
      "description": "Talk to Therapist",
@@ -37,11 +30,29 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "68c6a8ea578cb34230742497",
+     "type": "main",
+     "description": "Ensure access to Streets of Tarkov",
+     "sourceQuestId": "68c6a8551dfbf3fb78018562",
+     "maps": [
+      "Streets of Tarkov"
+     ]
+    },
+    {
+     "id": "6895c24ec097ed522295a05d",
+     "type": "main",
+     "description": "Hand over the cash to Therapist",
+     "sourceQuestId": "6895bed8e7dac53c7c08797d",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "68ccffb395ec3bc6eddfc3e3",
      "type": "optional",
      "description": "Collect the required amount in RUB",
      "sourceQuestId": "6895bed8e7dac53c7c08797d",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68c15e129c0090b717977bd4",
@@ -60,6 +71,16 @@ const STORY_DATA = {
      ]
     },
     {
+     "id": "69bd75c3338353fb98d95b78",
+     "type": "main",
+     "description": "Visit Interchange",
+     "sourceQuestId": "6895bf0872e2151e9e0a59fa",
+     "maps": [
+      "Interchange"
+     ],
+     "indent": 1
+    },
+    {
      "id": "68cc123af7f4373ce2365213",
      "type": "main",
      "description": "Tell Ragman what you found during the recon",
@@ -67,18 +88,9 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69bd75c3338353fb98d95b78",
+     "id": "68c2c0907a45d1fc06b150a2",
      "type": "main",
-     "description": "Visit Interchange",
-     "sourceQuestId": "6895bf0872e2151e9e0a59fa",
-     "maps": [
-      "Interchange"
-     ]
-    },
-    {
-     "id": "6895c4a6b9a96237b73e15a1",
-     "type": "main",
-     "description": "Hand over any Building materials items to Skier",
+     "description": "Talk to Skier",
      "sourceQuestId": "6895bf1ecfb48128340d5a89",
      "maps": []
     },
@@ -92,46 +104,34 @@ const STORY_DATA = {
      ]
     },
     {
-     "id": "68cd000e66cfbf075021bbb4",
-     "type": "optional",
-     "description": "Find any item in raid from the Building materials category",
-     "sourceQuestId": "6895bf1ecfb48128340d5a89",
-     "maps": []
-    },
-    {
      "id": "69bd80ade532cba53e0ae707",
      "type": "main",
      "description": "Visit Customs",
      "sourceQuestId": "6895bf1ecfb48128340d5a89",
      "maps": [
       "Customs"
-     ]
+     ],
+     "indent": 1
     },
     {
-     "id": "68c2c0907a45d1fc06b150a2",
+     "id": "6895c4a6b9a96237b73e15a1",
      "type": "main",
-     "description": "Talk to Skier",
+     "description": "Hand over any Building materials items to Skier",
      "sourceQuestId": "6895bf1ecfb48128340d5a89",
      "maps": []
     },
     {
-     "id": "6895daa6f935f3dbe1de0a9d",
-     "type": "main",
-     "description": "Hand over any weapon to Mechanic",
-     "sourceQuestId": "6895bf42a3de8e8f1d0426a8",
-     "maps": []
+     "id": "68cd000e66cfbf075021bbb4",
+     "type": "optional",
+     "description": "Find any item in raid from the Building materials category",
+     "sourceQuestId": "6895bf1ecfb48128340d5a89",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68c41dde2ddd4581cfc7531c",
      "type": "main",
      "description": "Talk to Mechanic",
-     "sourceQuestId": "6895bf42a3de8e8f1d0426a8",
-     "maps": []
-    },
-    {
-     "id": "68cd03317ad9451d1d306448",
-     "type": "optional",
-     "description": "Find any weapon in raid",
      "sourceQuestId": "6895bf42a3de8e8f1d0426a8",
      "maps": []
     },
@@ -151,21 +151,35 @@ const STORY_DATA = {
      "sourceQuestId": "6895bf42a3de8e8f1d0426a8",
      "maps": [
       "Factory"
-     ]
+     ],
+     "indent": 1
+    },
+    {
+     "id": "6895daa6f935f3dbe1de0a9d",
+     "type": "main",
+     "description": "Hand over any weapon to Mechanic",
+     "sourceQuestId": "6895bf42a3de8e8f1d0426a8",
+     "maps": []
+    },
+    {
+     "id": "68cd03317ad9451d1d306448",
+     "type": "optional",
+     "description": "Find any weapon in raid",
+     "sourceQuestId": "6895bf42a3de8e8f1d0426a8",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68c427c12529fc8fe8d2ded6",
+     "type": "main",
+     "description": "Talk to Skier",
+     "sourceQuestId": "6895bf915bcf5c38e90b83d8",
+     "maps": []
     },
     {
      "id": "68c42742aba9a345346af424",
      "type": "main",
      "description": "Eliminate any target on Woods",
-     "sourceQuestId": "6895bf915bcf5c38e90b83d8",
-     "maps": [
-      "Woods"
-     ]
-    },
-    {
-     "id": "69bd84e421fa07eadaa652b5",
-     "type": "main",
-     "description": "Visit Woods",
      "sourceQuestId": "6895bf915bcf5c38e90b83d8",
      "maps": [
       "Woods"
@@ -181,11 +195,14 @@ const STORY_DATA = {
      ]
     },
     {
-     "id": "68c427c12529fc8fe8d2ded6",
+     "id": "69bd84e421fa07eadaa652b5",
      "type": "main",
-     "description": "Talk to Skier",
+     "description": "Visit Woods",
      "sourceQuestId": "6895bf915bcf5c38e90b83d8",
-     "maps": []
+     "maps": [
+      "Woods"
+     ],
+     "indent": 1
     },
     {
      "id": "68c6a5ed545269faf1c4b157",
@@ -266,32 +283,13 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "6895d2d18f186d19d54d102c",
+     "id": "68c6a97215db207712d81624",
      "type": "main",
-     "description": "Hand over the cash to Mechanic",
-     "sourceQuestId": "6895bfa355ad4ab76001a1c9",
-     "maps": []
-    },
-    {
-     "id": "68cd005720baf6092be731c8",
-     "type": "optional",
-     "description": "Collect the required amount in USD",
-     "sourceQuestId": "6895bfa355ad4ab76001a1c9",
-     "maps": []
-    },
-    {
-     "id": "6896020e3af3adc94b263d60",
-     "type": "main",
-     "description": "Hand over the item to Prapor: PMC dogtag",
-     "sourceQuestId": "6895bfd30cb3a157480db00a",
-     "maps": []
-    },
-    {
-     "id": "68cd008705dec39938e316d1",
-     "type": "main",
-     "description": "Find the item in raid: PMC dogtag",
-     "sourceQuestId": "6895bfd30cb3a157480db00a",
-     "maps": []
+     "description": "Ensure access to Reserve",
+     "sourceQuestId": "68c6a8551dfbf3fb78018562",
+     "maps": [
+      "Reserve"
+     ]
     },
     {
      "id": "69bd8757c588aa8f204f8ef8",
@@ -300,7 +298,8 @@ const STORY_DATA = {
      "sourceQuestId": "6895bfd30cb3a157480db00a",
      "maps": [
       "Shoreline"
-     ]
+     ],
+     "indent": 1
     },
     {
      "id": "69bd87733dc0daa202d06cb9",
@@ -309,7 +308,202 @@ const STORY_DATA = {
      "sourceQuestId": "6895bfd30cb3a157480db00a",
      "maps": [
       "Shoreline"
+     ],
+     "indent": 1
+    },
+    {
+     "id": "6896020e3af3adc94b263d60",
+     "type": "main",
+     "description": "Hand over the item to Prapor: PMC dogtag",
+     "sourceQuestId": "6895bfd30cb3a157480db00a",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68cd008705dec39938e316d1",
+     "type": "main",
+     "description": "Find the item in raid: PMC dogtag",
+     "sourceQuestId": "6895bfd30cb3a157480db00a",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68c6a969f7d6765264b9c44f",
+     "type": "main",
+     "description": "Ensure access to Lighthouse",
+     "sourceQuestId": "68c6a8551dfbf3fb78018562",
+     "maps": [
+      "Lighthouse"
      ]
+    },
+    {
+     "id": "6895d2d18f186d19d54d102c",
+     "type": "main",
+     "description": "Hand over the cash to Mechanic",
+     "sourceQuestId": "6895bfa355ad4ab76001a1c9",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68cd005720baf6092be731c8",
+     "type": "optional",
+     "description": "Collect the required amount in USD",
+     "sourceQuestId": "6895bfa355ad4ab76001a1c9",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68c6b0a3cb1c5c519963e7af",
+     "type": "main",
+     "description": "Ensure access to The Lab",
+     "sourceQuestId": "68c6a8551dfbf3fb78018562",
+     "maps": [
+      "The Lab"
+     ]
+    },
+    {
+     "id": "68c6afd2e48214ee402ccc2a",
+     "type": "main",
+     "description": "Access the secret TerraGroup facility",
+     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68c6aaba5deca7d908404c63",
+     "type": "optional",
+     "description": "Obtain a keycard or access codes to enter the facility",
+     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68c7e87321acda56046a7f4f",
+     "type": "optional",
+     "description": "Locate the entrance to the facility on Factory",
+     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
+     "maps": [
+      "Factory"
+     ],
+     "points": [
+      {
+       "map": "Factory",
+       "floor": 2,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -26.62,
+         "z": -41.95
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68c7e86ff945792cfd97edfe",
+     "type": "optional",
+     "description": "Locate the entrance to the facility on Streets of Tarkov",
+     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 212.02,
+         "z": 83.49
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68c6aa469b0217ce22d6fb0b",
+     "type": "main",
+     "description": "Search the top management offices in The Lab",
+     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
+     "maps": [
+      "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -169.2,
+         "z": -340.68
+        },
+        {
+         "x": -149.55,
+         "z": -340.76
+        },
+        {
+         "x": -149.55,
+         "z": -359.1
+        },
+        {
+         "x": -169.05,
+         "z": -359.1
+        },
+        {
+         "x": -169.35,
+         "z": -340.76
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68c6aa43498b4da977128b3c",
+     "type": "main",
+     "description": "Search the server room in The Lab",
+     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
+     "maps": [
+      "The Lab"
+     ],
+     "points": [
+      {
+       "map": "The Lab",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -127.84,
+         "z": -279.24
+        },
+        {
+         "x": -127.71,
+         "z": -332.8
+        },
+        {
+         "x": -101.06,
+         "z": -332.5
+        },
+        {
+         "x": -100.92,
+         "z": -279.08
+        },
+        {
+         "x": -127.84,
+         "z": -279.39
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68c6aa4040bb6d7ff66c0abb",
@@ -388,181 +582,8 @@ const STORY_DATA = {
         }
        ]
       }
-     ]
-    },
-    {
-     "id": "68c6aa43498b4da977128b3c",
-     "type": "main",
-     "description": "Search the server room in The Lab",
-     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
-     "maps": [
-      "The Lab"
      ],
-     "points": [
-      {
-       "map": "The Lab",
-       "floor": -1,
-       "kind": "area",
-       "color": "blue",
-       "pts": [
-        {
-         "x": -127.84,
-         "z": -279.24
-        },
-        {
-         "x": -127.71,
-         "z": -332.8
-        },
-        {
-         "x": -101.06,
-         "z": -332.5
-        },
-        {
-         "x": -100.92,
-         "z": -279.08
-        },
-        {
-         "x": -127.84,
-         "z": -279.39
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "id": "68c6aa469b0217ce22d6fb0b",
-     "type": "main",
-     "description": "Search the top management offices in The Lab",
-     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
-     "maps": [
-      "The Lab"
-     ],
-     "points": [
-      {
-       "map": "The Lab",
-       "floor": 0,
-       "kind": "area",
-       "color": "blue",
-       "pts": [
-        {
-         "x": -169.2,
-         "z": -340.68
-        },
-        {
-         "x": -149.55,
-         "z": -340.76
-        },
-        {
-         "x": -149.55,
-         "z": -359.1
-        },
-        {
-         "x": -169.05,
-         "z": -359.1
-        },
-        {
-         "x": -169.35,
-         "z": -340.76
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "id": "68c6aaba5deca7d908404c63",
-     "type": "optional",
-     "description": "Obtain a keycard or access codes to enter the facility",
-     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
-     "maps": []
-    },
-    {
-     "id": "68c6afd2e48214ee402ccc2a",
-     "type": "main",
-     "description": "Access the secret TerraGroup facility",
-     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
-     "maps": []
-    },
-    {
-     "id": "68c7e86ff945792cfd97edfe",
-     "type": "optional",
-     "description": "Locate the entrance to the facility on Streets of Tarkov",
-     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
-     "maps": [
-      "Streets of Tarkov"
-     ],
-     "points": [
-      {
-       "map": "Streets of Tarkov",
-       "floor": -1,
-       "kind": "pin",
-       "color": "blue",
-       "pts": [
-        {
-         "x": 212.02,
-         "z": 83.49
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "id": "68c7e87321acda56046a7f4f",
-     "type": "optional",
-     "description": "Locate the entrance to the facility on Factory",
-     "sourceQuestId": "68c6aa0e2f0a1d31380ad618",
-     "maps": [
-      "Factory"
-     ],
-     "points": [
-      {
-       "map": "Factory",
-       "floor": 2,
-       "kind": "pin",
-       "color": "blue",
-       "pts": [
-        {
-         "x": -26.62,
-         "z": -41.95
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "id": "68c6a8ea578cb34230742497",
-     "type": "main",
-     "description": "Ensure access to Streets of Tarkov",
-     "sourceQuestId": "68c6a8551dfbf3fb78018562",
-     "maps": [
-      "Streets of Tarkov"
-     ]
-    },
-    {
-     "id": "68c6a969f7d6765264b9c44f",
-     "type": "main",
-     "description": "Ensure access to Lighthouse",
-     "sourceQuestId": "68c6a8551dfbf3fb78018562",
-     "maps": [
-      "Lighthouse"
-     ]
-    },
-    {
-     "id": "68c6a97215db207712d81624",
-     "type": "main",
-     "description": "Ensure access to Reserve",
-     "sourceQuestId": "68c6a8551dfbf3fb78018562",
-     "maps": [
-      "Reserve"
-     ]
-    },
-    {
-     "id": "68c6b0a3cb1c5c519963e7af",
-     "type": "main",
-     "description": "Ensure access to The Lab",
-     "sourceQuestId": "68c6a8551dfbf3fb78018562",
-     "maps": [
-      "The Lab"
-     ]
+     "indent": 1
     }
    ]
   },
@@ -579,52 +600,10 @@ const STORY_DATA = {
    "description": "Investigate the crashed aircraft operation and decide what to do with the armored case.",
    "objectives": [
     {
-     "id": "68b83ecbe7204965a7265865",
-     "type": "main",
-     "description": "Learn details about the SUV from Therapist",
-     "sourceQuestId": "678f6bd1e8d46e40ff021605",
-     "maps": []
-    },
-    {
      "id": "68c01c6c954650cf2b48bbea",
      "type": "main",
      "description": "Ask the traders about the fallen plane",
      "sourceQuestId": "678f6bd1e8d46e40ff021605",
-     "maps": []
-    },
-    {
-     "id": "678f6eae2ed26c2110cb9909",
-     "type": "main",
-     "description": "Retrieve the flash drive from one of the G-Wagon SUVs",
-     "sourceQuestId": "678f6bd1e8d46e40ff021605",
-     "maps": []
-    },
-    {
-     "id": "678f6edd6b76b693d0f62654",
-     "type": "main",
-     "description": "Locate the right G-Wagon SUV",
-     "sourceQuestId": "678f6bd1e8d46e40ff021605",
-     "maps": []
-    },
-    {
-     "id": "678f6ec00199b227bbf61473",
-     "type": "main",
-     "description": "Hand over the flash drive to Prapor",
-     "sourceQuestId": "678f6bd1e8d46e40ff021605",
-     "maps": []
-    },
-    {
-     "id": "68b5758c09b1506a5cd4e3a3",
-     "type": "main",
-     "description": "Collect the required amount in USD",
-     "sourceQuestId": "678fa1463977eb69290a3a06",
-     "maps": []
-    },
-    {
-     "id": "678fa1b62f3482f90842ff2f",
-     "type": "main",
-     "description": "Hand over the cash to Therapist",
-     "sourceQuestId": "678fa1463977eb69290a3a06",
      "maps": []
     },
     {
@@ -642,6 +621,83 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "678fa1b62f3482f90842ff2f",
+     "type": "main",
+     "description": "Hand over the cash to Therapist",
+     "sourceQuestId": "678fa1463977eb69290a3a06",
+     "maps": []
+    },
+    {
+     "id": "68b5758c09b1506a5cd4e3a3",
+     "type": "main",
+     "description": "Collect the required amount in USD",
+     "sourceQuestId": "678fa1463977eb69290a3a06",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68b83ecbe7204965a7265865",
+     "type": "main",
+     "description": "Learn details about the SUV from Therapist",
+     "sourceQuestId": "678f6bd1e8d46e40ff021605",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "678f6eae2ed26c2110cb9909",
+     "type": "main",
+     "description": "Retrieve the flash drive from one of the G-Wagon SUVs",
+     "sourceQuestId": "678f6bd1e8d46e40ff021605",
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 336.57,
+         "z": 317.87
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "678f6edd6b76b693d0f62654",
+     "type": "main",
+     "description": "Locate the right G-Wagon SUV",
+     "sourceQuestId": "678f6bd1e8d46e40ff021605",
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 336.58,
+         "z": 317.88
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "678f6ec00199b227bbf61473",
+     "type": "main",
+     "description": "Hand over the flash drive to Prapor",
+     "sourceQuestId": "678f6bd1e8d46e40ff021605",
+     "maps": []
+    },
+    {
      "id": "68bdb2dca55fc9decb4551a2",
      "type": "main",
      "description": "Wait for information from Prapor",
@@ -653,55 +709,52 @@ const STORY_DATA = {
      "type": "main",
      "description": "Retrieve the plane's flight recorder",
      "sourceQuestId": "678f9df57252f8f0ae02f2d6",
-     "maps": []
+     "maps": [
+      "Woods"
+     ],
+     "points": [
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -248.18,
+         "z": -21.98
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "678fa01c06932e11d6741b80",
      "type": "main",
      "description": "Leave the flight recorder in the specified spot",
      "sourceQuestId": "678f9df57252f8f0ae02f2d6",
-     "maps": []
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 242.75,
+         "z": 427.24
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68d5be85d12284307b081760",
      "type": "main",
      "description": "Visit Prapor",
      "sourceQuestId": "68d5be85d12284307b08175e",
-     "maps": []
-    },
-    {
-     "id": "68b95c8cf26f696276119422",
-     "type": "main",
-     "description": "Find the item in raid: Toolset",
-     "sourceQuestId": "678fa2fe2e048957490ce617",
-     "maps": []
-    },
-    {
-     "id": "678fa38cc5377951addd369f",
-     "type": "main",
-     "description": "Hand over the item to Prapor: Toolset",
-     "sourceQuestId": "678fa2fe2e048957490ce617",
-     "maps": []
-    },
-    {
-     "id": "68b95cad7b5e2749d0f9bd46",
-     "type": "main",
-     "description": "Find the item in raid: Printed circuit board",
-     "sourceQuestId": "678fa2fe2e048957490ce617",
-     "maps": []
-    },
-    {
-     "id": "678fa3a6a65842dba9d420f8",
-     "type": "main",
-     "description": "Hand over the item to Prapor: Printed circuit board",
-     "sourceQuestId": "678fa2fe2e048957490ce617",
-     "maps": []
-    },
-    {
-     "id": "68b95cca591ec8a847687a27",
-     "type": "main",
-     "description": "Find the item in raid: Rechargeable battery",
-     "sourceQuestId": "678fa2fe2e048957490ce617",
      "maps": []
     },
     {
@@ -712,6 +765,44 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "68b95cca591ec8a847687a27",
+     "type": "main",
+     "description": "Find the item in raid: Rechargeable battery",
+     "sourceQuestId": "678fa2fe2e048957490ce617",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "678fa3a6a65842dba9d420f8",
+     "type": "main",
+     "description": "Hand over the item to Prapor: Printed circuit board",
+     "sourceQuestId": "678fa2fe2e048957490ce617",
+     "maps": []
+    },
+    {
+     "id": "68b95cad7b5e2749d0f9bd46",
+     "type": "main",
+     "description": "Find the item in raid: Printed circuit board",
+     "sourceQuestId": "678fa2fe2e048957490ce617",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "678fa38cc5377951addd369f",
+     "type": "main",
+     "description": "Hand over the item to Prapor: Toolset",
+     "sourceQuestId": "678fa2fe2e048957490ce617",
+     "maps": []
+    },
+    {
+     "id": "68b95c8cf26f696276119422",
+     "type": "main",
+     "description": "Find the item in raid: Toolset",
+     "sourceQuestId": "678fa2fe2e048957490ce617",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "68bdb3b00deb8afba70216bf",
      "type": "main",
      "description": "Wait for the information from Prapor",
@@ -719,18 +810,35 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68fd39472a6fa09d4555bdc8",
+     "id": "69017129b491f9fe2c6d2d8f",
      "type": "main",
-     "description": "Find the pilots' transcript",
+     "description": "Hand over the flight crew's transcript to Prapor",
      "sourceQuestId": "679cdd71af268e67ff086be8",
      "maps": []
     },
     {
-     "id": "679cde2cf433587bbd608420",
+     "id": "68fd39472a6fa09d4555bdc8",
      "type": "main",
-     "description": "Find Elektronik's secure flash drive",
+     "description": "Find the pilots' transcript",
      "sourceQuestId": "679cdd71af268e67ff086be8",
-     "maps": []
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 401.74,
+         "z": -44.32
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "679cde277d312130eefb88e7",
@@ -740,11 +848,28 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69017129b491f9fe2c6d2d8f",
+     "id": "679cde2cf433587bbd608420",
      "type": "main",
-     "description": "Hand over the flight crew's transcript to Prapor",
+     "description": "Find Elektronik's secure flash drive",
      "sourceQuestId": "679cdd71af268e67ff086be8",
-     "maps": []
+     "maps": [
+      "Shoreline"
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 401.76,
+         "z": -42.14
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68cc07e96a6359b02109da1a",
@@ -758,19 +883,36 @@ const STORY_DATA = {
      "type": "main",
      "description": "Retrieve the armored case",
      "sourceQuestId": "679cdee4ce3a208fee0ad657",
-     "maps": []
-    },
-    {
-     "id": "679cdee4ce3a208fee0ad65b",
-     "type": "main",
-     "description": "Hand over the armored case to Prapor",
-     "sourceQuestId": "679cdee4ce3a208fee0ad657",
-     "maps": []
+     "maps": [
+      "Woods"
+     ],
+     "points": [
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -247.29,
+         "z": -21.26
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68fbbc8ea9ece72415bf5223",
      "type": "optional",
      "description": "Find any additional clues",
+     "sourceQuestId": "679cdee4ce3a208fee0ad657",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "679cdee4ce3a208fee0ad65b",
+     "type": "main",
+     "description": "Hand over the armored case to Prapor",
      "sourceQuestId": "679cdee4ce3a208fee0ad657",
      "maps": []
     },
@@ -798,49 +940,189 @@ const STORY_DATA = {
      "type": "main",
      "description": "Locate the traces of the BEAR special squad",
      "sourceQuestId": "68d6894a05ab6c954c01f65e",
-     "maps": []
+     "maps": [
+      "Customs",
+      "Woods",
+      "Shoreline",
+      "Reserve"
+     ],
+     "points": [
+      {
+       "map": "Customs",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 196.93,
+         "z": -159.48
+        },
+        {
+         "x": 219.97,
+         "z": -155.12
+        },
+        {
+         "x": 208.45,
+         "z": -95.77
+        },
+        {
+         "x": 186.13,
+         "z": -100.13
+        },
+        {
+         "x": 196.93,
+         "z": -158.52
+        }
+       ]
+      },
+      {
+       "map": "Reserve",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 2.93,
+         "z": 163.83
+        },
+        {
+         "x": -17.8,
+         "z": 165.13
+        },
+        {
+         "x": -18.44,
+         "z": 185.26
+        },
+        {
+         "x": 3.58,
+         "z": 182.88
+        },
+        {
+         "x": 2.28,
+         "z": 163.4
+        }
+       ]
+      },
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -147.97,
+         "z": -308.23
+        },
+        {
+         "x": -161.12,
+         "z": -305.33
+        },
+        {
+         "x": -159.18,
+         "z": -292.76
+        },
+        {
+         "x": -146.23,
+         "z": -295.08
+        },
+        {
+         "x": -147.58,
+         "z": -307.84
+        }
+       ]
+      },
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 297.83,
+         "z": -474.91
+        },
+        {
+         "x": 224.7,
+         "z": -456.18
+        },
+        {
+         "x": 253.45,
+         "z": -407.47
+        },
+        {
+         "x": 307.21,
+         "z": -429.32
+        },
+        {
+         "x": 292.21,
+         "z": -474.29
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68cad2c2abcd16d97906a2d2",
      "type": "optional",
      "description": "Locate and obtain the Bogatyr squad patch",
      "sourceQuestId": "68caba2ae86db94cdc051418",
-     "maps": []
-    },
-    {
-     "id": "68cad2d7ab591bad52125950",
-     "type": "optional",
-     "description": "Locate and obtain a dogtag of one of the Bogatyrs",
-     "sourceQuestId": "68caba2ae86db94cdc051418",
-     "maps": []
-    },
-    {
-     "id": "68cad2ddd5ccb3a7be444363",
-     "type": "optional",
-     "description": "Locate and obtain a personal item of one of the Bogatyrs",
-     "sourceQuestId": "68caba2ae86db94cdc051418",
-     "maps": []
-    },
-    {
-     "id": "68cad2e086e6f96ff175b95d",
-     "type": "optional",
-     "description": "Locate and obtain a keepsake of one of the Bogatyrs",
-     "sourceQuestId": "68caba2ae86db94cdc051418",
-     "maps": []
-    },
-    {
-     "id": "68cad2e142b4aa16844f4544",
-     "type": "optional",
-     "description": "Locate and obtain the squad commander's recorder",
-     "sourceQuestId": "68caba2ae86db94cdc051418",
-     "maps": []
-    },
-    {
-     "id": "690e753e2abdafe866160a6a",
-     "type": "main",
-     "description": "Gather all the found items related to the squad",
-     "sourceQuestId": "68caba2ae86db94cdc051418",
-     "maps": []
+     "maps": [
+      "Customs",
+      "Woods",
+      "Reserve",
+      "Lighthouse"
+     ],
+     "points": [
+      {
+       "map": "Customs",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 502.66,
+         "z": 94.83
+        }
+       ]
+      },
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 197.1,
+         "z": -603.11
+        }
+       ]
+      },
+      {
+       "map": "Reserve",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -48.28,
+         "z": 29.33
+        }
+       ]
+      },
+      {
+       "map": "Lighthouse",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 78,
+         "z": 164.47
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68d97067104f263eefaff823",
@@ -850,30 +1132,508 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "68cd75f985759834cdb8077e",
+     "type": "main",
+     "description": "Locate the Ryabina outpost",
+     "sourceQuestId": "68caba33f193c0b4fb01cc2d",
+     "maps": [
+      "Woods"
+     ],
+     "points": [
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 37.96,
+         "z": -323.49
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68dbe472fc1cbb19989a792e",
+     "type": "main",
+     "description": "Find more information about the Bogatyr squad",
+     "sourceQuestId": "68caba33f193c0b4fb01cc2d",
+     "maps": [
+      "Woods"
+     ]
+    },
+    {
+     "id": "68cad2e086e6f96ff175b95d",
+     "type": "optional",
+     "description": "Locate and obtain a keepsake of one of the Bogatyrs",
+     "sourceQuestId": "68caba2ae86db94cdc051418",
+     "maps": [
+      "Woods"
+     ],
+     "points": [
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 40.38,
+         "z": -319.52
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68cd76423e506353c08a0b71",
+     "type": "main",
+     "description": "Locate the Carousel outpost",
+     "sourceQuestId": "68caba33f193c0b4fb01cc2d",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 91.53,
+         "z": -304.92
+        },
+        {
+         "x": 47.51,
+         "z": -305.22
+        },
+        {
+         "x": 48.1,
+         "z": -283.9
+        },
+        {
+         "x": 91.82,
+         "z": -283.01
+        },
+        {
+         "x": 91.53,
+         "z": -304.63
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68f9eed31dbc7a9f81001a49",
+     "type": "main",
+     "description": "Find the Bogatyr squad's personal notes",
+     "sourceQuestId": "68f9eed31dbc7a9f81001a3a",
+     "maps": [
+      "Interchange"
+     ]
+    },
+    {
+     "id": "68f9ef8a1dbc7a9f81001a94",
+     "type": "main",
+     "description": "Learn more about Strelets",
+     "sourceQuestId": "68f9ef8a1dbc7a9f81001a87",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 92.12,
+         "z": -304.63
+        },
+        {
+         "x": 46.63,
+         "z": -304.63
+        },
+        {
+         "x": 47.22,
+         "z": -284.19
+        },
+        {
+         "x": 92.71,
+         "z": -283.6
+        },
+        {
+         "x": 93,
+         "z": -305.22
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68f9ef8a1dbc7a9f81001a92",
+     "type": "main",
+     "description": "Learn more about Taran",
+     "sourceQuestId": "68f9ef8a1dbc7a9f81001a87",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 92.13,
+         "z": -283.42
+        },
+        {
+         "x": 91.81,
+         "z": -304.82
+        },
+        {
+         "x": 47.13,
+         "z": -304.82
+        },
+        {
+         "x": 47.72,
+         "z": -284.13
+        },
+        {
+         "x": 92.1,
+         "z": -283.33
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68cad2ddd5ccb3a7be444363",
+     "type": "optional",
+     "description": "Locate and obtain a personal item of one of the Bogatyrs",
+     "sourceQuestId": "68caba2ae86db94cdc051418",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 92.15,
+         "z": -304.77
+        },
+        {
+         "x": 47.01,
+         "z": -304.9
+        },
+        {
+         "x": 47.55,
+         "z": -284.09
+        },
+        {
+         "x": 92.27,
+         "z": -283.29
+        },
+        {
+         "x": 92.1,
+         "z": -304.94
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68f9eed31dbc7a9f81001a43",
+     "type": "main",
+     "description": "Learn more about Voevoda",
+     "sourceQuestId": "68f9eed31dbc7a9f81001a3a",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 92.31,
+         "z": -305.15
+        },
+        {
+         "x": 47.09,
+         "z": -305.24
+        },
+        {
+         "x": 47.64,
+         "z": -284.04
+        },
+        {
+         "x": 92.61,
+         "z": -283.45
+        },
+        {
+         "x": 92.4,
+         "z": -305.32
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68f9ef8a1dbc7a9f81001a98",
+     "type": "main",
+     "description": "Find Voevoda's personal belongings",
+     "sourceQuestId": "68f9ef8a1dbc7a9f81001a87",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 92.52,
+         "z": -305.14
+        },
+        {
+         "x": 46.95,
+         "z": -304.69
+        },
+        {
+         "x": 47.64,
+         "z": -284.01
+        },
+        {
+         "x": 92.41,
+         "z": -283.36
+        },
+        {
+         "x": 92.58,
+         "z": -305.13
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68cad2e142b4aa16844f4544",
+     "type": "optional",
+     "description": "Locate and obtain the squad commander's recorder",
+     "sourceQuestId": "68caba2ae86db94cdc051418",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 92.67,
+         "z": -305.15
+        },
+        {
+         "x": 91.94,
+         "z": -283.22
+        },
+        {
+         "x": 47.5,
+         "z": -284.1
+        },
+        {
+         "x": 46.88,
+         "z": -304.8
+        },
+        {
+         "x": 92.68,
+         "z": -305.18
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
      "id": "68cd423a99a8769285aa4a30",
      "type": "main",
      "description": "Locate the Gnezdo outpost",
      "sourceQuestId": "68caba2cc567ca20cc01c775",
-     "maps": []
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -327.09,
+         "z": -71.96
+        },
+        {
+         "x": -320.32,
+         "z": -67.72
+        },
+        {
+         "x": -314.86,
+         "z": -61.06
+        },
+        {
+         "x": -313.12,
+         "z": -53.09
+        },
+        {
+         "x": -315.35,
+         "z": -46.36
+        },
+        {
+         "x": -318.77,
+         "z": -39.95
+        },
+        {
+         "x": -327.16,
+         "z": -31.92
+        },
+        {
+         "x": -335.73,
+         "z": -29.99
+        },
+        {
+         "x": -347.09,
+         "z": -32.1
+        },
+        {
+         "x": -355.42,
+         "z": -43.19
+        },
+        {
+         "x": -356.04,
+         "z": -54.4
+        },
+        {
+         "x": -351.07,
+         "z": -63.37
+        },
+        {
+         "x": -340.57,
+         "z": -70.4
+        },
+        {
+         "x": -330.82,
+         "z": -71.9
+        },
+        {
+         "x": -326.72,
+         "z": -72.33
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "6915bb41efc107ce960110e5",
+     "type": "main",
+     "description": "Search the Gnezdo outpost",
+     "sourceQuestId": "6915bb41efc107ce960110d9",
+     "maps": [
+      "Interchange"
+     ]
     },
     {
      "id": "6915bb41efc107ce960110de",
      "type": "main",
      "description": "Figure out what happened to the Bogatyr squad",
      "sourceQuestId": "6915bb41efc107ce960110d9",
-     "maps": []
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -312.35,
+         "z": -53.15
+        },
+        {
+         "x": -317.11,
+         "z": -65.08
+        },
+        {
+         "x": -323.03,
+         "z": -70.37
+        },
+        {
+         "x": -334,
+         "z": -72.17
+        },
+        {
+         "x": -345.76,
+         "z": -67.98
+        },
+        {
+         "x": -353.85,
+         "z": -59.51
+        },
+        {
+         "x": -356.23,
+         "z": -48.73
+        },
+        {
+         "x": -351.32,
+         "z": -36.51
+        },
+        {
+         "x": -340.86,
+         "z": -30.57
+        },
+        {
+         "x": -330.25,
+         "z": -30.5
+        },
+        {
+         "x": -322.24,
+         "z": -35.42
+        },
+        {
+         "x": -315.09,
+         "z": -45.19
+        },
+        {
+         "x": -312.13,
+         "z": -52.86
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "6915bb41efc107ce960110e3",
      "type": "main",
      "description": "Figure out where the Bogatyr squad got ambushed",
-     "sourceQuestId": "6915bb41efc107ce960110d9",
-     "maps": []
-    },
-    {
-     "id": "6915bb41efc107ce960110e5",
-     "type": "main",
-     "description": "Search the Gnezdo outpost",
      "sourceQuestId": "6915bb41efc107ce960110d9",
      "maps": []
     },
@@ -896,6 +1656,73 @@ const STORY_DATA = {
      "type": "main",
      "description": "Locate the ambush spot",
      "sourceQuestId": "68caba2d7d1e2d4df2032efe",
+     "maps": [
+      "Woods"
+     ],
+     "points": [
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -449.55,
+         "z": -64.55
+        },
+        {
+         "x": -417.66,
+         "z": -63.07
+        },
+        {
+         "x": -391.39,
+         "z": -53.63
+        },
+        {
+         "x": -393.75,
+         "z": -30.92
+        },
+        {
+         "x": -402.9,
+         "z": -9.38
+        },
+        {
+         "x": -412.94,
+         "z": -0.24
+        },
+        {
+         "x": -451.61,
+         "z": 4.19
+        },
+        {
+         "x": -462.24,
+         "z": -4.37
+        },
+        {
+         "x": -466.08,
+         "z": -30.92
+        },
+        {
+         "x": -459.58,
+         "z": -54.22
+        },
+        {
+         "x": -451.32,
+         "z": -66.91
+        },
+        {
+         "x": -448.96,
+         "z": -65.43
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "68dbcd695ac7893559edefe7",
+     "type": "main",
+     "description": "Obtain more information about the Bogatyr squad",
+     "sourceQuestId": "68caba2d7d1e2d4df2032efe",
      "maps": []
     },
     {
@@ -906,18 +1733,20 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68dbcd695ac7893559edefe7",
-     "type": "main",
-     "description": "Obtain more information about the Bogatyr squad",
-     "sourceQuestId": "68caba2d7d1e2d4df2032efe",
-     "maps": []
-    },
-    {
      "id": "68cd72da971ca7fba504335a",
      "type": "optional",
      "description": "Locate and obtain Moreman's phone",
      "sourceQuestId": "68caba2f28ffeb58ad030255",
-     "maps": []
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68cad2d7ab591bad52125950",
+     "type": "optional",
+     "description": "Locate and obtain a dogtag of one of the Bogatyrs",
+     "sourceQuestId": "68caba2ae86db94cdc051418",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68f81b2cf92d7f60dac72678",
@@ -931,69 +1760,14 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Study the data from Moreman's phone",
      "sourceQuestId": "68caba2f28ffeb58ad030255",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68cd75b551a1ee3476a9605c",
      "type": "main",
      "description": "Upgrade the Intelligence Center to Level 3 in the Hideout",
      "sourceQuestId": "68caba3128f428794e0780fd",
-     "maps": []
-    },
-    {
-     "id": "68cd75f985759834cdb8077e",
-     "type": "main",
-     "description": "Locate the Ryabina outpost",
-     "sourceQuestId": "68caba33f193c0b4fb01cc2d",
-     "maps": []
-    },
-    {
-     "id": "68dbe472fc1cbb19989a792e",
-     "type": "main",
-     "description": "Find more information about the Bogatyr squad",
-     "sourceQuestId": "68caba33f193c0b4fb01cc2d",
-     "maps": []
-    },
-    {
-     "id": "68cd76423e506353c08a0b71",
-     "type": "main",
-     "description": "Locate the Carousel outpost",
-     "sourceQuestId": "68caba33f193c0b4fb01cc2d",
-     "maps": []
-    },
-    {
-     "id": "68f9eed31dbc7a9f81001a43",
-     "type": "main",
-     "description": "Learn more about Voevoda",
-     "sourceQuestId": "68f9eed31dbc7a9f81001a3a",
-     "maps": []
-    },
-    {
-     "id": "68f9eed31dbc7a9f81001a49",
-     "type": "main",
-     "description": "Find the Bogatyr squad's personal notes",
-     "sourceQuestId": "68f9eed31dbc7a9f81001a3a",
-     "maps": []
-    },
-    {
-     "id": "68f9ef8a1dbc7a9f81001a92",
-     "type": "main",
-     "description": "Learn more about Taran",
-     "sourceQuestId": "68f9ef8a1dbc7a9f81001a87",
-     "maps": []
-    },
-    {
-     "id": "68f9ef8a1dbc7a9f81001a94",
-     "type": "main",
-     "description": "Learn more about Strelets",
-     "sourceQuestId": "68f9ef8a1dbc7a9f81001a87",
-     "maps": []
-    },
-    {
-     "id": "68f9ef8a1dbc7a9f81001a98",
-     "type": "main",
-     "description": "Find Voevoda's personal belongings",
-     "sourceQuestId": "68f9ef8a1dbc7a9f81001a87",
      "maps": []
     },
     {
@@ -1004,53 +1778,27 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "692468924fa2da123ec3f441",
-     "type": "main",
-     "description": "Hand over the Bogatyr squad patch to Lightkeeper",
-     "sourceQuestId": "68caba3985c14c12720e9287",
-     "maps": []
-    },
-    {
-     "id": "692468bd1b012d5d716fd1f7",
-     "type": "main",
-     "description": "Hand over Moreman's dogtag to Lightkeeper",
-     "sourceQuestId": "68caba3985c14c12720e9287",
-     "maps": []
-    },
-    {
-     "id": "692468bfc4613b982af2d8de",
-     "type": "main",
-     "description": "Hand over Strelets' amulet to Lightkeeper",
-     "sourceQuestId": "68caba3985c14c12720e9287",
-     "maps": []
-    },
-    {
-     "id": "692468c0d971a358ede70ad8",
-     "type": "main",
-     "description": "Hand over Taran's postcard to Lightkeeper",
-     "sourceQuestId": "68caba3985c14c12720e9287",
-     "maps": []
-    },
-    {
-     "id": "692468c2fd540f50d7e5558a",
-     "type": "main",
-     "description": "Hand over Voevoda's audio recorder to Lightkeeper",
-     "sourceQuestId": "68caba3985c14c12720e9287",
-     "maps": []
-    },
-    {
-     "id": "69245fe39a65440680728ddb",
-     "type": "main",
-     "description": "Bring all the Bogatyr squad's items to Lightkeeper",
-     "sourceQuestId": "68fab1c73754850d130f5c61",
-     "maps": []
-    },
-    {
      "id": "692eb9b4ad4cf9794040bc68",
      "type": "main",
      "description": "Gain access to Lightkeeper",
      "sourceQuestId": "68fab1c73754850d130f5c61",
-     "maps": []
+     "maps": [
+      "Lighthouse"
+     ],
+     "points": [
+      {
+       "map": "Lighthouse",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 445.93,
+         "z": 462.74
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68fab1c73754850d130f5c64",
@@ -1060,24 +1808,81 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "69245fe39a65440680728ddb",
+     "type": "main",
+     "description": "Bring all the Bogatyr squad's items to Lightkeeper",
+     "sourceQuestId": "68fab1c73754850d130f5c61",
+     "maps": [
+      "Lighthouse"
+     ],
+     "points": [
+      {
+       "map": "Lighthouse",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 444.44,
+         "z": 462.95
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "690e753e2abdafe866160a6a",
+     "type": "main",
+     "description": "Gather all the found items related to the squad",
+     "sourceQuestId": "68caba2ae86db94cdc051418",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "692468924fa2da123ec3f441",
+     "type": "main",
+     "description": "Hand over the Bogatyr squad patch to Lightkeeper",
+     "sourceQuestId": "68caba3985c14c12720e9287",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "692468bd1b012d5d716fd1f7",
+     "type": "main",
+     "description": "Hand over Moreman's dogtag to Lightkeeper",
+     "sourceQuestId": "68caba3985c14c12720e9287",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "692468bfc4613b982af2d8de",
+     "type": "main",
+     "description": "Hand over Strelets' amulet to Lightkeeper",
+     "sourceQuestId": "68caba3985c14c12720e9287",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "692468c0d971a358ede70ad8",
+     "type": "main",
+     "description": "Hand over Taran's postcard to Lightkeeper",
+     "sourceQuestId": "68caba3985c14c12720e9287",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "692468c2fd540f50d7e5558a",
+     "type": "main",
+     "description": "Hand over Voevoda's audio recorder to Lightkeeper",
+     "sourceQuestId": "68caba3985c14c12720e9287",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "68fad1e0f087f82f93824b35",
      "type": "main",
      "description": "Wait for Voevoda to reach out",
      "sourceQuestId": "68dbf867ff23e2cbe2014c02",
-     "maps": []
-    },
-    {
-     "id": "68d9bad30abd4969c2005181",
-     "type": "main",
-     "description": "Reach the Strength skill level 15",
-     "sourceQuestId": "68caba3b09dc3189010e49cc",
-     "maps": []
-    },
-    {
-     "id": "68d9baf8d2d4717fd0369c4b",
-     "type": "main",
-     "description": "Reach the Stress Resistance skill level 10",
-     "sourceQuestId": "68caba3b09dc3189010e49cc",
      "maps": []
     },
     {
@@ -1095,10 +1900,17 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68d9bb9ad5c5839176775f2a",
+     "id": "68d9baf8d2d4717fd0369c4b",
      "type": "main",
-     "description": "Eliminate PMC operatives without dying",
-     "sourceQuestId": "68d9b97c42007d9a0a0f901c",
+     "description": "Reach the Stress Resistance skill level 10",
+     "sourceQuestId": "68caba3b09dc3189010e49cc",
+     "maps": []
+    },
+    {
+     "id": "68d9bad30abd4969c2005181",
+     "type": "main",
+     "description": "Reach the Strength skill level 15",
+     "sourceQuestId": "68caba3b09dc3189010e49cc",
      "maps": []
     },
     {
@@ -1106,6 +1918,13 @@ const STORY_DATA = {
      "type": "main",
      "description": "Eliminate any target without dying",
      "sourceQuestId": "68d9b97ef19ccd1e51002c80",
+     "maps": []
+    },
+    {
+     "id": "68d9bb9ad5c5839176775f2a",
+     "type": "main",
+     "description": "Eliminate PMC operatives without dying",
+     "sourceQuestId": "68d9b97c42007d9a0a0f901c",
      "maps": []
     },
     {
@@ -1120,24 +1939,10 @@ const STORY_DATA = {
      "type": "main",
      "description": "Locate the traces of the traitors",
      "sourceQuestId": "68caba3da331c68e8209b55a",
-     "maps": []
-    },
-    {
-     "id": "68dbed24038b894e38a30aa1",
-     "type": "optional",
-     "description": "Investigate the BEAR camp east of the Ultra mall on Interchange",
-     "sourceQuestId": "68caba3da331c68e8209b55a",
      "maps": [
+      "Reserve",
+      "Lighthouse",
       "Interchange"
-     ]
-    },
-    {
-     "id": "68dbed28d01c49f4ed397cea",
-     "type": "optional",
-     "description": "Investigate the BEAR camp on Lighthouse",
-     "sourceQuestId": "68caba3da331c68e8209b55a",
-     "maps": [
-      "Lighthouse"
      ]
     },
     {
@@ -1147,7 +1952,138 @@ const STORY_DATA = {
      "sourceQuestId": "68caba3da331c68e8209b55a",
      "maps": [
       "Reserve"
-     ]
+     ],
+     "points": [
+      {
+       "map": "Reserve",
+       "floor": 0,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -88.35,
+         "z": 45.31
+        },
+        {
+         "x": -101.22,
+         "z": 1.87
+        },
+        {
+         "x": -159.46,
+         "z": 17.14
+        },
+        {
+         "x": -149.3,
+         "z": 62.96
+        },
+        {
+         "x": -87.68,
+         "z": 48.03
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68dbed28d01c49f4ed397cea",
+     "type": "optional",
+     "description": "Investigate the BEAR camp on Lighthouse",
+     "sourceQuestId": "68caba3da331c68e8209b55a",
+     "maps": [
+      "Lighthouse"
+     ],
+     "points": [
+      {
+       "map": "Lighthouse",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 81.76,
+         "z": 161.91
+        },
+        {
+         "x": 79.51,
+         "z": 167.25
+        },
+        {
+         "x": 76.6,
+         "z": 166.97
+        },
+        {
+         "x": 75.38,
+         "z": 164.81
+        },
+        {
+         "x": 76.97,
+         "z": 160.78
+        },
+        {
+         "x": 79.22,
+         "z": 159.94
+        },
+        {
+         "x": 81.66,
+         "z": 161.91
+        }
+       ]
+      }
+     ],
+     "indent": 1
+    },
+    {
+     "id": "68dbed24038b894e38a30aa1",
+     "type": "optional",
+     "description": "Investigate the BEAR camp east of the Ultra mall on Interchange",
+     "sourceQuestId": "68caba3da331c68e8209b55a",
+     "maps": [
+      "Interchange"
+     ],
+     "points": [
+      {
+       "map": "Interchange",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -325.38,
+         "z": -71.57
+        },
+        {
+         "x": -348.23,
+         "z": -66.38
+        },
+        {
+         "x": -355.21,
+         "z": -57.57
+        },
+        {
+         "x": -353.38,
+         "z": -39.33
+        },
+        {
+         "x": -333.62,
+         "z": -30.04
+        },
+        {
+         "x": -317.54,
+         "z": -41.09
+        },
+        {
+         "x": -313.4,
+         "z": -57.52
+        },
+        {
+         "x": -325.04,
+         "z": -71.65
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68dbff1b2281dcf3bf2ea214",
@@ -1170,7 +2106,38 @@ const STORY_DATA = {
      "sourceQuestId": "68caba3fcc16a93b26096721",
      "maps": [
       "Shoreline"
-     ]
+     ],
+     "points": [
+      {
+       "map": "Shoreline",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 249.44,
+         "z": 422.08
+        },
+        {
+         "x": 241.51,
+         "z": 420.92
+        },
+        {
+         "x": 238.42,
+         "z": 437.36
+        },
+        {
+         "x": 247.32,
+         "z": 438.71
+        },
+        {
+         "x": 249.44,
+         "z": 422.66
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68dc05109075f2e13953ebec",
@@ -1179,7 +2146,22 @@ const STORY_DATA = {
      "sourceQuestId": "68caba3fcc16a93b26096721",
      "maps": [
       "Woods"
-     ]
+     ],
+     "points": [
+      {
+       "map": "Woods",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 198.05,
+         "z": -7.69
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68dc0513d9f293e66c05c459",
@@ -1188,7 +2170,8 @@ const STORY_DATA = {
      "sourceQuestId": "68caba3fcc16a93b26096721",
      "maps": [
       "Reserve"
-     ]
+     ],
+     "indent": 1
     },
     {
      "id": "690f8a20c616b5a85666d054",
@@ -1197,14 +2180,61 @@ const STORY_DATA = {
      "sourceQuestId": "68caba3fcc16a93b26096721",
      "maps": [
       "Customs"
-     ]
+     ],
+     "points": [
+      {
+       "map": "Customs",
+       "floor": 2,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 171.73,
+         "z": 189.14
+        },
+        {
+         "x": 187.54,
+         "z": 187.01
+        },
+        {
+         "x": 185.17,
+         "z": 171.72
+        },
+        {
+         "x": 169.75,
+         "z": 173.85
+        },
+        {
+         "x": 171.6,
+         "z": 188.74
+        }
+       ]
+      }
+     ],
+     "indent": 1
     },
     {
      "id": "68faaab4615a04b8ee0be802",
      "type": "main",
      "description": "Talk to Lightkeeper",
      "sourceQuestId": "68faaab4615a04b8ee0be7ff",
-     "maps": []
+     "maps": [
+      "Lighthouse"
+     ],
+     "points": [
+      {
+       "map": "Lighthouse",
+       "floor": -1,
+       "kind": "pin",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 445.06,
+         "z": 462.9
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "69125acb48ae3fe668fd2910",
@@ -1218,7 +2248,8 @@ const STORY_DATA = {
      "type": "main",
      "description": "Read the agent network deployment report",
      "sourceQuestId": "68caba4119f13a8d1b0ad3ac",
-     "maps": []
+     "maps": [],
+     "indent": 1
     }
    ]
   },
@@ -1237,28 +2268,107 @@ const STORY_DATA = {
      "type": "main",
      "description": "Learn more about The Unheard",
      "sourceQuestId": "68ec5135459f4ca1d60c601d",
-     "maps": []
-    },
-    {
-     "id": "68ec5551096cabc6d676bd9c",
-     "type": "main",
-     "description": "Learn more about The Unheard",
-     "sourceQuestId": "68ec5137062b3169d009eaf9",
-     "maps": []
-    },
-    {
-     "id": "690095af2ee6b9e3fb09b38d",
-     "type": "main",
-     "description": "Learn more about The Unheard",
-     "sourceQuestId": "69009349b7d28358f80b942c",
-     "maps": []
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "points": [
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": 69.68,
+         "z": -77.98
+        },
+        {
+         "x": 39.92,
+         "z": -78.74
+        },
+        {
+         "x": 39.54,
+         "z": -44.46
+        },
+        {
+         "x": 68.15,
+         "z": -44.85
+        },
+        {
+         "x": 70.06,
+         "z": -77.98
+        }
+       ]
+      },
+      {
+       "map": "Streets of Tarkov",
+       "floor": -1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -25.7,
+         "z": -121.02
+        },
+        {
+         "x": -48.21,
+         "z": -120.26
+        },
+        {
+         "x": -48.59,
+         "z": -108.83
+        },
+        {
+         "x": -25.32,
+         "z": -107.31
+        },
+        {
+         "x": -25.32,
+         "z": -120.26
+        }
+       ]
+      }
+     ]
     },
     {
      "id": "68ec56e7fdf6af65ee217461",
      "type": "main",
      "description": "Learn more about TerraGroup's activities",
      "sourceQuestId": "67ced00eceefc356a10fd405",
-     "maps": []
+     "maps": [
+      "Ground Zero"
+     ],
+     "points": [
+      {
+       "map": "Ground Zero",
+       "floor": 1,
+       "kind": "area",
+       "color": "blue",
+       "pts": [
+        {
+         "x": -18.71,
+         "z": 57.77
+        },
+        {
+         "x": -17.8,
+         "z": 38.96
+        },
+        {
+         "x": -8.41,
+         "z": 38.65
+        },
+        {
+         "x": -2.65,
+         "z": 59.28
+        },
+        {
+         "x": -19.31,
+         "z": 57.77
+        }
+       ]
+      }
+     ],
+     "needs": "TerraGroup science office key"
     },
     {
      "id": "68ec571087d1dcf9407e2439",
@@ -1286,7 +2396,8 @@ const STORY_DATA = {
      "type": "main",
      "description": "Obtain Rzhevsky's personal belongings",
      "sourceQuestId": "67ced012152372f12708b7b6",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68ec65d9ea92f36f080dca1f",
@@ -1296,16 +2407,17 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68ec65ba33a343f819b00bb5",
-     "type": "main",
-     "description": "Read the transcript of Rzhevsky's conversation",
-     "sourceQuestId": "68ec64b49012da9779025825",
-     "maps": []
-    },
-    {
      "id": "68ec65ef83e462b8d58bd965",
      "type": "main",
      "description": "Take the hard drive from Rzhevsky's car",
+     "sourceQuestId": "68ec64b49012da9779025825",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68ec65ba33a343f819b00bb5",
+     "type": "main",
+     "description": "Read the transcript of Rzhevsky's conversation",
      "sourceQuestId": "68ec64b49012da9779025825",
      "maps": []
     },
@@ -1321,6 +2433,13 @@ const STORY_DATA = {
      "type": "main",
      "description": "Find as much information as possible about the plans of The Unheard",
      "sourceQuestId": "67ced014c43709665f0fbe46",
+     "maps": []
+    },
+    {
+     "id": "68ec5551096cabc6d676bd9c",
+     "type": "main",
+     "description": "Learn more about The Unheard",
+     "sourceQuestId": "68ec5137062b3169d009eaf9",
      "maps": []
     },
     {
@@ -1358,7 +2477,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Find out which room A.P. was assigned to",
      "sourceQuestId": "67ced017029b9dbe190f3c77",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68ec68e1137e88d6f94cf1fa",
@@ -1375,16 +2495,17 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68ec69606665411e26746c35",
-     "type": "main",
-     "description": "Decrypt the flash drive from A.P.'s room",
-     "sourceQuestId": "67ced018d1e611aa410235e5",
-     "maps": []
-    },
-    {
      "id": "68ec69814fb1c1a2389383ce",
      "type": "main",
      "description": "Take the flash drive from A.P.'s room",
+     "sourceQuestId": "67ced018d1e611aa410235e5",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68ec69606665411e26746c35",
+     "type": "main",
+     "description": "Decrypt the flash drive from A.P.'s room",
      "sourceQuestId": "67ced018d1e611aa410235e5",
      "maps": []
     },
@@ -1396,18 +2517,19 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68feac1954fb4abc26e3cc22",
-     "type": "main",
-     "description": "Collect the required amount in RUB",
-     "sourceQuestId": "67ced018d1e611aa410235e5",
-     "maps": []
-    },
-    {
      "id": "68ec69e3234c86444b09d2f2",
      "type": "main",
      "description": "Hand over the cash to Mechanic",
      "sourceQuestId": "67ced018d1e611aa410235e5",
      "maps": []
+    },
+    {
+     "id": "68feac1954fb4abc26e3cc22",
+     "type": "main",
+     "description": "Collect the required amount in RUB",
+     "sourceQuestId": "67ced018d1e611aa410235e5",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68ec6a093473fe8fe28b8543",
@@ -1473,6 +2595,13 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "690095af2ee6b9e3fb09b38d",
+     "type": "main",
+     "description": "Learn more about The Unheard",
+     "sourceQuestId": "69009349b7d28358f80b942c",
+     "maps": []
+    },
+    {
      "id": "68efb3512b07b367450de5fc",
      "type": "main",
      "description": "Figure out how The Unheard are connected to Tarkov",
@@ -1503,7 +2632,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Gain access to Mechanic",
      "sourceQuestId": "67b892b338076c36e50abfb5",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "67dbffc1b68b82b75762d7f9",
@@ -1583,6 +2713,13 @@ const STORY_DATA = {
    "description": "Follow the Eye of the World trail through cultist sites, Sordi infrastructure, and ARRS Station 14-4 KORD.",
    "objectives": [
     {
+     "id": "68bc6cee5d6a14b608a68e4e",
+     "type": "main",
+     "description": "Learn more about the victim",
+     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
+     "maps": []
+    },
+    {
      "id": "68bc19ad0be47ffe301db8a0",
      "type": "main",
      "description": "Locate a place connected to the Eye of the World",
@@ -1608,14 +2745,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Obtain the key to the apartment",
      "sourceQuestId": "68588eca1d2ea426e9085c29",
-     "maps": []
-    },
-    {
-     "id": "68e2f412da3da7800550bcca",
-     "type": "main",
-     "description": "Obtain and read the book that the cultists planted with Igor",
-     "sourceQuestId": "68588eca1d2ea426e9085c29",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e2f41bf02c52291042a3aa",
@@ -1632,6 +2763,13 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "68e2f412da3da7800550bcca",
+     "type": "main",
+     "description": "Obtain and read the book that the cultists planted with Igor",
+     "sourceQuestId": "68588eca1d2ea426e9085c29",
+     "maps": []
+    },
+    {
      "id": "68bc47ec6de448aac12c22e9",
      "type": "main",
      "description": "Ask Mechanic about the Eye of the World",
@@ -1643,7 +2781,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Gain access to Mechanic",
      "sourceQuestId": "68588ecc10ea119db4095de7",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68589307a77e480f775134e1",
@@ -1657,6 +2796,53 @@ const STORY_DATA = {
      "type": "main",
      "description": "Obtain more information on the Eye of the World",
      "sourceQuestId": "68588ed2b2a45312020df028",
+     "maps": []
+    },
+    {
+     "id": "68bc6bb66bdc2ed0e15d1762",
+     "type": "main",
+     "description": "Locate the place marked with the Eye of the World on Lighthouse",
+     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
+     "maps": [
+      "Lighthouse"
+     ]
+    },
+    {
+     "id": "68e3cfb56d2dff9ad6b618a4",
+     "type": "main",
+     "description": "Investigate the ransacked cultist room in the chalet",
+     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
+     "maps": []
+    },
+    {
+     "id": "68bc6cda0fd9f69c1c860815",
+     "type": "optional",
+     "description": "Locate the victim's belongings",
+     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68bc6e5e79239e9ac6b14897",
+     "type": "main",
+     "description": "Locate and obtain the key mentioned in the victim's note",
+     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
+     "maps": []
+    },
+    {
+     "id": "68bc683e2e2cb4ecf0c534e8",
+     "type": "main",
+     "description": "Locate the place marked with the Eye of the World on Woods",
+     "sourceQuestId": "68588ed4257202ddee073e07",
+     "maps": [
+      "Woods"
+     ]
+    },
+    {
+     "id": "68e3bbd3c0923a97a98a163c",
+     "type": "main",
+     "description": "Investigate the cultists' house marked with the Eye of the World",
+     "sourceQuestId": "68588ed4257202ddee073e07",
      "maps": []
     },
     {
@@ -1683,66 +2869,6 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68bc683e2e2cb4ecf0c534e8",
-     "type": "main",
-     "description": "Locate the place marked with the Eye of the World on Woods",
-     "sourceQuestId": "68588ed4257202ddee073e07",
-     "maps": [
-      "Woods"
-     ]
-    },
-    {
-     "id": "68e3bbd3c0923a97a98a163c",
-     "type": "main",
-     "description": "Investigate the cultists' house marked with the Eye of the World",
-     "sourceQuestId": "68588ed4257202ddee073e07",
-     "maps": []
-    },
-    {
-     "id": "68bc6bb66bdc2ed0e15d1762",
-     "type": "main",
-     "description": "Locate the place marked with the Eye of the World on Lighthouse",
-     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
-     "maps": [
-      "Lighthouse"
-     ]
-    },
-    {
-     "id": "68bc6cda0fd9f69c1c860815",
-     "type": "optional",
-     "description": "Locate the victim's belongings",
-     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
-     "maps": []
-    },
-    {
-     "id": "68bc6cee5d6a14b608a68e4e",
-     "type": "main",
-     "description": "Learn more about the victim",
-     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
-     "maps": []
-    },
-    {
-     "id": "68e3cfb56d2dff9ad6b618a4",
-     "type": "main",
-     "description": "Investigate the ransacked cultist room in the chalet",
-     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
-     "maps": []
-    },
-    {
-     "id": "68bc6e5e79239e9ac6b14897",
-     "type": "main",
-     "description": "Locate and obtain the key mentioned in the victim's note",
-     "sourceQuestId": "68588ed5c7a9b3b530005ec8",
-     "maps": []
-    },
-    {
-     "id": "68bc6fe3131e42073d622dc1",
-     "type": "main",
-     "description": "Learn more about Station 14-4 KORD from Mechanic",
-     "sourceQuestId": "68588ed9f981006b1e0a7718",
-     "maps": []
-    },
-    {
      "id": "690413d50750895a590a3bbf",
      "type": "main",
      "description": "Restore Arshavin's keycard",
@@ -1754,7 +2880,8 @@ const STORY_DATA = {
      "type": "main",
      "description": "Locate and obtain K. Arshavin's pass",
      "sourceQuestId": "690413d50750895a590a3bbd",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68bc7db61eac78aabb22522c",
@@ -1785,6 +2912,21 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "690b27c818894cbda1b19399",
+     "type": "main",
+     "description": "Bring a flash drive to install in the facility",
+     "sourceQuestId": "68588edb1dbd9790be0f5ee9",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68e5976a0a045554d26a7d8c",
+     "type": "main",
+     "description": "Investigate ARRS Station 14-4 KORD thoroughly",
+     "sourceQuestId": "68588ede90466842410d7bb8",
+     "maps": []
+    },
+    {
      "id": "68bc7f690038ec4d99ec7a77",
      "type": "main",
      "description": "Survive and extract from Interchange",
@@ -1794,17 +2936,39 @@ const STORY_DATA = {
      ]
     },
     {
-     "id": "690b27c818894cbda1b19399",
+     "id": "690420e9f34c0074532b1aa2",
      "type": "main",
-     "description": "Bring a flash drive to install in the facility",
-     "sourceQuestId": "68588edb1dbd9790be0f5ee9",
+     "description": "Find a way to disconnect the station from external agents",
+     "sourceQuestId": "68588edf975681ee130def28",
      "maps": []
+    },
+    {
+     "id": "690a15748850c7c2ccc34e38",
+     "type": "main",
+     "description": "Restore the ARRS station to backup settings",
+     "sourceQuestId": "68588edf975681ee130def28",
+     "maps": []
+    },
+    {
+     "id": "690a144cb3bb1e6f6cb9b95d",
+     "type": "optional",
+     "description": "Check that the station power is turned on",
+     "sourceQuestId": "68588edf975681ee130def28",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "6914d59b1bd36f988e0d95be",
      "type": "main",
      "description": "Collect the flash drive from the ARRS station",
      "sourceQuestId": "6914d59b1bd36f988e0d95bc",
+     "maps": []
+    },
+    {
+     "id": "6932f2bc6527b555a335e292",
+     "type": "main",
+     "description": "Collect the flash drive from the ARRS station",
+     "sourceQuestId": "68588edc157cc3165608f2b7",
      "maps": []
     },
     {
@@ -1824,38 +2988,10 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "6932f2bc6527b555a335e292",
+     "id": "68bc6fe3131e42073d622dc1",
      "type": "main",
-     "description": "Collect the flash drive from the ARRS station",
-     "sourceQuestId": "68588edc157cc3165608f2b7",
-     "maps": []
-    },
-    {
-     "id": "68e5976a0a045554d26a7d8c",
-     "type": "main",
-     "description": "Investigate ARRS Station 14-4 KORD thoroughly",
-     "sourceQuestId": "68588ede90466842410d7bb8",
-     "maps": []
-    },
-    {
-     "id": "690420e9f34c0074532b1aa2",
-     "type": "main",
-     "description": "Find a way to disconnect the station from external agents",
-     "sourceQuestId": "68588edf975681ee130def28",
-     "maps": []
-    },
-    {
-     "id": "690a144cb3bb1e6f6cb9b95d",
-     "type": "optional",
-     "description": "Check that the station power is turned on",
-     "sourceQuestId": "68588edf975681ee130def28",
-     "maps": []
-    },
-    {
-     "id": "690a15748850c7c2ccc34e38",
-     "type": "main",
-     "description": "Restore the ARRS station to backup settings",
-     "sourceQuestId": "68588edf975681ee130def28",
+     "description": "Learn more about Station 14-4 KORD from Mechanic",
+     "sourceQuestId": "68588ed9f981006b1e0a7718",
      "maps": []
     },
     {
@@ -1892,20 +3028,6 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68f0ff6bb0c5f1c1e59ee772",
-     "type": "optional",
-     "description": "Access Kozlov's room",
-     "sourceQuestId": "68f0f54d0a378517c900226e",
-     "maps": []
-    },
-    {
-     "id": "68f1003a16005381985a06e5",
-     "type": "optional",
-     "description": "Figure out where to get Kozlov's key",
-     "sourceQuestId": "68f0f54d0a378517c900226e",
-     "maps": []
-    },
-    {
      "id": "68f10c6d450cc4e461d7d95b",
      "type": "main",
      "description": "Find out what Kozlov was involved in",
@@ -1913,11 +3035,28 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "68f0ff6bb0c5f1c1e59ee772",
+     "type": "optional",
+     "description": "Access Kozlov's room",
+     "sourceQuestId": "68f0f54d0a378517c900226e",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68f1003a16005381985a06e5",
+     "type": "optional",
+     "description": "Figure out where to get Kozlov's key",
+     "sourceQuestId": "68f0f54d0a378517c900226e",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "68f10ca30e1534718d91279f",
      "type": "optional",
      "description": "Investigate Kozlov's room",
      "sourceQuestId": "68f0f54d0a378517c900226e",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68f115c333e89b83374fe8c9",
@@ -1938,7 +3077,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Find the key to the apartment",
      "sourceQuestId": "68f0f5516871d33422038cd2",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68f1191a5344aa2765f03322",
@@ -1946,6 +3086,14 @@ const STORY_DATA = {
      "description": "Learn more about Skier's accomplice",
      "sourceQuestId": "68f0f5516871d33422038cd2",
      "maps": []
+    },
+    {
+     "id": "6907e6e7dfe4440eca8e7c4b",
+     "type": "optional",
+     "description": "Investigate the apartment",
+     "sourceQuestId": "68f0f5516871d33422038cd2",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68f11ad800eefa59290cede0",
@@ -1962,13 +3110,6 @@ const STORY_DATA = {
      "maps": [
       "Streets of Tarkov"
      ]
-    },
-    {
-     "id": "6907e6e7dfe4440eca8e7c4b",
-     "type": "optional",
-     "description": "Investigate the apartment",
-     "sourceQuestId": "68f0f5516871d33422038cd2",
-     "maps": []
     },
     {
      "id": "68f3b826eece50a3d96ebb71",
@@ -1992,16 +3133,16 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68f3c0fa5c45556144c8ae24",
+     "id": "68f3c10b376fa4425ce02422",
      "type": "main",
-     "description": "Investigate the entrance to Anastasia's building",
+     "description": "Learn more about Anastasia",
      "sourceQuestId": "68f0f556dae477041501acfe",
      "maps": []
     },
     {
-     "id": "68f3c10b376fa4425ce02422",
+     "id": "68f3c0fa5c45556144c8ae24",
      "type": "main",
-     "description": "Learn more about Anastasia",
+     "description": "Investigate the entrance to Anastasia's building",
      "sourceQuestId": "68f0f556dae477041501acfe",
      "maps": []
     },
@@ -2034,16 +3175,25 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "68f3c51a829dc8fbee1f3651",
+     "type": "optional",
+     "description": "Locate and neutralize Reshala",
+     "sourceQuestId": "68f0f55b6310272fc402e2dc",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "68f3c46286136e291b3decea",
      "type": "optional",
      "description": "Obtain the key to Reshala's stash",
      "sourceQuestId": "68f0f55b6310272fc402e2dc",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
-     "id": "6907f9955766c2f7c917f84e",
-     "type": "optional",
-     "description": "Obtain courier Pasha's belongings",
+     "id": "68f3c48fd6712209faa7b385",
+     "type": "main",
+     "description": "Investigate Reshala's bunkhouse",
      "sourceQuestId": "68f0f55b6310272fc402e2dc",
      "maps": []
     },
@@ -2052,21 +3202,16 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Obtain Reshala's work notes",
      "sourceQuestId": "68f0f55b6310272fc402e2dc",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
-     "id": "68f3c51a829dc8fbee1f3651",
+     "id": "6907f9955766c2f7c917f84e",
      "type": "optional",
-     "description": "Locate and neutralize Reshala",
+     "description": "Obtain courier Pasha's belongings",
      "sourceQuestId": "68f0f55b6310272fc402e2dc",
-     "maps": []
-    },
-    {
-     "id": "68f3c48fd6712209faa7b385",
-     "type": "main",
-     "description": "Investigate Reshala's bunkhouse",
-     "sourceQuestId": "68f0f55b6310272fc402e2dc",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68f3c5703dba2961fcf0fa76",
@@ -2106,7 +3251,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Ask Therapist how to access the underground facility",
      "sourceQuestId": "68e3a3bc02661eb2d30ce389",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e4cf9b9faf030025469bef",
@@ -2127,14 +3273,16 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Locate the entrance to the underground facility beneath the Health Resort",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "6907cf0a8bade80b86f79c5d",
      "type": "optional",
      "description": "Access the facility",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e4e3eca3ce127ce890ec2f",
@@ -2143,47 +3291,53 @@ const STORY_DATA = {
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
      "maps": [
       "The Labyrinth"
-     ]
+     ],
+     "indent": 1
     },
     {
      "id": "68e4e506dbb7abb1bc047018",
      "type": "optional",
      "description": "Investigate the BEAR squad regroup spot at Item 1156",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e4e5235f8c749cfca48679",
      "type": "optional",
      "description": "Locate the squad leader",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e4e546688ec98b13d6350a",
      "type": "optional",
      "description": "Gather more information about the squad",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "68ffe508dcb52296aa8a4006",
+     "type": "optional",
+     "description": "Investigate the lab staff bodies",
+     "sourceQuestId": "68e3a3d2ff05916c250a898b",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e4e8b45fae2c907a1c4343",
      "type": "optional",
      "description": "Access the locked office",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "68e4e97ed2c83e861e65119c",
      "type": "main",
      "description": "Listen to the audio tape from the office",
-     "sourceQuestId": "68e3a3d2ff05916c250a898b",
-     "maps": []
-    },
-    {
-     "id": "68ffe508dcb52296aa8a4006",
-     "type": "optional",
-     "description": "Investigate the lab staff bodies",
      "sourceQuestId": "68e3a3d2ff05916c250a898b",
      "maps": []
     },
@@ -2195,18 +3349,19 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "68ffd68b52fa44fe7cb35762",
-     "type": "optional",
-     "description": "Locate and obtain the Labyrinth facility research report",
-     "sourceQuestId": "68e3a3e51edf1ca810009a99",
-     "maps": []
-    },
-    {
      "id": "68ffd719b3d6b70b0d469760",
      "type": "main",
      "description": "Read the Labyrinth facility research report",
      "sourceQuestId": "68e3a3e51edf1ca810009a99",
      "maps": []
+    },
+    {
+     "id": "68ffd68b52fa44fe7cb35762",
+     "type": "optional",
+     "description": "Locate and obtain the Labyrinth facility research report",
+     "sourceQuestId": "68e3a3e51edf1ca810009a99",
+     "maps": [],
+     "indent": 1
     }
    ]
   },
@@ -2253,6 +3408,106 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "sec-the-ticket-ydyc43",
+     "type": "section",
+     "description": "If the Armored case was given to Prapor in Falling Skies",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-1",
+     "type": "optional",
+     "description": "Locate Prapor's camp on Lighthouse",
+     "maps": [
+      "Lighthouse"
+     ]
+    },
+    {
+     "id": "the-ticket-opt-2",
+     "type": "optional",
+     "description": "Find clues about their intentions at the camp",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-main-21",
+     "type": "main",
+     "description": "Report to Mr. Kerman",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-5",
+     "type": "optional",
+     "description": "Talk to Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-4",
+     "type": "optional",
+     "description": "Gain access to Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-6",
+     "type": "optional",
+     "description": "Maintain good standing with Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-7",
+     "type": "optional",
+     "description": "Obtain 3 TerraGroup \"Blue Folders\" materials",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-main-29",
+     "type": "main",
+     "description": "Deliver items to Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-9",
+     "type": "optional",
+     "description": "Launch yellow signal flare at ULTRA entrance on Interchange",
+     "maps": [
+      "Interchange"
+     ]
+    },
+    {
+     "id": "the-ticket-opt-10",
+     "type": "optional",
+     "description": "Eliminate 15 targets in a single Interchange raid",
+     "maps": [
+      "Interchange"
+     ]
+    },
+    {
+     "id": "the-ticket-opt-8",
+     "type": "optional",
+     "description": "Deliver materials to Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "sec-the-ticket-pzkouc",
+     "type": "section",
+     "description": "Once you have the case",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "the-ticket-main-9",
+     "type": "main",
+     "description": "Unlock the armored case",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1jxnd85",
+     "type": "main",
+     "description": "Obtain the \"Ticket\"",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
      "id": "the-ticket-main-6",
      "type": "main",
      "description": "Ask Mechanic for help with the armored case",
@@ -2265,15 +3520,29 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "wiki-the-ticket-1bt8en3",
+     "type": "optional",
+     "description": "Gain access to The Lab",
+     "sourceQuestId": null,
+     "maps": [
+      "The Lab"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1x6jc91",
+     "type": "optional",
+     "description": "Obtain the TerraGroup Labs access keycard",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
      "id": "the-ticket-main-8",
      "type": "main",
      "description": "Use the signal jammer to unlock the armored case",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-9",
-     "type": "main",
-     "description": "Unlock the armored case",
      "maps": []
     },
     {
@@ -2289,16 +3558,41 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "sec-the-ticket-1lpq914",
+     "type": "section",
+     "description": "If you accept Mr. Kerman's offer",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
      "id": "the-ticket-main-12",
      "type": "main",
      "description": "Accept Mr. Kerman's cooperation offer",
      "maps": []
     },
     {
-     "id": "the-ticket-main-13",
+     "id": "the-ticket-main-15",
      "type": "main",
-     "description": "Refuse Mr. Kerman's cooperation offer",
+     "description": "Locate the RFID card encryption device",
      "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1m3z4nn",
+     "type": "optional",
+     "description": "Obtain Solar Power level 1",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-7pch7d",
+     "type": "optional",
+     "description": "Obtain a Blank RFID keycard",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
     },
     {
      "id": "the-ticket-main-14",
@@ -2307,9 +3601,41 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "the-ticket-main-15",
+     "id": "the-ticket-main-20",
      "type": "main",
-     "description": "Locate the RFID card encryption device",
+     "description": "Use the RFID device to activate Kruglov's keycard",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1bt8en0",
+     "type": "optional",
+     "description": "Gain access to The Lab",
+     "sourceQuestId": null,
+     "maps": [
+      "The Lab"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1i0wed9",
+     "type": "main",
+     "description": "Obtain an RFID card encryption device",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-7ffitg",
+     "type": "section",
+     "description": "If you accept Mr. Kerman's offer and agree to find evidence on TerraGroup",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "the-ticket-opt-3",
+     "type": "optional",
+     "description": "Talk to Mr. Kerman about what you found",
      "maps": []
     },
     {
@@ -2331,83 +3657,50 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "wiki-the-ticket-5gfadf",
+     "type": "optional",
+     "description": "Obtain Bitcoin Farm level 1",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-ygni",
+     "type": "optional",
+     "description": "Obtain 40 Physical Bitcoins to pay for Elektronik's services",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
      "id": "the-ticket-main-19",
      "type": "main",
      "description": "Collect the RFID encryption device from Mechanic",
      "maps": []
     },
     {
-     "id": "the-ticket-main-20",
-     "type": "main",
-     "description": "Use the RFID device to activate Kruglov's keycard",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-21",
-     "type": "main",
-     "description": "Report to Mr. Kerman",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-22",
-     "type": "main",
-     "description": "Hand over the TerraGroup evidence to Mr. Kerman",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-23",
-     "type": "main",
-     "description": "Betray Mr. Kerman and keep the evidence",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-24",
-     "type": "main",
-     "description": "Use the RFID card at the Terminal intercom on Shoreline",
+     "id": "wiki-the-ticket-14fgqsn",
+     "type": "optional",
+     "description": "Gain access to Streets of Tarkov",
+     "sourceQuestId": null,
      "maps": [
-      "Shoreline",
-      "Terminal"
-     ]
+      "Streets of Tarkov"
+     ],
+     "synthetic": true,
+     "indent": 1
     },
     {
-     "id": "the-ticket-main-25",
-     "type": "main",
-     "description": "Pay Prapor to arrange Terminal access",
+     "id": "wiki-the-ticket-2xzlte",
+     "type": "optional",
+     "description": "Access Kruglov's apartment on Streets of Tarkov",
+     "sourceQuestId": null,
      "maps": [
-      "Terminal"
-     ]
-    },
-    {
-     "id": "the-ticket-main-26",
-     "type": "main",
-     "description": "Seek Lightkeeper for Terminal access",
-     "maps": [
-      "Terminal"
-     ]
-    },
-    {
-     "id": "the-ticket-main-27",
-     "type": "main",
-     "description": "Complete topographic reconnaissance for Lightkeeper",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-28",
-     "type": "main",
-     "description": "Obtain cultist amulets for Lightkeeper",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-29",
-     "type": "main",
-     "description": "Deliver items to Lightkeeper",
-     "maps": []
-    },
-    {
-     "id": "the-ticket-main-30",
-     "type": "main",
-     "description": "Receive the Lightkeeper keycard",
-     "maps": []
+      "Streets of Tarkov"
+     ],
+     "synthetic": true,
+     "indent": 1
     },
     {
      "id": "the-ticket-main-31",
@@ -2418,70 +3711,254 @@ const STORY_DATA = {
      ]
     },
     {
-     "id": "the-ticket-opt-1",
-     "type": "optional",
-     "description": "Locate Prapor's camp on Lighthouse",
+     "id": "wiki-the-ticket-1cyhk1l",
+     "type": "main",
+     "description": "Swipe the keycard at the intercom reader",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-9d65fu",
+     "type": "section",
+     "description": "If you refuse Mr. Kerman's offer",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "the-ticket-main-13",
+     "type": "main",
+     "description": "Refuse Mr. Kerman's cooperation offer",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-2ac2h",
+     "type": "main",
+     "description": "Arrive at the entrance pathway to the port Terminal",
+     "sourceQuestId": null,
      "maps": [
-      "Lighthouse"
+      "Terminal"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1cyhk1m",
+     "type": "main",
+     "description": "Swipe the keycard at the intercom reader",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-11k6sb4",
+     "type": "main",
+     "description": "Talk to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "the-ticket-main-25",
+     "type": "main",
+     "description": "Pay Prapor to arrange Terminal access",
+     "maps": [
+      "Terminal"
      ]
     },
     {
-     "id": "the-ticket-opt-2",
-     "type": "optional",
-     "description": "Find clues about their intentions at the camp",
+     "id": "sec-the-ticket-1svrewj",
+     "type": "section",
+     "description": "If you gave the Armored case to Prapor in Falling Skies",
+     "sourceQuestId": null,
      "maps": []
     },
     {
-     "id": "the-ticket-opt-3",
-     "type": "optional",
-     "description": "Talk to Mr. Kerman about what you found",
+     "id": "the-ticket-main-22",
+     "type": "main",
+     "description": "Hand over the TerraGroup evidence to Mr. Kerman",
      "maps": []
     },
     {
-     "id": "the-ticket-opt-4",
+     "id": "wiki-the-ticket-iycvwe",
      "type": "optional",
-     "description": "Gain access to Lightkeeper",
+     "description": "Collect the required amount in RUB: 300,000,000",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "sec-the-ticket-1uay2dd",
+     "type": "section",
+     "description": "If you kept the Armored case from Prapor in Falling Skies",
+     "sourceQuestId": null,
      "maps": []
     },
     {
-     "id": "the-ticket-opt-5",
-     "type": "optional",
-     "description": "Talk to Lightkeeper",
-     "maps": []
+     "id": "wiki-the-ticket-1mnh6r3",
+     "type": "main",
+     "description": "Hand over the cash to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
-     "id": "the-ticket-opt-6",
+     "id": "wiki-the-ticket-1dqde60",
      "type": "optional",
-     "description": "Maintain good standing with Lightkeeper",
-     "maps": []
+     "description": "Collect the required amount in RUB: 500,000,000",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
     },
     {
-     "id": "the-ticket-opt-7",
-     "type": "optional",
-     "description": "Obtain 3 TerraGroup \"Blue Folders\" materials",
-     "maps": []
+     "id": "wiki-the-ticket-1x3iprd",
+     "type": "main",
+     "description": "Complete all Prapor's tasks in time",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
-     "id": "the-ticket-opt-8",
+     "id": "wiki-the-ticket-1s4rbb7",
      "type": "optional",
-     "description": "Deliver materials to Lightkeeper",
-     "maps": []
+     "description": "Convert the evidence folders to digital format and save them to an SSD",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
     },
     {
-     "id": "the-ticket-opt-9",
+     "id": "wiki-the-ticket-fu0zyu",
      "type": "optional",
-     "description": "Launch yellow signal flare at ULTRA entrance on Interchange",
+     "description": "Obtain the item: Folder with TerraGroup Labs evidence (Reports)",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1xxgu6p",
+     "type": "optional",
+     "description": "Obtain the item: Folder with TerraGroup evidence (Staff)",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-19zmf6z",
+     "type": "optional",
+     "description": "Obtain the item: Folder with TerraGroup Labs evidence (Developments)",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1nvb78s",
+     "type": "optional",
+     "description": "Obtain the item: Folder with TerraGroup evidence (Finances)",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1fas61f",
+     "type": "optional",
+     "description": "Eliminate any 50 targets on Streets of Tarkov",
+     "sourceQuestId": null,
      "maps": [
-      "Interchange"
-     ]
+      "Streets of Tarkov"
+     ],
+     "synthetic": true,
+     "indent": 1
     },
     {
-     "id": "the-ticket-opt-10",
+     "id": "wiki-the-ticket-srsk4u",
      "type": "optional",
-     "description": "Eliminate 15 targets in a single Interchange raid",
-     "maps": [
-      "Interchange"
-     ]
+     "description": "Eliminate 4 PMC operatives in one raid",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-nsno0c",
+     "type": "main",
+     "description": "Report to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-1u2hg7d",
+     "type": "section",
+     "description": "Only if you fail to complete Prapor's tasks in time",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-19w4lqs",
+     "type": "main",
+     "description": "Hand over Secure container Kappa to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-zbnrky",
+     "type": "section",
+     "description": "If you accept Mr. Kerman's offer and refuse to find evidence on TerraGroup",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1u63o0h",
+     "type": "main",
+     "description": "Talk to Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-2vcijw",
+     "type": "main",
+     "description": "Agree to find dirt on TerraGroup for Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-14e9hgz",
+     "type": "main",
+     "description": "Obtain Intelligence Center level 3",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-35jbmp",
+     "type": "section",
+     "description": "If player failed to obtain the major evidence from They Are Already Here",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1dhcvuv",
+     "type": "main",
+     "description": "Don't waste the second chance from Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-1gufdt5",
+     "type": "section",
+     "description": "If player received the major evidence from They Are Already Here",
+     "sourceQuestId": null,
+     "maps": []
     },
     {
      "id": "the-ticket-opt-11",
@@ -2500,6 +3977,817 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Collect all required TerraGroup compromise evidence",
      "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1889vuo",
+     "type": "main",
+     "description": "Deliver the 8 major TerraGroup evidence to Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-xj8u9d",
+     "type": "optional",
+     "description": "Deliver the 36 minor TerraGroup evidence to Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-cajqyc",
+     "type": "main",
+     "description": "Negotiate with Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-neqmxk",
+     "type": "main",
+     "description": "Confirm with Mr. Kerman that all the evidence has been delivered",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1tpwxl2",
+     "type": "main",
+     "description": "Wait for Mr. Kerman's trusted contact to get in touch",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-vfg88l",
+     "type": "main",
+     "description": "Talk to Fence",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1jyuefm",
+     "type": "main",
+     "description": "Reach 4.0 reputation with Fence",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-rji2g1",
+     "type": "main",
+     "description": "Complete Fence's assignments",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1dhyu85",
+     "type": "main",
+     "description": "Keep the standing with Fence above 4.0",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1s27h1l",
+     "type": "main",
+     "description": "Extract through the Friendship Bridge (Co-Op) on Woods",
+     "sourceQuestId": null,
+     "maps": [
+      "Woods"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-upus30",
+     "type": "main",
+     "description": "Eliminate 5 PMC operatives on Interchange in one raid",
+     "sourceQuestId": null,
+     "maps": [
+      "Interchange"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1snh2j9",
+     "type": "main",
+     "description": "Extract through the Scav Lands (Co-Op) on Reserve",
+     "sourceQuestId": null,
+     "maps": [
+      "Reserve"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-2f3qsj",
+     "type": "main",
+     "description": "Eliminate 5 PMC operatives on Shoreline in one raid",
+     "sourceQuestId": null,
+     "maps": [
+      "Shoreline"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-zkuc44",
+     "type": "main",
+     "description": "Reach 0.4 standing with BTR Driver",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-olvmil",
+     "type": "main",
+     "description": "Tell Fence that the assignment is complete",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1m3z4nk",
+     "type": "main",
+     "description": "Obtain Solar Power level 1",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-1qfhivu",
+     "type": "section",
+     "description": "If you accept Mr. Kerman's offer and agree to find evidence on TerraGroup, but refuse to hand in more than 2 major evidence",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "the-ticket-main-23",
+     "type": "main",
+     "description": "Betray Mr. Kerman and keep the evidence",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-gxr0vp",
+     "type": "main",
+     "description": "Ask the traders how to leave Tarkov",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "the-ticket-main-26",
+     "type": "main",
+     "description": "Seek Lightkeeper for Terminal access",
+     "maps": [
+      "Terminal"
+     ]
+    },
+    {
+     "id": "the-ticket-main-27",
+     "type": "main",
+     "description": "Complete topographic reconnaissance for Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-5okl0u",
+     "type": "main",
+     "description": "Hand over the military flash drive with compiled data to Lightkeeper",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-s2dti7",
+     "type": "optional",
+     "description": "Record the compiled data to a military flash drive",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-11pwhbi",
+     "type": "optional",
+     "description": "Obtain the topographic intel documents on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-17f5qz8",
+     "type": "optional",
+     "description": "Obtain the topographic intel documents on Woods",
+     "sourceQuestId": null,
+     "maps": [
+      "Woods"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-546bqs",
+     "type": "optional",
+     "description": "Obtain the topographic intel documents on Customs",
+     "sourceQuestId": null,
+     "maps": [
+      "Customs"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-105l6lv",
+     "type": "optional",
+     "description": "Obtain the topographic intel documents on Ground Zero",
+     "sourceQuestId": null,
+     "maps": [
+      "Ground Zero"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1g9pgxs",
+     "type": "optional",
+     "description": "Obtain the topographic intel documents on Factory",
+     "sourceQuestId": null,
+     "maps": [
+      "Factory"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-b2ubuq",
+     "type": "main",
+     "description": "Eliminate 30 PMCs on Woods",
+     "sourceQuestId": null,
+     "maps": [
+      "Woods"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1arvcc1",
+     "type": "main",
+     "description": "Hand over 100 PMC dogtags to Lightkeeper",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-vvt66i",
+     "type": "optional",
+     "description": "Obtain 100 PMC dogtags",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "the-ticket-main-28",
+     "type": "main",
+     "description": "Obtain cultist amulets for Lightkeeper",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-p1dzlv",
+     "type": "main",
+     "description": "Stash the first amulet in the marked room on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1tndy28",
+     "type": "optional",
+     "description": "Obtain the amulet from the marked room on Customs",
+     "sourceQuestId": null,
+     "maps": [
+      "Customs"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-18mjnd5",
+     "type": "main",
+     "description": "Stash the second amulet in the marked room on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-zolu6c",
+     "type": "optional",
+     "description": "Obtain the amulet from the first marked room on Streets of Tarkov",
+     "sourceQuestId": null,
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1dkyzoa",
+     "type": "main",
+     "description": "Stash the third amulet in the marked room on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-hazv1q",
+     "type": "optional",
+     "description": "Obtain the amulet from the second marked room on Streets of Tarkov",
+     "sourceQuestId": null,
+     "maps": [
+      "Streets of Tarkov"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-xubmy3",
+     "type": "main",
+     "description": "Stash the fourth amulet in the marked room on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1nvgup6",
+     "type": "optional",
+     "description": "Obtain the amulet from the first marked room on Reserve",
+     "sourceQuestId": null,
+     "maps": [
+      "Reserve"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-dt3vho",
+     "type": "main",
+     "description": "Stash the fifth amulet in the marked room on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-v1dl34",
+     "type": "optional",
+     "description": "Obtain the amulet from the second marked room on Reserve",
+     "sourceQuestId": null,
+     "maps": [
+      "Reserve"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1hcbgiv",
+     "type": "main",
+     "description": "Stash the sixth amulet in the marked room on Lighthouse",
+     "sourceQuestId": null,
+     "maps": [
+      "Lighthouse"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-138gfwz",
+     "type": "optional",
+     "description": "Obtain the amulet from the third marked room on Reserve",
+     "sourceQuestId": null,
+     "maps": [
+      "Reserve"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-16g7834",
+     "type": "main",
+     "description": "Report to Lightkeeper",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "the-ticket-main-30",
+     "type": "main",
+     "description": "Receive the Lightkeeper keycard",
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1u63o0i",
+     "type": "main",
+     "description": "Talk to Mr. Kerman",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-gxr0vq",
+     "type": "main",
+     "description": "Ask the traders how to leave Tarkov",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-1uay2de",
+     "type": "section",
+     "description": "If you kept the Armored case from Prapor in Falling Skies",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-5d81m",
+     "type": "main",
+     "description": "Complete Prapor's tasks",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1pxwo1g",
+     "type": "optional",
+     "description": "Hand over any military or advanced electronics to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1jlc92u",
+     "type": "optional",
+     "description": "Obtain any 50 military or advanced electronics",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1lmlm0b",
+     "type": "optional",
+     "description": "Hand over Secure container Theta, Epsilon or Kappa to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1qw44qb",
+     "type": "optional",
+     "description": "Obtain Secure container Kappa",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1fqjefu",
+     "type": "optional",
+     "description": "Obtain Secure container Epsilon",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-dp79w",
+     "type": "optional",
+     "description": "Obtain Secure container Theta",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-4dex7d",
+     "type": "optional",
+     "description": "Hand over 40 weapon and armor repair kits to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-17zejny",
+     "type": "optional",
+     "description": "Obtain 40 weapon and armor repair kits with full durability",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "sec-the-ticket-qijri2",
+     "type": "section",
+     "description": "After the completion of Prapor's tasks OR if you gave the Armored case to Prapor in Falling Skies",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-1e8u1qr",
+     "type": "main",
+     "description": "Hand over Case with dangerous cargo to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-v47oom",
+     "type": "optional",
+     "description": "Locate and obtain the Case with dangerous cargo",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-nsno0f",
+     "type": "main",
+     "description": "Report to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1ceaj91",
+     "type": "main",
+     "description": "Hand over 1,000,000 Dollars to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-vghjdn",
+     "type": "optional",
+     "description": "Collect the required amount in USD: 1,000,000",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-ejrluw",
+     "type": "main",
+     "description": "Wait for the info from Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1y3lmsx",
+     "type": "main",
+     "description": "Collect the updated hash codes from Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1m3z4nl",
+     "type": "main",
+     "description": "Obtain Solar Power level 1",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-the-ticket-1dh09us",
+     "type": "section",
+     "description": "Identical for all endings",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-the-ticket-2ac2i",
+     "type": "main",
+     "description": "Arrive at the entrance pathway to the port Terminal",
+     "sourceQuestId": null,
+     "maps": [
+      "Terminal"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-13fbzzy",
+     "type": "optional",
+     "description": "Bring the Reprogrammed RFID keycard with Mr. Kerman's hash codes",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1tnh9zz",
+     "type": "optional",
+     "description": "Bring the Reprogrammed RFID keycard with Prapor's hash codes",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-glav55",
+     "type": "optional",
+     "description": "Bring the RFID keycard with unknown name",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1prjiaz",
+     "type": "optional",
+     "description": "Bring the Prapor's letter for the port checkpoint",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "the-ticket-main-24",
+     "type": "main",
+     "description": "Use the RFID card at the Terminal intercom on Shoreline",
+     "maps": [
+      "Shoreline",
+      "Terminal"
+     ]
+    },
+    {
+     "id": "wiki-the-ticket-nr412v",
+     "type": "main",
+     "description": "Access the port Terminal",
+     "sourceQuestId": null,
+     "maps": [
+      "Terminal"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1ariqfs",
+     "type": "optional",
+     "description": "Bring the Secure container Alpha-1 with TerraGroup evidence",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-z7wn67",
+     "type": "main",
+     "description": "Pass the security check",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1v48hpx",
+     "type": "main",
+     "description": "Escape from Tarkov",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-the-ticket-1s2hu7w",
+     "type": "optional",
+     "description": "Locate the armory with the confiscated equipment",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-161md3s",
+     "type": "optional",
+     "description": "Retrieve the Secure container Alpha-1",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1nnsutr",
+     "type": "optional",
+     "description": "Obtain the keycard to unlock the service passage",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-ch3dos",
+     "type": "optional",
+     "description": "Locate the exit leading to the Terminal loading zone",
+     "sourceQuestId": null,
+     "maps": [
+      "Terminal"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1tbvufg",
+     "type": "optional",
+     "description": "Unlock the service passage inside the seaport building",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-12ftauu",
+     "type": "optional",
+     "description": "Access the Terminal loading zone",
+     "sourceQuestId": null,
+     "maps": [
+      "Terminal"
+     ],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-199ahgk",
+     "type": "optional",
+     "description": "Locate the way into the fuel depot",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1p6hd1r",
+     "type": "optional",
+     "description": "Figure out how to restore power to the pumping station",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1gmj2yn",
+     "type": "optional",
+     "description": "Obtain the diagram of the electrical panels",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-13y5mc7",
+     "type": "optional",
+     "description": "Drain the water in the pumping station",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-jam6zb",
+     "type": "optional",
+     "description": "Obtain the key to the gate blocking the road to the pier",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-15s6yzi",
+     "type": "optional",
+     "description": "Locate the exit leading to the pier",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-the-ticket-1qhdbwf",
+     "type": "optional",
+     "description": "Reach the evacuation area at the pier",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
     }
    ]
   },
@@ -2519,6 +4807,14 @@ const STORY_DATA = {
      "description": "Find out from traders more about the connection between TerraGroup and Paradigm Shipping",
      "sourceQuestId": "69a05d3ae6778aebac085ca5",
      "maps": []
+    },
+    {
+     "id": "wiki-boreas-dvgxkz",
+     "type": "main",
+     "description": "Ask Mechanic where the distress signal came from",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
      "id": "69e7706fa8d4414fc6625f92",
@@ -2567,10 +4863,71 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69b41c86118b43d3e0f5adb2",
+     "id": "sec-boreas-1svrewj",
+     "type": "section",
+     "description": "If you gave the Armored case to Prapor in Falling Skies",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "69b2b143b6449f7050b302ed",
      "type": "main",
-     "description": "Tell Mechanic you found transport to the icebreaker",
-     "sourceQuestId": "69b2bb74ac1e735d5c0f9a57",
+     "description": "Hand over the AMG-10 fluid to Prapor",
+     "sourceQuestId": "69b2b0cc0a7db6b331031267",
+     "maps": []
+    },
+    {
+     "id": "sec-boreas-1uay2dd",
+     "type": "section",
+     "description": "If you kept the Armored case from Prapor in Falling Skies",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-boreas-1i2jcyo",
+     "type": "main",
+     "description": "Hand over 3 found in raid Military power filters to Prapor",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "69bc1373ceb4678a2e393625",
+     "type": "main",
+     "description": "Hand over the Ultralink satellite modules to Mechanic",
+     "sourceQuestId": "69bc1265402142259105e144",
+     "maps": []
+    },
+    {
+     "id": "sec-boreas-ex8jjt",
+     "type": "section",
+     "description": "If you have not completed Falling Skies",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "69c15642d2d74180f90e78bb",
+     "type": "main",
+     "description": "Eliminate any target on the icebreaker",
+     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
+     "maps": []
+    },
+    {
+     "id": "wiki-boreas-1afus3r",
+     "type": "main",
+     "description": "Launch a yellow signal flare at the Woods transit on Reserve",
+     "sourceQuestId": null,
+     "maps": [
+      "Reserve",
+      "Woods"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "69c159ad1ba493f9f60a66fb",
+     "type": "main",
+     "description": "Hand over the respirators to the BTR driver",
+     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
      "maps": []
     },
     {
@@ -2581,19 +4938,17 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69b2b139114270cbf48bcff4",
-     "type": "optional",
-     "description": "Locate and obtain the AMG-10 fluid on Reserve",
-     "sourceQuestId": "69b2b0cc0a7db6b331031267",
-     "maps": [
-      "Reserve"
-     ]
+     "id": "69b418d182d12863d121cdc3",
+     "type": "main",
+     "description": "Return to the BTR driver",
+     "sourceQuestId": "69b41843dc22acbf90051e3f",
+     "maps": []
     },
     {
-     "id": "69b2b143b6449f7050b302ed",
-     "type": "main",
-     "description": "Hand over the AMG-10 fluid to Prapor",
-     "sourceQuestId": "69b2b0cc0a7db6b331031267",
+     "id": "sec-boreas-t4xex1",
+     "type": "section",
+     "description": "If you have completed The Price of Independence",
+     "sourceQuestId": null,
      "maps": []
     },
     {
@@ -2604,11 +4959,106 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69b418d182d12863d121cdc3",
+     "id": "6a1051db5338d166e444483b",
      "type": "main",
      "description": "Return to the BTR driver",
-     "sourceQuestId": "69b41843dc22acbf90051e3f",
+     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
      "maps": []
+    },
+    {
+     "id": "69b41c86118b43d3e0f5adb2",
+     "type": "main",
+     "description": "Tell Mechanic you found transport to the icebreaker",
+     "sourceQuestId": "69b2bb74ac1e735d5c0f9a57",
+     "maps": []
+    },
+    {
+     "id": "sec-boreas-2adjrw",
+     "type": "section",
+     "description": "If you have completed Choose Your Friends Wisely",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-boreas-1266q4d",
+     "type": "main",
+     "description": "Hand over 200 7.62x54mm R BT gzh",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-boreas-r4c5j1",
+     "type": "main",
+     "description": "Locate and obtain Skier's reports on Customs",
+     "sourceQuestId": null,
+     "maps": [
+      "Customs"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-boreas-1f52l8y",
+     "type": "main",
+     "description": "Burn Skier's reports on Customs",
+     "sourceQuestId": null,
+     "maps": [
+      "Customs"
+     ],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-boreas-1kihn17",
+     "type": "main",
+     "description": "Eliminate any 15 targets at the smugglers' territories",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "6a05e06bd8462d56fffb5a31",
+     "type": "main",
+     "description": "Return to the BTR driver",
+     "sourceQuestId": "6a05dfd31681410e9e0b9afc",
+     "maps": []
+    },
+    {
+     "id": "wiki-boreas-ggobfe",
+     "type": "main",
+     "description": "Tell Mechanic that you found transport to the icebreaker",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "sec-boreas-ej2upm",
+     "type": "section",
+     "description": "If you have not completed either The Price of Independence or Choose Your Friends Wisely",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "wiki-boreas-7w3mam",
+     "type": "main",
+     "description": "Eliminate any 10 targets at the smugglers' territories",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "6a10769d3795c09172e840a2",
+     "type": "main",
+     "description": "Return to the BTR driver",
+     "sourceQuestId": "6a05e47ec8c57a62940cd74a",
+     "maps": []
+    },
+    {
+     "id": "wiki-boreas-ggobfd",
+     "type": "main",
+     "description": "Tell Mechanic that you found transport to the icebreaker",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
      "id": "69ba8d651b499fbada0cd5ae",
@@ -2620,11 +5070,59 @@ const STORY_DATA = {
      ]
     },
     {
+     "id": "69e7871c5088efad039bac2a",
+     "type": "optional",
+     "description": "Bring Roubles to pay for the insertion onto the icebreaker",
+     "sourceQuestId": "69ba8cd91c440c14bb09a955",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69e788391986fc5462bc3975",
+     "type": "optional",
+     "description": "Bring a green RSP signal flare",
+     "sourceQuestId": "69ba8cd91c440c14bb09a955",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69e787cf1a8e0d067c803580",
+     "type": "optional",
+     "description": "Bring Euros to pay for the evacuation from the icebreaker",
+     "sourceQuestId": "69ba8cd91c440c14bb09a955",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "69ba8dcbd7922704ff3ed3e2",
      "type": "main",
      "description": "Arrive at the icebreaker",
      "sourceQuestId": "69ba8cd91c440c14bb09a955",
      "maps": []
+    },
+    {
+     "id": "69e7888de4ffa7159fc3ec35",
+     "type": "optional",
+     "description": "Bring Roubles to pay for the insertion onto the icebreaker",
+     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69e788a5aa6ebbdbf9fad1ef",
+     "type": "optional",
+     "description": "Bring Euros to pay for the evacuation from the icebreaker",
+     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69e788b7e93cda1fa49d1ccb",
+     "type": "optional",
+     "description": "Bring a green RSP signal flare",
+     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69d4f17c837544d785bbd4ac",
@@ -2645,33 +5143,21 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Locate and obtain the engine room keycard",
      "sourceQuestId": "69ba8cd91c440c14bb09a955",
-     "maps": []
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69bab4f68c85b53b8e473911",
+     "type": "optional",
+     "description": "Reach the engine room",
+     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69ba8ef59b8dfa643e494308",
      "type": "main",
      "description": "Find a way into the icebreaker superstructure",
-     "sourceQuestId": "69ba8cd91c440c14bb09a955",
-     "maps": []
-    },
-    {
-     "id": "69e7871c5088efad039bac2a",
-     "type": "optional",
-     "description": "Bring Roubles to pay for the insertion onto the icebreaker",
-     "sourceQuestId": "69ba8cd91c440c14bb09a955",
-     "maps": []
-    },
-    {
-     "id": "69e787cf1a8e0d067c803580",
-     "type": "optional",
-     "description": "Bring Euros to pay for the evacuation from the icebreaker",
-     "sourceQuestId": "69ba8cd91c440c14bb09a955",
-     "maps": []
-    },
-    {
-     "id": "69e788391986fc5462bc3975",
-     "type": "optional",
-     "description": "Bring a green RSP signal flare",
      "sourceQuestId": "69ba8cd91c440c14bb09a955",
      "maps": []
     },
@@ -2697,30 +5183,9 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69bab4f68c85b53b8e473911",
-     "type": "optional",
-     "description": "Reach the engine room",
-     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
-    },
-    {
-     "id": "69bab5121a15490f84594dcb",
-     "type": "optional",
-     "description": "Locate and obtain the engine room keycard",
-     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
-    },
-    {
      "id": "69bab557f31c7fb31a72591e",
      "type": "main",
      "description": "Reach the damaged door on the roof of the engine room",
-     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
-    },
-    {
-     "id": "69bab56d31d685e0bb03223d",
-     "type": "main",
-     "description": "Obtain the SZ-1 explosive charge",
      "sourceQuestId": "69baaaae8f45d6b3fa020ade",
      "maps": []
     },
@@ -2730,6 +5195,14 @@ const STORY_DATA = {
      "description": "Break the chain on the door on the roof of the engine room using the SZ-1 charge",
      "sourceQuestId": "69baaaae8f45d6b3fa020ade",
      "maps": []
+    },
+    {
+     "id": "69bab56d31d685e0bb03223d",
+     "type": "main",
+     "description": "Obtain the SZ-1 explosive charge",
+     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69bab59e8e59c8f34c271c22",
@@ -2743,7 +5216,8 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Inspect the crew living quarters in the icebreaker superstructure",
      "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69bab5d9a808cc922348458b",
@@ -2753,30 +5227,17 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "69ea74c990de7d2e5eb02907",
+     "type": "main",
+     "description": "Inspect the upper decks of the icebreaker superstructure",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "69c6abd4808c26f357532e2a",
      "type": "main",
      "description": "Ask the surviving scientist how to open the code-locked door on level 6",
-     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
-    },
-    {
-     "id": "69e7888de4ffa7159fc3ec35",
-     "type": "optional",
-     "description": "Bring Roubles to pay for the insertion onto the icebreaker",
-     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
-    },
-    {
-     "id": "69e788a5aa6ebbdbf9fad1ef",
-     "type": "optional",
-     "description": "Bring Euros to pay for the evacuation from the icebreaker",
-     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
-     "maps": []
-    },
-    {
-     "id": "69e788b7e93cda1fa49d1ccb",
-     "type": "optional",
-     "description": "Bring a green RSP signal flare",
      "sourceQuestId": "69baaaae8f45d6b3fa020ade",
      "maps": []
     },
@@ -2811,6 +5272,30 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "69e78b09e728378a9d0f4925",
+     "type": "optional",
+     "description": "Bring Roubles to pay for the insertion onto the icebreaker",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69e78b1409ffeb5a0cbffff3",
+     "type": "optional",
+     "description": "Bring Euros to pay for the evacuation from the icebreaker",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69e78d7ef8dd94707ac6d011",
+     "type": "optional",
+     "description": "Bring a green RSP signal flare",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
      "id": "69bbfae89ce356593c0e2f41",
      "type": "optional",
      "description": "Reach the engine room",
@@ -2818,11 +5303,12 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69bbfd92150877f45d94dbe1",
+     "id": "69bab5121a15490f84594dcb",
      "type": "optional",
      "description": "Locate and obtain the engine room keycard",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
+     "sourceQuestId": "69baaaae8f45d6b3fa020ade",
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69bbfae89ce356593c0e2f47",
@@ -2832,9 +5318,52 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "sec-boreas-1s3qknz",
+     "type": "section",
+     "description": "After completing Stick to It",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "69c15a0fb61d78c89b5fe307",
+     "type": "optional",
+     "description": "Obtain respirators for the BTR driver",
+     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
+     "maps": []
+    },
+    {
+     "id": "sec-boreas-xv61im",
+     "type": "section",
+     "description": "After completing A Bitter Victory",
+     "sourceQuestId": null,
+     "maps": []
+    },
+    {
+     "id": "69c25db20ae364365b933df5",
+     "type": "main",
+     "description": "Ask the BTR driver what to do next",
+     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
+     "maps": []
+    },
+    {
      "id": "69bbfae89ce356593c0e2f45",
      "type": "main",
      "description": "Break the chain on the door on the roof of the engine room using the SZ-1 charge",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": []
+    },
+    {
+     "id": "69ea705f75a115dbfb489516",
+     "type": "main",
+     "description": "Obtain the SZ-1 explosive charge",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69bbfae89ce356593c0e2f4c",
+     "type": "main",
+     "description": "Reach the code-locked door",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
      "maps": []
     },
@@ -2846,30 +5375,9 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69bbfae89ce356593c0e2f4c",
-     "type": "main",
-     "description": "Reach the code-locked door",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69ca4bdb8d19de47752aaacb",
-     "type": "main",
-     "description": "Access the upper levels of the icebreaker",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
      "id": "69bbfd1f4a8e7c1bc4896ea2",
      "type": "main",
      "description": "Locate compartment C-1",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69bbfe405997a15939caf7c4",
-     "type": "main",
-     "description": "Access compartment C-1",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
      "maps": []
     },
@@ -2878,26 +5386,36 @@ const STORY_DATA = {
      "type": "optional",
      "description": "Locate and obtain the keycard with access to compartment C-1",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69bbfe4c4d7ec6c347262823",
      "type": "optional",
      "description": "Locate the entrance to the bridge",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
      "id": "69bbfe7abb85b612104189c4",
      "type": "optional",
      "description": "Locate an alternative path to the bridge",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "6a088c7a92e688af6eff80df",
+     "type": "main",
+     "description": "Reach the upper decks",
+     "sourceQuestId": "69c14feae2c5125aa504e9d7",
      "maps": []
     },
     {
-     "id": "69bbfe997ac0792bddc9e8f8",
-     "type": "optional",
-     "description": "Find something to thaw the hatch on the roof of the bridge",
+     "id": "69ca4bdb8d19de47752aaacb",
+     "type": "main",
+     "description": "Access the upper levels of the icebreaker",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
      "maps": []
     },
@@ -2909,16 +5427,24 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69bc102d23d5c5d97d6bdf42",
-     "type": "main",
-     "description": "Search the servers in compartment C-1",
+     "id": "69bbfe997ac0792bddc9e8f8",
+     "type": "optional",
+     "description": "Find something to thaw the hatch on the roof of the bridge",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69c15087c6efee6666c3b4a9",
+     "type": "main",
+     "description": "Rescue the icebreaker captain",
+     "sourceQuestId": "69c14feae2c5125aa504e9d7",
      "maps": []
     },
     {
-     "id": "69bc101598f575dac79155a7",
+     "id": "69bbfe405997a15939caf7c4",
      "type": "main",
-     "description": "Search the area near the workstation in compartment C-1",
+     "description": "Access compartment C-1",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
      "maps": []
     },
@@ -2930,44 +5456,23 @@ const STORY_DATA = {
      "maps": []
     },
     {
+     "id": "69bc101598f575dac79155a7",
+     "type": "main",
+     "description": "Search the area near the workstation in compartment C-1",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": []
+    },
+    {
+     "id": "69bc102d23d5c5d97d6bdf42",
+     "type": "main",
+     "description": "Search the servers in compartment C-1",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": []
+    },
+    {
      "id": "69bc0b6069651f9af0993d2c",
      "type": "main",
      "description": "Ask Mechanic for help decoding the hard drives from the icebreaker",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69e78b09e728378a9d0f4925",
-     "type": "optional",
-     "description": "Bring Roubles to pay for the insertion onto the icebreaker",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69e78b1409ffeb5a0cbffff3",
-     "type": "optional",
-     "description": "Bring Euros to pay for the evacuation from the icebreaker",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69e78d7ef8dd94707ac6d011",
-     "type": "optional",
-     "description": "Bring a green RSP signal flare",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69ea705f75a115dbfb489516",
-     "type": "main",
-     "description": "Obtain the SZ-1 explosive charge",
-     "sourceQuestId": "69bbfae89ce356593c0e2f35",
-     "maps": []
-    },
-    {
-     "id": "69ea74c990de7d2e5eb02907",
-     "type": "main",
-     "description": "Inspect the upper decks of the icebreaker superstructure",
      "sourceQuestId": "69bbfae89ce356593c0e2f35",
      "maps": []
     },
@@ -2976,28 +5481,67 @@ const STORY_DATA = {
      "type": "main",
      "description": "Find the item in raid: Ultralink satellite communication module",
      "sourceQuestId": "69bc1265402142259105e144",
-     "maps": []
+     "maps": [],
+     "indent": 1
     },
     {
-     "id": "69bc1373ceb4678a2e393625",
+     "id": "wiki-boreas-15l6abb",
      "type": "main",
-     "description": "Hand over the Ultralink satellite modules to Mechanic",
-     "sourceQuestId": "69bc1265402142259105e144",
-     "maps": []
+     "description": "Hand over 3 found in raid Ultralink satellite modules to Mechanic",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
-     "id": "6a088c7a92e688af6eff80df",
-     "type": "main",
-     "description": "Reach the upper decks",
-     "sourceQuestId": "69c14feae2c5125aa504e9d7",
-     "maps": []
+     "id": "69b2b139114270cbf48bcff4",
+     "type": "optional",
+     "description": "Locate and obtain the AMG-10 fluid on Reserve",
+     "sourceQuestId": "69b2b0cc0a7db6b331031267",
+     "maps": [
+      "Reserve"
+     ],
+     "indent": 1
     },
     {
-     "id": "69c15087c6efee6666c3b4a9",
+     "id": "wiki-boreas-7hmtse",
      "type": "main",
-     "description": "Rescue the icebreaker captain",
-     "sourceQuestId": "69c14feae2c5125aa504e9d7",
-     "maps": []
+     "description": "Hand over 4 found in raid server RAM modules to Mechanic",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-boreas-1y57skn",
+     "type": "optional",
+     "description": "Locate and obtain the server RAM modules on the icebreaker",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
+    },
+    {
+     "id": "wiki-boreas-jr501m",
+     "type": "main",
+     "description": "Hand over 2 found in raid cryptographic processors to Mechanic",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "69bbfd92150877f45d94dbe1",
+     "type": "optional",
+     "description": "Locate and obtain the engine room keycard",
+     "sourceQuestId": "69bbfae89ce356593c0e2f35",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "wiki-boreas-1ib4piz",
+     "type": "main",
+     "description": "Analyse the data from the icebreaker",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
      "id": "69ca6719ce155703cfb50cd7",
@@ -3021,32 +5565,20 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "6a1051db5338d166e444483b",
+     "id": "wiki-boreas-9enox1",
      "type": "main",
      "description": "Return to the BTR driver",
-     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
-     "maps": []
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
-     "id": "69c15a0fb61d78c89b5fe307",
-     "type": "optional",
-     "description": "Obtain respirators for the BTR driver",
-     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
-     "maps": []
-    },
-    {
-     "id": "69c15642d2d74180f90e78bb",
+     "id": "wiki-boreas-aoawlu",
      "type": "main",
-     "description": "Eliminate any target on the icebreaker",
-     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
-     "maps": []
-    },
-    {
-     "id": "69c159db45b0d4bd6f227777",
-     "type": "optional",
-     "description": "Obtain the Kirasa-N body armor",
-     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
-     "maps": []
+     "description": "Eliminate 20 targets on the icebreaker",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     },
     {
      "id": "69c1586cffdda1085a41cded",
@@ -3056,11 +5588,13 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69c159ef9fa4c0e8f7d74a8e",
+     "id": "wiki-boreas-ueg8zo",
      "type": "optional",
-     "description": "Obtain class 5+ ballistic plates",
-     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
-     "maps": []
+     "description": "Obtain respirators for the BTR driver",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
     },
     {
      "id": "69c158cd9e33113cb865839b",
@@ -3070,25 +5604,28 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "69c159ad1ba493f9f60a66fb",
-     "type": "main",
-     "description": "Hand over the respirators to the BTR driver",
+     "id": "69c159ef9fa4c0e8f7d74a8e",
+     "type": "optional",
+     "description": "Obtain class 5+ ballistic plates",
+     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
+     "maps": [],
+     "indent": 1
+    },
+    {
+     "id": "69c159db45b0d4bd6f227777",
+     "type": "optional",
+     "description": "Obtain the Kirasa-N body armor",
      "sourceQuestId": "69c151fd9c9149a8dd01a29a",
      "maps": []
     },
     {
-     "id": "69c25db20ae364365b933df5",
-     "type": "main",
-     "description": "Ask the BTR driver what to do next",
-     "sourceQuestId": "69c151fd9c9149a8dd01a29a",
-     "maps": []
-    },
-    {
-     "id": "6a05e06bd8462d56fffb5a31",
-     "type": "main",
-     "description": "Return to the BTR driver",
-     "sourceQuestId": "6a05dfd31681410e9e0b9afc",
-     "maps": []
+     "id": "wiki-boreas-15au0xm",
+     "type": "optional",
+     "description": "Obtain the Kirasa-N body armor for the BTR driver",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true,
+     "indent": 1
     },
     {
      "id": "6a05e47ec8c57a62940cd74c",
@@ -3098,14 +5635,162 @@ const STORY_DATA = {
      "maps": []
     },
     {
-     "id": "6a10769d3795c09172e840a2",
+     "id": "wiki-boreas-5zmovy",
      "type": "main",
-     "description": "Return to the BTR driver",
-     "sourceQuestId": "6a05e47ec8c57a62940cd74a",
-     "maps": []
+     "description": "Inform the scientist that everything is ready for his evacuation",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
+    },
+    {
+     "id": "wiki-boreas-y5frzb",
+     "type": "main",
+     "description": "Ask the BTR driver how the scientist's rescue went",
+     "sourceQuestId": null,
+     "maps": [],
+     "synthetic": true
     }
    ]
   }
  ]
 };
-const STORY_BAKED_AT = "2026-07-22";
+const STORY_BAKED_AT = "2026-07-23";
+const STORY_HAZARDS = [
+ {
+  "map": "Shoreline",
+  "floor": -1,
+  "label": "Snipers",
+  "layer": "hazardSniper",
+  "kind": "area",
+  "pts": [
+   {
+    "x": -1030.45,
+    "z": 363.42
+   },
+   {
+    "x": -1038.83,
+    "z": 311.13
+   },
+   {
+    "x": -1034.84,
+    "z": 301.15
+   },
+   {
+    "x": -1022.47,
+    "z": 298.76
+   },
+   {
+    "x": -1013.29,
+    "z": 297.96
+   },
+   {
+    "x": -1005.71,
+    "z": 288.78
+   },
+   {
+    "x": -1001.32,
+    "z": 278.4
+   },
+   {
+    "x": -1004.11,
+    "z": 278.4
+   },
+   {
+    "x": -1004.91,
+    "z": 272.81
+   },
+   {
+    "x": -999.72,
+    "z": 267.62
+   },
+   {
+    "x": -996.93,
+    "z": 260.84
+   },
+   {
+    "x": -992.14,
+    "z": 249.66
+   },
+   {
+    "x": -988.54,
+    "z": 244.07
+   },
+   {
+    "x": -978.17,
+    "z": 244.07
+   },
+   {
+    "x": -966.2,
+    "z": 241.28
+   },
+   {
+    "x": -965,
+    "z": 233.7
+   },
+   {
+    "x": -919.11,
+    "z": 252.06
+   },
+   {
+    "x": -929.48,
+    "z": 271.22
+   },
+   {
+    "x": -920.7,
+    "z": 275.61
+   },
+   {
+    "x": -910.33,
+    "z": 260.44
+   },
+   {
+    "x": -909.13,
+    "z": 257.25
+   },
+   {
+    "x": -876.4,
+    "z": 272.81
+   },
+   {
+    "x": -869.22,
+    "z": 276.41
+   },
+   {
+    "x": -887.18,
+    "z": 327.5
+   },
+   {
+    "x": -812.95,
+    "z": 358.23
+   },
+   {
+    "x": -855.65,
+    "z": 463.61
+   },
+   {
+    "x": -915.51,
+    "z": 432.88
+   },
+   {
+    "x": -936.66,
+    "z": 371.01
+   },
+   {
+    "x": -957.42,
+    "z": 380.59
+   },
+   {
+    "x": -996.13,
+    "z": 367.41
+   },
+   {
+    "x": -1000.92,
+    "z": 372.2
+   },
+   {
+    "x": -1031.25,
+    "z": 363.02
+   }
+  ]
+ }
+];
