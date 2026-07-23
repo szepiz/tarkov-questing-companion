@@ -266,21 +266,58 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 /* a failed quest that the trader will hand out again is not a dead end */
 .failed-tag.retakeable { color: #d0a943; }
 .quest-row.failed:has(.failed-tag.retakeable) .quest-name { text-decoration: none; opacity: .55; }
+/* failed: a white X on red. Missed (story only): a white line on red — the
+   chance went by without a failure, so it reads as "closed" rather than
+   "botched". The two must be tellable apart at a glance. */
 .quest-row.failed .quest-check {
-  background: #1d1212;
-  border-color: #7e2626;
+  background: #9e3030;
+  border-color: #6e1e1e;
 }
-.quest-row.failed .quest-check::before {
+.quest-row.failed .quest-check::before,
+.quest-row.failed .quest-check::after {
   content: '';
   position: absolute;
-  left: 2px;
-  right: 2px;
+  left: 2.5px;
+  right: 2.5px;
   top: 50%;
   height: 2px;
   margin-top: -1px;
-  background: #c05050;
+  background: #f2f0ea;
 }
-.quest-row.failed.selected .quest-check { border-color: #7e2626; }
+.quest-row.failed .quest-check::before { transform: rotate(45deg); }
+.quest-row.failed .quest-check::after { transform: rotate(-45deg); }
+.quest-row.failed.selected .quest-check { border-color: #6e1e1e; }
+.quest-row.missed { color: #8a877e; }
+.quest-row.missed .quest-name {
+  text-decoration: line-through;
+  text-decoration-color: #7e5050;
+  text-decoration-thickness: 2px;
+  opacity: .4;
+}
+.quest-row.missed.selected .quest-name { opacity: .65; }
+.quest-row.missed .quest-check {
+  background: #9e3030;
+  border-color: #6e1e1e;
+}
+.quest-row.missed .quest-check::before {
+  content: '';
+  position: absolute;
+  left: 2.5px;
+  right: 2.5px;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: #f2f0ea;
+}
+.missed-tag {
+  flex: none;
+  margin-left: 6px;
+  color: #c07850;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  opacity: .9;
+}
 
 .quest-check {
   flex: none;
@@ -895,10 +932,14 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .objective.ticked { color: #6e6b62; }
 .objective.ticked span:last-child { text-decoration: line-through; opacity: .7; }
 .objective.ticked .bullet { color: #7a9a5a; }
-/* hand-marked FAILED story objectives (endings/branches not taken) */
+/* hand-marked FAILED story objectives (endings/branches not taken) and MISSED
+   ones (chances that passed by without failing) */
 .objective.failedmark { color: #6e6b62; }
 .objective.failedmark span:last-child { text-decoration: line-through; opacity: .6; }
 .objective.failedmark .bullet { color: #c96a5a; }
+.objective.missedmark { color: #6e6b62; }
+.objective.missedmark span:last-child { text-decoration: line-through; opacity: .6; }
+.objective.missedmark .bullet { color: #c07850; }
 .obj-count { font-weight: 400; font-size: 11px; letter-spacing: .5px; color: #6e6b62; }
 
 .ld-ticked { border-top: 1px solid #26261f; margin-top: 10px; padding-top: 4px; }

@@ -40,6 +40,7 @@ const DEFAULT_SETTINGS = {
   gameMode: 'regular',    // 'regular' (PvP) | 'pve' — which profile is being viewed
   modeAutoResolved: false, // has the initial "open on the populated mode" decision been made
   mapRotation: {},        // per-map quarter-turn count (0-3) from the rotate button
+  hintsSeen: {},          // one-time UI explainers already shown (e.g. storyMarks)
   hideCompleted: false,   // hide completed quests from the list
   hideLocked: false,      // hide locked quests from the list (auto mode only)
   hideFailed: false,      // hide failed quests from the list
@@ -949,14 +950,16 @@ ipcMain.handle('toggle-task', (_e, { taskId, done, mode }) => {
 
 // Tick a single objective off by hand. The logs carry no per-objective progress,
 // so this is the only way a multi-objective quest can show partial completion.
-// `done` is true | false | 'failed' — story branches (The Ticket's endings) make
-// objectives failable, and nothing logs that either, so it is a hand-mark too.
-// One record per objective: done and failed replace each other, false clears.
+// `done` is true | false | 'failed' | 'missed' — story branches (The Ticket's
+// endings) make objectives failable, and one-shot chances can be missed without
+// failing; nothing logs either, so both are hand-marks too.
+// One record per objective: the marks replace each other, false clears.
 ipcMain.handle('toggle-objective', (_e, { objectiveId, done, mode }) => {
   const m = MODES.includes(mode) ? mode : settings.gameMode;
   const bucket = progress[m];
   if (!bucket.objectives) bucket.objectives = {};
   if (done === 'failed') bucket.objectives[objectiveId] = { at: Date.now(), failed: true };
+  else if (done === 'missed') bucket.objectives[objectiveId] = { at: Date.now(), missed: true };
   else if (done) bucket.objectives[objectiveId] = { at: Date.now() };
   else delete bucket.objectives[objectiveId];
   saveProgress();
@@ -1181,11 +1184,35 @@ function createWindow() {
                 fail = marked && cleared ? 'ok fail + clear' : 'BAD marked=' + marked + ' cleared=' + cleared;
               }
             }
+            // middle-click marks MISSED, middle-click again clears — and the
+            // first mark of the session pops the one-time explainer toast
+            let miss = 'n/a';
+            {
+              const row3 = [...document.querySelectorAll('.quest-row.story-obj')]
+                .find(r => !r.classList.contains('completed') && !r.classList.contains('locked'));
+              if (row3) {
+                const name = row3.querySelector('.quest-name').textContent;
+                const mclick = (el) => el.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
+                const find3 = () => [...document.querySelectorAll('.quest-row.story-obj')]
+                  .find(r => r.querySelector('.quest-name').textContent === name);
+                mclick(row3.querySelector('.quest-check'));
+                ${settle(250)}
+                const marked = !!(find3() && find3().classList.contains('missed'))
+                  && !!find3().querySelector('.missed-tag');
+                const hintShown = document.querySelectorAll('#toasts .toast').length > 0
+                  || !!((await window.api.getInit()).settings.hintsSeen || {}).storyMarks;
+                mclick(find3().querySelector('.quest-check'));
+                ${settle(250)}
+                const cleared = !!find3() && !find3().classList.contains('missed');
+                miss = marked && cleared && hintShown ? 'ok miss + clear + hint'
+                  : 'BAD marked=' + marked + ' cleared=' + cleared + ' hint=' + hintShown;
+              }
+            }
             // chapter details pane
             first.click();
             ${settle(250)}
             const details = document.getElementById('questName').textContent;
-            return { chapters, expected, objRows, objExpected, tags, tick, fail, details, diag };
+            return { chapters, expected, objRows, objExpected, tags, tick, fail, miss, details, diag };
           })()`);
           console.log('TQT_STORY', JSON.stringify(story));
           const shot1 = await win.webContents.capturePage();

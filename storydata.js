@@ -581,6 +581,18 @@ const STORY_DATA = {
          "z": -275.25
         }
        ]
+      },
+      {
+       "map": "The Lab",
+       "floor": -1,
+       "kind": "pin",
+       "color": "green",
+       "pts": [
+        {
+         "x": -131.3,
+         "z": -229.58
+        }
+       ]
       }
      ],
      "indent": 1
@@ -5804,4 +5816,4 @@ const STORY_HAZARDS = [
   ]
  }
 ];
-const MAP_FIXES = {"labels":{},"extracts":{}};
+const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-222.9,"z":-262.3},"The Lab|Men's Locker Room|-241|-280":{"x":-231.6,"z":-262.7},"The Lab|Gym|-236|-302":{"x":-229.4,"z":-297.9},"The Lab|Warehouse|-163|-269":{"x":-159,"z":-252},"The Lab|Warehouse Gate|-170|-248":{"x":-159.2,"z":-209.6},"The Lab|Main Working Area|-172|-342":{"x":-161.8,"z":-349.6}},"extracts":{"The Lab|Hangar Gate|0":{"x":-159.9,"z":-224.6},"The Lab|Cargo Elevator|2":{"x":-112.1,"z":-412.3}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-132,"z":-354.9}}};

@@ -38,6 +38,7 @@ const backend = window.api || (() => {
       const b = bucket(mode);
       if (!b.objectives) b.objectives = {};
       if (done === 'failed') b.objectives[objectiveId] = { at: Date.now(), failed: true };
+      else if (done === 'missed') b.objectives[objectiveId] = { at: Date.now(), missed: true };
       else if (done) b.objectives[objectiveId] = { at: Date.now() };
       else delete b.objectives[objectiveId];
       persist(); return store.progress;
@@ -217,17 +218,24 @@ function isDone(taskId) {
 // An objective the player ticked off by hand. Tarkov reports no partial quest
 // progress, so a quest spread over three maps otherwise keeps showing all three
 // pins after you have done one.
-// A failed mark lives on the SAME record ({at, failed: true}) — story branches
-// (The Ticket's endings) make objectives failable, also only by hand — so done
-// must exclude it: a failed objective is resolved, not achieved.
+// Failed and missed marks live on the SAME record ({at, failed: true} /
+// {at, missed: true}) — story branches (The Ticket's endings) make objectives
+// failable, one-shot chances can slip by without failing, and neither reaches
+// any log — so done must exclude both: a marked objective is resolved, not
+// achieved.
 function isObjectiveDone(objectiveId) {
   const r = objectiveId && state.progress.objectives && state.progress.objectives[objectiveId];
-  return !!(r && !r.failed);
+  return !!(r && !r.failed && !r.missed);
 }
 
 function isObjectiveFailed(objectiveId) {
   const r = objectiveId && state.progress.objectives && state.progress.objectives[objectiveId];
   return !!(r && r.failed);
+}
+
+function isObjectiveMissed(objectiveId) {
+  const r = objectiveId && state.progress.objectives && state.progress.objectives[objectiveId];
+  return !!(r && r.missed);
 }
 
 function isFailed(taskId) {
@@ -408,7 +416,8 @@ function chapterStatuses() {
   for (const c of storyChapters()) {
     const mains = chapterMainObjectives(c);
     if (auto.chapters[c.questId] === 'done'
-      || (mains.length && mains.every((o) => isObjectiveDone(o.id) || isObjectiveFailed(o.id))
+      || (mains.length
+        && mains.every((o) => isObjectiveDone(o.id) || isObjectiveFailed(o.id) || isObjectiveMissed(o.id))
         && mains.some((o) => isObjectiveDone(o.id)))) done.add(c.id);
   }
   const st = {};
@@ -424,15 +433,26 @@ function chapterStatuses() {
   return st;
 }
 
-// objective -> 'done' | 'failed' | 'locked' | 'open'
-// failed outranks locked: a hand-set failed mark is the player's own statement,
-// and hiding it behind LOCKED would make the mark look lost.
+// objective -> 'done' | 'failed' | 'missed' | 'locked' | 'open'
+// hand-set marks outrank locked: they are the player's own statement, and
+// hiding them behind LOCKED would make the mark look lost.
 function storyObjectiveStatus(o, chapterState) {
   if (isObjectiveDone(o.id)) return 'done';
   if (isObjectiveFailed(o.id)) return 'failed';
+  if (isObjectiveMissed(o.id)) return 'missed';
   if (chapterState === 'locked') return 'locked';
   if (storyAuto().subs[o.sourceQuestId]) return 'locked';
   return 'open';
+}
+
+// One-time explainer the first time any story-objective mark is used — the
+// three mouse buttons are not discoverable from a tick box alone. Remembered in
+// settings so it never repeats.
+async function storyMarkHint() {
+  const seen = (state.settings && state.settings.hintsSeen) || {};
+  if (seen.storyMarks) return;
+  toast('Story objectives: left-click ticks one off · right-click marks it FAILED · middle-click marks it MISSED. The same button again undoes the mark.');
+  state.settings = await backend.saveSettings({ hintsSeen: { ...seen, storyMarks: true } });
 }
 
 function renderStoryTree(tree) {
@@ -495,12 +515,13 @@ function renderStoryTree(tree) {
       }
       const oState = storyObjectiveStatus(o, cState);
       if (hideC && oState === 'done') continue;
-      if (hideL && (oState === 'locked' || oState === 'failed')) continue;
+      if (hideL && (oState === 'locked' || oState === 'failed' || oState === 'missed')) continue;
       const orow = document.createElement('div');
       orow.className = 'quest-row story-obj'
         + (o.indent ? ' sub' : '')
         + (oState === 'done' ? ' completed' : '')
         + (oState === 'failed' ? ' failed' : '')
+        + (oState === 'missed' ? ' missed' : '')
         + (oState === 'locked' ? ' locked' : '')
         + (o.type === 'optional' ? ' optional' : '');
       // an OPEN objective says which map it is on (when its own text names one)
@@ -511,17 +532,21 @@ function renderStoryTree(tree) {
         ${o.type === 'optional' ? '<span class="story-tag optional">OPTIONAL</span>' : ''}
         ${mapTag}
         ${oState === 'failed' ? '<span class="failed-tag" title="marked failed by hand — right-click the box to undo">FAILED</span>' : ''}
+        ${oState === 'missed' ? '<span class="missed-tag" title="marked missed by hand — middle-click the box to undo">MISSED</span>' : ''}
         ${oState === 'locked' ? '<span class="locked-tag">LOCKED</span>' : ''}
         <span class="quest-check" title="${oState === 'done' ? 'ticked off — click to undo'
           : oState === 'failed' ? 'marked failed — right-click to undo, click to tick it done instead'
-          : 'The game never logs story objective progress — tick it off here yourself. Right-click to mark it FAILED (an ending you did not take).'}"></span>`;
+          : oState === 'missed' ? 'marked missed — middle-click to undo, click to tick it done instead'
+          : 'The game never logs story objective progress — tick it off here yourself. Right-click marks it FAILED, middle-click marks it MISSED (passed by without failing).'}"></span>`;
       orow.querySelector('.quest-name').addEventListener('click', () => {
         state.selChapter = c.id;
         state.selQuestId = null;
         renderAll();
       });
-      orow.querySelector('.quest-check').addEventListener('click', async (e) => {
+      const check = orow.querySelector('.quest-check');
+      check.addEventListener('click', async (e) => {
         e.stopPropagation();
+        storyMarkHint();
         state.fullProgress = await backend.toggleObjective(o.id, oState !== 'done', state.gameMode);
         applyMode();
         renderAll();
@@ -529,9 +554,21 @@ function renderStoryTree(tree) {
       // right-click marks the objective FAILED (or clears the mark) — story
       // branches mean some objectives genuinely cannot be completed, and the
       // logs say nothing about that either
-      orow.querySelector('.quest-check').addEventListener('contextmenu', async (e) => {
+      check.addEventListener('contextmenu', async (e) => {
         e.preventDefault(); e.stopPropagation();
+        storyMarkHint();
         state.fullProgress = await backend.toggleObjective(o.id, oState === 'failed' ? false : 'failed', state.gameMode);
+        applyMode();
+        renderAll();
+      });
+      // middle-click marks it MISSED — the chance went by without a failure
+      // (a one-raid opportunity you skipped). mousedown eats the autoscroll.
+      check.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
+      check.addEventListener('auxclick', async (e) => {
+        if (e.button !== 1) return;
+        e.preventDefault(); e.stopPropagation();
+        storyMarkHint();
+        state.fullProgress = await backend.toggleObjective(o.id, oState === 'missed' ? false : 'missed', state.gameMode);
         applyMode();
         renderAll();
       });
@@ -564,24 +601,27 @@ function renderStoryChapter() {
     const oState = storyObjectiveStatus(o, cState);
     const maps = oState !== 'done' && o.maps.length ? ` — ${o.maps.join(' / ')}` : '';
     return `
-    <div class="objective${o.indent ? ' sub' : ''}${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}${oState === 'failed' ? ' failedmark' : ''}"
+    <div class="objective${o.indent ? ' sub' : ''}${o.type === 'optional' ? ' optional' : ''}${oState === 'done' ? ' ticked' : ''}${oState === 'failed' ? ' failedmark' : ''}${oState === 'missed' ? ' missedmark' : ''}"
          data-obj="${escapeHtml(o.id)}"
          title="${oState === 'done' ? 'ticked off by hand — click to undo'
            : oState === 'failed' ? 'marked failed by hand — right-click to undo, click to tick it done instead'
-           : 'click to tick this objective off by hand · right-click to mark it FAILED'}">
-      <span class="bullet">${oState === 'done' ? '✔' : oState === 'failed' ? '✖' : oState === 'locked' ? '🔒' : '▪'}</span>
+           : oState === 'missed' ? 'marked missed by hand — middle-click to undo, click to tick it done instead'
+           : 'click to tick this objective off by hand · right-click marks it FAILED · middle-click marks it MISSED'}">
+      <span class="bullet">${oState === 'done' ? '✔' : oState === 'failed' ? '✖' : oState === 'missed' ? '−' : oState === 'locked' ? '🔒' : '▪'}</span>
       <span>${escapeHtml(o.description)}${o.type === 'optional' ? ' (optional)' : ''}${escapeHtml(maps)}</span>
     </div>`;
   }).join('');
   const doneCount = c.objectives.filter((o) => isObjectiveDone(o.id)).length;
   const failCount = c.objectives.filter((o) => isObjectiveFailed(o.id)).length;
+  const missCount = c.objectives.filter((o) => isObjectiveMissed(o.id)).length;
   $('questObjectives').innerHTML =
-    `<h3>OBJECTIVES ${doneCount || failCount ? `<span class="obj-count">${doneCount}/${c.objectives.length} done${failCount ? ` · ${failCount} failed` : ''}</span>` : ''}</h3>`
-    + `<div class="setting-hint">Chapter state (active / completed) is read from your game logs automatically; the game never logs per-objective progress, so tick objectives off here as you do them. Right-click an objective to mark it FAILED — for endings and branches you did not take.</div>`
+    `<h3>OBJECTIVES ${doneCount || failCount || missCount ? `<span class="obj-count">${doneCount}/${c.objectives.length} done${failCount ? ` · ${failCount} failed` : ''}${missCount ? ` · ${missCount} missed` : ''}</span>` : ''}</h3>`
+    + `<div class="setting-hint">Chapter state (active / completed) is read from your game logs automatically; the game never logs per-objective progress, so tick objectives off here as you do them. Right-click an objective to mark it FAILED (endings and branches you did not take); middle-click marks it MISSED (a chance that passed you by).</div>`
     + objectives;
   for (const el of $('questObjectives').querySelectorAll('.objective[data-obj]')) {
     el.addEventListener('click', async () => {
       const id = el.dataset.obj;
+      storyMarkHint();
       state.fullProgress = await backend.toggleObjective(id, !isObjectiveDone(id), state.gameMode);
       applyMode();
       renderAll();
@@ -589,7 +629,18 @@ function renderStoryChapter() {
     el.addEventListener('contextmenu', async (e) => {
       e.preventDefault();
       const id = el.dataset.obj;
+      storyMarkHint();
       state.fullProgress = await backend.toggleObjective(id, isObjectiveFailed(id) ? false : 'failed', state.gameMode);
+      applyMode();
+      renderAll();
+    });
+    el.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
+    el.addEventListener('auxclick', async (e) => {
+      if (e.button !== 1) return;
+      e.preventDefault();
+      const id = el.dataset.obj;
+      storyMarkHint();
+      state.fullProgress = await backend.toggleObjective(id, isObjectiveMissed(id) ? false : 'missed', state.gameMode);
       applyMode();
       renderAll();
     });
@@ -1176,6 +1227,7 @@ $('refreshDataBtn').addEventListener('click', async () => {
   if (state.dataInfo.regular) {
     const pve = (state.dataInfo.pve && state.dataInfo.pve.length) ? state.dataInfo.pve : state.dataInfo.regular;
     state.tasksByMode = { regular: state.dataInfo.regular, pve };
+    applyObjectiveFixes();   // hand-corrected pin positions (MAP_FIXES)
     applyMode();
   }
   renderAll();
@@ -1294,6 +1346,19 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 // the map's own box, in the coordinates the user sees. Markers clamp to this —
 // it is the artwork, not the window onto it.
 function fullView(md) { return rotatedViewBox(md); }
+
+// Labels and quest pins clamp into the map box the same way markers do
+// (markerPoint): a hand-dragged fix can put one just past the artwork, and
+// without this the SVG viewport clips it invisible — at the edge it stays
+// findable and can be dragged back in the editor.
+function clampToMap(md, x, z, insetUnits) {
+  const box = fullView(md);
+  const p = mapPoint(md, x, z);
+  return {
+    x: clamp(p.x, box.x + insetUnits, box.x + box.w - insetUnits),
+    y: clamp(p.y, box.y + insetUnits, box.y + box.h - insetUnits),
+  };
+}
 
 // The stage's shape, as width/height.
 function stageAspect() {
@@ -1734,6 +1799,30 @@ function collectMapPins(mapName) {
     }
   }
 })();
+
+// Objective-position fixes (MAP_FIXES.objectives) work on the TASK data, which
+// arrives async and is rebuilt on every refresh — so unlike labels/extracts
+// this must run after every tasksByMode assignment, not once at parse. It sets
+// absolute coordinates, so applying it twice is harmless. Keys are built from
+// the cache's pristine coords: map|objectiveId|round(x)|round(z).
+function applyObjectiveFixes() {
+  if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES || !MAP_FIXES.objectives) return;
+  const fx = MAP_FIXES.objectives;
+  if (!Object.keys(fx).length) return;
+  const apply = (mapName, oid, p) => {
+    if (!mapName || !p) return;
+    const m = fx[`${mapName}|${oid}|${Math.round(p.x)}|${Math.round(p.z)}`];
+    if (m) { p.x = m.x; p.z = m.z; }
+  };
+  for (const list of Object.values(state.tasksByMode || {})) {
+    for (const t of list || []) for (const o of t.objectives || []) {
+      for (const z of o.zones || []) if (z && z.position && z.map) apply(normMapName(z.map.name), o.id, z.position);
+      for (const l of o.possibleLocations || []) {
+        for (const p of l.positions || []) apply(normMapName(l.map && l.map.name), o.id, p);
+      }
+    }
+  }
+}
 
 const hasMapMarkers = (name) => typeof MAP_MARKERS !== 'undefined' && !!MAP_MARKERS[name]
   && Object.values(MAP_MARKERS[name]).some((rows) => rows.length);
@@ -2521,7 +2610,7 @@ function drawMap() {
   // trick the markers use.
   if (labelsOn()) {
     for (const [lx, lz, text] of (md.labels || []).filter((l) => labelOnFloor(md, l))) {
-      const p = mapPoint(md, lx, lz);
+      const p = clampToMap(md, lx, lz, 8 * k);
       const t = document.createElementNS(ns, 'text');
       t.setAttribute('x', p.x); t.setAttribute('y', p.y);
       t.setAttribute('class', 'map-label');
@@ -2573,7 +2662,7 @@ function drawMap() {
     g.appendChild(poly);
   }
   shown.forEach((p, i) => {
-    const s = mapPoint(md, p.x, p.z);
+    const s = clampToMap(md, p.x, p.z, 9 * k);
     const isHl = hlObjs && hlObjs.has(p.objId);
     const faded = hlObjs && !isHl;
 
@@ -2643,7 +2732,7 @@ function drawMap() {
 function pinCard(md, p, parent, k) {
   const ns = 'http://www.w3.org/2000/svg';
   const vb = cardArea(md);                        // what is on screen, minus the layer panel
-  const pin = mapPoint(md, p.x, p.z);
+  const pin = clampToMap(md, p.x, p.z, 9 * k);    // same clamped spot the pin drew at
 
   const desc = p.desc || '';
   const tags = [
@@ -3035,6 +3124,7 @@ backend.onUpdateAvailable((r) => {
   if (state.dataInfo.regular) {
     const pve = (state.dataInfo.pve && state.dataInfo.pve.length) ? state.dataInfo.pve : state.dataInfo.regular;
     state.tasksByMode = { regular: state.dataInfo.regular, pve };
+    applyObjectiveFixes();   // hand-corrected pin positions (MAP_FIXES)
     applyMode();
   }
   renderAll();
