@@ -441,24 +441,24 @@ const STORY_DATA = {
        "color": "blue",
        "pts": [
         {
-         "x": -169.2,
-         "z": -340.68
+         "x": -180.31,
+         "z": -349.36
         },
         {
-         "x": -149.55,
-         "z": -340.76
+         "x": -179.72,
+         "z": -336.32
         },
         {
-         "x": -149.55,
-         "z": -359.1
+         "x": -161.1,
+         "z": -336.32
         },
         {
-         "x": -169.05,
-         "z": -359.1
+         "x": -161.1,
+         "z": -350.07
         },
         {
-         "x": -169.35,
-         "z": -340.76
+         "x": -180.11,
+         "z": -349.54
         }
        ]
       }
@@ -481,24 +481,24 @@ const STORY_DATA = {
        "color": "blue",
        "pts": [
         {
-         "x": -127.54,
-         "z": -279.24
+         "x": -139.99,
+         "z": -329.91
         },
         {
-         "x": -127.41,
-         "z": -332.8
+         "x": -114.26,
+         "z": -329.7
         },
         {
-         "x": -100.76,
-         "z": -332.5
+         "x": -114.72,
+         "z": -289.36
         },
         {
-         "x": -100.62,
-         "z": -279.08
+         "x": -139.54,
+         "z": -289.15
         },
         {
-         "x": -127.54,
-         "z": -279.39
+         "x": -139.77,
+         "z": -329.5
         }
        ]
       }
@@ -517,80 +517,12 @@ const STORY_DATA = {
       {
        "map": "The Lab",
        "floor": 1,
-       "kind": "area",
+       "kind": "pin",
        "color": "blue",
        "pts": [
         {
-         "x": -174.64,
-         "z": -275.04
-        },
-        {
-         "x": -174.79,
-         "z": -268.09
-        },
-        {
-         "x": -139.61,
-         "z": -268
-        },
-        {
-         "x": -135.56,
-         "z": -267.08
-        },
-        {
-         "x": -132.78,
-         "z": -265.32
-        },
-        {
-         "x": -130.83,
-         "z": -262.31
-        },
-        {
-         "x": -129.82,
-         "z": -256.06
-        },
-        {
-         "x": -123.97,
-         "z": -255.65
-        },
-        {
-         "x": -124.12,
-         "z": -261.34
-        },
-        {
-         "x": -125.1,
-         "z": -265.53
-        },
-        {
-         "x": -127.12,
-         "z": -269.88
-        },
-        {
-         "x": -129.52,
-         "z": -272.56
-        },
-        {
-         "x": -136.8,
-         "z": -275.24
-        },
-        {
-         "x": -152.47,
-         "z": -275.33
-        },
-        {
-         "x": -174.61,
-         "z": -275.25
-        }
-       ]
-      },
-      {
-       "map": "The Lab",
-       "floor": -1,
-       "kind": "pin",
-       "color": "green",
-       "pts": [
-        {
-         "x": -131.3,
-         "z": -229.58
+         "x": -139.51,
+         "z": -272.9
         }
        ]
       }
@@ -5816,5 +5748,5 @@ const STORY_HAZARDS = [
   ]
  }
 ];
-const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-229.5,"z":-276.1},"The Lab|Men's Locker Room|-241|-280":{"x":-237.7,"z":-276.4},"The Lab|Warehouse|-163|-269":{"x":-169.2,"z":-268.3},"The Lab|Warehouse Gate|-170|-248":{"x":-169.4,"z":-236},"The Lab|Security Barracks|-260|-319":{"x":-257.2,"z":-322.9},"The Lab|Recreation Area|-221|-343":{"x":-224.5,"z":-342.6},"The Lab|Security Office|-254|-320":{"x":-257.8,"z":-323.3},"The Lab|Corridor To Building #2|-250|-281":{"x":-253,"z":-283.5},"The Lab|Boiler Room|-259|-366":{"x":-264.6,"z":-363.4}},"extracts":{"The Lab|Ventilation Shaft|0":{"x":-140.7,"z":-396.6},"The Lab|Sewage Conduit|0":{"x":-133.5,"z":-269.6},"The Lab|Parking Gate|0":{"x":-229.8,"z":-421}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-143.7,"z":-346.5},"The Lab|66b10eef0951e90ec383850b|-171|-283":{"x":-170.8,"z":-288.6}},"newLabels":[]};
+const MAP_FIXES = {"labels":{"The Lab|Women's Locker Room|-232|-280":{"x":-229.5,"z":-276.1},"The Lab|Men's Locker Room|-241|-280":{"x":-237.7,"z":-276.4},"The Lab|Warehouse|-163|-269":{"x":-169.2,"z":-268.3},"The Lab|Warehouse Gate|-170|-248":{"x":-169.4,"z":-236},"The Lab|Security Barracks|-260|-319":{"x":-257.2,"z":-322.9},"The Lab|Recreation Area|-221|-343":{"x":-224.5,"z":-342.6},"The Lab|Security Office|-254|-320":{"x":-257.8,"z":-323.3},"The Lab|Corridor To Building #2|-250|-281":{"x":-253,"z":-283.5},"The Lab|Boiler Room|-259|-366":{"x":-264.6,"z":-363.4},"Ground Zero|TerraGroup|-50|0":{"x":-32.3,"z":32.8},"Ground Zero|Tarbank|43|150":{"x":60,"z":158},"Ground Zero|Empire|14|201":{"x":40.5,"z":141.3},"Ground Zero|Nakatani|2|324":{"x":6.7,"z":330},"Ground Zero|Skyside|150|1":{"x":147.2,"z":9.5},"Ground Zero|Fusion|141|142":{"x":152.4,"z":97.3},"Factory|Heli Crash|30|-8":{"x":24.4,"z":-6.5},"Factory|Rafters|18|4":{"x":20.3,"z":7.9},"Factory|Office Building|21|39":{"x":21.4,"z":44.4},"Factory|Main Office|16|39":{"x":17.3,"z":38.7}},"extracts":{"The Lab|Ventilation Shaft|0":{"x":-140.7,"z":-396.6},"The Lab|Sewage Conduit|0":{"x":-133.5,"z":-269.6},"The Lab|Parking Gate|0":{"x":-229.8,"z":-421},"The Lab|Main Elevator|2":{"x":-281.6,"z":-333.5},"Factory|Camera Bunker Door|1":{"x":-19.7,"z":42.4},"Factory|Courtyard Gate|0":{"x":18.5,"z":62.8},"Factory|Med Tent Gate|0":{"x":-18.9,"z":-54.7},"Factory|Gate 3|0":{"x":58.6,"z":60.2}},"objectives":{"The Lab|62692a8a161ea75b3470d90e|-129|-359":{"x":-143.7,"z":-346.5},"The Lab|66b10eef0951e90ec383850b|-171|-283":{"x":-170.8,"z":-288.6}},"objectiveFloors":{},"newLabels":[{"map":"The Lab","x":-266.8,"z":-342.7,"text":"Switchboard","floor":1},{"map":"The Lab","x":-238.6,"z":-294.6,"text":"Switchboard","floor":1},{"map":"The Lab","x":-220.8,"z":-298.7,"text":"Offline Power Plant","floor":1},{"map":"The Lab","x":-191.9,"z":-321.7,"text":"Ventillation","floor":1},{"map":"The Lab","x":-231,"z":-399.7,"text":"Heat Station","floor":1},{"map":"The Lab","x":-202,"z":-377.8,"text":"Dry Room","floor":1},{"map":"The Lab","x":-182.1,"z":-378.7,"text":"Desalinator","floor":1},{"map":"The Lab","x":-161.1,"z":-342.3,"text":"Central Discharge Collector","floor":1},{"map":"The Lab","x":-160.8,"z":-353,"text":"Store Room","floor":1},{"map":"The Lab","x":-129.4,"z":-357.1,"text":"Offline Power Plant","floor":1},{"map":"The Lab","x":-119.2,"z":-311.3,"text":"Switchboard","floor":1},{"map":"The Lab","x":-139.2,"z":-267.9,"text":"Pumping Station","floor":1},{"map":"The Lab","x":-185.2,"z":-311.5,"text":"Weapon Testing Area","floor":-1},{"map":"The Lab","x":-104.9,"z":-431.6,"text":"Residential","floor":-1},{"map":"The Lab","x":-261.9,"z":-362.5,"text":"Boiler Room","floor":-1},{"map":"The Lab","x":-170.1,"z":-342.4,"text":"Board Room","floor":0},{"map":"Ground Zero","x":9.2,"z":-41,"text":"TerraGroup Garage","floor":-1},{"map":"Ground Zero","x":19,"z":70,"text":"Coffee Maniac","floor":-1},{"map":"Ground Zero","x":112.1,"z":-3.4,"text":"Skyside Business","floor":-1},{"map":"Ground Zero","x":175.4,"z":-0.7,"text":"Reception","floor":-1},{"map":"Ground Zero","x":175.1,"z":7.9,"text":"Skyside Hotel","floor":-1},{"map":"Ground Zero","x":176.1,"z":31,"text":"Coffee Joy","floor":-1},{"map":"Ground Zero","x":153.4,"z":36.3,"text":"Norvair","floor":-1},{"map":"Ground Zero","x":111.3,"z":148.7,"text":"Olive Restaurant","floor":-1},{"map":"Ground Zero","x":117.5,"z":190.1,"text":"Kyshperski","floor":-1},{"map":"Ground Zero","x":139.8,"z":204.2,"text":"Golden World","floor":-1},{"map":"Ground Zero","x":194.5,"z":134.1,"text":"Tartowers","floor":-1},{"map":"Ground Zero","x":69.4,"z":313.5,"text":"Giovanni Teducci","floor":-1},{"map":"Ground Zero","x":72.4,"z":318.6,"text":"Budda Lounge","floor":-1},{"map":"Ground Zero","x":112.4,"z":-5.3,"text":"Skyside Business","floor":0},{"map":"Ground Zero","x":115,"z":30.3,"text":"ASAP Winery","floor":0},{"map":"Ground Zero","x":98.7,"z":-64.4,"text":"Ramp","floor":-1},{"map":"Ground Zero","x":164.9,"z":-89.4,"text":"Coffee Joy","floor":-1},{"map":"Ground Zero","x":107.7,"z":-93.8,"text":"Kostin","floor":-1},{"map":"Ground Zero","x":135.6,"z":-101,"text":"Unity Credit Bank","floor":-1},{"map":"Ground Zero","x":99,"z":-69.7,"text":"Ramp","floor":0},{"map":"Ground Zero","x":80.5,"z":133.9,"text":"Coffee Vice","floor":-1},{"map":"Ground Zero","x":117.4,"z":190.9,"text":"Kyshperski","floor":0},{"map":"Ground Zero","x":112,"z":150.6,"text":"Olive Restaurant","floor":0},{"map":"Ground Zero","x":2304.7,"z":-120.9,"text":"Ramp","floor":0},{"map":"Ground Zero","x":1985,"z":76.5,"text":"Ramp","floor":0},{"map":"Ground Zero","x":110.9,"z":147.2,"text":"Olive Restaurant","floor":1},{"map":"Factory","x":-19.5,"z":43.6,"text":"Bunker Red Light","floor":2}],"newExtracts":[]};
 const HAND_INTERACTABLES = [];

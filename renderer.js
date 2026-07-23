@@ -1731,9 +1731,11 @@ function collectMapPins(mapName) {
           quest: t.name, trader: (t.trader && t.trader.name) || '',
           desc: o.description || '', optional: !!o.optional, locked, needs,
           objId: o.id, objDone, objTotal,
-          // a hand-moved position (p._o = pristine coords) keeps its original
+          // a hand floor reassignment (p._floor) wins outright; else a
+          // hand-moved position (p._o = pristine coords) keeps its original
           // floor — the move corrects the artwork spot, not the storey
-          floor: floorOf(md, p._o ? p._o[0] : p.x, typeof p.y === 'number' ? p.y : 0, p._o ? p._o[1] : p.z),
+          floor: typeof p._floor === 'number' ? p._floor
+            : floorOf(md, p._o ? p._o[0] : p.x, typeof p.y === 'number' ? p.y : 0, p._o ? p._o[1] : p.z),
         });
       }
     }
@@ -1817,6 +1819,18 @@ function collectMapPins(mapName) {
     row._floor = typeof nl.floor === 'number' ? nl.floor : -1;
     (md.labels = md.labels || []).push(row);
   }
+  // Hand-ADDED extracts: appended as normal ex rows. y is unknown (nothing to
+  // derive it from), so the placed floor rides on `_floor` and the collect
+  // loop prefers it; `_hand` adds the honesty line on the card.
+  if (typeof MAP_MARKERS !== 'undefined') {
+    for (const ne of MAP_FIXES.newExtracts || []) {
+      if (!MAP_MARKERS[ne.map]) continue;
+      const row = [ne.x, 0, ne.z, ne.faction || 0, 0, ne.name || 'Extract', '', 0];
+      row._floor = typeof ne.floor === 'number' ? ne.floor : -1;
+      row._hand = true;
+      (MAP_MARKERS[ne.map].ex = MAP_MARKERS[ne.map].ex || []).push(row);
+    }
+  }
 })();
 
 // Objective-position fixes (MAP_FIXES.objectives) work on the TASK data, which
@@ -1825,15 +1839,19 @@ function collectMapPins(mapName) {
 // absolute coordinates, so applying it twice is harmless. Keys are built from
 // the cache's pristine coords: map|objectiveId|round(x)|round(z).
 function applyObjectiveFixes() {
-  if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES || !MAP_FIXES.objectives) return;
-  const fx = MAP_FIXES.objectives;
-  if (!Object.keys(fx).length) return;
+  if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
+  const fx = MAP_FIXES.objectives || {};
+  const ff = MAP_FIXES.objectiveFloors || {};
+  if (!Object.keys(fx).length && !Object.keys(ff).length) return;
   const apply = (mapName, oid, p) => {
     if (!mapName || !p) return;
-    const m = fx[`${mapName}|${oid}|${Math.round(p.x)}|${Math.round(p.z)}`];
-    // keep the pristine coords: floor membership stays decided by them (see
-    // applyMapFixes) — and they are also what the override key derives from
-    if (m) { p._o = [p.x, p.z]; p.x = m.x; p.z = m.z; }
+    // the key always derives from the PRISTINE coords — after a move applied,
+    // `_o` holds them, which also keeps re-applying idempotent
+    const key = `${mapName}|${oid}|${Math.round(p._o ? p._o[0] : p.x)}|${Math.round(p._o ? p._o[1] : p.z)}`;
+    const m = fx[key];
+    if (m && !p._o) { p._o = [p.x, p.z]; p.x = m.x; p.z = m.z; }
+    // hand floor reassignment — the data's y files some pins on the wrong storey
+    if (typeof ff[key] === 'number') p._floor = ff[key];
   };
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) for (const o of t.objectives || []) {
@@ -2074,15 +2092,18 @@ function collectMapMarkers(mapName) {
     }
     if (sw) lines.push(['Needs', 'a switch or lever thrown first']);
     for (const g of extractGear(mapName, name)) lines.push(['Needs', g]);
+    if (r._hand) lines.push(['', 'Added by hand — not in the API data']);
     const m = out.length;
     // anyFloor: an extract you cannot see is worse than one drawn in the wrong
     // place. They stay on screen whatever floor you are on, greyed when they
-    // belong to another one. A hand-moved row (r._o = pristine coords, see
-    // applyMapFixes) keeps the floor its ORIGINAL position implies — the move
-    // corrects the artwork spot, not the storey.
+    // belong to another one. A hand-ADDED row carries its placed floor
+    // (`_floor` — its y is unknown); a hand-moved row (r._o = pristine coords,
+    // see applyMapFixes) keeps the floor its ORIGINAL position implies — the
+    // move corrects the artwork spot, not the storey.
     add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract', lines,
       Object.assign({ anyFloor: true },
-        r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : {}));
+        typeof r._floor === 'number' ? { floor: r._floor }
+          : r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : {}));
     if (out.length > m) out[out.length - 1].label = name || '';   // drawn above the icon
   }
   // Transits behave like extracts for the player (a way OUT of the raid), so
