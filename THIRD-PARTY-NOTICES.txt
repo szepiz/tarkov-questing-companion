@@ -53,19 +53,21 @@ SOFTWARE.
    it plots public quest data on a static map.
 
 
-2b. The Labyrinth map by re3mr  --  maps/Labyrinth.svg
-   https://reemr.se
+2b. The Labyrinth map tiles by tarkov.dev  --  maps/Labyrinth.svg
+   https://tarkov.dev
 
-   Licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0
-   International (CC BY-NC-SA 4.0), as printed in the map's own footer.
-   https://creativecommons.org/licenses/by-nc-sa/4.0/
+   No SVG of The Labyrinth exists in the SVG maps project. The bundled image
+   is tarkov.dev's own top-down tile render of the location (the imagery
+   their interactive Labyrinth page serves; maps.json lists "Tarkov.dev" as
+   its author), stitched from their published tile pyramid, cropped to
+   content and wrapped in an SVG shell so the app can treat it like its
+   other maps.
 
-   No SVG of The Labyrinth exists; re3mr's community map is the source
-   tarkov.dev's own 2D map page credits. The image content is unmodified;
-   for distribution it was losslessly recompressed (PNG -> WebP) and wrapped
-   in an SVG shell so the app can treat it like its other maps. This app is
-   free and non-commercial. If re3mr would prefer it not ship this artwork,
-   it comes out on request.
+   The render is derived from Escape from Tarkov's game art, which belongs
+   to Battlestate Games -- the same footing as the trader portraits and
+   location screenshots in section 5: identification in a free,
+   non-commercial fan tool. If tarkov.dev, the-hideout or Battlestate Games
+   would prefer it not ship this imagery, it comes out on request.
 
 
 3. Bender typeface by Jovanny Lemonad  --  bender/

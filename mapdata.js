@@ -416,13 +416,13 @@ const MAP_DATA = {
   },
   "The Labyrinth": {
     svg: "maps/Labyrinth.svg",
-    viewBox: { w: 4800, h: 4320 },
-    bounds: [[-62.79, -69.47], [70.09, 78.68]], // [[x,z],[x,z]] in game coords
+    viewBox: { w: 3905, h: 3626 },
+    bounds: [[-53.22, -38.24], [53.93, 77.16]], // [[x,z],[x,z]] in game coords
     rotate: 0,
     orient: "vu",   // axis mapping (see mapPoint)
     baseLayer: "Base",
     approx: true,   // pin positions unverified — see _dev/build_mapdata.js
-    credit: "Map by re3mr — reemr.se",   // per-map artwork credit
+    credit: "Map tiles by tarkov.dev",   // per-map artwork credit
 
     floors: [],
     labels: [],

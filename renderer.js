@@ -2919,9 +2919,10 @@ async function openQuestMap(mapName) {
   renderMapLayers();
   resetMapView();
   $('mapTitle').textContent = mapName.toUpperCase();
-  // per-map artwork credit (The Labyrinth is re3mr's map); same licence family
-  $('mapCredit').innerHTML = (md.credit || 'Map by Shebuka · tarkov-dev-svg-maps')
-    + ' · CC BY-NC-SA 4.0'
+  // per-map artwork credit. The credit string carries its own licence tag —
+  // CC BY-NC-SA belongs to Shebuka's SVGs, NOT to The Labyrinth's tarkov.dev
+  // tile render, so it must never be appended blindly.
+  $('mapCredit').innerHTML = (md.credit || 'Map by Shebuka · tarkov-dev-svg-maps · CC BY-NC-SA 4.0')
     + (hasMapMarkers(mapName) ? ' · markers tarkov.dev' : '');
   $('mapOverlay').classList.remove('hidden');
 

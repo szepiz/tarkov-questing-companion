@@ -1032,7 +1032,6 @@ ipcMain.handle('get-map-svg', (_e, file) => {
 const EXTERNAL_HOSTS = new Set([
   'escapefromtarkov.fandom.com', 'www.escapefromtarkov.wiki',   // quest pages
   'tarkov.dev', 'github.com',                                   // data + map artwork
-  'reemr.se',                                                   // The Labyrinth map artwork
   'www.behance.net', 'www.electronjs.org',                      // font, framework
   'www.escapefromtarkov.com',                                   // Battlestate Games
   'creativecommons.org', 'scripts.sil.org',                     // licence texts

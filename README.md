@@ -104,7 +104,7 @@ any of the following, and the same list is in the app under **Settings → Credi
 |---|---|---|
 | Quest data, map geometry, floor extents, landmark names, extracts, hazards, keyed doors and loot spawn points | [tarkov.dev](https://tarkov.dev) by [the-hideout](https://github.com/the-hideout/tarkov-dev) | MIT |
 | Map artwork — *Escape from Tarkov SVG Maps Project* | **Shebuka** — [tarkov-dev-svg-maps](https://github.com/the-hideout/tarkov-dev-svg-maps) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
-| The Labyrinth map artwork | **re3mr** — [reemr.se](https://reemr.se) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
+| The Labyrinth map tiles | [tarkov.dev](https://tarkov.dev) | game-derived imagery · fan use |
 | Bender typeface | [Jovanny Lemonad](https://www.behance.net/jovanny) | [SIL Open Font License 1.1](bender/Bender/FREE%20FONT%20LICENSE.txt) |
 | Application framework | [Electron](https://www.electronjs.org) | MIT |
 | Escape from Tarkov, trader portraits, location screenshots | [Battlestate Games](https://www.escapefromtarkov.com) | all rights reserved |
@@ -113,16 +113,17 @@ Full licence texts — including tarkov.dev's MIT notice — are in
 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which also ships inside the app.
 
 **On the map artwork.** The SVGs are bundled **unmodified** and credited in the
-map footer, in Settings, and here — as CC BY-NC-SA 4.0 requires. The Labyrinth is
-**re3mr's** community map (no SVG of it exists; tarkov.dev's own 2D page uses and
-credits the same map), bundled with its content unmodified under the same licence
-printed in its footer. This app is free
+map footer, in Settings, and here — as CC BY-NC-SA 4.0 requires. The Labyrinth
+has no SVG anywhere, so it uses **tarkov.dev's own tile render** of the location
+(stitched from the tiles their interactive map page serves), which is
+game-derived imagery on the same fan-use footing as the trader portraits below.
+This app is free
 and non-commercial, and it is a quest tracker: it draws quest objectives from
 public quest data onto a static map, exactly as tarkov.dev's own map pages do. It
 reads no game memory, renders nothing in-game, and knows nothing about live raids,
 so it is not the "radar / ESP / cheat client" category the maps project explicitly
-forbids. If Shebuka, the-hideout or re3mr would prefer it not ship this artwork,
-open an issue and it comes out.
+forbids. If Shebuka or the-hideout would prefer it not ship this artwork, open an
+issue and it comes out.
 
 **On the trader portraits and location screenshots.** These are Battlestate
 Games' artwork, used here for identification in a free fan tool. Unofficial, not
