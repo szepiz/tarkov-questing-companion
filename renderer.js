@@ -1441,15 +1441,18 @@ function applyView(redraw) {
 
   // What is clamped is the view's CENTRE, and it is clamped to the artwork. That
   // lets you drag any corner of the map into the middle of the screen — the whole
-  // point of panning at high zoom — while still making it impossible to lose the
-  // map altogether, because the centre of the pane is always over it. Clamping the
+  // point of panning — while still making it impossible to lose the map
+  // altogether, because the centre of the pane is always over it. Clamping the
   // whole rectangle inside the map (the obvious version) stops the edges ever
   // reaching the middle; clamping to the padded base instead let the map be
-  // dragged completely off screen. Where the view is bigger than the map in an
-  // axis there is nothing to pan, so centre it — that is what draws the letterbox.
-  const axis = (c, size, fp, fs) => (size >= fs
-    ? fp + fs / 2 - size / 2
-    : clamp(c, fp, fp + fs) - size / 2);
+  // dragged completely off screen.
+  //
+  // The centre is clamped to the map bounds at EVERY zoom, including zoom 1 where
+  // the whole map fits — that is what lets you drag a fully-zoomed-out map around
+  // (previously this branch force-centred it, so panning did nothing until you
+  // zoomed in). baseView pads the map symmetrically, so with no pan the centre is
+  // already the map's centre and the initial view is pixel-identical to before.
+  const axis = (c, size, fp, fs) => clamp(c, fp, fp + fs) - size / 2;
 
   const v = { x: axis(cx, w, full.x, full.w), y: axis(cy, h, full.y, full.h), w, h };
   mapView.view = v;

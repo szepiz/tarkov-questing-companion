@@ -1730,6 +1730,28 @@ function createWindow() {
               // Panning must never take the artwork off screen. The padding beside
               // a map narrower than the pane is empty stage; clamping into it let
               // a zoomed-in map be dragged away entirely.
+              // You must be able to drag the map at zoom 1 (fully zoomed out) —
+              // it used to force-centre the view there, so panning did nothing
+              // until you zoomed in. Reset to zoom 1, shove the view, and the
+              // centre must actually move (while still staying over the map).
+              const panAtZoom1 = await (async () => {
+                resetMapView(); drawMap();
+                await new Promise(r => setTimeout(r, 200));
+                if (Math.abs((mapView.zoom || 1) - 1) > 0.001) return 'BAD not at zoom 1';
+                const before = { x: mapView.view.x, y: mapView.view.y };
+                mapView.view = { x: mapView.view.x + 9999, y: mapView.view.y + 9999,
+                                 w: mapView.view.w, h: mapView.view.h };
+                applyView(false);
+                const movedX = Math.abs(mapView.view.x - before.x) > 1;
+                const movedY = Math.abs(mapView.view.y - before.y) > 1;
+                resetMapView(); drawMap();
+                await new Promise(r => setTimeout(r, 200));
+                // a map that fills the pane in one axis genuinely can't pan that
+                // axis; requiring EITHER axis to move covers every map shape
+                return (movedX || movedY) ? 'ok (draggable at zoom 1)'
+                  : 'BAD cannot pan at zoom 1';
+              })();
+
               const panStaysOnMap = await (async () => {
                 const md = MAP_DATA[${JSON.stringify(name)}];
                 if (!md) return 'n/a';
@@ -1907,7 +1929,7 @@ function createWindow() {
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
                 card, oneCard, narrow, floorLabels, labelToggle, extractsAcrossFloors, objGlow,
-                resizeKeepsZoom, panStaysOnMap,
+                resizeKeepsZoom, panAtZoom1, panStaysOnMap,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
                 zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0
