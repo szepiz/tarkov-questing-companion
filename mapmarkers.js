@@ -43,11 +43,14 @@
 //   tr  [x, y, z, desc, dest]                        transit to another map; dest = map name.
 //                                                     Sourced from json.tarkov.dev (GraphQL
 //                                                     never carried them here).
-//   sw  [x, y, z, what]                              a switch / lever. `what` is a human
+//   sw  [x, y, z, what, opens]                       a switch / lever. `what` is a human
 //                                                     sentence resolved at bake time ("Opens
 //                                                     the D-2 extract · Needs another switch
 //                                                     thrown first") — the raw data only has
-//                                                     internal ids. Also json.tarkov.dev.
+//                                                     internal ids. `opens` names the EXTRACT(s)
+//                                                     it unlocks ("|"-joined, "" if none), which
+//                                                     is what draws the switch->extract line.
+//                                                     Also json.tarkov.dev.
 //
 // LOOT_VALUE prices every lt item: name -> [rouble value, value per slot], from
 // json.tarkov.dev at bake time — max(flea avg24h, flea last-low, best trader
@@ -77,14 +80,14 @@ const MARKER_COLS = {
   mk: ['x', 'y', 'z', 'pool', 'keys'],
   co: ['x', 'y', 'z', 'type'],
   tr: ['x', 'y', 'z', 'desc', 'dest'],
-  sw: ['x', 'y', 'z', 'what'],
+  sw: ['x', 'y', 'z', 'what', 'opens'],
 };
 
 
 const CAT_NAMES = ["keys","keycards","valuables","medical","stims","electronics","intel","tools"];
 const CONTAINER_TYPES = ["safe","bank-safe","weapon-box","wooden-ammo-box","grenade-box","medcase","medbag-smu06","medical-supply-crate","toolbox","technical-supply-crate","ration-supply-crate","jacket","plastic-suitcase","duffle-bag","drawer","wooden-crate","cash-register","bank-cash-register","pc-block","buried-barrel-cache","ground-cache","shturmans-stash","dead-scav","scav-body","pmc-body","civilian-body","lab-technician-body"];
 // item -> [rouble value, value per slot] when baked; keys match lt rows' item names
-const LOOT_VALUE = {"WFilter":[195837,97919],"Moonshine":[437188,218594],"Fuel":[100089,25022],"GoldChain":[38866,38866],"Cat":[39495,13165],"Armor repair kit":[1224850,204142],"Paracord":[45521,22761],"2A2-(b-TG)":[72801,72801],"Horse":[12025,6013],"Weapon repair kit":[359264,59877],"Powerbank":[66068,66068],"GPU":[680000,340000],"GreenBat":[223382,223382],"Intelligence":[327921,163961],"E310 San":[87046,87046],"Company":[46216,46216],"Director's":[29473,29473],"Dorm 203":[31194,31194],"Dorm 220":[30434,30434],"Dorm 303":[20851,20851],"EMC":[86153,86153],"Checkpoint":[38284,38284],"OLI Log.":[82209,82209],"Lion":[139120,23187],"Car":[6122,6122],"Dorm 306":[599999,599999],"TGL ASR":[1478057,1478057],"WSafe":[38700,38700],"Dorm 110":[47788,47788],"Flash drive":[21214,21214],"Rooster":[74362,18591],"Dorm 214":[17000,17000],"Vase":[55404,13851],"PFilter":[80156,80156],"OScope":[75793,75793],"Obdolbos":[38992,38992],"E308 San":[413364,413364],"E314 San":[86000,86000],"E316 San":[37061,37061],"Violet":[396163,396163],"LEDX":[873683,873683],"Blue Folders":[409901,204951],"Roler":[73768,73768],"Data":[4500,4500],"OR":[64020,64020],"L1":[23971,23971],"Trimadol":[70985,70985],"Meldonin":[63176,63176],"M.U.L.E.":[143096,143096],"MCable":[36280,18140],"SG-C10":[110031,55016],"AESA":[131684,32921],"Cyclon":[189436,94718],"Iridium":[71412,71412],"W112 San":[75420,75420],"W219 San":[109511,109511],"E306 San":[43001,43001],"Overseer":[195999,195999],"Cottage":[123224,123224],"W104 San":[65012,65012],"E107 San":[152419,152419],"W203 San":[682131,682131],"E205 San":[135766,135766],"E206 San":[126886,126886],"W216 San":[135117,135117],"W218 San":[700000,700000],"W220 San":[108984,108984],"W221 San":[98645,98645],"E222 San":[226489,226489],"E328 San":[173007,173007],"Blue":[568461,568461],"Red":[1124621,1124621],"Yellow":[229159,229159],"Gas safe":[62952,62952],"Knossos":[77681,77681],"SJ6":[101579,101579],"Propital":[55555,55555],"Zagustin":[28221,28221],"Manual":[45366,22683],"MGT":[121159,60580],"VPX":[279000,279000],"RB-AM":[65764,65764],"RB-ORB1":[3225794,3225794],"RB-ORB2":[166659,166659],"RB-OB":[292345,292345],"RB-TB":[41068,41068],"RB-PSV1":[38888,38888],"RB-ORB3":[173148,173148],"0.2BTC":[540996,540996],"RB-ST":[116742,116742],"RFIDR":[152572,152572],"Defib":[607098,607098],"IDEA reg.":[45132,45132],"OLI reg.":[34567,34567],"OLI util.":[82000,82000],"RB-MP21":[46259,46259],"Rusted":[4199,4199],"Tetriz":[111868,55934],"SDiary":[53333,53333],"X-ray":[81023,81023],"Egg":[50420,50420],"Badge":[337620,337620],"REA":[237114,237114],"Relax":[317250,317250],"Negotiations":[14228,14228],"Access":[112242,112242],"Clock":[113016,28254],"Veritas":[41177,41177],"Perfotoran":[47578,47578],"Diary":[31951,15976],"Prokill":[103545,103545],"Skybridge 46-48":[3235,3235],"Res. unit":[135420,135420],"TGL WT":[1044832,1044832],"Green":[1100000,1100000],"SJ1":[35059,35059],"3-(b-TG)":[31806,31806],"eTG-c":[92806,92806],"PNB":[41139,41139],"P22":[25400,25400],"TGL MO":[47038,47038],"xTG-12":[50778,50778],"Bloodsucker":[47250,23625],"Crooker":[47250,23625],"Xenoalien":[47250,23625],"Nailhead":[47250,23625],"Pointy guy":[47250,23625],"Corpses":[4199,4199]};
+const LOOT_VALUE = {"WFilter":[212952,106476],"Moonshine":[453243,226622],"Fuel":[95378,23845],"GoldChain":[33099,33099],"Cat":[39254,13085],"Armor repair kit":[1204076,200679],"Paracord":[60000,30000],"2A2-(b-TG)":[79060,79060],"Horse":[14782,7391],"Weapon repair kit":[444444,74074],"Powerbank":[68895,68895],"GPU":[665827,332914],"GreenBat":[225470,225470],"Intelligence":[323179,161590],"E310 San":[55555,55555],"Company":[99000,99000],"Director's":[27204,27204],"Dorm 203":[20065,20065],"Dorm 220":[249999,249999],"Dorm 303":[25632,25632],"EMC":[75191,75191],"Checkpoint":[41183,41183],"OLI Log.":[109099,109099],"Lion":[121946,20324],"Car":[8988,8988],"Dorm 306":[100000,100000],"TGL ASR":[1168992,1168992],"WSafe":[23654,23654],"Dorm 110":[46168,46168],"Flash drive":[23861,23861],"Rooster":[79000,19750],"Dorm 214":[18000,18000],"Vase":[55500,13875],"PFilter":[84002,84002],"OScope":[77548,77548],"Obdolbos":[38999,38999],"E308 San":[248865,248865],"E314 San":[47788,47788],"E316 San":[34868,34868],"Violet":[399998,399998],"LEDX":[999000,999000],"Blue Folders":[450000,225000],"Roler":[64513,64513],"Data":[4500,4500],"OR":[63431,63431],"L1":[27777,27777],"Trimadol":[77700,77700],"Meldonin":[58650,58650],"M.U.L.E.":[135701,135701],"MCable":[40662,20331],"SG-C10":[114297,57149],"AESA":[125817,31454],"Cyclon":[179340,89670],"Iridium":[64477,64477],"W112 San":[80000,80000],"W219 San":[76746,76746],"E306 San":[177777,177777],"Overseer":[190000,190000],"Cottage":[123262,123262],"W104 San":[99998,99998],"E107 San":[84907,84907],"W203 San":[139886,139886],"E205 San":[158119,158119],"E206 San":[377777,377777],"W216 San":[132631,132631],"W218 San":[263750,263750],"W220 San":[85000,85000],"W221 San":[72328,72328],"E222 San":[171658,171658],"E328 San":[220000,220000],"Blue":[569717,569717],"Red":[1144924,1144924],"Yellow":[227026,227026],"Gas safe":[68703,68703],"Knossos":[77681,77681],"SJ6":[105000,105000],"Propital":[54215,54215],"Zagustin":[29061,29061],"Manual":[43303,21652],"MGT":[130523,65262],"VPX":[220587,220587],"RB-AM":[94214,94214],"RB-ORB1":[2487375,2487375],"RB-ORB2":[136254,136254],"RB-OB":[182072,182072],"RB-TB":[200000,200000],"RB-PSV1":[36330,36330],"RB-ORB3":[235240,235240],"0.2BTC":[528757,528757],"RB-ST":[129900,129900],"RFIDR":[144342,144342],"Defib":[579481,579481],"IDEA reg.":[74900,74900],"OLI reg.":[40746,40746],"OLI util.":[20910,20910],"RB-MP21":[88888,88888],"Rusted":[4199,4199],"Tetriz":[118161,59081],"SDiary":[43728,43728],"X-ray":[73614,73614],"Egg":[42899,42899],"Badge":[339634,339634],"REA":[124330,124330],"Relax":[307674,307674],"Negotiations":[13876,13876],"Access":[105782,105782],"Clock":[98561,24640],"Veritas":[39786,39786],"Perfotoran":[48835,48835],"Diary":[28566,14283],"Prokill":[97809,97809],"Skybridge 46-48":[3235,3235],"Res. unit":[142213,142213],"TGL WT":[963064,963064],"Green":[1091088,1091088],"SJ1":[36611,36611],"3-(b-TG)":[32413,32413],"eTG-c":[88109,88109],"PNB":[41139,41139],"P22":[26131,26131],"TGL MO":[44097,44097],"xTG-12":[50778,50778],"Bloodsucker":[47250,23625],"Crooker":[47250,23625],"Xenoalien":[47250,23625],"Nailhead":[47250,23625],"Pointy guy":[47250,23625],"Corpses":[4199,4199]};
 const LOOT_HV_MIN = 1000000;   // roubles (whole item) — bar for the high-value layer
 
 const MAP_MARKERS = {
@@ -1041,7 +1044,7 @@ const MAP_MARKERS = {
       [23.7, -1.4, 139.5, "Transit to Shoreline", "Shoreline"]
     ],
     sw: [
-      [352.2, 2.6146, -40.8, "Opens the ZB-013 extract"]
+      [352.2, 2.6146, -40.8, "Opens the ZB-013 extract", "ZB-013"]
     ],
   },
   Woods: {
@@ -2501,9 +2504,9 @@ const MAP_MARKERS = {
       [263.1, 24.1, -444.4, "Transit to Streets of Tarkov", "Streets of Tarkov"]
     ],
     sw: [
-      [-201.1, 23.1857, -357.8, ""], [-46.6, 37.347, -55.2, ""], [-67.1, 27.9506, 53.7, ""],
-      [-50.6, 22.632, 45.6, "Opens the Saferoom Exfil extract · Operates a locked door"],
-      [-51.5, 36.86, -125.4, ""], [-47.7, 22.891, 42.6, "Operates a locked door"]
+      [-201.1, 23.1857, -357.8, "", ""], [-46.6, 37.347, -55.2, "", ""], [-67.1, 27.9506, 53.7, "", ""],
+      [-50.6, 22.632, 45.6, "Opens the Saferoom Exfil extract · Operates a locked door", "Saferoom Exfil"],
+      [-51.5, 36.86, -125.4, "", ""], [-47.7, 22.891, 42.6, "Operates a locked door", ""]
     ],
   },
   Reserve: {
@@ -3090,9 +3093,9 @@ const MAP_MARKERS = {
       [238.8, -6.2542, -128, "Transit to Lighthouse", "Lighthouse"]
     ],
     sw: [
-      [-60.8, -5.5522, 78.2, "Opens the Bunker Hermetic Door extract"],
-      [-117.2, -12.954, 22.7, "Enables another switch"],
-      [-117.4, -16.9843, 168.5, "Opens the D-2 extract · Needs another switch thrown first"]
+      [-60.8, -5.5522, 78.2, "Opens the Bunker Hermetic Door extract", "Bunker Hermetic Door"],
+      [-117.2, -12.954, 22.7, "Enables another switch", ""],
+      [-117.4, -16.9843, 168.5, "Opens the D-2 extract · Needs another switch thrown first", "D-2"]
     ],
   },
   "Streets of Tarkov": {
@@ -4707,7 +4710,7 @@ const MAP_MARKERS = {
       [106.3, 6.74, -958.1, "Transit to Woods", "Woods"]
     ],
     sw: [
-      [445.3, 33.391, 457.6, ""], [444.6, 33.391, 457.6, ""]
+      [445.3, 33.391, 457.6, "", ""], [444.6, 33.391, 457.6, "", ""]
     ],
   },
   "The Lab": {
@@ -4926,19 +4929,20 @@ const MAP_MARKERS = {
     ],
     tr: [],
     sw: [
-      [-124.8, -2.316, -313.8, "Enables another switch"],
-      [-281, -2.838, -335.5, "Needs another switch thrown first"],
-      [-114.1, -2.846, -343.2, "Needs another switch thrown first"],
-      [-170.2, 5.185, -281.5, "Opens the Hangar Gate extract"],
-      [-114, 5.314, -406.4, "Needs another switch thrown first"],
-      [-112.4, 5.354, -406.8, "Enables another switch · Opens the Cargo Elevator extract"],
-      [-271.4, -2.38, -366.1, "Enables another switch"],
-      [-129.5, -6.756, -244.8, "Opens the Sewage Conduit extract · Needs another switch thrown first"],
-      [-282.4, -2.912, -335.9, "Opens the Main Elevator extract"],
-      [-243.4, 5.076, -382.5, "Enables another switch · Opens the Parking Gate extract"],
-      [-136.8, -2.826, -254.5, "Enables another switch"], [-121, -2.837, -353.5, "Enables another switch"],
-      [-112.8, -2.846, -342.8, "Opens the Medical Block Elevator extract"],
-      [-220.8, 5.249, -381.3, "Needs another switch thrown first"], [-112.4, 1.063, -435.4, ""]
+      [-124.8, -2.316, -313.8, "Enables another switch", ""],
+      [-281, -2.838, -335.5, "Needs another switch thrown first", ""],
+      [-114.1, -2.846, -343.2, "Needs another switch thrown first", ""],
+      [-170.2, 5.185, -281.5, "Opens the Hangar Gate extract", "Hangar Gate"],
+      [-114, 5.314, -406.4, "Needs another switch thrown first", ""],
+      [-112.4, 5.354, -406.8, "Enables another switch · Opens the Cargo Elevator extract", "Cargo Elevator"],
+      [-271.4, -2.38, -366.1, "Enables another switch", ""],
+      [-129.5, -6.756, -244.8, "Opens the Sewage Conduit extract · Needs another switch thrown first", "Sewage Conduit"],
+      [-282.4, -2.912, -335.9, "Opens the Main Elevator extract", "Main Elevator"],
+      [-243.4, 5.076, -382.5, "Enables another switch · Opens the Parking Gate extract", "Parking Gate"],
+      [-136.8, -2.826, -254.5, "Enables another switch", ""],
+      [-121, -2.837, -353.5, "Enables another switch", ""],
+      [-112.8, -2.846, -342.8, "Opens the Medical Block Elevator extract", "Medical Block Elevator"],
+      [-220.8, 5.249, -381.3, "Needs another switch thrown first", ""], [-112.4, 1.063, -435.4, "", ""]
     ],
   },
   "The Labyrinth": {
@@ -5015,9 +5019,10 @@ const MAP_MARKERS = {
     ],
     tr: [],
     sw: [
-      [-4.3, 1.5151, 55.9, ""], [1.1, 1.5039, 7.2, ""], [-13.4, 1.6389, 36.1, ""], [40.2, 0.2986, 19.2, ""],
-      [8.9, 1.5479, 28.7, ""], [-43.6, 1.5659, -10.9, ""], [-9, 1.6679, 1.6, ""], [-31.7, 2.0807, 58.2, ""],
-      [-49.3, 1.7037, -11.8, ""], [25.4, 1.37, 59.5, ""], [46.4, 1.031, 11.1, ""], [2.7, 2.1099, -31.7, ""]
+      [-4.3, 1.5151, 55.9, "", ""], [1.1, 1.5039, 7.2, "", ""], [-13.4, 1.6389, 36.1, "", ""],
+      [40.2, 0.2986, 19.2, "", ""], [8.9, 1.5479, 28.7, "", ""], [-43.6, 1.5659, -10.9, "", ""],
+      [-9, 1.6679, 1.6, "", ""], [-31.7, 2.0807, 58.2, "", ""], [-49.3, 1.7037, -11.8, "", ""],
+      [25.4, 1.37, 59.5, "", ""], [46.4, 1.031, 11.1, "", ""], [2.7, 2.1099, -31.7, "", ""]
     ],
   },
   Terminal: {

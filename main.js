@@ -1727,6 +1727,25 @@ function createWindow() {
                   : \`BAD zoom drifted \${before} -> \${narrow} -> \${after}\`;
               })();
 
+              // A selected extract that needs a switch must draw the dashed
+              // line to it (Reserve/Lab/Customs get these links from the data
+              // itself, no hand work). NO BACKTICKS in here.
+              const switchLine = await (async () => {
+                const withSw = (mapView.markers || []).filter(m => m.switchPts && m.switchPts.length);
+                if (!withSw.length) return 'n/a (no extract needs a switch here)';
+                mapView.selectedMarker = withSw[0];
+                drawMap();
+                await new Promise(r => setTimeout(r, 300));
+                const lines = document.querySelectorAll('#mkpins .mk-swlink');
+                const dashed = lines.length && getComputedStyle(lines[0]).strokeDasharray !== 'none';
+                mapView.selectedMarker = null; drawMap();
+                await new Promise(r => setTimeout(r, 200));
+                const gone = document.querySelectorAll('#mkpins .mk-swlink').length === 0;
+                return lines.length === withSw[0].switchPts.length && dashed && gone
+                  ? 'ok ' + lines.length + ' dashed line(s) to the switch'
+                  : 'BAD lines=' + lines.length + ' want=' + withSw[0].switchPts.length + ' dashed=' + dashed + ' cleared=' + gone;
+              })();
+
               // Panning must never take the artwork off screen. The padding beside
               // a map narrower than the pane is empty stage; clamping into it let
               // a zoomed-in map be dragged away entirely.
@@ -1929,7 +1948,7 @@ function createWindow() {
                 decimates: denseZoomed >= drawn ? \`ok (\${drawn} -> \${denseZoomed} zoomed in)\`
                   : \`BAD fewer when zoomed: \${drawn} -> \${denseZoomed}\`,
                 card, oneCard, narrow, floorLabels, labelToggle, extractsAcrossFloors, objGlow,
-                resizeKeepsZoom, panAtZoom1, panStaysOnMap,
+                resizeKeepsZoom, panAtZoom1, panStaysOnMap, switchLine,
                 pinsUnchanged: document.querySelectorAll('.qpin-dot').length === pinsBefore
                   ? 'ok' : \`BAD \${pinsBefore} -> \${document.querySelectorAll('.qpin-dot').length}\`,
                 zOrder: kids.indexOf('mkpins') >= 0 && kids.indexOf('qpins') >= 0

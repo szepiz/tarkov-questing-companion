@@ -1843,11 +1843,21 @@ function collectMapPins(mapName) {
     }
     if (typeof MAP_MARKERS === 'undefined' || !MAP_MARKERS[name]) continue;
     for (const r of MAP_MARKERS[name].ex || []) {
+      // NOTE the key is built from the PRISTINE faction: correcting who can use
+      // an extract must not change the key that identifies it, or every other
+      // override on the same extract would come unstuck.
       const key = `${name}|${r[5]}|${r[3]}`;
       const m = F('extracts')[key];
       if (m) { r._o = [r[0], r[2]]; r[0] = m.x; r[2] = m.z; }
       const f = F('extractFloors')[key];
       if (typeof f === 'number') r._floor = f;
+      const note = F('extractNotes')[key];
+      if (note) r._note = note;
+      const links = F('extractSwitches')[key];
+      if (links && links.length) r._links = links;
+      const fac = F('extractFactions')[key];
+      if (typeof fac === 'number') { r._key = key; r[3] = fac; }   // after the key is taken
+      else r._key = key;
     }
     for (const r of MAP_MARKERS[name].tr || []) {
       const key = `${name}|${r[4]}|${Math.round(r[0])}|${Math.round(r[2])}`;
@@ -1903,9 +1913,17 @@ function collectMapPins(mapName) {
   if (typeof MAP_MARKERS !== 'undefined') {
     for (const ne of MAP_FIXES.newExtracts || []) {
       if (!MAP_MARKERS[ne.map]) continue;
-      const row = [ne.x, 0, ne.z, ne.faction || 0, 0, ne.name || 'Extract', '', 0];
+      const key = `my|${ne.id}`;
+      const fac = (MAP_FIXES.extractFactions || {})[key];
+      const row = [ne.x, 0, ne.z, typeof fac === 'number' ? fac : (ne.faction || 0), 0,
+        ne.name || 'Extract', '', 0];
       row._floor = typeof ne.floor === 'number' ? ne.floor : -1;
       row._hand = true;
+      row._key = key;
+      const note = (MAP_FIXES.extractNotes || {})[key];
+      if (note) row._note = note;
+      const links = (MAP_FIXES.extractSwitches || {})[key];
+      if (links && links.length) row._links = links;
       (MAP_MARKERS[ne.map].ex = MAP_MARKERS[ne.map].ex || []).push(row);
     }
   }
@@ -2171,6 +2189,37 @@ function collectMapMarkers(mapName) {
       floor: floorOf(md, x, y || 0, z) }, extra || {}));
   };
 
+  // Where the switch that opens an extract is. Two sources, both wanted: the
+  // DATA's own (a switch row naming this extract in its `opens` column — free,
+  // and covers Reserve/Lab/Customs) and hand links from the editor for the ones
+  // it misses. Points, not keys, so drawMap just draws.
+  const switchPointsFor = (row) => {
+    const pts = [];
+    const at = (sr) => ({ x: sr[0], z: sr[2], floor: floorOf(md, sr[0], sr[1], sr[2]) });
+    for (const sr of M.sw || []) {
+      if ((sr[4] || '').split(' | ').includes(row[5])) pts.push(at(sr));
+    }
+    for (const lk of row._links || []) {
+      const i = lk.indexOf('|');
+      const kind = lk.slice(0, i), rk = lk.slice(i + 1);
+      if (kind === 'sw') {
+        const sr = (M.sw || []).find((q) => `${mapName}|${Math.round(q._o ? q._o[0] : q[0])}|${Math.round(q._o ? q._o[1] : q[2])}` === rk);
+        if (sr) pts.push(at(sr));
+      } else if (kind === 'ann') {
+        const h = (typeof HAND_INTERACTABLES !== 'undefined' ? HAND_INTERACTABLES : [])
+          .find((q) => q.id === rk && q.map === mapName);
+        if (h && (h.pts || []).length) {
+          pts.push({ x: h.pts.reduce((t, q) => t + q.x, 0) / h.pts.length,
+                     z: h.pts.reduce((t, q) => t + q.z, 0) / h.pts.length,
+                     floor: typeof h.floor === 'number' ? h.floor : -1 });
+        }
+      }
+    }
+    // one switch can open two extracts and vice versa; de-duplicate by position
+    const seen = new Set();
+    return pts.filter((q) => { const k = q.x + ',' + q.z; if (seen.has(k)) return false; seen.add(k); return true; });
+  };
+
   for (const r of M.ex || []) {
     const [x, y, z, fac, sw, name, toll, tollN] = r;
     const layers = fac === 0 ? ['extractPmc'] : fac === 1 ? ['extractScav'] : ['extractPmc', 'extractScav'];
@@ -2182,6 +2231,23 @@ function collectMapMarkers(mapName) {
     }
     if (sw) lines.push(['Needs', 'a switch or lever thrown first']);
     for (const g of extractGear(mapName, name)) lines.push(['Needs', g]);
+    if (r._note) lines.push(['Needs', r._note]);   // the owner's own correction
+    // Where the switch IS matters more than that one exists: they range from
+    // right beside the door (D-2, the elevators) to 295 m away and a floor
+    // apart (Reserve's Bunker Hermetic Door). A line alone cannot say "it is
+    // downstairs", so the card does.
+    const swPts = switchPointsFor(r);
+    if (swPts.length) {
+      if (!sw) lines.push(['Needs', swPts.length > 1 ? 'a switch thrown first' : 'its switch thrown first']);
+      const exFloor = typeof r._floor === 'number' ? r._floor
+        : floorOf(md, r._o ? r._o[0] : x, y, r._o ? r._o[1] : z);
+      const fname = (f) => (f < 0 ? 'ground' : (((md.floors || [])[f] || {}).name || `floor ${f}`).toLowerCase());
+      const elsewhere = [...new Set(swPts.filter((q) => q.floor !== exFloor).map((q) => fname(q.floor)))];
+      const near = swPts.every((q) => Math.hypot(q.x - x, q.z - z) < 12);
+      if (elsewhere.length) lines.push(['', `The switch is on ${elsewhere.join(' / ')}`]);
+      else if (near) lines.push(['', 'The switch is right beside it']);
+      else lines.push(['', 'Click it to see where the switch is']);
+    }
     if (r._hand) lines.push(['', 'Added by hand — not in the API data']);
     const m = out.length;
     // anyFloor: an extract you cannot see is worse than one drawn in the wrong
@@ -2191,7 +2257,7 @@ function collectMapMarkers(mapName) {
     // see applyMapFixes) keeps the floor its ORIGINAL position implies — the
     // move corrects the artwork spot, not the storey.
     add(x, y, z, layers, 'exit', fac === 1 ? 'mk-scav' : 'mk-pmc', name || 'Extract', lines,
-      Object.assign({ anyFloor: true },
+      Object.assign({ anyFloor: true }, swPts.length ? { switchPts: swPts } : {},
         typeof r._floor === 'number' ? { floor: r._floor }
           : r._o ? { floor: floorOf(md, r._o[0], y, r._o[1]) } : {}));
     if (out.length > m) out[out.length - 1].label = name || '';   // drawn above the icon
@@ -2493,6 +2559,18 @@ function drawMapMarkers(md, svg, k) {
     s += `<path id="mkdef-${name}" d="${d}"/>`;
   }
   s += '</defs>';
+  // A selected extract that needs a switch draws a dashed line to it, so "needs
+  // a switch thrown first" stops being a riddle. Drawn FIRST, so every glyph
+  // sits on top of it, and clamped like the markers are.
+  const selEx = mapView.selectedMarker;
+  if (selEx && selEx.switchPts) {
+    const a = markerPoint(md, selEx, k);
+    for (const q of selEx.switchPts) {
+      const b = markerPoint(md, { x: q.x, z: q.z }, k);
+      s += `<line class="mk-swlink" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"`
+        + ` stroke-width="${2 * k}" stroke-dasharray="${7 * k} ${5 * k}"/>`;
+    }
+  }
   const gs = k * GLYPH_SCALE;
   shown.forEach((m, i) => {
     const p = markerPoint(md, m, k);

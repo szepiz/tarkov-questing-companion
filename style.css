@@ -1178,6 +1178,8 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-mine   { fill: #e0533f; }
 .mk-hazard { fill: #e8c14a; }   /* traps & other hazards — amber vs the red minefield */
 .mk-switch.hollow { stroke: #b8d84a; }   /* lime — levers & switches, nothing else uses it */
+/* the dashed line from a selected extract to the switch that opens it */
+.mk-swlink { stroke: #b8d84a; opacity: .9; pointer-events: none; }
 /* high value: the brightest thing on the map on purpose — a gold star that is
    deliberately lighter than the keys/keycards ambers around it */
 .mk-hv     { fill: #ffd75a; }
