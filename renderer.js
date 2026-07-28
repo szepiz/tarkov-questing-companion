@@ -1864,6 +1864,28 @@ function collectMapPins(mapName) {
       if (typeof f === 'number') r._floor = f;
     }
   }
+  // Things the GAME has removed that upstream still ships (dead extracts,
+  // replaced transits, stale switches/names): dropped outright here, at load,
+  // rather than skipped at every draw site — one filter cannot be forgotten,
+  // and every count/panel/floor tab then agrees for free. Keys are
+  // '<kind>|<same key the fixes use>'.
+  {
+    const gone = MAP_FIXES.hidden || {};
+    if (Object.keys(gone).length) {
+      for (const [name, md] of Object.entries(MAP_DATA)) {
+        if (md.labels) {
+          md.labels = md.labels.filter((l) => !gone[`label|${name}|${l[2]}|${Math.round(l._o ? l._o[0] : l[0])}|${Math.round(l._o ? l._o[1] : l[1])}`]);
+        }
+        const M = typeof MAP_MARKERS !== 'undefined' && MAP_MARKERS[name];
+        if (!M) continue;
+        const px = (r, i) => Math.round(r._o ? r._o[i] : r[i === 0 ? 0 : 2]);
+        if (M.ex) M.ex = M.ex.filter((r) => !gone[`ex|${name}|${r[5]}|${r[3]}`]);
+        if (M.tr) M.tr = M.tr.filter((r) => !gone[`tr|${name}|${r[4]}|${px(r, 0)}|${px(r, 1)}`]);
+        if (M.sw) M.sw = M.sw.filter((r) => !gone[`sw|${name}|${px(r, 0)}|${px(r, 1)}`]);
+      }
+    }
+  }
+
   // Hand-ADDED location names (the data is missing some): appended as normal
   // label rows carrying the floor they were placed on (`_floor`), which
   // labelOnFloor checks first — added names have no height band or extent
@@ -1898,7 +1920,10 @@ function applyObjectiveFixes() {
   if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
   const fx = MAP_FIXES.objectives || {};
   const ff = MAP_FIXES.objectiveFloors || {};
-  if (!Object.keys(fx).length && !Object.keys(ff).length) return;
+  const hid = MAP_FIXES.hidden || {};
+  // the guard must count HIDDEN too — hiding a pin with no position moves
+  // recorded would otherwise be a silent no-op
+  if (!Object.keys(fx).length && !Object.keys(ff).length && !Object.keys(hid).length) return;
   const apply = (mapName, oid, p) => {
     if (!mapName || !p) return;
     // the key always derives from the PRISTINE coords — after a move applied,
@@ -1909,11 +1934,19 @@ function applyObjectiveFixes() {
     // hand floor reassignment — the data's y files some pins on the wrong storey
     if (typeof ff[key] === 'number') p._floor = ff[key];
   };
+  const gone = hid;
+  const isGone = (mapName, oid, p) => !!(mapName && p
+    && gone[`api|${mapName}|${oid}|${Math.round(p._o ? p._o[0] : p.x)}|${Math.round(p._o ? p._o[1] : p.z)}`]);
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) for (const o of t.objectives || []) {
       for (const z of o.zones || []) if (z && z.position && z.map) apply(normMapName(z.map.name), o.id, z.position);
       for (const l of o.possibleLocations || []) {
         for (const p of l.positions || []) apply(normMapName(l.map && l.map.name), o.id, p);
+      }
+      // drop the positions the owner marked as no longer in the game
+      if (o.zones) o.zones = o.zones.filter((z) => !(z && z.position && z.map && isGone(normMapName(z.map.name), o.id, z.position)));
+      for (const l of o.possibleLocations || []) {
+        if (l.positions) l.positions = l.positions.filter((p) => !isGone(normMapName(l.map && l.map.name), o.id, p));
       }
     }
   }
