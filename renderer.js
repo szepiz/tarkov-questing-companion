@@ -1973,6 +1973,21 @@ function applyObjectiveFixes() {
 const hasMapMarkers = (name) => typeof MAP_MARKERS !== 'undefined' && !!MAP_MARKERS[name]
   && Object.values(MAP_MARKERS[name]).some((rows) => rows.length);
 
+// Upstream data is not the only source of markers: hand-marked hazards and
+// hand-placed interactables can exist on a map that ships NONE (Terminal —
+// artwork, no published features). Anything that decides "is there a marker
+// layer here at all" must ask THIS, or hand-placed work is silently invisible.
+// hasMapMarkers stays as-is where the question really is about upstream data
+// (the "markers tarkov.dev" credit).
+const handMarkersFor = (name) => {
+  const hz = (typeof STORY_HAZARDS !== 'undefined' ? STORY_HAZARDS : [])
+    .filter((h) => h.map === name && (h.pts || []).length).length;
+  const sw = (typeof HAND_INTERACTABLES !== 'undefined' ? HAND_INTERACTABLES : [])
+    .filter((h) => h.map === name && (h.pts || []).length).length;
+  return hz + sw;
+};
+const hasAnyMarkers = (name) => hasMapMarkers(name) || handMarkersFor(name) > 0;
+
 // One row per checkbox. This is the single source of truth: it drives the panel,
 // the glyph, the legend swatch, the settings key and the filter, so none of
 // those can drift apart. `cat` indexes mapmarkers.js's category codes.
@@ -2180,8 +2195,10 @@ const extractGear = (map, name) => EXTRACT_GEAR[`${map}|${name}`] || [];
 // of twice when both are.
 function collectMapMarkers(mapName) {
   const md = MAP_DATA[mapName];
-  if (!md || !hasMapMarkers(mapName)) return [];
-  const M = MAP_MARKERS[mapName];
+  if (!md || !hasAnyMarkers(mapName)) return [];
+  // may be a map with no upstream features at all — the hand-placed loops at
+  // the bottom are the whole point of still being here
+  const M = (typeof MAP_MARKERS !== 'undefined' && MAP_MARKERS[mapName]) || {};
   const out = [];
   const add = (x, y, z, layers, glyph, cls, title, lines, extra) => {
     if (typeof x !== 'number' || typeof z !== 'number') return;
@@ -2700,7 +2717,7 @@ function renderMapLayers() {
   if (!host) return;
   // Empty it as well as hiding it: a stale panel left in the DOM still answers
   // querySelectorAll, so the previous map's checkboxes would linger invisibly.
-  if (!hasMapMarkers(mapView.name)) { host.hidden = true; host.innerHTML = ''; return; }
+  if (!hasAnyMarkers(mapView.name)) { host.hidden = true; host.innerHTML = ''; return; }
   host.hidden = false;
 
   const counts = mapLayerCounts();
