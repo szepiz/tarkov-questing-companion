@@ -212,6 +212,19 @@ function adaptTask(t, names, questItemName) {
       task: { id: r.task, name: names.task(r.task) },
       status: r.status || [],
     })),
+    // Trader REPUTATION gates (Scav karma for Fence). Not a quest prerequisite,
+    // so nothing else in the data explains why a quest is unavailable: Fence's
+    // "Compensation for Damage" line needs reputation < -1 and "Establish
+    // Contact" needs >= 4. Without this the app showed all of them as ready to
+    // take. Only reputation rows are kept — loyalty-level rows would need the
+    // player's trader level, which no log carries.
+    traderRequirements: (t.traderRequirements || [])
+      .filter(r => r && r.requirementType === 'reputation')
+      .map(r => ({
+        trader: { name: names.trader(r.trader) },
+        compareMethod: r.compareMethod || '>=',
+        value: typeof r.value === 'number' ? r.value : 0,
+      })),
     objectives: (t.objectives || []).map(o => adaptObjective(o, names, questItemName)),
   };
 }

@@ -48,6 +48,8 @@ const DEFAULT_SETTINGS = {
   // app estimates a floor from the hardest quest already finished; Tarkov never
   // writes your own level to the logs.
   playerLevel: {},        // { regular?: number, pve?: number }
+  scavKarma: {},          // Fence reputation per mode — gates Fence's quest lines,
+                          // and no log carries it, so the user states it
   // Which map overlay layers are ticked, keyed by the layer ids in renderer.js.
   // Absent means off, so an install that predates the feature opens exactly as
   // it did before. Unknown ids are kept, not pruned, so downgrading and
@@ -293,6 +295,11 @@ let watcherStatus = {
   sessionFolders: 0,
   lastScan: 0,
   eventsFound: 0,
+  // quest events belonging to a PREVIOUS profile (i.e. before a wipe), which
+  // are skipped rather than imported. Surfaced so Settings can say why old
+  // progress the user remembers is not showing up.
+  oldProfileEvents: 0,
+  oldProfiles: 0,
 };
 
 function sendToRenderer(channel, payload) {
@@ -319,14 +326,18 @@ function sessionFolderTime(name) {
 // line to application.log each time. We read those lines (with timestamps) to
 // know which mode was active at any moment, then attribute each completion to
 // the mode active at its timestamp.
-function folderModeSegments(dir) {
-  let appFile = null;
+function appLogPath(dir) {
   let inner;
-  try { inner = fs.readdirSync(dir); } catch { return []; }
+  try { inner = fs.readdirSync(dir); } catch { return null; }
   for (const f of inner) {
     const lf = f.toLowerCase();
-    if (lf.includes('application') && lf.endsWith('.log')) { appFile = path.join(dir, f); break; }
+    if (lf.includes('application') && lf.endsWith('.log')) return path.join(dir, f);
   }
+  return null;
+}
+
+function folderModeSegments(dir) {
+  const appFile = appLogPath(dir);
   if (!appFile) return [];
   let stat;
   try { stat = fs.statSync(appFile); } catch { return []; }
@@ -342,8 +353,39 @@ function folderModeSegments(dir) {
     if (ts !== null) segs.push({ ts, mode: /pve/i.test(m[2]) ? 'pve' : 'regular' });
   }
   segs.sort((a, b) => a.ts - b.ts);
-  segCache.set(appFile, { size: stat.size, segments: segs });
+  // Same file, same pass: which PROFILE was selected when. A wipe gives you a
+  // brand-new profile id, so this is what tells last wipe's completions from
+  // this wipe's. Line shape: "…ProfileId:<24 hex> AccountId:<n>".
+  const profs = [];
+  const pre = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})[^\n]*ProfileId:([a-f0-9]{24})/g;
+  let pm;
+  while ((pm = pre.exec(text)) !== null) {
+    const pts = parseLogTs(pm[1]);
+    if (pts === null) continue;
+    if (profs.length && profs[profs.length - 1].id === pm[2]) continue;   // repeats each session
+    profs.push({ ts: pts, id: pm[2] });
+  }
+  profs.sort((a, b) => a.ts - b.ts);
+  segCache.set(appFile, { size: stat.size, segments: segs, profiles: profs });
   return segs;
+}
+
+// The profile timeline for a folder, out of the same cache entry.
+function folderProfileSegments(dir) {
+  folderModeSegments(dir);            // fills (or reuses) the cache entry
+  const appFile = appLogPath(dir);
+  const c = appFile && segCache.get(appFile);
+  return (c && c.profiles) || [];
+}
+
+// Which profile was selected at a moment — same rule modeAtTime uses: before
+// the first marker, assume the first one seen.
+function profileAtTime(profs, ts) {
+  if (!profs.length) return null;
+  if (ts === null) return profs[0].id;
+  let id = profs[0].id;
+  for (const p of profs) { if (p.ts <= ts) id = p.id; else break; }
+  return id;
 }
 
 function modeAtTime(segs, ts) {
@@ -425,6 +467,30 @@ function scanLogs() {
   for (const f of folders) if (f.startTs !== null && f.startTs > newestTs) newestTs = f.startTs;
   folders.sort((a, b) => (a.startTs || 0) - (b.startTs || 0)); // chronological
 
+  // WHICH PROFILE IS CURRENT. Every wipe hands you a brand-new profile id, and
+  // the logs of the wipe before it are still sitting on disk — so importing
+  // every completion found means importing LAST wipe's quests. (Reported live:
+  // one stale completion of Wet Job Part 1 re-implied all seven Spa Tour parts
+  // and made Cargo X look unlocked.) The newest profile seen per mode is the
+  // one being played; anything older is another life.
+  const profSeen = [];   // { ts, mode, id } across every folder
+  for (const folder of folders) {
+    const ms = folderModeSegments(folder.dir);
+    for (const pr of folderProfileSegments(folder.dir)) {
+      profSeen.push({ ts: pr.ts, mode: ms.length ? modeAtTime(ms, pr.ts) : 'regular', id: pr.id });
+    }
+  }
+  profSeen.sort((a, b) => a.ts - b.ts);
+  const curProfile = {};      // mode -> the profile being played now
+  const profileFrom = {};     // mode -> when that profile first appears
+  const seenIds = { regular: new Set(), pve: new Set() };
+  for (const e of profSeen) { curProfile[e.mode] = e.id; seenIds[e.mode].add(e.id); }
+  for (const e of profSeen) {
+    if (e.id === curProfile[e.mode] && profileFrom[e.mode] === undefined) profileFrom[e.mode] = e.ts;
+  }
+  watcherStatus.oldProfiles = MODES.reduce((n, m) => n + Math.max(0, seenIds[m].size - 1), 0);
+  let oldProfileEvents = 0;
+
   const newByMode = { regular: [], pve: [] };
   const known = knownQuestIds();
   let anyFail = false;
@@ -467,6 +533,16 @@ function scanLogs() {
         // completions from BEFORE the reset, not the rest of the session)
         const evTs = ev.ts !== null ? ev.ts : folder.startTs;
         if (bucket.resetAt && evTs !== null && evTs < bucket.resetAt) continue;
+        // …and the same for a previous PROFILE. Two ways to be sure it is old:
+        // the folder names a different profile id, or it names none at all and
+        // predates the first session of the current one (6 of 204 real folders
+        // carry no ProfileId line).
+        if (curProfile[mode]) {
+          const pid = profileAtTime(folderProfileSegments(folder.dir), ev.ts);
+          const stale = pid ? pid !== curProfile[mode]
+            : (profileFrom[mode] !== undefined && evTs !== null && evTs < profileFrom[mode]);
+          if (stale) { oldProfileEvents++; continue; }
+        }
         // Events arrive in order (folders sorted by start time, lines in file
         // order), so the LAST thing that happened to a quest wins. That matters:
         // several quests are restartable, and a failure followed by a re-accept
@@ -485,6 +561,17 @@ function scanLogs() {
         } else if (ev.kind === 'accept') {
           // taking the quest again undoes an earlier failure
           if (bucket.failed[ev.questId]) { delete bucket.failed[ev.questId]; anyFail = true; }
+          // ACCEPTING a quest proves its prerequisites were finished — the
+          // trader will not hand it over otherwise. Same inference as
+          // applyImpliedCompletions, just triggered by the other event: it is
+          // the only evidence for quests whose completion never reaches
+          // notifications.log (Ref's Arena-side ones write no success message).
+          // Applied here, at scan time, so it survives incremental scans.
+          for (const pid of (questIndex()[mode].prereqs.get(ev.questId) || [])) {
+            if (bucket.completed[pid] || !questIndex()[mode].ids.has(pid)) continue;
+            bucket.completed[pid] = { via: 'implied', at: Date.now(), by: ev.questId };
+            if (!known[mode].size || known[mode].has(pid)) newByMode[mode].push(pid);
+          }
         } else if (!bucket.failed[ev.questId] && !bucket.completed[ev.questId]) {
           // record WHEN it failed, not when we happened to scan
           bucket.failed[ev.questId] = { at: evTs !== null ? evTs : Date.now() };
@@ -493,6 +580,8 @@ function scanLogs() {
       }
     }
   }
+
+  watcherStatus.oldProfileEvents = oldProfileEvents;
 
   // story chapters never reach notifications.log — they get their own pass
   // over the output logs (size-cached, so steady-state cost is one file)
@@ -1082,6 +1171,35 @@ function createWindow() {
     },
   });
   win.loadFile(path.join(APP_DIR, 'index.html'));
+
+  // dev aid: TQT_WIPE_TEST=<logs dir> points the scanner at a synthetic log
+  // tree containing a WIPE and dumps what it decided, so _dev/test_wipe.js can
+  // assert that last wipe's completions stay out. Uses the real scan path.
+  if (process.env.TQT_WIPE_TEST) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(() => {
+        try {
+          settings.logsPath = process.env.TQT_WIPE_TEST;
+          settings.trackingMode = 'auto';
+          // start from nothing: initStorage migrates the developer's real
+          // progress into ANY fresh --user-data-dir, which would otherwise
+          // drown the synthetic tree's handful of events
+          for (const m of MODES) progress[m] = emptyBucket();
+          scanLogs();
+          for (const m of MODES) applyImpliedCompletions(m);
+          console.log('TQT_WIPE', JSON.stringify({
+            completed: Object.keys(progress.pve.completed),
+            oldProfiles: watcherStatus.oldProfiles,
+            oldProfileEvents: watcherStatus.oldProfileEvents,
+          }));
+        } catch (e) {
+          console.log('TQT_WIPE_ERR', String((e && e.message) || e));
+        }
+        app.quit();
+      }, 1500);
+    });
+  }
+
   // test hook: drive a real check -> download -> apply cycle (env-gated)
   if (process.env.TQC_TEST_APPLY) {
     win.webContents.once('did-finish-load', async () => {

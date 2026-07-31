@@ -1,5 +1,5 @@
 {
- "fetchedAt": 1784743923115,
+ "fetchedAt": 1785489853031,
  "regular": [
   {
    "id": "657315ddab5a49b71f098853",
@@ -16,6 +16,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65732ac3c67dcd96adffa3c7",
@@ -240,6 +241,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "657333fee3fbaa77d3b5cd7c",
@@ -349,6 +351,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65733e571b7e7ed95fcd2f0c",
@@ -384,6 +387,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6575a64d3fc09bdfb38b713d",
@@ -602,6 +606,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5967379186f77463860dadd6",
@@ -655,6 +660,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968edc086f77420d2328014",
@@ -715,6 +721,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6575aa67197bd678a0c3f552",
@@ -911,6 +918,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968ec9986f7741ddd6c1012",
@@ -1005,6 +1013,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accd5e386f77463027e9397",
@@ -1043,6 +1052,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc850d186f7747213700892",
@@ -1080,6 +1090,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bd983d886f7747ba73fc246",
@@ -1126,6 +1137,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc47e3e86f7741e6b2f3332",
@@ -1162,6 +1174,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "657b0567ec71635f16471dd2",
@@ -1200,6 +1213,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc84f7a86f774294c2f6862",
@@ -1240,6 +1254,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc483ba86f77415034ba8d0",
@@ -1280,6 +1295,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc485b586f774726473a858",
@@ -1316,6 +1332,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc48aed86f77452c947ce67",
@@ -1355,6 +1372,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac18f4972364554162a25c",
@@ -1450,6 +1468,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d24ba7886f77439c92d6baa",
@@ -1526,6 +1545,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25af3c86f77443ff46b9e7",
@@ -1568,6 +1588,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25beca86f77409dd5cdbb3",
@@ -1718,6 +1739,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25c5a186f77443fe457661",
@@ -1800,6 +1822,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25c8c986f77443e47ad47a",
@@ -1838,6 +1861,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25d09286f77444001e284c",
@@ -1878,6 +1902,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25d4e786f77442734d335d",
@@ -1914,6 +1939,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25fd8386f77443fe457cae",
@@ -1981,6 +2007,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2605ef86f77469ef0f7622",
@@ -2018,6 +2045,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d66741c86f7744a2e70f039",
@@ -2090,6 +2118,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2701b586f77469f1599fe2",
@@ -2126,6 +2155,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d307fc886f77447f15f5b23",
@@ -2163,6 +2193,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d272bd386f77446085fa4f9",
@@ -2205,6 +2236,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2733c586f7741dea4f3072",
@@ -2268,6 +2300,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5eaaaa7c93afa0558f3b5a1f",
@@ -2310,6 +2343,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb1ffe34e78d618792b41",
@@ -2434,6 +2468,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66b38c7bf85b8bf7250f9cb7",
@@ -2521,6 +2556,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66b38e144f2ab7cc530c3fe8",
@@ -2610,6 +2646,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1cf4a757ddd00404f0a6",
@@ -2721,6 +2758,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1f040a1128e59422a876",
@@ -2824,6 +2862,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d26143c86f77469ef0f894c",
@@ -2920,6 +2959,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5cb31b6188a450159d330a18",
@@ -2962,6 +3002,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5cb6f32986f7746ef55e17a0",
@@ -3021,6 +3062,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "597867e986f7741b265c6bd3",
@@ -3081,6 +3123,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd9fad9c1ce6b1a3b486d03",
@@ -3169,6 +3212,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968929e86f7740d121082d3",
@@ -3243,7 +3287,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Secure Folder 0022"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -3272,6 +3318,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accd9b686f774112d7173d1",
@@ -3312,6 +3359,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a98cfbc31b00242d28a95b",
@@ -3452,6 +3500,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59c128b986f77415037680df",
@@ -3588,6 +3637,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c3507a06634b5110e3c1a",
@@ -3630,6 +3680,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fb73b86f77458e0324376",
@@ -3710,6 +3761,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968943f86f7740d137ebfc2",
@@ -3856,6 +3908,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968eb9b86f7741ddb481543",
@@ -3896,6 +3949,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accde3686f7740cea1b7ec2",
@@ -3936,6 +3990,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596b44b686f77457cb50ecca",
@@ -4081,6 +4136,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ec1398886f7561e047757a5",
@@ -4139,6 +4195,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c9b5e3f86f7744aab7329b5",
@@ -4175,6 +4232,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5979ee2986f7743ec214c7a4",
@@ -4233,6 +4291,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5969f98286f774576d4c9542",
@@ -4293,6 +4352,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5979ef4586f77431307dc513",
@@ -4360,7 +4420,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Golden Zibbo lighter"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -4379,6 +4441,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5be0198686f774595412d9c4",
@@ -4481,6 +4544,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968ed3186f77420d2328013",
@@ -4579,6 +4643,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a27d34586f7744e1115b327",
@@ -4630,6 +4695,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987404e5163c24b3029356",
@@ -4668,6 +4734,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1b760686f77412780211a3",
@@ -4708,6 +4775,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6606b709f7ce34bb26221cab",
@@ -4807,6 +4875,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ee8eea538ca5b3b4f3c4647",
@@ -4897,6 +4966,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63929101744e452011470818",
@@ -4939,6 +5009,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5969fa4886f7741ddb481544",
@@ -5086,6 +5157,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5979fc2686f77426d702a0f2",
@@ -5241,6 +5313,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596895f986f7740d14064722",
@@ -5341,6 +5414,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba11786f7742c9d4f5d29",
@@ -5483,6 +5557,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae34b8b86f7741e5b1e5d48",
@@ -5521,6 +5596,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968975586f7740e7266d974",
@@ -5561,6 +5637,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a1f0486f77456630ea4d2",
@@ -5619,6 +5696,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596b46d886f77457ca186189",
@@ -5712,6 +5790,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b0e766b86f7746bfa618964",
@@ -5754,6 +5833,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "597a0be986f774273b74f673",
@@ -5885,6 +5965,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66698a9eddc21e9441645819",
@@ -5994,6 +6075,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a37e8ae86f77415076b401d",
@@ -6133,6 +6215,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb4a56e66d3d79183a5c9",
@@ -6222,6 +6305,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1c87caddcfa893af10e9",
@@ -6397,6 +6481,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6606d133fcb99b9004aa2d1d",
@@ -6435,6 +6520,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "660a9dc64c0927ead4fcfeef",
@@ -6505,6 +6591,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "660a9c99c650fa4d531f4c96",
@@ -6541,6 +6628,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6606bd2aa49db36b69b6dbf9",
@@ -6716,6 +6804,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6633a85e347a2a2b4051a26b",
@@ -6778,6 +6867,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "660d5effb318c171fb1ca234",
@@ -6820,6 +6910,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6658eb28849643547f210708",
@@ -6925,6 +7016,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "663b9bb7fe7953705cb09114",
@@ -6961,6 +7053,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6606d08b4e2e27ca2d80085e",
@@ -7096,6 +7189,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "662ba87106e44407b79e9ab2",
@@ -7131,6 +7225,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "664fd86520fa1bd9f8fa5489",
@@ -7208,6 +7303,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "662ba5a89d8041c264dd9673",
@@ -7243,6 +7339,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "662ba78e19c86d3199ae0a93",
@@ -7278,6 +7375,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "662ba61d3ed61b6b78187b71",
@@ -7313,6 +7411,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "69789727f9ef98d604a0a4eb",
@@ -7366,6 +7465,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "69788c6d403c43a13a7ba7c2",
@@ -7401,6 +7501,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "69788fc3dc3074ce1c851e20",
@@ -7436,6 +7537,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6978a28fe2bee676ada49c79",
@@ -7471,6 +7573,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "697895e700201d158bb28f22",
@@ -7517,6 +7620,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "664ef2e5c11296c444642040",
@@ -7655,6 +7759,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "597a15b386f774799e5cd152",
@@ -7763,6 +7868,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba34286f7744eb240406a",
@@ -7929,6 +8035,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fbc9586f77459d52a16c4",
@@ -8028,6 +8135,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fc1f286f7744ccc15d643",
@@ -8127,6 +8235,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fbec386f77413bd5fc20a",
@@ -8224,6 +8333,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59c93bdb86f7742a19140434",
@@ -8378,6 +8488,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a10d886f7741ddf11dbf0",
@@ -8420,6 +8531,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59ca1b1b86f7741b067dba42",
@@ -8480,6 +8592,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28017786f77452f6318b1b",
@@ -8694,6 +8807,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1d6d59b0575973008fc9",
@@ -8750,6 +8864,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac7a4ba86f77409f3423628",
@@ -8906,6 +9021,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5e0fa86f77431c305d243",
@@ -8996,6 +9112,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639135d89444fb141f4e6eeb",
@@ -9089,6 +9206,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c9a17c686f7747dbe2da3c1",
@@ -9131,6 +9249,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba51d86f7743af1475c3a",
@@ -9197,6 +9316,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a0317da86f77451cb427295",
@@ -9297,6 +9417,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a03289686f7745dbc6c5063",
@@ -9392,6 +9513,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba62786f7742c9d4f5ee9",
@@ -9491,6 +9613,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a044a6c86f7747370402d91",
@@ -9562,6 +9685,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28127b86f7743808504ecc",
@@ -9604,6 +9728,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28151986f77466837984c9",
@@ -9760,6 +9885,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28183186f774398675d127",
@@ -9842,6 +9968,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a2819c886f77460ba564f38",
@@ -9939,6 +10066,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba7db86f7744f0e568c9c",
@@ -10003,6 +10131,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac502a786f7740bde1b000c",
@@ -10125,6 +10254,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5cb6f81d86f7740e9d452683",
@@ -10279,6 +10409,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5ee9986f7746e7a509a26",
@@ -10403,6 +10534,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac61a8a86f7743a8d663c77",
@@ -10596,6 +10728,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61958d54aa0f643f9a0aed73",
@@ -10651,6 +10784,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac232087413d64ae0ac23c",
@@ -10746,6 +10880,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f731fa39e45b527a7c4300",
@@ -10842,6 +10977,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573387d0b26ed4fde798de4",
@@ -10952,6 +11088,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669faf99963982aef42a5ba4",
@@ -11424,6 +11561,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb12eb01ceef19a5b4ebc",
@@ -11466,6 +11604,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb647a5be751be095da27",
@@ -11614,6 +11753,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb5c58c03e61e1a33ddf0",
@@ -11774,6 +11914,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb6c859bdae826f7325d4",
@@ -11860,6 +12001,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66ab97a5c74ce045d6c32578",
@@ -11984,7 +12126,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Case with precision tools"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -12013,6 +12157,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66aba85403e0ee310104287a",
@@ -12160,6 +12305,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c15916580a378dc0f012f",
@@ -12257,6 +12403,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60c0d187938d68438757cda2",
@@ -12344,6 +12491,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5dbadfd186f77449467d1482",
@@ -12390,6 +12538,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0e7581ad4ff329a13ebc8",
@@ -12550,6 +12699,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a0e7086f7741ddf17dbef",
@@ -12635,6 +12785,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a10d886f7741ddf17dbf0",
@@ -12687,6 +12838,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2f464e498f71c8886f7656",
@@ -12759,6 +12911,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae3550b86f7741cf44fc799",
@@ -12799,6 +12952,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6087d553d79a2b4e943482bf",
@@ -13142,6 +13296,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c9de99286f7741ced54c902",
@@ -13184,6 +13339,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac6248586f77416781dd3a3",
@@ -13312,6 +13468,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608a94101a66564e74191fc3",
@@ -13378,6 +13535,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba97386f77459df27d10e",
@@ -13477,6 +13635,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3baa2586f7745b791b72fa",
@@ -13543,6 +13702,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28221e86f7741d5b719624",
@@ -13616,6 +13776,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a2e958d86f77416be092111",
@@ -13693,6 +13854,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28235e86f7741da250b438",
@@ -13728,6 +13890,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5081086f7740bde1b002f",
@@ -13818,6 +13981,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0bdf2c86f7746f016734a8",
@@ -13960,6 +14124,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d6fbf0f86f77449d97f738e",
@@ -14004,6 +14169,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60929ad46342771d851b827a",
@@ -14077,6 +14243,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6092942fb0f07c6ea1246e3a",
@@ -14157,6 +14324,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61952308aa0f643f9a0ae20f",
@@ -14281,6 +14449,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae44c6886f7744f1a7eb2b8",
@@ -14319,6 +14488,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0a91f4681b4e43d13892b",
@@ -14464,6 +14634,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "665eed28bdbf7b1f92394ecb",
@@ -14506,6 +14677,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968981986f7740d1648df42",
@@ -14625,6 +14797,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ee8ec5ed72d953f5d2aabd1",
@@ -14787,6 +14960,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6091698a30bb620b3239874c",
@@ -14917,6 +15091,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391359b9444fb141f4e6ee7",
@@ -15006,6 +15181,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608ab22755f4ac386d7e7fdc",
@@ -15059,6 +15235,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac7a7bf86f774132252a524",
@@ -15168,6 +15345,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf4e152e86c73d372a95d",
@@ -15221,6 +15399,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d99804d3dc28a52a2106",
@@ -15288,6 +15467,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ab184ff627f540861d1185",
@@ -15328,6 +15508,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accdfdb86f77412265cbfc9",
@@ -15366,6 +15547,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5eb3286f7746e7a509a09",
@@ -15403,6 +15585,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64ee9df4496db64f9b7a4433",
@@ -15523,6 +15706,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6578ec473dbd035d04531a92",
@@ -15684,6 +15868,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "665ef4d93bd11acd294ac48c",
@@ -15742,6 +15927,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6661a14545909ae2e92ca2d5",
@@ -15920,6 +16106,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6660785fc37356435d193ae4",
@@ -16025,6 +16212,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6661a28be2cdba6a469447c7",
@@ -16099,6 +16287,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669faeb6a6e02d00c47ad812",
@@ -16219,7 +16408,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Lab journal"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -16248,6 +16439,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669faef62c68a5925a36fccc",
@@ -16291,6 +16483,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0e692281e56a89b717b7d",
@@ -16413,6 +16606,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0bc81fcbc1c559d09b58f",
@@ -16596,6 +16790,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0bf7103442ae640dba835",
@@ -16686,6 +16881,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67dc3861d5c0070b960c1bba",
@@ -16753,6 +16949,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683dbecbfc878c4569e892c2",
@@ -16811,6 +17008,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67dbe0f532ff08bfa13237a8",
@@ -16879,6 +17077,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67dbe16ece16a02860ed9d33",
@@ -16947,6 +17146,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0dd7a2519959b187db47f",
@@ -17091,6 +17291,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0de6954c67082e9148328",
@@ -17203,6 +17404,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0df619fb6c42b9a08e8e9",
@@ -17259,6 +17461,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67d03be712fb5f8fd2096334",
@@ -17346,6 +17549,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0e4df8cddbe2df31dd1d9",
@@ -17473,6 +17677,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d64710b7a13eb015961f",
@@ -17615,6 +17820,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf6c70cf4a041de5b3972",
@@ -17734,6 +17940,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63927f14744e452011470816",
@@ -17843,6 +18050,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59674d5186f00443b872d5f7",
@@ -17883,6 +18091,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae3570b86f7746efa6b4494",
@@ -17923,6 +18132,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae44ecd86f77414a13c970e",
@@ -17965,6 +18175,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae4508386f7741250488337",
@@ -18127,6 +18338,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608bffeee0cc9c2d4d2ccb29",
@@ -18181,6 +18393,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf2a6f8e6c97ec70878b7",
@@ -18254,6 +18467,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "638fd070202cd55bee01ca11",
@@ -18327,6 +18541,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7db4a3e491955e65fb88b",
@@ -18391,6 +18606,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "676529e759261ce07bc47b62",
@@ -18453,6 +18669,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd89799c54dc00f463272d3",
@@ -18545,6 +18762,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9b5bd86f774307c29df37",
@@ -18624,6 +18842,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608bd0a053b9dd01a116f474",
@@ -18810,6 +19029,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60a4dc7e4e734e57d07fb335",
@@ -18892,6 +19112,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65802b627b44fa5e1463889a",
@@ -18966,6 +19187,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66aa5be8035c6a410dc570b2",
@@ -19085,6 +19307,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c0444db2b69f48942f37c",
@@ -19302,6 +19525,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c04b3fc6b273a36ed294a",
@@ -19396,6 +19620,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c04f4db8807b75d0f38eb",
@@ -19484,6 +19709,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c14f54662a2fae349dbb9",
@@ -19669,6 +19895,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7ba17220ee966bf425ecb",
@@ -19762,6 +19989,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f3176921045e77405d63ba",
@@ -19893,6 +20121,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae452c086f774336a397578",
@@ -20027,6 +20256,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9b32486f7745bbc72275a",
@@ -20199,6 +20429,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9e17c86f77440d37ce03c",
@@ -20389,6 +20620,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1b765d86f77413193fa4f2",
@@ -20427,6 +20659,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1fa9c986f7740de474cb3d",
@@ -20467,6 +20700,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a2806e086f774291b084041",
@@ -20619,6 +20853,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59624d5386f77446b872d5f7",
@@ -20693,6 +20928,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac1e0a87413d64ae0ac233",
@@ -20772,6 +21008,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bd94c5a52d2390a2630c7",
@@ -20825,6 +21062,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac1b741b5c95746621ddb4",
@@ -20939,6 +21177,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60916aeac49cf53e4772cc3c",
@@ -21100,6 +21339,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6398776f93ae507d5858c3a8",
@@ -21140,6 +21380,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59674d5186f77446b852d5f7",
@@ -21180,6 +21421,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66ab9c5c60199cdb0902f8cc",
@@ -21346,6 +21588,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d357b6c86f774588d4d7e25",
@@ -21460,6 +21703,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac22351b5c95746621ddc4",
@@ -21557,6 +21801,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d8a05d086f77410b4225d10",
@@ -21623,6 +21868,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6193dabd5f6468204470571f",
@@ -21676,6 +21922,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a6873bc86f7741f8d4589a3",
@@ -21822,6 +22069,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d6949e786f774238a38d9e0",
@@ -21882,6 +22130,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d53904d3dc28a52a2100",
@@ -21972,6 +22221,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d461f32fa1316250c3d7",
@@ -22062,6 +22312,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d8665199ab1f7d4a7747",
@@ -22170,6 +22421,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac22b8f627f540861d1b2d",
@@ -22236,6 +22488,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7da6f5199ab1f7d4a774a",
@@ -22308,6 +22561,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59674d5986f77446b872d5f7",
@@ -22394,6 +22648,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae445f386f7744e87761331",
@@ -22432,6 +22687,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59ca293c86f77445a80ed147",
@@ -22594,6 +22850,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59ca2fba86f77445e4732b25",
@@ -22791,6 +23048,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a68760f86f7743cc55d8709",
@@ -22884,6 +23142,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a68776786f774759f1f55f6",
@@ -22993,6 +23252,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a6878e886f7745e65687985",
@@ -23030,6 +23290,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a6879be86f774284429b1bb",
@@ -23133,6 +23394,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d27369586f774457411b264",
@@ -23174,6 +23436,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d6fb8a886f77449db3db8b6",
@@ -23218,6 +23481,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608a8356fa70fc097863b8f8",
@@ -23281,6 +23545,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7bc2c5e6d3e61ca2ca097",
@@ -23334,6 +23599,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7bd0c6393886f74119f41",
@@ -23387,6 +23653,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7bdd52d369a1c0172722f",
@@ -23440,6 +23707,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0f391676953651bd8b796",
@@ -23532,6 +23800,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68ee1cc7e8b13097f525e6f2",
@@ -23576,6 +23845,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edab7d3cc183c769d778bc5",
@@ -23690,6 +23960,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5eda1d6ec586607c09662d54",
@@ -23799,6 +24070,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edabb0b0c502106f869bc03",
@@ -23923,6 +24195,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5f071a9727cec53d5d24fe3b",
@@ -24051,6 +24324,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edac0e02ddc9e4c802cd969",
@@ -24303,6 +24577,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf1e1d93d977d2452051f",
@@ -24343,6 +24618,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b478f6886f774464201225a",
@@ -24518,6 +24794,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f5aac4b63b74469b6c14c7",
@@ -24628,6 +24905,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a5cf262964a7488f5243d1",
@@ -24676,6 +24954,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63929224744e45201147081a",
@@ -24716,6 +24995,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987860c8f8cc12a47b02a6",
@@ -24754,6 +25034,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47905886f7746807461fe2",
@@ -24844,6 +25125,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5f046f9825b2ad51bd275800",
@@ -24977,6 +25259,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f6a9e6dd44b6417729b535",
@@ -25071,6 +25354,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f6aafd67e11a7c6206e0d1",
@@ -25170,6 +25454,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573397ef3f8344c4575cd88",
@@ -25307,6 +25592,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5f0488c590eea473df674002",
@@ -25397,6 +25683,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edab5a6cecc0069284c0ec2",
@@ -25439,6 +25726,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639285879444fb141f4e6f25",
@@ -25523,6 +25811,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b477b3b86f77401da02e6c4",
@@ -25563,6 +25852,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6578eb36e5020875d64645d0",
@@ -25645,6 +25935,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5eff5674befb6436ce3bbaf7",
@@ -25754,6 +26045,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b478d8986f774563c7a4809",
@@ -25861,6 +26153,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47932586f7747cc908b5dd",
@@ -25980,6 +26273,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47968e86f7745877352c28",
@@ -26115,6 +26409,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c50481c86f77410650e0521",
@@ -26232,7 +26527,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Flash drive with fake info"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -26263,6 +26560,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65802779963422318339533a",
@@ -26339,6 +26637,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6613f36ca4dc044e13e02295",
@@ -26414,6 +26713,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66151401efb0539ae10875af",
@@ -26490,6 +26790,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c37d2da4b531ba8daaadd",
@@ -26566,6 +26867,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": ">=",
+     "value": 1
+    }
+   ],
    "objectives": [
     {
      "id": "66d9cbb67b491f9d5304f6eb",
@@ -27557,6 +27867,7 @@
     "name": "The Lab"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6761f93bc757eb8c228fa754",
@@ -27746,6 +28057,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66d078aadf338e6c13578080",
@@ -28012,6 +28324,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d4bfe4b86f7744a9d4fe032",
@@ -28102,6 +28415,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1242fa86f7742aa04fed52",
@@ -28166,6 +28480,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf5860cf4a041de5b396b",
@@ -28300,6 +28615,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae4559386f7742dc043c95e",
@@ -28390,6 +28706,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d27446f86f77475a86565a3",
@@ -28480,6 +28797,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f5deac39e45b527a7c4235",
@@ -28526,6 +28844,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5acce11786f77411ed6fa6eb",
@@ -28564,6 +28883,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9b77f86f77432c81e3074",
@@ -28654,6 +28974,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9bc6e86f7746e0026222c",
@@ -28712,6 +29033,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae45d7786f774178f237745",
@@ -28804,6 +29126,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65733403eefc2c312a759ddc",
@@ -28896,6 +29219,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573382e557ff128bf3da537",
@@ -28971,6 +29295,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a9b229813bba58a50c9ee6",
@@ -29018,6 +29343,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639135e8c115f907b14700ab",
@@ -29119,6 +29445,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9c29386f77427153c7fb0",
@@ -29163,6 +29490,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47884886f7744d1c35327d",
@@ -29230,6 +29558,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a9ae63da7999196148ba5c",
@@ -29277,6 +29606,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d8f404d3dc28a52a2104",
@@ -29431,6 +29761,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac0c99f83fd608393890bf",
@@ -29497,6 +29828,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9c0a686f774703201f143",
@@ -29613,6 +29945,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9c38e86f7743515398707",
@@ -29650,6 +29983,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac210b1287ef0b827d0cb8",
@@ -29734,6 +30068,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666333e93962787efd64004a",
@@ -29777,6 +30112,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0be2b486f7747bcb347d58",
@@ -29824,6 +30160,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d6d61f06d111271f5aeb",
@@ -29894,6 +30231,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639879addecada40426d3449",
@@ -29932,6 +30270,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64eea404a2a5bb727b61c31e",
@@ -30052,6 +30391,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66632cf3fbd7dedfa6153a9f",
@@ -30090,6 +30430,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66632deea5607d352f3aa844",
@@ -30144,6 +30485,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6672e47f25ab92726912c3e5",
@@ -30217,6 +30559,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6672edebec0c3e2ad7d4e489",
@@ -30276,6 +30619,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6663389aa257916ad3c89529",
@@ -30314,6 +30658,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "667a958eb30fe2e2938a6387",
@@ -30425,6 +30770,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66d07fa69d373d977f437fe0",
@@ -30546,6 +30892,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "667571ad6889d3af44af7be2",
@@ -30677,6 +31024,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66675a4567c0cf0989946e12",
@@ -30895,6 +31243,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "667442da875be5fb415df535",
@@ -31016,6 +31365,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6679884cef969161e3e9d64d",
@@ -31126,6 +31476,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47899386f77470315db7f3",
@@ -31314,6 +31665,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d357e8786f7745b5e66a51a",
@@ -31411,6 +31763,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573057d66de94c756a60472",
@@ -31797,6 +32150,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6574e0dedc0d635f633a5807",
@@ -31843,6 +32197,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2f375186f7745916404955",
@@ -31901,6 +32256,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66ab9da7eb102b9bcd08591d",
@@ -31971,6 +32327,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b478c4c86f7744d1a393fac",
@@ -32090,6 +32447,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae4479686f7744f6c79b7b3",
@@ -32128,6 +32486,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c112dc486f77465686bff38",
@@ -32173,6 +32532,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68db9ea0e6c69908254eceee",
@@ -32201,6 +32561,7 @@
     "name": "The Lab"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6762015739c53fca8ac51336",
@@ -32392,6 +32753,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61a61c085d06a344766f3a29",
@@ -32499,6 +32861,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ca719ef86f7740a78020783",
@@ -32591,6 +32954,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bb60cbc88a45011a8235cc5",
@@ -32631,6 +32995,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0d0dfd86f7747f482a89a5",
@@ -32668,6 +33033,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61a00eff2d708d41a34f19b4",
@@ -32766,6 +33132,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6193dc1e6623e330c82e0be9",
@@ -32849,6 +33216,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d273a4d86f774457411b266",
@@ -32895,6 +33263,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0bc95086f7746e784f39ec",
@@ -32941,6 +33310,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ec13d45a1032866196c939b",
@@ -33033,6 +33403,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c10f94386f774227172c574",
@@ -33140,6 +33511,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5acce08b86f7745f8521fa64",
@@ -33178,6 +33550,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1fd66286f7743c7b261f7b",
@@ -33303,6 +33676,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac19f9de609574d97adf78",
@@ -33410,6 +33784,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66aa61663aa37705c5024278",
@@ -33485,6 +33860,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d667a8e86f774131e206b46",
@@ -33572,6 +33948,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ca7254e86f7740d424a2043",
@@ -33728,6 +34105,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7cd3aee7b4d0d5507baee",
@@ -33792,6 +34170,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47796686f774374f4a8bb1",
@@ -33830,6 +34209,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0e6876d09282029e2fffe0",
@@ -34004,6 +34384,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0f5a7f9eae6761253114c",
@@ -34047,6 +34428,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67b45467814ab0ffa000c7ea",
@@ -34085,6 +34467,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd8aa3206fb3a6b8154a2c3",
@@ -34128,6 +34511,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "600303250b79c6604058ce30",
@@ -34170,6 +34554,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65734c186dc1e402c80dc1a2",
@@ -34272,6 +34657,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b477f1486f7743009493232",
@@ -34312,6 +34698,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d767f32fa1316250c3da",
@@ -34384,6 +34771,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7dbefee7b4d0d5507baf8",
@@ -34479,6 +34867,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6615127fd998c5f2aaa4a8a0",
@@ -34560,6 +34949,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6615141bfda04449120269a8",
@@ -34649,6 +35039,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "676418a60b9bcbe280972288",
@@ -34675,6 +35066,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6848100b00afffa81f09e369",
@@ -34891,6 +35283,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67e993b1ac26bf29380a320e",
@@ -35014,6 +35407,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639135534b15ca31f76bc318",
@@ -35096,6 +35490,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ec14003e16f6c41ee73525f",
@@ -35186,6 +35581,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c12470d86f77465ae27a8c0",
@@ -35275,6 +35671,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66696cd3997231debad40d19",
@@ -35311,6 +35708,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd892bc37b6e511a4734969",
@@ -35401,6 +35799,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0bdbb586f774166e38eed5",
@@ -35438,6 +35837,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1ff1a757ddd00404f0ae",
@@ -35478,6 +35878,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666973ee1d80fbbbfeaf46c9",
@@ -35832,6 +36233,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666976536518781b9feb2f28",
@@ -36018,6 +36420,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6669abb8dac5788ebd0ff74a",
@@ -36082,6 +36485,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6669acb8c4d34bd547a4d2ac",
@@ -36126,6 +36530,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "671a5941cb557f8656561a12",
@@ -36203,6 +36608,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "671ac68e30609eb2c7e9a7f7",
@@ -36239,6 +36645,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67ebc5f501052193cdb4c9ac",
@@ -36299,6 +36706,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "626c317e05f287031503c7fd",
@@ -36408,6 +36816,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1b778286f774294438b536",
@@ -36448,6 +36857,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987a4e3693c63d86328f27",
@@ -36495,6 +36905,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6942b48e6998a45a7b90cd5b",
@@ -36541,6 +36952,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47824386f7744d190d8dd1",
@@ -36579,6 +36991,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e8658571035f300c301ac6",
@@ -36765,6 +37178,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987b49cd51826f7a069b85",
@@ -36815,6 +37229,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b4783ba86f7744d1c353185",
@@ -36853,6 +37268,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f83d0eed30ed471f49bcde",
@@ -36891,6 +37307,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f83e9d52fc01298e2c857e",
@@ -36929,6 +37346,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f841199a4f905106515448",
@@ -36957,6 +37375,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68481881f43abfdda205836d",
@@ -37199,6 +37618,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a9b3d7813bba58a50c9ee9",
@@ -37363,6 +37783,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9e55886f77445315f662a",
@@ -37421,6 +37842,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60ec18b73b5f7d790a7ad034",
@@ -37532,6 +37954,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e38261886f77429853af26c",
@@ -37654,6 +38077,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e383a6386f77465910ce1f4",
@@ -37776,6 +38200,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e4d4ac186f774264f758337",
@@ -37898,6 +38323,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e4d515e86f77438b2195245",
@@ -38021,6 +38447,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68406fd3b614b3db64e6097d",
@@ -38222,7 +38649,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "AK-50 handguard with gas block"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -38249,7 +38678,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "AK-50 barrel"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -38276,7 +38707,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "AK-50 dust cover"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -38306,6 +38739,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "684180b0b22d582a57c5a8d7",
@@ -38350,6 +38784,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "684181808b21759f04e1c4ee",
@@ -38455,6 +38890,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e8650e5d67b234af3d3926",
@@ -38493,6 +38929,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e745d6479eef59b01b0bdc",
@@ -38535,6 +38972,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e73ee8b567ff641b129570",
@@ -39267,6 +39705,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c52da5886f7747364267a14",
@@ -39949,6 +40388,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60ec07bcd7b7cb55e94c1760",
@@ -40104,6 +40544,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e740b8b567ff641b129573",
@@ -40140,6 +40581,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60effdac12fec20321367038",
@@ -40182,6 +40624,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e82c12fd1bf4491c4e4547",
@@ -40243,6 +40686,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e729cf5698ee7b0505743c",
@@ -40283,6 +40727,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e73333465ea8368012cc5b",
@@ -40439,6 +40884,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e84ba726b88043510e0ad8",
@@ -40536,6 +40982,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e8174d0367e10a450f7818",
@@ -40739,6 +41186,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e7259e465ea8368012cc45",
@@ -40855,6 +41303,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e7434ed1a062318d3d2260",
@@ -41031,6 +41480,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af6dd0f5685508d9050158",
@@ -41073,6 +41523,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af6e1ee67a772b14e08061",
@@ -41147,6 +41598,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af7037f7937389517f0569",
@@ -41221,6 +41673,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af70d60ef31f2d26f1a4d5",
@@ -41375,6 +41828,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af7168fab0681948d9ed8b",
@@ -41433,6 +41887,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af71c90036a462a17a72d3",
@@ -41509,6 +41964,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af727750e1b6f21d9f5511",
@@ -41553,6 +42009,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e6e679b350e406c823a205",
@@ -41601,6 +42066,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e6ed30d007ca50d54baae5",
@@ -41627,6 +42101,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e703205ca3b3783662be2b",
@@ -41675,6 +42158,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e704a123374d168a4576a8",
@@ -41707,6 +42199,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": ">=",
+     "value": 1
+    }
+   ],
    "objectives": [
     {
      "id": "625eb7fe1ed3bb5bcc5bd9e6",
@@ -41799,6 +42300,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "625ecedaa4eb80027c4f2e0b",
@@ -41935,6 +42437,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "625ed292c4874104f230c0c8",
@@ -41988,6 +42491,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62602852c48e6c62a440fab6",
@@ -42124,6 +42628,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6260295faa168e51321d69d9",
@@ -42214,6 +42719,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62602b061ed3bb5bcc5bd9ea",
@@ -42462,6 +42968,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ab617b87413d64ae0ac210",
@@ -42528,6 +43035,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391e2f9e705511c8a4a1b85",
@@ -42750,6 +43258,15 @@
      ]
     }
    ],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Lightkeeper"
+     },
+     "compareMethod": "<=",
+     "value": 0
+    }
+   ],
    "objectives": [
     {
      "id": "62616a9ca4eb80027c4f2e12",
@@ -42792,6 +43309,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62616b17e7578c305945c9c9",
@@ -42836,6 +43354,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391d9ba4b15ca31f76bc325",
@@ -43057,6 +43576,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6397a2eee5d9c6753c61e2d8",
@@ -43209,6 +43729,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7cee004d3dc28a52a20f8",
@@ -43330,6 +43851,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63b33cd9862e1142130b610c",
@@ -43447,7 +43969,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Forged Lightkeeper intelligence"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -43496,6 +44020,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6397ae22e301557ae24cbfe7",
@@ -43599,6 +44124,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639914b61c712b1e1d4dafcb",
@@ -43714,6 +44240,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639a76e3e4aa7349085cb6e3",
@@ -43895,6 +44422,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639adf3edbf1d842d260cda6",
@@ -44087,6 +44615,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d2acee7b4d0d5507baf2",
@@ -44299,6 +44828,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639a169e6cd47c525121a116",
@@ -44350,6 +44880,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63bd64552803ffbfad0e3e48",
@@ -44488,6 +45019,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6667193a41b0135d2df10fd9",
@@ -44524,6 +45056,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666719fc7c5ae40e6adcf43e",
@@ -44560,6 +45093,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666729738d4b7a9182ad4a89",
@@ -44874,6 +45408,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666732298477f79f3f6ea229",
@@ -44926,6 +45461,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666733e0c62a5c652f3c4b45",
@@ -45086,6 +45622,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": ">=",
+     "value": 4
+    }
+   ],
    "objectives": [
     {
      "id": "66813c01decf4560581ca0c0",
@@ -45123,6 +45668,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f2d9a73ff76dd6d5a6344",
@@ -45232,6 +45778,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f34c674ec5bf80ea69eee",
@@ -45272,6 +45819,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f507029a1128d5c4d7498",
@@ -45331,6 +45879,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f5a9537550b9d7fd30777",
@@ -45388,6 +45937,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f60910aed589d887b5ea1",
@@ -45457,6 +46007,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f61d9c2bc3dc676297fde",
@@ -45522,7 +46073,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "KOSA UAV electronic jamming device"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -45552,6 +46105,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67519696567b9773f0811bae",
@@ -75988,6 +76542,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740a0c33c7152ccfe151146",
@@ -76087,6 +76642,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740a202086cf3dbf687279a",
@@ -76178,6 +76734,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6749aa9b1badcb1e8056d769",
@@ -76284,6 +76841,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740a42c508599fd5a066f19",
@@ -76331,6 +76889,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740b64f024f0e44fbed2c48",
@@ -76397,6 +76956,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "674492e56e8d2d5239a3fd37",
@@ -76533,6 +77093,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6744a4e6c8a456e74064e7d7",
@@ -76593,6 +77154,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683db718d1c3c712dac4b5c9",
@@ -76651,6 +77213,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683db86c1090d855fb0f2c23",
@@ -76712,6 +77275,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6744ab1def61d56e020b5c5f",
@@ -76805,6 +77369,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6744ae5cc771515803d615ec",
@@ -76933,6 +77498,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745c8ccb4adeab3910332cc",
@@ -77022,7 +77588,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Incriminating letter"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -77192,6 +77760,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745cbee909d2013670a4a60",
@@ -77281,7 +77850,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Incriminating letter"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -77445,6 +78016,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745fae369a58fceba103458",
@@ -77487,6 +78059,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745fd2e3d6070c3563039a9",
@@ -77527,6 +78100,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745fe81eae30b9fb3bb6166",
@@ -77597,7 +78171,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Lightkeeper's case"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -77628,6 +78204,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67460118d3498f1b35e0a025",
@@ -77818,6 +78395,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "674da90a45aa075a44b4d687",
@@ -78213,6 +78791,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675197664e610fc2b88e0bf3",
@@ -88193,6 +88772,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6746061983996c4aa4765025",
@@ -88293,6 +88873,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "674606bac840f707bea6242f",
@@ -88377,6 +88958,7 @@
     "name": "Woods"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6752f86d538945df8cc3fc3a",
@@ -88440,6 +89022,114 @@
    ]
   },
   {
+   "id": "69c27158e350f01390049e77",
+   "name": "Saving Private Roman",
+   "kappaRequired": false,
+   "lightkeeperRequired": false,
+   "minPlayerLevel": 0,
+   "restartable": false,
+   "wikiLink": "https://escapefromtarkov.fandom.com/wiki/Saving_Private_Roman",
+   "trader": {
+    "name": "BTR Driver"
+   },
+   "map": null,
+   "taskRequirements": [
+    {
+     "task": {
+      "id": "69c26c07683c9831020018c7",
+      "name": "Stick to It"
+     },
+     "status": [
+      "complete"
+     ]
+    }
+   ],
+   "traderRequirements": [],
+   "objectives": [
+    {
+     "id": "69c2740bdbeade0b8e55eeea",
+     "type": "mark",
+     "description": "Mark the transit to Lighthouse with an MS2000 Marker on Woods",
+     "optional": false,
+     "maps": [],
+     "requiredKeys": null,
+     "zones": [],
+     "markerItem": {
+      "name": "MS2000 Marker"
+     }
+    },
+    {
+     "id": "69c27425f79e528d73ed4b2e",
+     "type": "extract",
+     "description": "Use the transit from Woods to Lighthouse",
+     "optional": false,
+     "maps": [
+      {
+       "name": "Woods"
+      }
+     ],
+     "requiredKeys": null,
+     "zones": [],
+     "exitName": "TRANSIT03"
+    },
+    {
+     "id": "69c2745137b8de0e367891c6",
+     "type": "mark",
+     "description": "Mark the transit to Woods with an MS2000 Marker on Lighthouse",
+     "optional": false,
+     "maps": [],
+     "requiredKeys": null,
+     "zones": [],
+     "markerItem": {
+      "name": "MS2000 Marker"
+     }
+    }
+   ]
+  },
+  {
+   "id": "69c26c07683c9831020018c7",
+   "name": "Stick to It",
+   "kappaRequired": false,
+   "lightkeeperRequired": false,
+   "minPlayerLevel": 0,
+   "restartable": false,
+   "wikiLink": "https://escapefromtarkov.fandom.com/wiki/Stick_to_It",
+   "trader": {
+    "name": "BTR Driver"
+   },
+   "map": null,
+   "taskRequirements": [],
+   "traderRequirements": [],
+   "objectives": [
+    {
+     "id": "69c26dfeaa4283497aab0d36",
+     "type": "shoot",
+     "description": "Eliminate Rogues",
+     "optional": false,
+     "maps": [
+      {
+       "name": "Customs"
+      },
+      {
+       "name": "Woods"
+      },
+      {
+       "name": "Lighthouse"
+      },
+      {
+       "name": "Shoreline"
+      },
+      {
+       "name": "Icebreaker"
+      }
+     ],
+     "requiredKeys": null,
+     "zones": [],
+     "count": 30
+    }
+   ]
+  },
+  {
    "id": "61e6e60c5ca3b3783662be27",
    "name": "Compensation for Damage - Wergild",
    "kappaRequired": false,
@@ -88452,6 +89142,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -3
+    }
+   ],
    "objectives": [
     {
      "id": "61e6f5a1eea2935bc018a2c7",
@@ -88494,6 +89193,15 @@
      "status": [
       "complete"
      ]
+    }
+   ],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Lightkeeper"
+     },
+     "compareMethod": "<=",
+     "value": 0
     }
    ],
    "objectives": [
@@ -88648,6 +89356,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "626171a0f7308432be1d44cd",
@@ -88688,6 +89397,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391d9ba4b15ca31f76bc325",
@@ -88898,6 +89608,15 @@
      ]
     }
    ],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Lightkeeper"
+     },
+     "compareMethod": "<=",
+     "value": 0
+    }
+   ],
    "objectives": [
     {
      "id": "626676e1c48e6c62a440faba",
@@ -88942,6 +89661,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62692a8a161ea75b3470d90e",
@@ -89005,6 +89725,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391d9ba4b15ca31f76bc325",
@@ -89209,6 +89930,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65732ac3c67dcd96adffa3c7",
@@ -89433,6 +90155,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "657333fee3fbaa77d3b5cd7c",
@@ -89542,6 +90265,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65733e571b7e7ed95fcd2f0c",
@@ -89577,6 +90301,7 @@
     "name": "Ground Zero"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6575a64d3fc09bdfb38b713d",
@@ -89795,6 +90520,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5967379186f77463860dadd6",
@@ -89848,6 +90574,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968edc086f77420d2328014",
@@ -89908,6 +90635,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6575aa67197bd678a0c3f552",
@@ -90104,6 +90832,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968ec9986f7741ddd6c1012",
@@ -90198,6 +90927,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accd5e386f77463027e9397",
@@ -90236,6 +90966,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc850d186f7747213700892",
@@ -90273,6 +91004,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bd983d886f7747ba73fc246",
@@ -90319,6 +91051,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc47e3e86f7741e6b2f3332",
@@ -90355,6 +91088,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "657b0567ec71635f16471dd2",
@@ -90393,6 +91127,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc84f7a86f774294c2f6862",
@@ -90433,6 +91168,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc483ba86f77415034ba8d0",
@@ -90473,6 +91209,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc485b586f774726473a858",
@@ -90509,6 +91246,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bc48aed86f77452c947ce67",
@@ -90548,6 +91286,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac18f4972364554162a25c",
@@ -90643,6 +91382,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d24ba7886f77439c92d6baa",
@@ -90719,6 +91459,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25af3c86f77443ff46b9e7",
@@ -90761,6 +91502,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25beca86f77409dd5cdbb3",
@@ -90911,6 +91653,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25c5a186f77443fe457661",
@@ -90993,6 +91736,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25c8c986f77443e47ad47a",
@@ -91031,6 +91775,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25d09286f77444001e284c",
@@ -91071,6 +91816,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25d4e786f77442734d335d",
@@ -91107,6 +91853,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d25fd8386f77443fe457cae",
@@ -91174,6 +91921,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2605ef86f77469ef0f7622",
@@ -91211,6 +91959,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d66741c86f7744a2e70f039",
@@ -91283,6 +92032,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2701b586f77469f1599fe2",
@@ -91319,6 +92069,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d307fc886f77447f15f5b23",
@@ -91356,6 +92107,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d272bd386f77446085fa4f9",
@@ -91398,6 +92150,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2733c586f7741dea4f3072",
@@ -91461,6 +92214,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5eaaaa7c93afa0558f3b5a1f",
@@ -91503,6 +92257,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb1ffe34e78d618792b41",
@@ -91627,6 +92382,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66b38c7bf85b8bf7250f9cb7",
@@ -91714,6 +92470,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66b38e144f2ab7cc530c3fe8",
@@ -91803,6 +92560,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1cf4a757ddd00404f0a6",
@@ -91914,6 +92672,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1f040a1128e59422a876",
@@ -92017,6 +92776,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d26143c86f77469ef0f894c",
@@ -92113,6 +92873,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5cb31b6188a450159d330a18",
@@ -92155,6 +92916,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5cb6f32986f7746ef55e17a0",
@@ -92214,6 +92976,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "597867e986f7741b265c6bd3",
@@ -92274,6 +93037,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd9fad9c1ce6b1a3b486d03",
@@ -92362,6 +93126,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968929e86f7740d121082d3",
@@ -92436,7 +93201,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Secure Folder 0022"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -92465,6 +93232,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accd9b686f774112d7173d1",
@@ -92505,6 +93273,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a98cfbc31b00242d28a95b",
@@ -92645,6 +93414,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59c128b986f77415037680df",
@@ -92781,6 +93551,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c3507a06634b5110e3c1a",
@@ -92823,6 +93594,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fb73b86f77458e0324376",
@@ -92903,6 +93675,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968943f86f7740d137ebfc2",
@@ -93049,6 +93822,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968eb9b86f7741ddb481543",
@@ -93089,6 +93863,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accde3686f7740cea1b7ec2",
@@ -93129,6 +93904,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596b44b686f77457cb50ecca",
@@ -93274,6 +94050,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ec1398886f7561e047757a5",
@@ -93332,6 +94109,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c9b5e3f86f7744aab7329b5",
@@ -93368,6 +94146,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5979ee2986f7743ec214c7a4",
@@ -93426,6 +94205,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5969f98286f774576d4c9542",
@@ -93486,6 +94266,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5979ef4586f77431307dc513",
@@ -93553,7 +94334,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Golden Zibbo lighter"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -93572,6 +94355,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5be0198686f774595412d9c4",
@@ -93674,6 +94458,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968ed3186f77420d2328013",
@@ -93772,6 +94557,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a27d34586f7744e1115b327",
@@ -93823,6 +94609,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987404e5163c24b3029356",
@@ -93861,6 +94648,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1b760686f77412780211a3",
@@ -93901,6 +94689,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6834145ebc1f443d7603c8ab",
@@ -94000,6 +94789,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ee8eea538ca5b3b4f3c4647",
@@ -94090,6 +94880,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63929101744e452011470818",
@@ -94132,6 +94923,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5969fa4886f7741ddb481544",
@@ -94279,6 +95071,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5979fc2686f77426d702a0f2",
@@ -94434,6 +95227,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596895f986f7740d14064722",
@@ -94534,6 +95328,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba11786f7742c9d4f5d29",
@@ -94676,6 +95471,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae34b8b86f7741e5b1e5d48",
@@ -94714,6 +95510,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968975586f7740e7266d974",
@@ -94754,6 +95551,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a1f0486f77456630ea4d2",
@@ -94812,6 +95610,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596b46d886f77457ca186189",
@@ -94905,6 +95704,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b0e766b86f7746bfa618964",
@@ -94947,6 +95747,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "597a0be986f774273b74f673",
@@ -95078,6 +95879,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66698a9eddc21e9441645819",
@@ -95187,6 +95989,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a37e8ae86f77415076b401d",
@@ -95326,6 +96129,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb4a56e66d3d79183a5c9",
@@ -95412,6 +96216,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6834158f2f0e2a7eb90b62cb",
@@ -95587,6 +96392,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341846186efa3c5b07f98c",
@@ -95623,6 +96429,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341a0b2f0e2a7eb90b62d7",
@@ -95659,6 +96466,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341b407559f4e6d50bc0d1",
@@ -95796,6 +96604,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341c4babec72d95d0c1263",
@@ -95868,6 +96677,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341d7d7559f4e6d50bc0de",
@@ -95908,6 +96718,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341eb25619c8e2a9031504",
@@ -95943,6 +96754,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68341f6fe2e7ef70a3060a0d",
@@ -95978,6 +96790,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6834202a186efa3c5b07f9a5",
@@ -96013,6 +96826,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683421515619c8e2a9031514",
@@ -96073,6 +96887,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68342265a8d674b5740b31f3",
@@ -96108,6 +96923,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68342446a8d674b5740b31ff",
@@ -96144,6 +96960,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6834254f2f0e2a7eb90b62f1",
@@ -96223,6 +97040,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683425dd8f5b18d29a05d9d4",
@@ -96340,6 +97158,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "69788d4e963f08d9140bce1c",
@@ -96375,6 +97194,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "69789903c30426685c9f3080",
@@ -96428,6 +97248,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6978907718bd6d7cbd0e8b91",
@@ -96463,6 +97284,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6978a2bc18130b67d9156d7a",
@@ -96498,6 +97320,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "69789660b2187365e70bb94d",
@@ -96544,6 +97367,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6834233fecd5cf3a440d855f",
@@ -96682,6 +97506,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "597a15b386f774799e5cd152",
@@ -96790,6 +97615,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba34286f7744eb240406a",
@@ -96956,6 +97782,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fbc9586f77459d52a16c4",
@@ -97055,6 +97882,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fc1f286f7744ccc15d643",
@@ -97154,6 +97982,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3fbec386f77413bd5fc20a",
@@ -97251,6 +98080,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59c93bdb86f7742a19140434",
@@ -97405,6 +98235,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a10d886f7741ddf11dbf0",
@@ -97447,6 +98278,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59ca1b1b86f7741b067dba42",
@@ -97507,6 +98339,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28017786f77452f6318b1b",
@@ -97721,6 +98554,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1d6d59b0575973008fc9",
@@ -97777,6 +98611,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac7a4ba86f77409f3423628",
@@ -97933,6 +98768,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5e0fa86f77431c305d243",
@@ -98023,6 +98859,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639135d89444fb141f4e6eeb",
@@ -98116,6 +98953,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c9a17c686f7747dbe2da3c1",
@@ -98158,6 +98996,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba51d86f7743af1475c3a",
@@ -98224,6 +99063,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a0317da86f77451cb427295",
@@ -98324,6 +99164,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a03289686f7745dbc6c5063",
@@ -98419,6 +99260,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba62786f7742c9d4f5ee9",
@@ -98518,6 +99360,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a044a6c86f7747370402d91",
@@ -98589,6 +99432,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28127b86f7743808504ecc",
@@ -98631,6 +99475,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28151986f77466837984c9",
@@ -98787,6 +99632,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28183186f774398675d127",
@@ -98869,6 +99715,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a2819c886f77460ba564f38",
@@ -98966,6 +99813,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba7db86f7744f0e568c9c",
@@ -99030,6 +99878,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac502a786f7740bde1b000c",
@@ -99152,6 +100001,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5cb6f81d86f7740e9d452683",
@@ -99306,6 +100156,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5ee9986f7746e7a509a26",
@@ -99430,6 +100281,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac61a8a86f7743a8d663c77",
@@ -99623,6 +100475,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61958d54aa0f643f9a0aed73",
@@ -99678,6 +100531,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac232087413d64ae0ac23c",
@@ -99773,6 +100627,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f731fa39e45b527a7c4300",
@@ -99869,6 +100724,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573387d0b26ed4fde798de4",
@@ -99979,6 +100835,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669faf99963982aef42a5ba4",
@@ -100451,6 +101308,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb12eb01ceef19a5b4ebc",
@@ -100493,6 +101351,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb647a5be751be095da27",
@@ -100641,6 +101500,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb5c58c03e61e1a33ddf0",
@@ -100801,6 +101661,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669fb6c859bdae826f7325d4",
@@ -100887,6 +101748,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66ab97a5c74ce045d6c32578",
@@ -101011,7 +101873,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Case with precision tools"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -101040,6 +101904,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66aba85403e0ee310104287a",
@@ -101187,6 +102052,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c15916580a378dc0f012f",
@@ -101284,6 +102150,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60c0d187938d68438757cda2",
@@ -101371,6 +102238,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5dbadfd186f77449467d1482",
@@ -101417,6 +102285,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0e7581ad4ff329a13ebc8",
@@ -101577,6 +102446,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a0e7086f7741ddf17dbef",
@@ -101662,6 +102532,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "596a10d886f7741ddf17dbf0",
@@ -101714,6 +102585,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2f464e498f71c8886f7656",
@@ -101786,6 +102658,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae3550b86f7741cf44fc799",
@@ -101826,6 +102699,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6087d553d79a2b4e943482bf",
@@ -102169,6 +103043,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c9de99286f7741ced54c902",
@@ -102211,6 +103086,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac6248586f77416781dd3a3",
@@ -102339,6 +103215,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608a94101a66564e74191fc3",
@@ -102405,6 +103282,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3ba97386f77459df27d10e",
@@ -102504,6 +103382,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a3baa2586f7745b791b72fa",
@@ -102570,6 +103449,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28221e86f7741d5b719624",
@@ -102643,6 +103523,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a2e958d86f77416be092111",
@@ -102720,6 +103601,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a28235e86f7741da250b438",
@@ -102755,6 +103637,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5081086f7740bde1b002f",
@@ -102845,6 +103728,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0bdf2c86f7746f016734a8",
@@ -102987,6 +103871,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d6fbf0f86f77449d97f738e",
@@ -103031,6 +103916,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60929ad46342771d851b827a",
@@ -103104,6 +103990,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6092942fb0f07c6ea1246e3a",
@@ -103184,6 +104071,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61952308aa0f643f9a0ae20f",
@@ -103308,6 +104196,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae44c6886f7744f1a7eb2b8",
@@ -103346,6 +104235,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0a91f4681b4e43d13892b",
@@ -103491,6 +104381,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "665eed28bdbf7b1f92394ecb",
@@ -103533,6 +104424,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5968981986f7740d1648df42",
@@ -103652,6 +104544,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ee8ec5ed72d953f5d2aabd1",
@@ -103814,6 +104707,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6091698a30bb620b3239874c",
@@ -103944,6 +104838,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391359b9444fb141f4e6ee7",
@@ -104033,6 +104928,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608ab22755f4ac386d7e7fdc",
@@ -104086,6 +104982,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac7a7bf86f774132252a524",
@@ -104195,6 +105092,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf4e152e86c73d372a95d",
@@ -104248,6 +105146,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d99804d3dc28a52a2106",
@@ -104315,6 +105214,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ab184ff627f540861d1185",
@@ -104355,6 +105255,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5accdfdb86f77412265cbfc9",
@@ -104393,6 +105294,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ac5eb3286f7746e7a509a09",
@@ -104430,6 +105332,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64ee9df4496db64f9b7a4433",
@@ -104550,6 +105453,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6578ec473dbd035d04531a92",
@@ -104711,6 +105615,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "665ef4d93bd11acd294ac48c",
@@ -104769,6 +105674,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6661a14545909ae2e92ca2d5",
@@ -104947,6 +105853,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6660785fc37356435d193ae4",
@@ -105052,6 +105959,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6661a28be2cdba6a469447c7",
@@ -105126,6 +106034,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669faeb6a6e02d00c47ad812",
@@ -105246,7 +106155,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Lab journal"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -105275,6 +106186,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "669faef62c68a5925a36fccc",
@@ -105318,6 +106230,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0e692281e56a89b717b7d",
@@ -105440,6 +106353,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0bc81fcbc1c559d09b58f",
@@ -105623,6 +106537,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0bf7103442ae640dba835",
@@ -105713,6 +106628,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67dc3861d5c0070b960c1bba",
@@ -105780,6 +106696,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683dbecbfc878c4569e892c2",
@@ -105838,6 +106755,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67dbe0f532ff08bfa13237a8",
@@ -105906,6 +106824,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67dbe16ece16a02860ed9d33",
@@ -105974,6 +106893,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0dd7a2519959b187db47f",
@@ -106118,6 +107038,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0de6954c67082e9148328",
@@ -106230,6 +107151,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0df619fb6c42b9a08e8e9",
@@ -106286,6 +107208,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67d03be712fb5f8fd2096334",
@@ -106373,6 +107296,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67a0e4df8cddbe2df31dd1d9",
@@ -106500,6 +107424,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d64710b7a13eb015961f",
@@ -106642,6 +107567,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf6c70cf4a041de5b3972",
@@ -106761,6 +107687,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63927f14744e452011470816",
@@ -106870,6 +107797,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59674d5186f00443b872d5f7",
@@ -106910,6 +107838,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae3570b86f7746efa6b4494",
@@ -106950,6 +107879,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae44ecd86f77414a13c970e",
@@ -106992,6 +107922,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae4508386f7741250488337",
@@ -107154,6 +108085,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608bffeee0cc9c2d4d2ccb29",
@@ -107208,6 +108140,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf2a6f8e6c97ec70878b7",
@@ -107281,6 +108214,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "638fd070202cd55bee01ca11",
@@ -107354,6 +108288,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7db4a3e491955e65fb88b",
@@ -107418,6 +108353,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "676529e759261ce07bc47b62",
@@ -107480,6 +108416,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd89799c54dc00f463272d3",
@@ -107572,6 +108509,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9b5bd86f774307c29df37",
@@ -107651,6 +108589,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608bd0a053b9dd01a116f474",
@@ -107837,6 +108776,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60a4dc7e4e734e57d07fb335",
@@ -107919,6 +108859,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65802b627b44fa5e1463889a",
@@ -107993,6 +108934,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66aa5be8035c6a410dc570b2",
@@ -108112,6 +109054,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c0444db2b69f48942f37c",
@@ -108329,6 +109272,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c04b3fc6b273a36ed294a",
@@ -108423,6 +109367,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c04f4db8807b75d0f38eb",
@@ -108511,6 +109456,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c14f54662a2fae349dbb9",
@@ -108696,6 +109642,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7ba17220ee966bf425ecb",
@@ -108789,6 +109736,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f3176921045e77405d63ba",
@@ -108920,6 +109868,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae452c086f774336a397578",
@@ -109054,6 +110003,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9b32486f7745bbc72275a",
@@ -109226,6 +110176,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9e17c86f77440d37ce03c",
@@ -109416,6 +110367,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1b765d86f77413193fa4f2",
@@ -109454,6 +110406,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1fa9c986f7740de474cb3d",
@@ -109494,6 +110447,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a2806e086f774291b084041",
@@ -109646,6 +110600,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59624d5386f77446b872d5f7",
@@ -109720,6 +110675,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac1e0a87413d64ae0ac233",
@@ -109799,6 +110755,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bd94c5a52d2390a2630c7",
@@ -109852,6 +110809,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac1b741b5c95746621ddb4",
@@ -109966,6 +110924,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60916aeac49cf53e4772cc3c",
@@ -110127,6 +111086,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6398776f93ae507d5858c3a8",
@@ -110167,6 +111127,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59674d5186f77446b852d5f7",
@@ -110207,6 +111168,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66ab9c5c60199cdb0902f8cc",
@@ -110373,6 +111335,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d357b6c86f774588d4d7e25",
@@ -110487,6 +111450,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac22351b5c95746621ddc4",
@@ -110584,6 +111548,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d8a05d086f77410b4225d10",
@@ -110650,6 +111615,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6193dabd5f6468204470571f",
@@ -110703,6 +111669,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a6873bc86f7741f8d4589a3",
@@ -110849,6 +111816,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d6949e786f774238a38d9e0",
@@ -110909,6 +111877,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d53904d3dc28a52a2100",
@@ -110999,6 +111968,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d461f32fa1316250c3d7",
@@ -111089,6 +112059,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d8665199ab1f7d4a7747",
@@ -111197,6 +112168,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac22b8f627f540861d1b2d",
@@ -111263,6 +112235,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7da6f5199ab1f7d4a774a",
@@ -111335,6 +112308,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59674d5986f77446b872d5f7",
@@ -111421,6 +112395,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae445f386f7744e87761331",
@@ -111459,6 +112434,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59ca293c86f77445a80ed147",
@@ -111621,6 +112597,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "59ca2fba86f77445e4732b25",
@@ -111818,6 +112795,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a68760f86f7743cc55d8709",
@@ -111911,6 +112889,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a68776786f774759f1f55f6",
@@ -112020,6 +112999,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a6878e886f7745e65687985",
@@ -112057,6 +113037,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5a6879be86f774284429b1bb",
@@ -112160,6 +113141,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d27369586f774457411b264",
@@ -112201,6 +113183,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d6fb8a886f77449db3db8b6",
@@ -112245,6 +113228,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "608a8356fa70fc097863b8f8",
@@ -112308,6 +113292,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7bc2c5e6d3e61ca2ca097",
@@ -112361,6 +113346,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7bd0c6393886f74119f41",
@@ -112414,6 +113400,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64e7bdd52d369a1c0172722f",
@@ -112467,6 +113454,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0f391676953651bd8b796",
@@ -112559,6 +113547,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68ee1cc7e8b13097f525e6f2",
@@ -112603,6 +113592,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edab7d3cc183c769d778bc5",
@@ -112717,6 +113707,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5eda1d6ec586607c09662d54",
@@ -112826,6 +113817,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edabb0b0c502106f869bc03",
@@ -112950,6 +113942,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5f071a9727cec53d5d24fe3b",
@@ -113078,6 +114071,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edac0e02ddc9e4c802cd969",
@@ -113330,6 +114324,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf1e1d93d977d2452051f",
@@ -113370,6 +114365,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b478f6886f774464201225a",
@@ -113545,6 +114541,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f5aac4b63b74469b6c14c7",
@@ -113655,6 +114652,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a5cf262964a7488f5243d1",
@@ -113703,6 +114701,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63929224744e45201147081a",
@@ -113743,6 +114742,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987860c8f8cc12a47b02a6",
@@ -113781,6 +114781,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47905886f7746807461fe2",
@@ -113871,6 +114872,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5f046f9825b2ad51bd275800",
@@ -114004,6 +115006,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f6a9e6dd44b6417729b535",
@@ -114098,6 +115101,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f6aafd67e11a7c6206e0d1",
@@ -114197,6 +115201,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573397ef3f8344c4575cd88",
@@ -114334,6 +115339,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5f0488c590eea473df674002",
@@ -114424,6 +115430,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5edab5a6cecc0069284c0ec2",
@@ -114466,6 +115473,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639285879444fb141f4e6f25",
@@ -114550,6 +115558,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b477b3b86f77401da02e6c4",
@@ -114590,6 +115599,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6578eb36e5020875d64645d0",
@@ -114672,6 +115682,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5eff5674befb6436ce3bbaf7",
@@ -114781,6 +115792,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b478d8986f774563c7a4809",
@@ -114888,6 +115900,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47932586f7747cc908b5dd",
@@ -115007,6 +116020,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47968e86f7745877352c28",
@@ -115142,6 +116156,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c50481c86f77410650e0521",
@@ -115259,7 +116274,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Flash drive with fake info"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -115290,6 +116307,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65802779963422318339533a",
@@ -115366,6 +116384,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6613f36ca4dc044e13e02295",
@@ -115441,6 +116460,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66151401efb0539ae10875af",
@@ -115517,6 +116537,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c37d2da4b531ba8daaadd",
@@ -115593,6 +116614,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": ">=",
+     "value": 1
+    }
+   ],
    "objectives": [
     {
      "id": "66d9cbb67b491f9d5304f6eb",
@@ -116592,6 +117622,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66d078aadf338e6c13578080",
@@ -116858,6 +117889,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d4bfe4b86f7744a9d4fe032",
@@ -116948,6 +117980,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1242fa86f7742aa04fed52",
@@ -117012,6 +118045,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "617bf5860cf4a041de5b396b",
@@ -117146,6 +118180,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae4559386f7742dc043c95e",
@@ -117236,6 +118271,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d27446f86f77475a86565a3",
@@ -117326,6 +118362,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f5deac39e45b527a7c4235",
@@ -117372,6 +118409,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5acce11786f77411ed6fa6eb",
@@ -117410,6 +118448,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9b77f86f77432c81e3074",
@@ -117500,6 +118539,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9bc6e86f7746e0026222c",
@@ -117558,6 +118598,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae45d7786f774178f237745",
@@ -117650,6 +118691,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65733403eefc2c312a759ddc",
@@ -117742,6 +118784,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573382e557ff128bf3da537",
@@ -117817,6 +118860,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a9b229813bba58a50c9ee6",
@@ -117864,6 +118908,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639135e8c115f907b14700ab",
@@ -117965,6 +119010,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9c29386f77427153c7fb0",
@@ -118009,6 +119055,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47884886f7744d1c35327d",
@@ -118076,6 +119123,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a9ae63da7999196148ba5c",
@@ -118123,6 +119171,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d8f404d3dc28a52a2104",
@@ -118277,6 +119326,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac0c99f83fd608393890bf",
@@ -118343,6 +119393,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9c0a686f774703201f143",
@@ -118459,6 +119510,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9c38e86f7743515398707",
@@ -118496,6 +119548,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac210b1287ef0b827d0cb8",
@@ -118580,6 +119633,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666333e93962787efd64004a",
@@ -118623,6 +119677,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0be2b486f7747bcb347d58",
@@ -118670,6 +119725,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d6d61f06d111271f5aeb",
@@ -118740,6 +119796,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639879addecada40426d3449",
@@ -118778,6 +119835,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64eea404a2a5bb727b61c31e",
@@ -118898,6 +119956,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66632cf3fbd7dedfa6153a9f",
@@ -118936,6 +119995,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66632deea5607d352f3aa844",
@@ -118990,6 +120050,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6672e47f25ab92726912c3e5",
@@ -119063,6 +120124,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6672edebec0c3e2ad7d4e489",
@@ -119122,6 +120184,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6663389aa257916ad3c89529",
@@ -119160,6 +120223,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "667a958eb30fe2e2938a6387",
@@ -119271,6 +120335,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66d07fa69d373d977f437fe0",
@@ -119392,6 +120457,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "667571ad6889d3af44af7be2",
@@ -119523,6 +120589,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66675a4567c0cf0989946e12",
@@ -119741,6 +120808,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "667442da875be5fb415df535",
@@ -119862,6 +120930,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6679884cef969161e3e9d64d",
@@ -119972,6 +121041,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47899386f77470315db7f3",
@@ -120160,6 +121230,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d357e8786f7745b5e66a51a",
@@ -120257,6 +121328,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6573057d66de94c756a60472",
@@ -120643,6 +121715,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6574e0dedc0d635f633a5807",
@@ -120689,6 +121762,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d2f375186f7745916404955",
@@ -120747,6 +121821,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66ab9da7eb102b9bcd08591d",
@@ -120817,6 +121892,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b478c4c86f7744d1a393fac",
@@ -120936,6 +122012,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae4479686f7744f6c79b7b3",
@@ -120974,6 +122051,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c112dc486f77465686bff38",
@@ -121019,6 +122097,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68db9ea0e6c69908254eceee",
@@ -121057,6 +122136,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61a61c085d06a344766f3a29",
@@ -121164,6 +122244,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ca719ef86f7740a78020783",
@@ -121256,6 +122337,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5bb60cbc88a45011a8235cc5",
@@ -121296,6 +122378,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0d0dfd86f7747f482a89a5",
@@ -121333,6 +122416,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "61a00eff2d708d41a34f19b4",
@@ -121431,6 +122515,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6193dc1e6623e330c82e0be9",
@@ -121514,6 +122599,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d273a4d86f774457411b266",
@@ -121560,6 +122646,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0bc95086f7746e784f39ec",
@@ -121606,6 +122693,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ec13d45a1032866196c939b",
@@ -121698,6 +122786,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c10f94386f774227172c574",
@@ -121805,6 +122894,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5acce08b86f7745f8521fa64",
@@ -121843,6 +122933,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1fd66286f7743c7b261f7b",
@@ -121968,6 +123059,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ac19f9de609574d97adf78",
@@ -122075,6 +123167,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66aa61663aa37705c5024278",
@@ -122150,6 +123243,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5d667a8e86f774131e206b46",
@@ -122237,6 +123331,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ca7254e86f7740d424a2043",
@@ -122393,6 +123488,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7cd3aee7b4d0d5507baee",
@@ -122457,6 +123553,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47796686f774374f4a8bb1",
@@ -122495,6 +123592,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0e6876d09282029e2fffe0",
@@ -122669,6 +123767,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66a0f5a7f9eae6761253114c",
@@ -122712,6 +123811,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67b45467814ab0ffa000c7ea",
@@ -122750,6 +123850,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd8aa3206fb3a6b8154a2c3",
@@ -122793,6 +123894,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "600303250b79c6604058ce30",
@@ -122835,6 +123937,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "65734c186dc1e402c80dc1a2",
@@ -122937,6 +124040,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b477f1486f7743009493232",
@@ -122977,6 +124081,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d767f32fa1316250c3da",
@@ -123049,6 +124154,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7dbefee7b4d0d5507baf8",
@@ -123144,6 +124250,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6615127fd998c5f2aaa4a8a0",
@@ -123225,6 +124332,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6615141bfda04449120269a8",
@@ -123314,6 +124422,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "676418a60b9bcbe280972288",
@@ -123350,6 +124459,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683427418f5b18d29a05d9e5",
@@ -123473,6 +124583,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639135534b15ca31f76bc318",
@@ -123555,6 +124666,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ec14003e16f6c41ee73525f",
@@ -123645,6 +124757,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c12470d86f77465ae27a8c0",
@@ -123734,6 +124847,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "66696cd3997231debad40d19",
@@ -123770,6 +124884,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5fd892bc37b6e511a4734969",
@@ -123860,6 +124975,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c0bdbb586f774166e38eed5",
@@ -123897,6 +125013,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1ff1a757ddd00404f0ae",
@@ -123937,6 +125054,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666973ee1d80fbbbfeaf46c9",
@@ -124291,6 +125409,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666976536518781b9feb2f28",
@@ -124477,6 +125596,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6669abb8dac5788ebd0ff74a",
@@ -124541,6 +125661,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6669acb8c4d34bd547a4d2ac",
@@ -124585,6 +125706,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "671a5941cb557f8656561a12",
@@ -124662,6 +125784,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "671ac68e30609eb2c7e9a7f7",
@@ -124698,6 +125821,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6834287b7559f4e6d50bc0fd",
@@ -124758,6 +125882,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "626c317e05f287031503c7fd",
@@ -124867,6 +125992,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c1b778286f774294438b536",
@@ -124907,6 +126033,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987a4e3693c63d86328f27",
@@ -124954,6 +126081,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6942b48e6998a45a7b90cd5b",
@@ -125000,6 +126128,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b47824386f7744d190d8dd1",
@@ -125038,6 +126167,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e8658571035f300c301ac6",
@@ -125224,6 +126354,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63987b49cd51826f7a069b85",
@@ -125274,6 +126405,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5b4783ba86f7744d1c353185",
@@ -125312,6 +126444,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f83d0eed30ed471f49bcde",
@@ -125350,6 +126483,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f83e9d52fc01298e2c857e",
@@ -125388,6 +126522,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "64f841199a4f905106515448",
@@ -125435,6 +126570,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a9b3d7813bba58a50c9ee9",
@@ -125599,6 +126735,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5ae9e55886f77445315f662a",
@@ -125657,6 +126794,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60ec18b73b5f7d790a7ad034",
@@ -125768,6 +126906,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e38261886f77429853af26c",
@@ -125890,6 +127029,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e383a6386f77465910ce1f4",
@@ -126012,6 +127152,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e4d4ac186f774264f758337",
@@ -126134,6 +127275,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5e4d515e86f77438b2195245",
@@ -126257,6 +127399,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "68406fd3b614b3db64e6097d",
@@ -126458,7 +127601,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "AK-50 handguard with gas block"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -126485,7 +127630,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "AK-50 barrel"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -126512,7 +127659,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "AK-50 dust cover"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -126542,6 +127691,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "684180b0b22d582a57c5a8d7",
@@ -126586,6 +127736,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "684181808b21759f04e1c4ee",
@@ -126691,6 +127842,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e8650e5d67b234af3d3926",
@@ -126729,6 +127881,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e745d6479eef59b01b0bdc",
@@ -126771,6 +127924,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e73ee8b567ff641b129570",
@@ -127503,6 +128657,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "5c52da5886f7747364267a14",
@@ -128185,6 +129340,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60ec07bcd7b7cb55e94c1760",
@@ -128340,6 +129496,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e740b8b567ff641b129573",
@@ -128376,6 +129533,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60effdac12fec20321367038",
@@ -128418,6 +129576,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e82c12fd1bf4491c4e4547",
@@ -128479,6 +129638,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e729cf5698ee7b0505743c",
@@ -128519,6 +129679,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e73333465ea8368012cc5b",
@@ -128675,6 +129836,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e84ba726b88043510e0ad8",
@@ -128772,6 +129934,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e8174d0367e10a450f7818",
@@ -128975,6 +130138,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e7259e465ea8368012cc45",
@@ -129091,6 +130255,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "60e7434ed1a062318d3d2260",
@@ -129267,6 +130432,7 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af6dd0f5685508d9050158",
@@ -129309,6 +130475,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af6e1ee67a772b14e08061",
@@ -129383,6 +130550,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af7037f7937389517f0569",
@@ -129457,6 +130625,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af70d60ef31f2d26f1a4d5",
@@ -129611,6 +130780,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af7168fab0681948d9ed8b",
@@ -129669,6 +130839,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af71c90036a462a17a72d3",
@@ -129745,6 +130916,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67af727750e1b6f21d9f5511",
@@ -129789,6 +130961,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e6e679b350e406c823a205",
@@ -129837,6 +131018,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e6ed30d007ca50d54baae5",
@@ -129863,6 +131053,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e703205ca3b3783662be2b",
@@ -129911,6 +131110,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -1
+    }
+   ],
    "objectives": [
     {
      "id": "61e704a123374d168a4576a8",
@@ -129943,6 +131151,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": ">=",
+     "value": 1
+    }
+   ],
    "objectives": [
     {
      "id": "625eb7fe1ed3bb5bcc5bd9e6",
@@ -130035,6 +131252,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "625ecedaa4eb80027c4f2e0b",
@@ -130171,6 +131389,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "625ed292c4874104f230c0c8",
@@ -130224,6 +131443,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62602852c48e6c62a440fab6",
@@ -130360,6 +131580,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6260295faa168e51321d69d9",
@@ -130450,6 +131671,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62602b061ed3bb5bcc5bd9ea",
@@ -130698,6 +131920,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63ab617b87413d64ae0ac210",
@@ -130764,6 +131987,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391e2f9e705511c8a4a1b85",
@@ -130986,6 +132210,15 @@
      ]
     }
    ],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Lightkeeper"
+     },
+     "compareMethod": "<=",
+     "value": 0
+    }
+   ],
    "objectives": [
     {
      "id": "62616a9ca4eb80027c4f2e12",
@@ -131028,6 +132261,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62616b17e7578c305945c9c9",
@@ -131072,6 +132306,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391d9ba4b15ca31f76bc325",
@@ -131293,6 +132528,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6397a2eee5d9c6753c61e2d8",
@@ -131445,6 +132681,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7cee004d3dc28a52a20f8",
@@ -131566,6 +132803,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63b33cd9862e1142130b610c",
@@ -131683,7 +132921,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Forged Lightkeeper intelligence"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -131732,6 +132972,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6397ae22e301557ae24cbfe7",
@@ -131835,6 +133076,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639914b61c712b1e1d4dafcb",
@@ -131950,6 +133192,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639a76e3e4aa7349085cb6e3",
@@ -132131,6 +133374,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639adf3edbf1d842d260cda6",
@@ -132323,6 +133567,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63a7d2acee7b4d0d5507baf2",
@@ -132535,6 +133780,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "639a169e6cd47c525121a116",
@@ -132586,6 +133832,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "63bd64552803ffbfad0e3e48",
@@ -132724,6 +133971,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6667193a41b0135d2df10fd9",
@@ -132760,6 +134008,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666719fc7c5ae40e6adcf43e",
@@ -132796,6 +134045,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666729738d4b7a9182ad4a89",
@@ -133110,6 +134360,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666732298477f79f3f6ea229",
@@ -133162,6 +134413,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "666733e0c62a5c652f3c4b45",
@@ -133322,6 +134574,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": ">=",
+     "value": 4
+    }
+   ],
    "objectives": [
     {
      "id": "66813c01decf4560581ca0c0",
@@ -133359,6 +134620,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f2d9a73ff76dd6d5a6344",
@@ -133468,6 +134730,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f34c674ec5bf80ea69eee",
@@ -133508,6 +134771,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f507029a1128d5c4d7498",
@@ -133567,6 +134831,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f5a9537550b9d7fd30777",
@@ -133624,6 +134889,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f60910aed589d887b5ea1",
@@ -133693,6 +134959,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "673f61d9c2bc3dc676297fde",
@@ -133758,7 +135025,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "KOSA UAV electronic jamming device"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -133788,6 +135057,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67519696567b9773f0811bae",
@@ -164224,6 +165494,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740a0c33c7152ccfe151146",
@@ -164323,6 +165594,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740a202086cf3dbf687279a",
@@ -164414,6 +165686,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6749aa9b1badcb1e8056d769",
@@ -164520,6 +165793,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740a42c508599fd5a066f19",
@@ -164567,6 +165841,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6740b64f024f0e44fbed2c48",
@@ -164633,6 +165908,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "674492e56e8d2d5239a3fd37",
@@ -164769,6 +166045,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6744a4e6c8a456e74064e7d7",
@@ -164829,6 +166106,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683db718d1c3c712dac4b5c9",
@@ -164887,6 +166165,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "683db86c1090d855fb0f2c23",
@@ -164948,6 +166227,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6744ab1def61d56e020b5c5f",
@@ -165041,6 +166321,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6744ae5cc771515803d615ec",
@@ -165169,6 +166450,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745c8ccb4adeab3910332cc",
@@ -165258,7 +166540,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Incriminating letter"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -165428,6 +166712,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745cbee909d2013670a4a60",
@@ -165517,7 +166802,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Incriminating letter"
+     },
      "count": 1,
      "possibleLocations": null
     },
@@ -165681,6 +166968,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745fae369a58fceba103458",
@@ -165723,6 +167011,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745fd2e3d6070c3563039a9",
@@ -165763,6 +167052,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6745fe81eae30b9fb3bb6166",
@@ -165833,7 +167123,9 @@
        }
       }
      ],
-     "questItem": null,
+     "questItem": {
+      "name": "Lightkeeper's case"
+     },
      "count": 1,
      "possibleLocations": null
     }
@@ -165864,6 +167156,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "67460118d3498f1b35e0a025",
@@ -166054,6 +167347,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "674da90a45aa075a44b4d687",
@@ -166449,6 +167743,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675197664e610fc2b88e0bf3",
@@ -176429,6 +177724,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6746061983996c4aa4765025",
@@ -176529,6 +177825,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "674606bac840f707bea6242f",
@@ -176613,6 +177910,7 @@
     "name": "Woods"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6752f86d538945df8cc3fc3a",
@@ -176690,6 +177988,7 @@
     "name": "Customs"
    },
    "taskRequirements": [],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "675c1c87caddcfa893af10e9",
@@ -176843,6 +178142,114 @@
    ]
   },
   {
+   "id": "69c27158e350f01390049e77",
+   "name": "Saving Private Roman",
+   "kappaRequired": false,
+   "lightkeeperRequired": false,
+   "minPlayerLevel": 0,
+   "restartable": false,
+   "wikiLink": "https://escapefromtarkov.fandom.com/wiki/Saving_Private_Roman",
+   "trader": {
+    "name": "BTR Driver"
+   },
+   "map": null,
+   "taskRequirements": [
+    {
+     "task": {
+      "id": "69c26c07683c9831020018c7",
+      "name": "Stick to It"
+     },
+     "status": [
+      "complete"
+     ]
+    }
+   ],
+   "traderRequirements": [],
+   "objectives": [
+    {
+     "id": "69c2740bdbeade0b8e55eeea",
+     "type": "mark",
+     "description": "Mark the transit to Lighthouse with an MS2000 Marker on Woods",
+     "optional": false,
+     "maps": [],
+     "requiredKeys": null,
+     "zones": [],
+     "markerItem": {
+      "name": "MS2000 Marker"
+     }
+    },
+    {
+     "id": "69c27425f79e528d73ed4b2e",
+     "type": "extract",
+     "description": "Use the transit from Woods to Lighthouse",
+     "optional": false,
+     "maps": [
+      {
+       "name": "Woods"
+      }
+     ],
+     "requiredKeys": null,
+     "zones": [],
+     "exitName": "TRANSIT03"
+    },
+    {
+     "id": "69c2745137b8de0e367891c6",
+     "type": "mark",
+     "description": "Mark the transit to Woods with an MS2000 Marker on Lighthouse",
+     "optional": false,
+     "maps": [],
+     "requiredKeys": null,
+     "zones": [],
+     "markerItem": {
+      "name": "MS2000 Marker"
+     }
+    }
+   ]
+  },
+  {
+   "id": "69c26c07683c9831020018c7",
+   "name": "Stick to It",
+   "kappaRequired": false,
+   "lightkeeperRequired": false,
+   "minPlayerLevel": 0,
+   "restartable": false,
+   "wikiLink": "https://escapefromtarkov.fandom.com/wiki/Stick_to_It",
+   "trader": {
+    "name": "BTR Driver"
+   },
+   "map": null,
+   "taskRequirements": [],
+   "traderRequirements": [],
+   "objectives": [
+    {
+     "id": "69c26dfeaa4283497aab0d36",
+     "type": "shoot",
+     "description": "Eliminate Rogues",
+     "optional": false,
+     "maps": [
+      {
+       "name": "Customs"
+      },
+      {
+       "name": "Woods"
+      },
+      {
+       "name": "Lighthouse"
+      },
+      {
+       "name": "Shoreline"
+      },
+      {
+       "name": "Icebreaker"
+      }
+     ],
+     "requiredKeys": null,
+     "zones": [],
+     "count": 30
+    }
+   ]
+  },
+  {
    "id": "61e6e60c5ca3b3783662be27",
    "name": "Compensation for Damage - Wergild",
    "kappaRequired": false,
@@ -176855,6 +178262,15 @@
    },
    "map": null,
    "taskRequirements": [],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Fence"
+     },
+     "compareMethod": "<=",
+     "value": -3
+    }
+   ],
    "objectives": [
     {
      "id": "61e6f5a1eea2935bc018a2c7",
@@ -176897,6 +178313,15 @@
      "status": [
       "complete"
      ]
+    }
+   ],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Lightkeeper"
+     },
+     "compareMethod": "<=",
+     "value": 0
     }
    ],
    "objectives": [
@@ -177051,6 +178476,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "626171a0f7308432be1d44cd",
@@ -177091,6 +178517,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391d9ba4b15ca31f76bc325",
@@ -177423,6 +178850,15 @@
      ]
     }
    ],
+   "traderRequirements": [
+    {
+     "trader": {
+      "name": "Lightkeeper"
+     },
+     "compareMethod": "<=",
+     "value": 0
+    }
+   ],
    "objectives": [
     {
      "id": "626676e1c48e6c62a440faba",
@@ -177467,6 +178903,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "62692a8a161ea75b3470d90e",
@@ -177530,6 +178967,7 @@
      ]
     }
    ],
+   "traderRequirements": [],
    "objectives": [
     {
      "id": "6391d9ba4b15ca31f76bc325",

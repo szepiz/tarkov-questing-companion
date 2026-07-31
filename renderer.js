@@ -333,6 +333,56 @@ function playerLevel() {
   return own > 0 ? own : 0;
 }
 
+// Fence reputation (Scav karma). It gates whole Fence quest lines and appears
+// in NO log — the profile carries it, the logs do not — so the user states it
+// in Settings, exactly like their level. Unset means 0, a fresh profile's
+// value, which is also the honest default: it keeps the karma-penalty quests
+// ("Compensation for Damage", reputation < -1) and the high-karma line
+// ("Establish Contact", >= 4) out of the list until they say otherwise.
+function scavKarma() {
+  const set = state.settings && state.settings.scavKarma;
+  const own = set && Number(set[state.gameMode]);
+  return Number.isFinite(own) ? own : 0;
+}
+
+// does the player's karma satisfy this requirement?
+function repMet(r, have) {
+  const v = Number(r.value) || 0;
+  switch (r.compareMethod) {
+    case '<': return have < v;
+    case '<=': return have <= v;
+    case '>': return have > v;
+    case '=': case '==': return have === v;
+    default: return have >= v;
+  }
+}
+
+// Reputation gates are only evaluated for traders we can actually know a value
+// for. Fence is Scav karma; anything else (Lightkeeper's own standing) has no
+// source, so it is shown but never used to lock.
+function karmaIsSet() {
+  const set = state.settings && state.settings.scavKarma;
+  return !!set && Number.isFinite(Number(set[state.gameMode]));
+}
+
+function repLocked(t) {
+  const have = scavKarma();
+  const known = karmaIsSet();
+  for (const r of t.traderRequirements || []) {
+    if (!r.trader || r.trader.name !== 'Fence') continue;
+    if (repMet(r, have)) continue;
+    // With karma UNSET we are guessing at 0, and a guess must never hide a
+    // quest someone can actually take — the same rule the level estimate
+    // follows. So only gates needing NEGATIVE reputation are trusted blind:
+    // Fence's "Compensation for Damage" line exists solely for players who
+    // tanked their karma, which is not a state you reach by accident. Gates
+    // wanting MORE reputation stay visible until the user states a value.
+    if (!known && !(String(r.compareMethod).startsWith('<') && Number(r.value) < 0)) continue;
+    return true;
+  }
+  return false;
+}
+
 function levelLocked(t) {
   const need = t.minPlayerLevel || 0;
   const have = playerLevel();
@@ -340,7 +390,7 @@ function levelLocked(t) {
 }
 
 function isLocked(t) {
-  return lockingActive() && !isDone(t.id) && (!isUnlocked(t) || levelLocked(t));
+  return lockingActive() && !isDone(t.id) && (!isUnlocked(t) || levelLocked(t) || repLocked(t));
 }
 
 // Map -> Trader -> [tasks]
@@ -779,6 +829,7 @@ function renderTree() {
           : done ? 'mark as not completed'
           : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
           : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
+          : locked && repLocked(t) ? `locked — needs Fence reputation your Scav karma does not meet (yours is ${scavKarma()}). Set it in Settings if that is wrong.`
           : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
           : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
           : 'mark as completed';
@@ -951,6 +1002,17 @@ function renderQuest() {
     reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">LEVEL</span>`
       + `<span>player level ${t.minPlayerLevel}${short ? ` — you are ${playerLevel()}` : ''}</span></div>`);
   }
+  for (const r of t.traderRequirements || []) {
+    if (!r.trader) continue;
+    // only claim a comparison when the user has actually stated their karma —
+    // otherwise the line would report a guess ("yours is 0") as fact
+    const known = r.trader.name === 'Fence' && karmaIsSet();
+    const short = known && !repMet(r, scavKarma());
+    const sign = { '<': 'below', '<=': 'at most', '>': 'above', '=': 'exactly', '==': 'exactly' }[r.compareMethod] || 'at least';
+    reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">KARMA</span>`
+      + `<span>${escapeHtml(r.trader.name)} reputation ${sign} ${r.value}`
+      + `${known ? ` — yours is ${scavKarma()}` : ''}</span></div>`);
+  }
   // highlight each prerequisite with the same status-aware logic that
   // decides LOCKED: green = positively met, yellow = the one blocking it
   const showMissing = isLocked(t);
@@ -1087,12 +1149,34 @@ function renderSettingsPanel() {
       ? `Not set, so quests are never locked on level. You are <strong>at least ${floor}</strong> — you finished a quest that needs it — but Tarkov never writes your real level to the logs, so type it in to get exact locking.`
       : 'Not set. Tarkov never writes your level to the logs, so type it in and quests needing a higher level will show as LOCKED.';
 
+  // Scav karma — same deal as the level: the logs never carry it, and it gates
+  // whole Fence quest lines in both directions.
+  const karmaSet = (state.settings.scavKarma || {})[state.gameMode];
+  if (document.activeElement !== $('scavKarmaInput')) {
+    $('scavKarmaInput').value = Number.isFinite(Number(karmaSet)) && karmaSet !== undefined ? karmaSet : '';
+  }
+  const nRep = state.tasks.filter((t) => (t.traderRequirements || []).some((r) => r.trader && r.trader.name === 'Fence')).length;
+  $('karmaHint').innerHTML = karmaIsSet()
+    ? `Fence's reputation gates ${nRep} quests in both directions. At <strong>${scavKarma()}</strong> the ones you`
+      + ` cannot reach show as LOCKED. Clear the box to stop locking on it.`
+    : `Fence's reputation gates ${nRep} quests. Not set, so only the "Compensation for Damage" line is hidden —`
+      + ` it exists solely below <strong>-1</strong> karma. Type your Fence reputation in and the rest lock exactly`
+      + ` ("Establish Contact" needs <strong>4</strong>). Tarkov never writes it to the logs.`;
+
   const ws = state.watcherStatus;
   $('logsStatus').innerHTML = state.settings.trackingMode !== 'auto'
     ? 'Only used when tracking is set to AUTOMATIC.'
     : (ws.logsFound
       ? `<span class="ok">Logs folder found</span> — ${ws.sessionFolders} session folder(s) scanned.`
-      : `<span class="bad">Logs folder not found.</span> If your game is not installed in the default location, point this at your EFT\\Logs folder.`);
+      : `<span class="bad">Logs folder not found.</span> If your game is not installed in the default location, point this at your EFT\\Logs folder.`)
+    + (ws && ws.oldProfiles > 0
+      // A wipe hands out a NEW profile and the old one's logs stay on disk.
+      // Those completions are skipped rather than imported (they belong to
+      // last wipe) — saying so beats letting people wonder where they went.
+      ? `<br><span class="ok">Skipping ${ws.oldProfileEvents} quest event(s) from ${ws.oldProfiles} earlier profile(s)</span>`
+        + ` — progress from before a wipe. If the list still shows quests you have not done this wipe,`
+        + ` use RESET ALL PROGRESS once to clear them.`
+      : '');
 
   const di = state.dataInfo;
   $('dataStatus').innerHTML = !di ? 'Loading…'
@@ -1233,6 +1317,17 @@ async function savePlayerLevel(v) {
   renderAll();
   renderSettingsPanel();
 }
+async function saveScavKarma(v) {
+  const karma = { ...(state.settings.scavKarma || {}) };
+  if (Number.isFinite(v)) karma[state.gameMode] = v; else delete karma[state.gameMode];
+  state.settings = await backend.saveSettings({ scavKarma: karma });
+  renderAll();
+  renderSettingsPanel();
+}
+$('scavKarmaInput').addEventListener('change', () => {
+  const raw = $('scavKarmaInput').value.trim();
+  saveScavKarma(raw === '' ? NaN : Number(raw));
+});
 $('playerLevelInput').addEventListener('change', () => {
   const v = Math.floor(Number($('playerLevelInput').value));
   savePlayerLevel(Number.isFinite(v) && v > 0 ? Math.min(v, 99) : 0);
