@@ -1183,6 +1183,10 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 /* high value: the brightest thing on the map on purpose — a gold star that is
    deliberately lighter than the keys/keycards ambers around it */
 .mk-hv     { fill: #ffd75a; }
+/* the same gold, unfilled: a high-value item that is one of dozens in a shared
+   pool. Same shape and colour so it reads as the same kind of thing; hollow so a
+   solid star still means the spot where little else competes with it. */
+.mk-hv.hollow { stroke: #ffd75a; }
 .mk-keys.hollow   { stroke: #d0a943; }
 .mk-intel.hollow  { stroke: #7fb2e5; }
 .mk-val.hollow    { stroke: #b06fd0; }

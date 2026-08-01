@@ -2186,10 +2186,20 @@ const MARKER_GROUPS = [
     // can act on, and dressing it up as two tiers implied one of them was reliable.
     note: 'Spots where that kind of item can turn up. Nothing here is guaranteed.',
     // High value is data-driven, never a hand list: whatever cleared the
-    // value-per-slot bar (LOOT_HV_MIN) when the marker data was baked. Those
+    // rouble bar (LOOT_HV_MIN) when the marker data was baked. Those
     // spots draw the gold star INSTEAD of their category glyph and show under
     // either tick box — see collectMapMarkers.
-    rows: [{ id: 'lootHighValue', label: 'High value', glyph: 'star', cls: 'mk-hv' }].concat(LOOT_CATS.slice(2)),
+    //
+    // The SECOND high-value row is the one exception to "every marker reads the
+    // same", and it is drawn from data rather than judgement: a point offering
+    // more items than the bake's pool bar is a shared loot table. Those points
+    // are the only way LEDX, GPU, Defib and bitcoin appear at all in most of
+    // their spots, so hiding them was worse — but a hollow star and a separate
+    // box keep them from being mistaken for a run worth making.
+    rows: [
+      { id: 'lootHighValue', label: 'High value', glyph: 'star', cls: 'mk-hv' },
+      { id: 'lootHighValuePool', label: 'High value · long shot', glyph: 'starOpen', cls: 'mk-hv' },
+    ].concat(LOOT_CATS.slice(2)),
   },
   {
     id: 'containers', title: 'CONTAINERS',
@@ -2412,12 +2422,22 @@ function collectMapMarkers(mapName) {
   for (const [x, y, z, cat, alts, item] of M.lt || []) {
     const c = LOOT_CATS[cat];
     if (!c) continue;
+    // How many items in total can roll at this exact spot (alts is the count of
+    // the OTHERS). Anything over the bake's pool bar is a shared loot table, not
+    // a spawn for this item in particular — the Lab's keycard-room shelves offer
+    // 22 to 71 things each. Those points reach the map ONLY for their high-value
+    // item, and they must not look like the concentrated spots: same gold, drawn
+    // hollow, own tick box, and the card leads with the pool size instead of the
+    // flat "has a chance to spawn here".
+    const poolMax = typeof LOOT_POOL_MAX !== 'undefined' ? LOOT_POOL_MAX : 5;
+    const pool = (alts || 0) + 1;
+    const diluted = pool > poolMax;
     // Every loose-loot marker means exactly one thing, so every one of them looks
     // and reads the same. How many other items share the exact spot is not
     // something a player can act on, and showing it as two tiers made one of them
     // look reliable.
     //
-    // The one sanctioned exception: an item whose baked value-per-slot clears
+    // The one sanctioned exception: an item whose baked rouble value clears
     // LOOT_HV_MIN draws as the gold star and belongs to BOTH its category layer
     // and the high-value one (either box shows it, it appears once). That is a
     // statement about the item's price, not about the spawn — the card keeps the
@@ -2426,14 +2446,27 @@ function collectMapMarkers(mapName) {
     // the bar is the item's own worth (lv[0]); lv[1] (per slot) is card detail
     const lv = (typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[item]) || null;
     const hv = !!lv && typeof LOOT_HV_MIN !== 'undefined' && lv[0] >= LOOT_HV_MIN;
-    const lines = [['', 'This item has a chance to spawn here']];
+    // No odds anywhere upstream — tarkov.dev's loose-loot type carries items and
+    // a position, nothing else — so the card says the one thing that IS known.
+    // "One of 44" is not a percentage and must never be dressed up as one: the
+    // game weights rare items DOWN inside a pool, so dividing by the pool size
+    // would overstate exactly the items this layer exists for.
+    const lines = [['', diluted
+      ? `One of ${pool} items that can roll at this spot`
+      : 'This item has a chance to spawn here']];
     if (hv) {
       const fv = (n) => Math.round(n).toLocaleString('en-US');
       lines.push(['Worth', `≈ ${fv(lv[0])} roubles`
         + (lv[0] !== lv[1] ? ` (${fv(lv[1])} per slot)` : '')]);
     }
-    add(x, y, z, hv ? [c.id, 'lootHighValue'] : [c.id], hv ? 'star' : c.glyph,
-      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv });
+    // Worded without reference to how big the pool is: these run from 6 items to
+    // 90, and "a pool this big" is silly on the small ones. The count above is
+    // the number; this line is only there so nobody has to do the arithmetic to
+    // know it is worse odds than a spot with two or three things in it.
+    if (diluted) lines.push(['', 'A shared pool — much longer odds than a dedicated spot']);
+    const layers = hv ? (diluted ? ['lootHighValuePool'] : [c.id, 'lootHighValue']) : [c.id];
+    add(x, y, z, layers, hv ? (diluted ? 'starOpen' : 'star') : c.glyph,
+      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv, pool });
   }
   // The only layer that is genuinely always there: the container is level
   // geometry, so it is in that spot every raid. Its CONTENTS are still a roll,
@@ -2531,6 +2564,10 @@ const MARKER_GLYPHS = {
   // high value: a solid five-point star — nothing else on the map is one. All
   // one subpath, so the winding rule that hollowed the grenade cannot bite.
   star: 'M0 -7.2 L1.76 -2.43 L6.85 -2.22 L2.85 0.93 L4.23 5.83 L0 3 L-4.23 5.83 L-2.85 0.93 L-6.85 -2.22 L-1.76 -2.43 Z',
+  // the same star, drawn as an outline: a high-value item that is one of dozens
+  // in a shared pool. Same shape and same gold, so it reads as the same KIND of
+  // thing; unfilled, so a solid star still means the concentrated spot.
+  starOpen: 'M0 -7.2 L1.76 -2.43 L6.85 -2.22 L2.85 0.93 L4.23 5.83 L0 3 L-4.23 5.83 L-2.85 0.93 L-6.85 -2.22 L-1.76 -2.43 Z',
   cross: 'M-2.3 -6.4 L2.3 -6.4 L2.3 -2.3 L6.4 -2.3 L6.4 2.3 L2.3 2.3 L2.3 6.4 L-2.3 6.4 L-2.3 2.3 L-6.4 2.3 L-6.4 -2.3 L-2.3 -2.3 Z',
 
   // pins down two sides only, not all four: with pins all round it read as a
@@ -2571,7 +2608,7 @@ const MARKER_GLYPHS = {
 // Which glyphs are drawn as outlines (fill: none) rather than solids. A shape
 // built from open strokes MUST be listed here or it fills into a blob.
 const HOLLOW = new Set([
-  'sniper', 'marked', 'text', 'lever',
+  'sniper', 'marked', 'text', 'lever', 'starOpen',
   'stim', 'chip', 'card', 'fuelCan', 'nut', 'gear', 'cutlery',
   'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'shirt', 'bag', 'cache', 'body', 'rouble',
 ]);

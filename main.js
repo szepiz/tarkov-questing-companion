@@ -1142,7 +1142,7 @@ ipcMain.handle('open-wiki', (_e, url) => {
 // ---------- window ----------
 
 function createWindow() {
-  const shooting = !!process.env.TQT_SHOOT;
+  const shooting = !!(process.env.TQT_SHOOT || process.env.TQT_SHOTJS);
   win = new BrowserWindow({
     width: 1280,
     height: 760,
@@ -1214,6 +1214,38 @@ function createWindow() {
         console.log('TQC_T_ERR', String(e.message || e));
         app.quit();
       }
+    });
+  }
+
+  // dev aid: TQT_SHOTJS=<js file> runs that file's code in the renderer, logs
+  // whatever it returns and screenshots the result to TQT_SHOTOUT. Generic on
+  // purpose — a one-off visual check (a new glyph, a layer at real map scale)
+  // should not need its own hook in here, and the rule is that anything drawn
+  // gets LOOKED at, not just asserted about.
+  if (process.env.TQT_SHOTJS) {
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        try {
+          const res = await win.webContents.executeJavaScript(
+            fs.readFileSync(process.env.TQT_SHOTJS, 'utf8'));
+          console.log('TQT_SHOTJS', JSON.stringify(res === undefined ? null : res));
+          let img = await win.webContents.capturePage();
+          // Returning {crop:{x,y,width,height}} (and optionally zoom:N) cuts a
+          // region out and magnifies it. Needed because the interesting question
+          // is often "is that 13 px glyph readable", and a full-window shot at
+          // 1280 px cannot answer it.
+          if (res && res.crop) {
+            img = img.crop(res.crop);
+            if (res.zoom > 1) {
+              img = img.resize({ width: Math.round(res.crop.width * res.zoom), quality: 'best' });
+            }
+          }
+          fs.writeFileSync(process.env.TQT_SHOTOUT || 'shot.png', img.toPNG());
+        } catch (e) {
+          console.log('TQT_SHOTJS_ERR', String((e && e.message) || e));
+        }
+        app.quit();
+      }, 2200);
     });
   }
 
@@ -2404,7 +2436,8 @@ function refuseIfRealProfile() {
   // every harness that drives the real UI, not just the first two
   if (!process.env.TQT_SHOOT && !process.env.TQC_TEST_APPLY
       && !process.env.TQT_MAPS && !process.env.TQT_HERO && !process.env.TQT_LAYERS
-      && !process.env.TQT_PROBE_LAYERS && !process.env.TQT_STORY) return;
+      && !process.env.TQT_PROBE_LAYERS && !process.env.TQT_STORY
+      && !process.env.TQT_WIPE_TEST && !process.env.TQT_SHOTJS) return;
   const real = path.join(app.getPath('appData'), app.getName());
   if (path.resolve(app.getPath('userData')) !== path.resolve(real)) return;
   console.error(
