@@ -392,6 +392,33 @@ function standingFor(trader, mode) {
 // quests each one gates. Data-driven on purpose: today that is Fence and
 // Lightkeeper for reputation plus a handful for loyalty, but 1.1.0's rework is
 // still landing upstream and this must not need editing when it does.
+// Reputation is only worth asking about where the player can act on it. Fence's
+// Scav karma opens and closes real quest lines; Lightkeeper's standing has
+// gates in the data ("Make Amends", <= 0) but they are satisfied at the value
+// everyone starts on, so asking for it would be a box that changes nothing.
+const REP_TRADERS = new Set(['Fence']);
+// Traders with no standing to speak of. The BTR Driver hands out quests but is
+// a service, not a trader you level with.
+const NO_STANDING = new Set(['BTR Driver']);
+
+// The karma values that actually change something: 0, plus each distinct
+// threshold the quest data gates on. Read from the data, so a new gate adds a
+// button by itself. Fence today: 0, +1 (Is This a Reference?, Network Provider
+// Part 1) and +4 (Establish Contact).
+function repChoices(trader) {
+  const vals = new Set([0]);
+  for (const t of state.tasks || []) {
+    for (const r of t.traderRequirements || []) {
+      if (!r.trader || r.trader.name !== trader) continue;
+      if (r.kind === 'loyalty') continue;
+      if (!String(r.compareMethod).startsWith('>')) continue;   // negative gates: see below
+      const v = Number(r.value);
+      if (Number.isFinite(v) && v > 0) vals.add(v);
+    }
+  }
+  return [...vals].sort((a, b) => a - b);
+}
+
 function tradersWithGates() {
   const out = new Map();
   const get = (n) => {
@@ -413,6 +440,7 @@ function tradersWithGates() {
       e.quests.add(t.id);
     }
   }
+  for (const n of NO_STANDING) out.delete(n);
   // gating traders first (that is where a value changes something today), then
   // by how much of the quest list they own
   return [...out.values()].sort((a, b) =>
@@ -1528,7 +1556,8 @@ function renderTraders() {
   $('traderList').innerHTML = gated.map((g) => {
     const st = standingFor(g.trader);
     const rows = [];
-    const showLoyalty = g.loyalty > 0 || g.reputation === 0;
+    const showRep = REP_TRADERS.has(g.trader) && g.reputation > 0;
+    const showLoyalty = !showRep;
 
     if (showLoyalty) {
       const cur = Number.isFinite(st.loyalty) ? st.loyalty : null;
@@ -1541,39 +1570,36 @@ function renderTraders() {
       </div>`);
     }
 
-    if (g.reputation) {
+    if (showRep) {
       const cur = Number.isFinite(st.rep) ? st.rep : null;
-      const whole = cur === null ? null : Math.floor(cur);
-      // Scav karma's real span. Whole numbers first; the slider then covers the
-      // gap up to the next one, which is where values like 3.64 actually live.
-      const lo = -7, hi = 6;
-      const steps = [];
-      for (let n = lo; n <= hi; n++) steps.push(n);
+      // Only the values that CHANGE something. Karma is a decimal, but nothing
+      // in the quest data cares where between the thresholds you sit — Fence's
+      // gates are ">= 1" and ">= 4" and nothing else — so the exact figure was
+      // a number to look up for no gain. The choices are the thresholds
+      // themselves, read from the data, plus 0 for "below the first one".
+      // If BSG adds a gate at 6, a sixth button appears here on its own.
+      const steps = repChoices(g.trader);
       rows.push(`<div class="trader-control">
-        <div class="trader-control-label">REPUTATION${cur === null ? '' : ` — <strong>${cur.toFixed(2)}</strong>`}</div>
-        <div class="rep-buttons">${steps.map((n) =>
-          `<button class="rep-btn${whole === n ? ' on' : ''}" data-trader="${escapeHtml(g.trader)}" data-rep="${n}"
-            title="${whole === n ? 'Click again to clear' : 'Set reputation ' + n + ' and fine-tune below'}">${n}</button>`).join('')}
+        <div class="trader-control-label">SCAV KARMA</div>
+        <div class="rep-buttons">${steps.map((n) => {
+    const on = cur !== null && cur === n;
+    const what = n === 0 ? 'Below +1 — the usual starting point' : `At least +${n}`;
+    return `<button class="rep-btn${on ? ' on' : ''}" data-trader="${escapeHtml(g.trader)}" data-rep="${n}"
+            title="${on ? 'Click again to clear' : escapeHtml(what)}">${n > 0 ? '+' : ''}${n}</button>`;
+  }).join('')}
         </div>
-        ${whole === null ? '' : `<div class="rep-fine">
-          <span class="rep-fine-end">${whole}</span>
-          <input type="range" min="${whole}" max="${whole + 0.99}" step="0.01" value="${cur}"
-            data-trader="${escapeHtml(g.trader)}" data-repfine="1">
-          <span class="rep-fine-end">${whole + 1}</span>
-        </div>`}
       </div>`);
     }
 
-    const need = [];
-    if (g.loyalty) need.push(`${g.loyalty} by loyalty level`);
-    if (g.reputation) need.push(`${g.reputation} by reputation`);
-    // Say plainly whether a value changes anything YET. A trader with no
-    // published gate is worth filling in, but pretending it locks something
-    // today would be a claim the data does not support.
-    const sub = g.quests.size
-      ? `gates ${g.quests.size} quest(s) — ${need.join(', ')}`
+    // Only count gates this card can actually DO something about: Lightkeeper's
+    // reputation rows are real in the data but unaskable here, so claiming the
+    // card gates them would be a promise it cannot keep.
+    const live = showRep ? g.reputation : g.loyalty;
+    const kind = showRep ? 'Scav karma' : 'loyalty level';
+    const sub = live
+      ? `gates ${live} quest(s) by ${kind}`
       : `${g.owns} quest(s) — none gated by standing in the current data`;
-    return `<div class="trader-card${g.quests.size ? '' : ' ungated'}">
+    return `<div class="trader-card${live ? '' : ' ungated'}">
       <div class="trader-card-head">
         <span class="trader-card-name">${escapeHtml(g.trader.toUpperCase())}</span>
         <span class="trader-card-gates">${sub}</span>
@@ -1607,23 +1633,8 @@ function renderTraders() {
   }
   for (const b of $('traderList').querySelectorAll('.rep-btn')) {
     b.addEventListener('click', () => {
-      const n = Number(b.dataset.rep);
-      if (b.classList.contains('on')) { write(b.dataset.trader, 'rep', null); return; }
-      // keep any fraction already dialled in if it belongs to this whole number
-      const cur = standingFor(b.dataset.trader).rep;
-      const keep = Number.isFinite(cur) && Math.floor(cur) === n ? cur : n;
-      write(b.dataset.trader, 'rep', keep);
+      write(b.dataset.trader, 'rep', b.classList.contains('on') ? null : Number(b.dataset.rep));
     });
-  }
-  for (const s of $('traderList').querySelectorAll('input[data-repfine]')) {
-    // `input` not `change`, so the readout tracks the drag
-    s.addEventListener('input', () => {
-      const v = Number(s.value);
-      if (!Number.isFinite(v)) return;
-      const label = s.closest('.trader-control').querySelector('.trader-control-label');
-      if (label) label.innerHTML = `REPUTATION — <strong>${v.toFixed(2)}</strong>`;
-    });
-    s.addEventListener('change', () => write(s.dataset.trader, 'rep', Number(s.value)));
   }
 }
 

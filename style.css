@@ -1533,16 +1533,12 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   background: #101010; border: 1px solid #4a4a44; color: #b8b5ac;
   font: inherit; font-size: 12px; font-weight: 900; letter-spacing: .5px;
 }
-.rep-btn { min-width: 30px; padding: 4px 6px; font-size: 11px; }
+.rep-btn { min-width: 42px; }
 .ll-btn:hover, .rep-btn:hover { color: #fff; border-color: #6a6a60; }
 .ll-btn.on, .rep-btn.on {
   background: linear-gradient(#c9a94a, #a9862f); border-color: #8a7127; color: #17140c;
   text-shadow: 0 1px 0 rgba(255,255,255,.3);
 }
-/* the fraction between two whole numbers — where Scav karma actually sits */
-.rep-fine { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
-.rep-fine-end { color: #7a776e; font-size: 11px; font-weight: 700; min-width: 16px; text-align: center; }
-.rep-fine input[type=range] { flex: 1; accent-color: #c9a94a; }
 
 
 #mapsOverlay {
