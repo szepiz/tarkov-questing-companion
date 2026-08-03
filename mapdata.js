@@ -427,6 +427,112 @@ const MAP_DATA = {
     floors: [],
     labels: [],
   },
+  Icebreaker: {
+    svg: "maps/Icebreaker.svg",
+    viewBox: { w: 856, h: 4088 },
+    bounds: [[11.875, -62.40625], [-14.875, 65.34375]], // [[x,z],[x,z]] in game coords
+    rotate: 0,
+    orient: "uv",   // axis mapping (see mapPoint)
+    baseLayer: "Control_Room",
+    approx: true,   // pin positions unverified — see _dev/build_mapdata.js
+    credit: "Map tiles by TarkovBOT.eu via tarkov.dev",   // per-map artwork credit
+    groundName: "Control Room",   // what the base layer's tab is called
+    defaultFloor: 5,   // deck to open on (upstream's own default view)
+
+    floors: [
+      {
+        name: "Engine Room", svgLayer: "Engine_Room",
+        extents: [
+          { height: [3.6, 5.6] },
+        ],
+      },
+      {
+        name: "Engine Room (upper)", svgLayer: "Engine_Room_upper",
+        extents: [
+          { height: [5.7, 8.7] },
+        ],
+      },
+      {
+        name: "Fuel Pumps (lower)", svgLayer: "Fuel_Pumps_lower",
+        extents: [
+          { height: [8.8, 11.8] },
+        ],
+      },
+      {
+        name: "Fuel Pumps", svgLayer: "Fuel_Pumps",
+        extents: [
+          { height: [11.9, 14.9] },
+        ],
+      },
+      {
+        name: "Storage/Security", svgLayer: "Storage_Security",
+        extents: [
+          { height: [15, 18.93] },
+        ],
+      },
+      {
+        name: "Infirmary", svgLayer: "Infirmary",
+        extents: [
+          { height: [18.92, 19.56] },
+        ],
+      },
+      {
+        name: "Helipad", svgLayer: "Helipad",
+        extents: [
+          { height: [19.57, 22.1] },
+        ],
+      },
+      {
+        name: "Gym/Canteen", svgLayer: "Gym_Canteen",
+        extents: [
+          { height: [22.2, 25.2] },
+        ],
+      },
+      {
+        name: "Accommodation (lower)", svgLayer: "Accommodation_lower",
+        extents: [
+          { height: [25.3, 28.2] },
+        ],
+      },
+      {
+        name: "Accommodation (mid)", svgLayer: "Accommodation_mid",
+        extents: [
+          { height: [28.3, 31.3] },
+        ],
+      },
+      {
+        name: "Accommodation (upper)", svgLayer: "Accommodation_upper",
+        extents: [
+          { height: [31.4, 34.4] },
+        ],
+      },
+      {
+        name: "Officers' Deck", svgLayer: "Officers_Deck",
+        extents: [
+          { height: [34.5, 37.5] },
+        ],
+      },
+      {
+        name: "Stairs (blocked)", svgLayer: "Stairs_blocked",
+        extents: [
+          { height: [37.6, 40.6] },
+        ],
+      },
+      {
+        name: "Bridge", svgLayer: "Bridge",
+        extents: [
+          { height: [40.7, 43.7] },
+        ],
+      },
+      {
+        name: "Bridge Roof", svgLayer: "Bridge_Roof",
+        extents: [
+          { height: [43.8, 10000] },
+        ],
+      },
+    ],
+    labels: [],
+  },
   Terminal: {
     svg: "maps/Terminal.svg",
     viewBox: { w: 887.70096, h: 1043.9554 },
@@ -520,7 +626,7 @@ function floorHeight(floor) {
 
 // [{ name, idx }] for the floor tabs, lowest first; idx -1 is the ground floor
 function floorOrder(md) {
-  const tabs = [{ name: 'Ground', idx: -1, h: 0 }].concat(
+  const tabs = [{ name: md.groundName || 'Ground', idx: -1, h: 0 }].concat(
     (md.floors || []).map((f, i) => ({ name: f.name, idx: i, h: floorHeight(f) })));
   return tabs.sort((a, b) => a.h - b.h || a.idx - b.idx);
 }

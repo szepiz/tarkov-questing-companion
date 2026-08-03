@@ -1580,6 +1580,28 @@ function createWindow() {
               };
               const hits = labels.filter(onArt).length;
               if (panel) panel.style.display = panelWas;
+              // One reader for both floor controls. Buttons on maps with a few
+              // storeys, a <select> on one with sixteen; the assertions below
+              // should not care which.
+              function floorCtl() {
+                const btns = [...document.querySelectorAll('.floor-tab')];
+                if (btns.length) {
+                  return btns.map(b => ({ label: b.textContent, idx: Number(b.dataset.floor), pick: () => b.click() }));
+                }
+                const sel = document.querySelector('.floor-pick');
+                if (!sel) return [];
+                return [...sel.options].map(o => ({
+                  label: o.text,
+                  idx: Number(o.value),
+                  pick: () => { sel.value = o.value; sel.dispatchEvent(new Event('change', { bubbles: true })); },
+                }));
+              }
+              function activeFloor() {
+                const b = document.querySelector('.floor-tab.active');
+                if (b) return Number(b.dataset.floor);
+                const sel = document.querySelector('.floor-pick');
+                return sel ? Number(sel.value) : null;
+              }
               return {
                 map: ${JSON.stringify(name)},
                 viewBox: svg.getAttribute('viewBox'),
@@ -1601,28 +1623,39 @@ function createWindow() {
                     return { x: r(b.x), y: r(b.y), w: r(b.width), h: r(b.height) };
                   } catch { return null; }
                 })(),
-                floors: [...document.querySelectorAll('.floor-tab')].map(t => t.textContent),
+                // Read the floor control WHICHEVER it is: a row of tabs, or the
+                // picker a map with more decks than fit gets (Icebreaker's 16).
+                // Asserting on '.floor-tab' alone reported that ship as having no
+                // floors at all, which is exactly the kind of silent blind spot
+                // this harness exists to prevent.
+                floors: floorCtl().map(f => f.label),
                 // selecting an upper floor must dim the ground plan underneath it.
                 // Checked per map because their SVG structures differ.
                 // tabs are ordered by height now, so ground is not tabs[0] on a
-                // map with a basement — find them by their data-floor index
-                defaultIsGround: (() => {
-                  const active = document.querySelector('.floor-tab.active');
-                  return !!active && Number(active.dataset.floor) === -1;
-                })(),
-                tabOrder: [...document.querySelectorAll('.floor-tab')].map(t => Number(t.dataset.floor)),
+                // map with a basement — find them by their floor index
+                openedOn: activeFloor(),
+                // ground unless the map declares a defaultFloor (only Icebreaker
+                // does: its ground IS a cupboard-sized control room)
+                opensWhereExpected: activeFloor() === (typeof MAP_DATA[${JSON.stringify(name)}].defaultFloor === 'number'
+                  ? MAP_DATA[${JSON.stringify(name)}].defaultFloor : -1),
+                tabOrder: floorCtl().map(f => f.idx),
                 dim: await (async () => {
-                  const tabs = [...document.querySelectorAll('.floor-tab')];
-                  const ground = tabs.find(t => Number(t.dataset.floor) === -1);
-                  const upper = tabs.find(t => Number(t.dataset.floor) >= 0);
+                  const ctl = floorCtl();
+                  const ground = ctl.find(f => f.idx === -1);
+                  const upper = ctl.find(f => f.idx >= 0);
                   if (!upper || !ground) return 'no floors';
                   const base = svg.querySelector('#' + CSS.escape(MAP_DATA[${JSON.stringify(name)}].baseLayer));
                   if (!base) return 'no base layer';
+                  // start from ground explicitly: a map with a defaultFloor does
+                  // not open there, and measuring "at ground" while standing on
+                  // deck five reports a dimming failure that is not one
+                  ground.pick();
+                  await new Promise(r => setTimeout(r, 250));
                   const atGround = Number(getComputedStyle(base).opacity);
-                  upper.click();
+                  upper.pick();
                   await new Promise(r => setTimeout(r, 250));
                   const onFloor = Number(getComputedStyle(base).opacity);
-                  ground.click();
+                  ground.pick();
                   await new Promise(r => setTimeout(r, 250));
                   const backToGround = Number(getComputedStyle(base).opacity);
                   return (atGround > 0.9 && onFloor < 0.5 && backToGround > 0.9)
@@ -1677,7 +1710,18 @@ function createWindow() {
               return { w: Math.round(s.width), vbRaw: raw, vbW: Math.round(vb[2] * 10) / 10, cx: Math.round(s.left + s.width / 2) };
             };
             const dot = () => { const d = document.querySelector('.qpin-dot'); return d ? Math.round(d.getBoundingClientRect().width * 10) / 10 : null; };
-            const dotXY = () => { const d = document.querySelector('.qpin-dot'); const r = d.getBoundingClientRect(); return { x: Math.round(r.left + r.width/2), y: Math.round(r.top + r.height/2) }; };
+            // This whole check anchors on a quest pin, and Customs having one
+            // depends on the PROFILE: a player who has finished its quests has
+            // none, and dereferencing null here aborted the entire harness
+            // before the zoom and pan assertions ever ran. Fall back to the
+            // middle of the stage so the zoom maths is still exercised, and say
+            // in the result which anchor was used.
+            const dotXY = () => {
+              const d = document.querySelector('.qpin-dot');
+              if (!d) return { x: Math.round(st.left + st.width / 2), y: Math.round(st.top + st.height / 2), noPin: true };
+              const r = d.getBoundingClientRect();
+              return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) };
+            };
             const before = { zoom: mapView.zoom, ...at(), map: at().w, dot: dot(), pin: dotXY() };
             // zoom in on the pin itself: it should barely move
             const p = dotXY();

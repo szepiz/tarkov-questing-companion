@@ -531,7 +531,6 @@ function renderStoryTree(tree) {
     row.innerHTML = `
       <span class="row-name">${escapeHtml(c.name.toUpperCase())}</span>
       <span class="row-toggle">${expanded ? '−' : '+'}</span>
-      ${c.wip ? '<span class="story-tag wip" title="Map locations for this chapter are not placed yet — expect no pins or areas">WIP</span>' : ''}
       ${cState === 'done' ? '<span class="story-tag done">DONE</span>'
         : cState === 'locked' ? '<span class="story-tag locked">LOCKED</span>' : ''}
       <span class="row-count${cState === 'done' ? ' done' : ''}">${doneCount}/${mains.length}</span>`;
@@ -635,9 +634,12 @@ function renderStoryChapter() {
   if (!c) return;
   const cState = chapterStatuses()[c.id];
   $('questName').textContent = c.name.toUpperCase();
+  // The chapter's `wip` flag is still baked and still shown in the DEV editor —
+  // it is how the owner tracks which chapters they have finished placing map
+  // locations for. It is deliberately NOT surfaced here: to a player it read as
+  // "this part of the app is unfinished" rather than "no pins on this one yet".
   $('questBadges').innerHTML = [
     '<span class="badge story">STORY CHAPTER</span>',
-    c.wip ? '<span class="badge wip" title="Map locations for this chapter are not placed yet">MAP LOCATIONS WIP</span>' : '',
     cState === 'done' ? '<span class="badge done">COMPLETED</span>' : '',
     cState === 'locked' ? '<span class="badge locked">NOT DISCOVERED</span>' : '',
   ].join('');
@@ -2907,15 +2909,43 @@ function renderMapLayers() {
 }
 // ---------- map layers end ----------
 
+// A map with more storeys than this gets a picker instead of a row of tabs.
+// Three tabs are a row you read at a glance; Icebreaker's SIXTEEN decks are
+// 2,400 px of buttons in a header that also holds the title, the quest-set
+// boxes and the close button. The threshold is deliberately above every other
+// map (Streets has the most at six including ground), so nothing that works
+// today changes shape.
+const FLOOR_TABS_MAX = 8;
+
 function renderFloorTabs() {
   const md = MAP_DATA[mapView.name];
   // ordered bottom-to-top, so ground sits above the basement rather than first
   const tabs = floorOrder(md).map((t) => ({ name: t.name.toUpperCase(), idx: t.idx }));
-  $('floorTabs').innerHTML = tabs.map((t) => {
-    const n = mapView.pins.filter((p) => p.floor === t.idx).length;
+  const host = $('floorTabs');
+  const count = (idx) => mapView.pins.filter((p) => p.floor === idx).length;
+
+  if (tabs.length > FLOOR_TABS_MAX) {
+    const cur = tabs.find((t) => t.idx === mapView.floor) || tabs[0];
+    host.innerHTML = `<select class="floor-pick" title="Deck">`
+      + tabs.map((t) => {
+        const n = count(t.idx);
+        return `<option value="${t.idx}"${t.idx === cur.idx ? ' selected' : ''}>`
+          + `${escapeHtml(t.name)}${n ? ` (${n})` : ''}</option>`;
+      }).join('')
+      + '</select>';
+    host.querySelector('.floor-pick').addEventListener('change', (e) => {
+      mapView.floor = Number(e.target.value);
+      mapView.selected = null; mapView.selectedMarker = null;
+      drawMap();
+    });
+    return;
+  }
+
+  host.innerHTML = tabs.map((t) => {
+    const n = count(t.idx);
     return `<button class="floor-tab${t.idx === mapView.floor ? ' active' : ''}" data-floor="${t.idx}">${escapeHtml(t.name)}${n ? ` (${n})` : ''}</button>`;
   }).join('');
-  $('floorTabs').querySelectorAll('.floor-tab').forEach((b) => {
+  host.querySelectorAll('.floor-tab').forEach((b) => {
     b.addEventListener('click', () => {
       mapView.floor = Number(b.dataset.floor);
       mapView.selected = null; mapView.selectedMarker = null;
@@ -3204,7 +3234,11 @@ async function openQuestMap(mapName) {
   applyMapRotation(mapName);   // saved quarter-turns, applied to the pristine entry
   const md = MAP_DATA[mapName];
   mapView.name = mapName;
-  mapView.floor = -1;
+  // Ground unless the map names a better place to start. Icebreaker's ground IS
+  // its Control Room — a 281x134 cupboard on a 4088-tall ship — so opening there
+  // shows an almost empty canvas. `defaultFloor` carries the deck upstream marks
+  // as its own default view (the Infirmary), and no other map sets it.
+  mapView.floor = typeof md.defaultFloor === 'number' ? md.defaultFloor : -1;
   mapView.selected = null;
   mapView.selectedMarker = null;
   mapView.highlight = null;

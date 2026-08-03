@@ -865,6 +865,22 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   border-radius: 2px;
 }
 .floor-tab:hover { color: #e8e5dc; }
+/* Maps with more decks than fit as tabs (Icebreaker's sixteen) get this instead.
+   Styled as the ACTIVE tab, because that is what it is: the current floor, with
+   the rest one click away. */
+.floor-pick {
+  border: 1px solid #8a7127;
+  background: linear-gradient(#c9a94a, #a9862f);
+  color: #17140c;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 4px 6px 3px;
+  border-radius: 2px;
+  max-width: 210px;
+}
+.floor-pick:hover { filter: brightness(1.06); }
 .floor-tab.active {
   background:
     repeating-linear-gradient(115deg, rgba(0,0,0,.05) 0 2px, transparent 2px 4px),
@@ -1447,8 +1463,6 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 .story-tag.done { color: #7a9a5a; }
 .story-tag.locked { color: #d0a943; }
-.story-tag.wip { color: #8a877e; opacity: .8; }
-.badge.wip { color: #8a877e; border-color: #55524a; background: rgba(138,135,126,.1); }
 .story-tag.optional { color: #8a877e; }
 .chapter-row.chapter-locked .row-name { color: #8a877e; }
 /* the map an open story objective is on, right after its name */
