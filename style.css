@@ -1483,7 +1483,7 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   background: #171715; border: 1px solid #4a4a44;
   box-shadow: 0 10px 40px rgba(0,0,0,.6);
 }
-#traderHeader {
+#traderHeader { flex: none; 
   display: flex; align-items: center; gap: 10px;
   background: linear-gradient(#3a3a37, #2c2c29);
   border-bottom: 1px solid #000; padding: 8px 12px;
@@ -1499,12 +1499,22 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   border: 1px solid #4a4a44; color: #cfccc3;
   font: inherit; font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 4px 10px;
 }
-#traderIntro {
+#traderIntro { flex: none; 
   padding: 10px 12px; color: #a5a299; font-size: 12px; line-height: 1.5;
   border-bottom: 1px solid #2a2a26; background: #131311;
 }
 #traderIntro strong { color: #cdc6b4; }
-#traderList { overflow-y: auto; padding: 10px 12px 14px; display: grid; gap: 8px; }
+#traderList {
+  /* min-height:0 is load-bearing: without it this flex child refuses to shrink
+     below its content, so the list runs past the panel and never scrolls. */
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  padding: 10px 12px 14px; display: grid; gap: 8px; align-content: start;
+}
+#traderList::-webkit-scrollbar { width: 10px; }
+#traderList::-webkit-scrollbar-thumb { background: #4a4a42; border-radius: 5px; }
+#traderList::-webkit-scrollbar-track { background: #121210; }
+/* a trader nothing is gated by yet — still worth recording, just quieter */
+.trader-card.ungated { opacity: .82; }
 .trader-card {
   background: #1d1d1a; border: 1px solid #33332e; padding: 9px 11px 11px;
 }

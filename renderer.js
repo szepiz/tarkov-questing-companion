@@ -394,17 +394,30 @@ function standingFor(trader, mode) {
 // still landing upstream and this must not need editing when it does.
 function tradersWithGates() {
   const out = new Map();
+  const get = (n) => {
+    if (!out.has(n)) out.set(n, { trader: n, reputation: 0, loyalty: 0, quests: new Set(), owns: 0 });
+    return out.get(n);
+  };
   for (const t of state.tasks || []) {
+    // EVERY trader that hands out quests gets a row, not only the ones the data
+    // currently gates something with. 1.1.0's loyalty requirements are landing
+    // upstream a few at a time, and a player knows their own loyalty level long
+    // before tarkov.dev publishes the gate — recording it now means those quests
+    // lock correctly the moment it does.
+    if (t.trader && t.trader.name) get(t.trader.name).owns++;
     for (const r of t.traderRequirements || []) {
       const n = r.trader && r.trader.name;
       if (!n) continue;
-      const e = out.get(n) || { trader: n, reputation: 0, loyalty: 0, quests: new Set() };
+      const e = get(n);
       e[r.kind === 'loyalty' ? 'loyalty' : 'reputation']++;
       e.quests.add(t.id);
-      out.set(n, e);
     }
   }
-  return [...out.values()].sort((a, b) => b.quests.size - a.quests.size || a.trader.localeCompare(b.trader));
+  // gating traders first (that is where a value changes something today), then
+  // by how much of the quest list they own
+  return [...out.values()].sort((a, b) =>
+    (b.quests.size > 0) - (a.quests.size > 0) || b.quests.size - a.quests.size
+    || b.owns - a.owns || a.trader.localeCompare(b.trader));
 }
 
 // does the player's karma satisfy this requirement?
@@ -1504,18 +1517,20 @@ function renderTraders() {
       + ` Patch 1.1.0 moved a lot of unlocks onto trader loyalty level, so expect this to fill in`
       + ` as the quest data catches up.`;
 
-  // Each trader shows ONLY the control that actually gates its quests, and each
-  // control matches the shape of the thing it is setting:
+  // Each control matches the shape of the thing it sets:
   //   loyalty level is 1-4 and nothing in between  -> four buttons
   //   reputation is a running decimal              -> pick the whole number,
   //                                                   then dial in the fraction
   // Which one a trader gets is read from the data, not from a list of names, so
-  // it stays right as 1.1.0's rework lands upstream.
+  // it stays right as 1.1.0's rework lands upstream. A trader the data does not
+  // gate anything by yet still gets the loyalty buttons — that is the number
+  // 1.1.0 unlocks by, and recording it now costs nothing.
   $('traderList').innerHTML = gated.map((g) => {
     const st = standingFor(g.trader);
     const rows = [];
+    const showLoyalty = g.loyalty > 0 || g.reputation === 0;
 
-    if (g.loyalty) {
+    if (showLoyalty) {
       const cur = Number.isFinite(st.loyalty) ? st.loyalty : null;
       rows.push(`<div class="trader-control">
         <div class="trader-control-label">LOYALTY LEVEL</div>
@@ -1552,10 +1567,16 @@ function renderTraders() {
     const need = [];
     if (g.loyalty) need.push(`${g.loyalty} by loyalty level`);
     if (g.reputation) need.push(`${g.reputation} by reputation`);
-    return `<div class="trader-card">
+    // Say plainly whether a value changes anything YET. A trader with no
+    // published gate is worth filling in, but pretending it locks something
+    // today would be a claim the data does not support.
+    const sub = g.quests.size
+      ? `gates ${g.quests.size} quest(s) — ${need.join(', ')}`
+      : `${g.owns} quest(s) — none gated by standing in the current data`;
+    return `<div class="trader-card${g.quests.size ? '' : ' ungated'}">
       <div class="trader-card-head">
         <span class="trader-card-name">${escapeHtml(g.trader.toUpperCase())}</span>
-        <span class="trader-card-gates">gates ${g.quests.size} quest(s) — ${need.join(', ')}</span>
+        <span class="trader-card-gates">${sub}</span>
       </div>
       ${rows.join('')}
     </div>`;
