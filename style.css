@@ -1506,20 +1506,33 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 #traderIntro strong { color: #cdc6b4; }
 #traderList { overflow-y: auto; padding: 10px 12px 14px; display: grid; gap: 8px; }
 .trader-card {
-  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px;
-  background: #1d1d1a; border: 1px solid #33332e; padding: 8px 10px;
+  background: #1d1d1a; border: 1px solid #33332e; padding: 9px 11px 11px;
 }
+.trader-card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .trader-card-name { font-weight: 900; letter-spacing: 1px; color: #d8d5cd; font-size: 13px; }
-.trader-card-gates { grid-column: 1; grid-row: 2; color: #7a776e; font-size: 11px; }
-.trader-field {
-  grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 3px;
-  color: #7a776e; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+.trader-card-gates { color: #7a776e; font-size: 11px; }
+.trader-control { margin-top: 9px; }
+.trader-control-label {
+  color: #7a776e; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; margin-bottom: 5px;
 }
-.trader-field input {
-  width: 84px; background: #101010; border: 1px solid #4a4a44; color: #e8e5dc;
-  font: inherit; font-size: 13px; padding: 4px 6px; text-align: center;
+.trader-control-label strong { color: #e0c266; font-size: 12px; }
+/* loyalty level is 1-4 and nothing between, so it is four buttons, not a field */
+.ll-buttons, .rep-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
+.ll-btn, .rep-btn {
+  min-width: 34px; padding: 5px 8px;
+  background: #101010; border: 1px solid #4a4a44; color: #b8b5ac;
+  font: inherit; font-size: 12px; font-weight: 900; letter-spacing: .5px;
 }
-.trader-field input:focus { outline: none; border-color: #c9a94a; }
+.rep-btn { min-width: 30px; padding: 4px 6px; font-size: 11px; }
+.ll-btn:hover, .rep-btn:hover { color: #fff; border-color: #6a6a60; }
+.ll-btn.on, .rep-btn.on {
+  background: linear-gradient(#c9a94a, #a9862f); border-color: #8a7127; color: #17140c;
+  text-shadow: 0 1px 0 rgba(255,255,255,.3);
+}
+/* the fraction between two whole numbers — where Scav karma actually sits */
+.rep-fine { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+.rep-fine-end { color: #7a776e; font-size: 11px; font-weight: 700; min-width: 16px; text-align: center; }
+.rep-fine input[type=range] { flex: 1; accent-color: #c9a94a; }
 
 
 #mapsOverlay {

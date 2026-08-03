@@ -1496,51 +1496,113 @@ function renderTraders() {
   $('traderMode').textContent = modeLabel(state.gameMode);
   const nQuests = new Set(gated.flatMap((g) => [...g.quests])).size;
   $('traderIntro').innerHTML = gated.length
-    ? `Tarkov keeps your loyalty level and reputation out of the logs, so they have to be typed in.`
+    ? `Tarkov keeps your standing with each trader out of the logs, so it has to be set here.`
       + ` They gate <strong>${nQuests}</strong> quest(s) in this list.`
-      + ` <strong>A blank box is never used to hide a quest</strong> — fill one in and its quests lock exactly.`
+      + ` <strong>Anything left unset is never used to hide a quest</strong> — set it and its quests lock exactly.`
       + ` These are your <strong>${escapeHtml(modeLabel(state.gameMode))}</strong> values; each mode is its own character.`
     : `Nothing in the current quest list is gated by trader standing.`
       + ` Patch 1.1.0 moved a lot of unlocks onto trader loyalty level, so expect this to fill in`
       + ` as the quest data catches up.`;
 
+  // Each trader shows ONLY the control that actually gates its quests, and each
+  // control matches the shape of the thing it is setting:
+  //   loyalty level is 1-4 and nothing in between  -> four buttons
+  //   reputation is a running decimal              -> pick the whole number,
+  //                                                   then dial in the fraction
+  // Which one a trader gets is read from the data, not from a list of names, so
+  // it stays right as 1.1.0's rework lands upstream.
   $('traderList').innerHTML = gated.map((g) => {
     const st = standingFor(g.trader);
+    const rows = [];
+
+    if (g.loyalty) {
+      const cur = Number.isFinite(st.loyalty) ? st.loyalty : null;
+      rows.push(`<div class="trader-control">
+        <div class="trader-control-label">LOYALTY LEVEL</div>
+        <div class="ll-buttons">${[1, 2, 3, 4].map((n) =>
+          `<button class="ll-btn${cur === n ? ' on' : ''}" data-trader="${escapeHtml(g.trader)}" data-loyalty="${n}"
+            title="${cur === n ? 'Click again to clear' : 'Set loyalty level ' + n}">${n}</button>`).join('')}
+        </div>
+      </div>`);
+    }
+
+    if (g.reputation) {
+      const cur = Number.isFinite(st.rep) ? st.rep : null;
+      const whole = cur === null ? null : Math.floor(cur);
+      // Scav karma's real span. Whole numbers first; the slider then covers the
+      // gap up to the next one, which is where values like 3.64 actually live.
+      const lo = -7, hi = 6;
+      const steps = [];
+      for (let n = lo; n <= hi; n++) steps.push(n);
+      rows.push(`<div class="trader-control">
+        <div class="trader-control-label">REPUTATION${cur === null ? '' : ` — <strong>${cur.toFixed(2)}</strong>`}</div>
+        <div class="rep-buttons">${steps.map((n) =>
+          `<button class="rep-btn${whole === n ? ' on' : ''}" data-trader="${escapeHtml(g.trader)}" data-rep="${n}"
+            title="${whole === n ? 'Click again to clear' : 'Set reputation ' + n + ' and fine-tune below'}">${n}</button>`).join('')}
+        </div>
+        ${whole === null ? '' : `<div class="rep-fine">
+          <span class="rep-fine-end">${whole}</span>
+          <input type="range" min="${whole}" max="${whole + 0.99}" step="0.01" value="${cur}"
+            data-trader="${escapeHtml(g.trader)}" data-repfine="1">
+          <span class="rep-fine-end">${whole + 1}</span>
+        </div>`}
+      </div>`);
+    }
+
     const need = [];
     if (g.loyalty) need.push(`${g.loyalty} by loyalty level`);
     if (g.reputation) need.push(`${g.reputation} by reputation`);
     return `<div class="trader-card">
-      <div class="trader-card-name">${escapeHtml(g.trader.toUpperCase())}</div>
-      <div class="trader-card-gates">gates ${g.quests.size} quest(s) — ${need.join(', ')}</div>
-      <label class="trader-field">LOYALTY
-        <input type="number" min="1" max="4" step="1" data-trader="${escapeHtml(g.trader)}" data-kind="loyalty"
-          placeholder="—" value="${Number.isFinite(st.loyalty) ? st.loyalty : ''}">
-      </label>
-      <label class="trader-field">REPUTATION
-        <input type="number" min="-10" max="10" step="0.01" data-trader="${escapeHtml(g.trader)}" data-kind="rep"
-          placeholder="—" value="${Number.isFinite(st.rep) ? st.rep : ''}">
-      </label>
+      <div class="trader-card-head">
+        <span class="trader-card-name">${escapeHtml(g.trader.toUpperCase())}</span>
+        <span class="trader-card-gates">gates ${g.quests.size} quest(s) — ${need.join(', ')}</span>
+      </div>
+      ${rows.join('')}
     </div>`;
   }).join('');
 
-  for (const input of $('traderList').querySelectorAll('input[data-trader]')) {
-    input.addEventListener('change', () => {
-      const raw = input.value.trim();
-      const val = raw === '' ? null : Number(raw);
-      if (raw !== '' && !Number.isFinite(val)) return;
-      const all = { ...(state.settings.traderStanding || {}) };
-      const forMode = { ...(all[state.gameMode] || {}) };
-      const entry = { ...(forMode[input.dataset.trader] || {}) };
-      const key = input.dataset.kind === 'loyalty' ? 'loyalty' : 'rep';
-      if (val === null) delete entry[key]; else entry[key] = val;
-      if (!Object.keys(entry).length) delete forMode[input.dataset.trader];
-      else forMode[input.dataset.trader] = entry;
-      all[state.gameMode] = forMode;
-      state.settings = { ...state.settings, traderStanding: all };
-      backend.saveSettings({ traderStanding: all }).then((s) => { if (s) state.settings = s; });
-      renderAll();
-      renderTraders();
+  // Writing a value is the same operation whichever control produced it.
+  const write = (trader, key, val) => {
+    const all = { ...(state.settings.traderStanding || {}) };
+    const forMode = { ...(all[state.gameMode] || {}) };
+    const entry = { ...(forMode[trader] || {}) };
+    if (val === null) delete entry[key]; else entry[key] = val;
+    if (!Object.keys(entry).length) delete forMode[trader];
+    else forMode[trader] = entry;
+    all[state.gameMode] = forMode;
+    state.settings = { ...state.settings, traderStanding: all };
+    backend.saveSettings({ traderStanding: all }).then((s) => { if (s) state.settings = s; });
+    renderAll();
+    renderTraders();
+  };
+
+  for (const b of $('traderList').querySelectorAll('.ll-btn')) {
+    b.addEventListener('click', () => {
+      const n = Number(b.dataset.loyalty);
+      // clicking the level you are already on clears it — back to "unknown",
+      // which is the state that never hides anything
+      write(b.dataset.trader, 'loyalty', b.classList.contains('on') ? null : n);
     });
+  }
+  for (const b of $('traderList').querySelectorAll('.rep-btn')) {
+    b.addEventListener('click', () => {
+      const n = Number(b.dataset.rep);
+      if (b.classList.contains('on')) { write(b.dataset.trader, 'rep', null); return; }
+      // keep any fraction already dialled in if it belongs to this whole number
+      const cur = standingFor(b.dataset.trader).rep;
+      const keep = Number.isFinite(cur) && Math.floor(cur) === n ? cur : n;
+      write(b.dataset.trader, 'rep', keep);
+    });
+  }
+  for (const s of $('traderList').querySelectorAll('input[data-repfine]')) {
+    // `input` not `change`, so the readout tracks the drag
+    s.addEventListener('input', () => {
+      const v = Number(s.value);
+      if (!Number.isFinite(v)) return;
+      const label = s.closest('.trader-control').querySelector('.trader-control-label');
+      if (label) label.innerHTML = `REPUTATION — <strong>${v.toFixed(2)}</strong>`;
+    });
+    s.addEventListener('change', () => write(s.dataset.trader, 'rep', Number(s.value)));
   }
 }
 
