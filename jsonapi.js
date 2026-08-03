@@ -218,10 +218,18 @@ function adaptTask(t, names, questItemName) {
     // Contact" needs >= 4. Without this the app showed all of them as ready to
     // take. Only reputation rows are kept — loyalty-level rows would need the
     // player's trader level, which no log carries.
+    // BOTH kinds are kept now. Upstream calls them `reputation` (the decimal
+    // standing, e.g. Fence karma) and `level` (the trader's LOYALTY LEVEL, 1-4).
+    // Loyalty rows used to be dropped because no log carries the player's trader
+    // level — still true, so the player types it in, exactly as they already do
+    // for Fence. EFT 1.1.0 re-hung much of the quest tree off loyalty level, so
+    // dropping these would mean showing quests as available that are not.
+    // NOTHING is locked on an UNSET value: see repLocked in renderer.js.
     traderRequirements: (t.traderRequirements || [])
-      .filter(r => r && r.requirementType === 'reputation')
+      .filter(r => r && (r.requirementType === 'reputation' || r.requirementType === 'level'))
       .map(r => ({
         trader: { name: names.trader(r.trader) },
+        kind: r.requirementType === 'level' ? 'loyalty' : 'reputation',
         compareMethod: r.compareMethod || '>=',
         value: typeof r.value === 'number' ? r.value : 0,
       })),

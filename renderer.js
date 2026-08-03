@@ -366,6 +366,47 @@ function scavKarma() {
   return Number.isFinite(own) ? own : 0;
 }
 
+// ---------- trader standing (reputation + loyalty level) ----------
+//
+// EFT 1.1.0 re-hung much of the quest tree off TRADER LOYALTY LEVEL rather than
+// prerequisite quests, which turned this from a Fence footnote into something
+// the player needs at hand. Neither number appears in any log — the profile
+// carries them, the logs do not — so both are typed in, per mode, per trader.
+//
+// Storage: settings.traderStanding[mode][traderName] = { rep, loyalty }.
+// Fence's reputation keeps living in settings.scavKarma so an existing install
+// keeps working and a downgrade keeps reading it; readers below merge the two.
+function standingFor(trader, mode) {
+  const all = (state.settings && state.settings.traderStanding) || {};
+  const own = (all[mode || state.gameMode] || {})[trader] || {};
+  const out = { rep: Number(own.rep), loyalty: Number(own.loyalty) };
+  if (trader === 'Fence' && !Number.isFinite(out.rep)) {
+    const k = state.settings && state.settings.scavKarma;
+    const v = k && Number(k[mode || state.gameMode]);
+    if (Number.isFinite(v)) out.rep = v;
+  }
+  return out;
+}
+
+// Every trader the loaded quest list actually gates something by, with how many
+// quests each one gates. Data-driven on purpose: today that is Fence and
+// Lightkeeper for reputation plus a handful for loyalty, but 1.1.0's rework is
+// still landing upstream and this must not need editing when it does.
+function tradersWithGates() {
+  const out = new Map();
+  for (const t of state.tasks || []) {
+    for (const r of t.traderRequirements || []) {
+      const n = r.trader && r.trader.name;
+      if (!n) continue;
+      const e = out.get(n) || { trader: n, reputation: 0, loyalty: 0, quests: new Set() };
+      e[r.kind === 'loyalty' ? 'loyalty' : 'reputation']++;
+      e.quests.add(t.id);
+      out.set(n, e);
+    }
+  }
+  return [...out.values()].sort((a, b) => b.quests.size - a.quests.size || a.trader.localeCompare(b.trader));
+}
+
 // does the player's karma satisfy this requirement?
 function repMet(r, have) {
   const v = Number(r.value) || 0;
@@ -386,20 +427,28 @@ function karmaIsSet() {
   return !!set && Number.isFinite(Number(set[state.gameMode]));
 }
 
+// Now covers EVERY trader and BOTH kinds of gate, but the governing rule is
+// unchanged and is the important part: a value the player has not given us is
+// NOT a value we may lock on. Unknown standing keeps the quest visible.
 function repLocked(t) {
-  const have = scavKarma();
-  const known = karmaIsSet();
   for (const r of t.traderRequirements || []) {
-    if (!r.trader || r.trader.name !== 'Fence') continue;
-    if (repMet(r, have)) continue;
-    // With karma UNSET we are guessing at 0, and a guess must never hide a
-    // quest someone can actually take — the same rule the level estimate
-    // follows. So only gates needing NEGATIVE reputation are trusted blind:
-    // Fence's "Compensation for Damage" line exists solely for players who
-    // tanked their karma, which is not a state you reach by accident. Gates
-    // wanting MORE reputation stay visible until the user states a value.
-    if (!known && !(String(r.compareMethod).startsWith('<') && Number(r.value) < 0)) continue;
-    return true;
+    const trader = r.trader && r.trader.name;
+    if (!trader) continue;
+    const st = standingFor(trader);
+    const have = r.kind === 'loyalty' ? st.loyalty : st.rep;
+    if (Number.isFinite(have)) {
+      // stated by the player — trust it in both directions
+      if (!repMet(r, have)) return true;
+      continue;
+    }
+    // UNSET. A guess must never hide a quest someone can actually take, the same
+    // rule the level estimate follows. The single blind exception, kept from
+    // v1.18.0: a gate that requires NEGATIVE reputation describes a state nobody
+    // reaches by accident, so Fence's "Compensation for Damage" line stays
+    // hidden until someone says otherwise. Everything else stays visible.
+    if (r.kind !== 'loyalty'
+      && String(r.compareMethod).startsWith('<') && Number(r.value) < 0
+      && !repMet(r, 0)) return true;
   }
   return false;
 }
@@ -1207,17 +1256,22 @@ function renderSettingsPanel() {
 
   // Scav karma — same deal as the level: the logs never carry it, and it gates
   // whole Fence quest lines in both directions.
-  const karmaSet = (state.settings.scavKarma || {})[state.gameMode];
-  if (document.activeElement !== $('scavKarmaInput')) {
-    $('scavKarmaInput').value = Number.isFinite(Number(karmaSet)) && karmaSet !== undefined ? karmaSet : '';
+  // Trader standing moved to its own header panel in 1.1.0 — Settings just
+  // points at it now, and says how much is currently riding on it.
+  {
+    const gated = tradersWithGates();
+    const nQuests = new Set(gated.flatMap((g) => [...g.quests])).size;
+    const stated = gated.filter((g) => {
+      const st = standingFor(g.trader);
+      return Number.isFinite(st.rep) || Number.isFinite(st.loyalty);
+    }).length;
+    $('karmaHint').innerHTML = gated.length
+      ? `Your loyalty level and reputation with each trader gate <strong>${nQuests}</strong> quest(s) here.`
+        + ` Tarkov never writes either number to the logs, so you type them in —`
+        + ` <strong>TRADERS</strong>, at the top. ${stated} of ${gated.length} filled in.`
+        + ` Anything left blank is never used to hide a quest.`
+      : 'No quest in the current list is gated by trader standing.';
   }
-  const nRep = state.tasks.filter((t) => (t.traderRequirements || []).some((r) => r.trader && r.trader.name === 'Fence')).length;
-  $('karmaHint').innerHTML = karmaIsSet()
-    ? `Fence's reputation gates ${nRep} quests in both directions. At <strong>${scavKarma()}</strong> the ones you`
-      + ` cannot reach show as LOCKED. Clear the box to stop locking on it.`
-    : `Fence's reputation gates ${nRep} quests. Not set, so only the "Compensation for Damage" line is hidden —`
-      + ` it exists solely below <strong>-1</strong> karma. Type your Fence reputation in and the rest lock exactly`
-      + ` ("Establish Contact" needs <strong>4</strong>). Tarkov never writes it to the logs.`;
 
   const ws = state.watcherStatus;
   $('logsStatus').innerHTML = state.settings.trackingMode !== 'auto'
@@ -1241,6 +1295,14 @@ function renderSettingsPanel() {
       : di.source === 'cache'
         ? `Using cached data from ${new Date(di.fetchedAt).toLocaleString()} (${state.tasks.length} quests). Refresh when online.`
         : `<span class="bad">No data.</span> Connect to the internet and refresh.`;
+
+  // Patch 1.1.0 reworked the Collector requirements, and tarkov.dev still ships
+  // the pre-patch graph. Saying so beats letting the KAPPA tab be quietly wrong —
+  // and beats hard-coding a requirement list the community is still arguing about.
+  // Drop this line once the upstream data reflects the new gate.
+  $('dataStatus').innerHTML += '<br><span class="warn-note">Kappa changed in patch 1.1.0.</span>'
+    + ' The quest data still carries the old Collector requirements, so the KAPPA tab may be wrong'
+    + ' in every mode until tarkov.dev updates.';
 
   if (typeof renderUpdateSection === 'function') renderUpdateSection();
 }
@@ -1315,6 +1377,182 @@ document.querySelectorAll('.mode-btn-top').forEach((el) => {
   el.addEventListener('click', () => setGameMode(el.dataset.mode));
 });
 
+// ---------- first-run guide ----------
+//
+// Shown once per app VERSION: a new install sees it, and so does an existing
+// user after an update, because every release so far has changed something a
+// player would otherwise have to discover by accident (story ticks, the mode
+// buttons, seasonal, trader standing). Stored as settings.guideSeenVersion.
+//
+// Content rule: every card explains something the UI does NOT make obvious on
+// its own. No card describes a button that already says what it does.
+const GUIDE_CARDS = [
+  {
+    title: 'IT READS YOUR LOGS — MOST TICKS ARE AUTOMATIC',
+    body: 'Tarkov writes a line to its log files when a trader hands you a quest reward, and this app watches for it. '
+      + 'Finish a quest in game and it ticks itself here, usually within a few seconds. '
+      + 'You never have to import anything, and nothing is sent anywhere — it only reads files already on your PC.',
+  },
+  {
+    title: 'STORY QUESTS HAVE TO BE TICKED BY HAND',
+    body: 'The STORY tab is the exception, and it is the thing people miss. '
+      + 'Story chapters come from a hidden trader that sends no messages, so <strong>nothing about them ever reaches the logs</strong> — '
+      + 'the app cannot see them at all. Tick their objectives yourself as you go. '
+      + 'Left click marks one done; right click marks it failed; middle click marks it missed.',
+  },
+  {
+    title: 'SOME NORMAL QUESTS ALSO NEED A HAND',
+    body: 'A few quests never write a completion message either — Ref\'s Arena line is the worst offender, '
+      + 'and quests that break and get fixed server-side can complete in silence. '
+      + 'Click any quest to tick it yourself. The app also works backwards: accepting a quest proves you finished '
+      + 'the ones it required, so those get filled in for you.',
+  },
+  {
+    title: 'PvP, PvE AND SEASON ARE THREE SEPARATE CHARACTERS',
+    body: 'The buttons at the top right switch between them, and each keeps its own progress, its own level and its own trader standing. '
+      + 'Patch 1.1.0 added SEASON — a seasonal character that wipes each season, while PvP and PvE now carry over. '
+      + 'Resetting progress only ever affects the mode you are looking at.',
+  },
+  {
+    title: 'TELL IT YOUR LEVEL AND TRADER STANDING',
+    body: 'Tarkov never writes your player level, trader loyalty levels or reputation to the logs, so the app cannot know them. '
+      + 'Put your level in Settings and your trader standing under <strong>TRADERS</strong> at the top. '
+      + 'Patch 1.1.0 unlocks a lot of quests by trader loyalty level, which is why that moved out of Settings. '
+      + '<strong>Anything you leave blank is never used to hide a quest</strong> — the app would rather show you one quest too many than hide one you can take.',
+  },
+  {
+    title: 'THE MAPS ARE CLICKABLE, AND THE PINS ARE APPROXIMATE',
+    body: 'MAPS at the top opens any map, whether you have quests on it or not. Quest objectives, extracts, keys, loose loot and hazards '
+      + 'each have their own tick box in the layers panel. Scroll to zoom, drag to move, double click to reset. '
+      + 'Pin positions are converted from game coordinates and are close, not exact — treat them as "look around here".',
+  },
+];
+
+function guideVersion() {
+  return String(upd.current || '');
+}
+
+function shouldShowGuide() {
+  if (!state.settings) return false;
+  const seen = state.settings.guideSeenVersion;
+  const now = guideVersion();
+  if (!now) return false;              // version unknown — do not nag
+  return seen !== now;
+}
+
+let guideAt = 0;
+
+function renderGuide() {
+  const card = GUIDE_CARDS[guideAt];
+  $('guideStep').textContent = `${guideAt + 1} / ${GUIDE_CARDS.length}`;
+  $('guideBody').innerHTML = `<h3>${card.title}</h3><p>${card.body}</p>`;
+  $('guideDots').innerHTML = GUIDE_CARDS
+    .map((_, i) => `<span class="guide-dot${i === guideAt ? ' on' : ''}"></span>`).join('');
+  $('guideBack').disabled = guideAt === 0;
+  $('guideNext').textContent = guideAt === GUIDE_CARDS.length - 1 ? 'DONE' : 'NEXT';
+}
+
+function closeGuide() {
+  $('guideOverlay').classList.add('hidden');
+  const v = guideVersion();
+  if (!v) return;
+  state.settings = { ...state.settings, guideSeenVersion: v };
+  backend.saveSettings({ guideSeenVersion: v }).then((s) => { if (s) state.settings = s; });
+}
+
+function openGuide(force) {
+  if (!force && !shouldShowGuide()) return;
+  guideAt = 0;
+  renderGuide();
+  $('guideOverlay').classList.remove('hidden');
+}
+
+$('guideNext').addEventListener('click', () => {
+  if (guideAt >= GUIDE_CARDS.length - 1) { closeGuide(); return; }
+  guideAt++;
+  renderGuide();
+});
+$('guideBack').addEventListener('click', () => { if (guideAt > 0) { guideAt--; renderGuide(); } });
+$('guideSkip').addEventListener('click', closeGuide);
+$('showGuideBtn').addEventListener('click', () => {
+  $('settingsOverlay').classList.add('hidden');
+  openGuide(true);
+});
+document.addEventListener('keydown', (e) => {
+  if ($('guideOverlay').classList.contains('hidden')) return;
+  if (e.key === 'Escape') closeGuide();
+  else if (e.key === 'ArrowRight') $('guideNext').click();
+  else if (e.key === 'ArrowLeft') $('guideBack').click();
+});
+
+// ---------- TRADERS: your standing, which now unlocks much of the tree ----------
+//
+// Built from the loaded quest list rather than a fixed trader table, so as
+// tarkov.dev publishes more of 1.1.0's loyalty-level gates the panel fills in by
+// itself. Both numbers are per MODE, because the three profiles are three
+// separate characters with separate standings.
+function renderTraders() {
+  const gated = tradersWithGates();
+  $('traderMode').textContent = modeLabel(state.gameMode);
+  const nQuests = new Set(gated.flatMap((g) => [...g.quests])).size;
+  $('traderIntro').innerHTML = gated.length
+    ? `Tarkov keeps your loyalty level and reputation out of the logs, so they have to be typed in.`
+      + ` They gate <strong>${nQuests}</strong> quest(s) in this list.`
+      + ` <strong>A blank box is never used to hide a quest</strong> — fill one in and its quests lock exactly.`
+      + ` These are your <strong>${escapeHtml(modeLabel(state.gameMode))}</strong> values; each mode is its own character.`
+    : `Nothing in the current quest list is gated by trader standing.`
+      + ` Patch 1.1.0 moved a lot of unlocks onto trader loyalty level, so expect this to fill in`
+      + ` as the quest data catches up.`;
+
+  $('traderList').innerHTML = gated.map((g) => {
+    const st = standingFor(g.trader);
+    const need = [];
+    if (g.loyalty) need.push(`${g.loyalty} by loyalty level`);
+    if (g.reputation) need.push(`${g.reputation} by reputation`);
+    return `<div class="trader-card">
+      <div class="trader-card-name">${escapeHtml(g.trader.toUpperCase())}</div>
+      <div class="trader-card-gates">gates ${g.quests.size} quest(s) — ${need.join(', ')}</div>
+      <label class="trader-field">LOYALTY
+        <input type="number" min="1" max="4" step="1" data-trader="${escapeHtml(g.trader)}" data-kind="loyalty"
+          placeholder="—" value="${Number.isFinite(st.loyalty) ? st.loyalty : ''}">
+      </label>
+      <label class="trader-field">REPUTATION
+        <input type="number" min="-10" max="10" step="0.01" data-trader="${escapeHtml(g.trader)}" data-kind="rep"
+          placeholder="—" value="${Number.isFinite(st.rep) ? st.rep : ''}">
+      </label>
+    </div>`;
+  }).join('');
+
+  for (const input of $('traderList').querySelectorAll('input[data-trader]')) {
+    input.addEventListener('change', () => {
+      const raw = input.value.trim();
+      const val = raw === '' ? null : Number(raw);
+      if (raw !== '' && !Number.isFinite(val)) return;
+      const all = { ...(state.settings.traderStanding || {}) };
+      const forMode = { ...(all[state.gameMode] || {}) };
+      const entry = { ...(forMode[input.dataset.trader] || {}) };
+      const key = input.dataset.kind === 'loyalty' ? 'loyalty' : 'rep';
+      if (val === null) delete entry[key]; else entry[key] = val;
+      if (!Object.keys(entry).length) delete forMode[input.dataset.trader];
+      else forMode[input.dataset.trader] = entry;
+      all[state.gameMode] = forMode;
+      state.settings = { ...state.settings, traderStanding: all };
+      backend.saveSettings({ traderStanding: all }).then((s) => { if (s) state.settings = s; });
+      renderAll();
+      renderTraders();
+    });
+  }
+}
+
+$('tradersBtn').addEventListener('click', () => {
+  renderTraders();
+  $('traderOverlay').classList.remove('hidden');
+});
+$('closeTradersBtn').addEventListener('click', () => $('traderOverlay').classList.add('hidden'));
+$('traderOverlay').addEventListener('click', (e) => {
+  if (e.target === $('traderOverlay')) $('traderOverlay').classList.add('hidden');
+});
+
 // MAPS browser: every map with artwork, quests on it or not
 $('mapsBtn').addEventListener('click', () => {
   const names = orderedKeys(Object.keys(MAP_DATA).filter(hasMapData), MAP_ORDER);
@@ -1380,10 +1618,8 @@ async function saveScavKarma(v) {
   renderAll();
   renderSettingsPanel();
 }
-$('scavKarmaInput').addEventListener('change', () => {
-  const raw = $('scavKarmaInput').value.trim();
-  saveScavKarma(raw === '' ? NaN : Number(raw));
-});
+// (the Scav-karma box moved into the TRADERS panel as Fence's reputation field;
+// saveScavKarma stays for the stored value, which standingFor still reads)
 $('playerLevelInput').addEventListener('change', () => {
   const v = Math.floor(Number($('playerLevelInput').value));
   savePlayerLevel(Number.isFinite(v) && v > 0 ? Math.min(v, 99) : 0);
@@ -3649,4 +3885,8 @@ backend.onUpdateAvailable((r) => {
   }
   renderAll();
   document.fonts.ready.then(fitSidebarWidth);
+  // Last thing in boot, so the guide never covers a half-loaded screen. Shown
+  // once per app VERSION — a new install sees it, and so does an existing user
+  // after an update.
+  openGuide(false);
 })();

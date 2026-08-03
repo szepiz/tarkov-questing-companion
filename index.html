@@ -12,6 +12,7 @@
       <header id="titlebar">
         <span id="titleText">TARKOV QUESTING COMPANION</span>
         <button id="mapsBtn" title="Browse all maps — including ones you have no quests on">MAPS</button>
+        <button id="tradersBtn" title="Your standing with each trader — loyalty level and reputation. Patch 1.1.0 unlocks a lot of quests this way.">TRADERS</button>
         <div class="mode-switch" title="Switch between your PvP, PvE and seasonal profiles">
           <button class="mode-btn-top" data-mode="regular">PvP</button>
           <button class="mode-btn-top" data-mode="pve">PvE</button>
@@ -79,6 +80,14 @@
         <h2>SETTINGS</h2>
 
         <div class="setting-group">
+          <div class="setting-label">HOW THIS WORKS</div>
+          <div class="logs-row">
+            <button id="showGuideBtn">SHOW THE GUIDE</button>
+          </div>
+          <div class="setting-hint">What ticks itself, what you have to tick yourself, and what the app cannot know. Shown automatically after each update.</div>
+        </div>
+
+        <div class="setting-group">
           <div class="setting-label">TASK TRACKING</div>
           <div class="mode-buttons">
             <button id="modeManual" class="mode-btn">MANUAL</button>
@@ -114,10 +123,7 @@
         </div>
 
         <div class="setting-group" id="karmaGroup">
-          <div class="setting-label">SCAV KARMA</div>
-          <div class="logs-row">
-            <input id="scavKarmaInput" type="number" min="-7" max="10" step="0.01" placeholder="0">
-          </div>
+          <div class="setting-label">TRADER STANDING</div>
           <div class="setting-hint" id="karmaHint"></div>
         </div>
 
@@ -188,6 +194,39 @@
         </div>
 
         <button id="closeSettingsBtn">CLOSE</button>
+      </div>
+    </div>
+
+    <!-- First-run guide. Shown once per app VERSION, so it also reappears after
+         an update carrying whatever that release changed. -->
+    <div id="guideOverlay" class="hidden">
+      <div id="guidePanel">
+        <div id="guideHeader">
+          <span id="guideTitle">HOW THIS WORKS</span>
+          <span id="guideStep"></span>
+        </div>
+        <div id="guideBody"></div>
+        <div id="guideFooter">
+          <button id="guideSkip">SKIP</button>
+          <div id="guideDots"></div>
+          <button id="guideBack">BACK</button>
+          <button id="guideNext">NEXT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trader standing. Out of Settings and onto the header on purpose: 1.1.0
+         unlocks a large part of the quest tree by trader loyalty level, so this
+         went from a Fence footnote to something you check as you play. -->
+    <div id="traderOverlay" class="hidden">
+      <div id="traderPanel">
+        <div id="traderHeader">
+          <span id="traderTitle">TRADER STANDING</span>
+          <span id="traderMode"></span>
+          <button id="closeTradersBtn">CLOSE</button>
+        </div>
+        <div id="traderIntro"></div>
+        <div id="traderList"></div>
       </div>
     </div>
 

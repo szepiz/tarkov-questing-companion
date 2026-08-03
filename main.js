@@ -68,6 +68,14 @@ const DEFAULT_SETTINGS = {
   // app estimates a floor from the hardest quest already finished; Tarkov never
   // writes your own level to the logs.
   playerLevel: {},        // { regular?: number, pve?: number }
+  // Trader standing per mode, per trader: { rep, loyalty }. EFT 1.1.0 unlocks a
+  // large part of the quest tree by trader LOYALTY LEVEL, and neither number is
+  // in any log, so the player states them. Blank is never used to lock.
+  traderStanding: {},
+  // which app version last showed the first-run guide. Re-shown after every
+  // update, because each release has changed something a player would
+  // otherwise only find by accident.
+  guideSeenVersion: '',
   scavKarma: {},          // Fence reputation per mode — gates Fence's quest lines,
                           // and no log carries it, so the user states it
   // Which map overlay layers are ticked, keyed by the layer ids in renderer.js.
