@@ -12,7 +12,27 @@ const BUNDLED_CACHE = path.join(APP_DIR, 'quests_cache.json');
 const DEFAULT_LOGS_PATH = 'C:\\Battlestate Games\\EFT\\Logs';
 const jsonapi = require('./jsonapi'); // tarkov.dev JSON API (GraphQL is deprecated)
 const POLL_MS = 5000;
-const MODES = ['regular', 'pve']; // EFT has two separate profiles: PvP (regular) and PvE
+// EFT 1.1.0 (Aug 2026) made this THREE separate characters, not two. Seasonal
+// PvP is a full third profile with its own ProfileId, served from its own
+// gateway (gw-pvp-season.escapefromtarkov.com) — not a filter over the PvP one.
+// Only seasonal wipes now; the two permanent profiles carry over.
+//
+// MODES is the single source of truth: everything that builds a per-mode object
+// derives from it, and it is shipped to the renderer through get-init so the two
+// sides can never disagree about what modes exist.
+const MODES = ['regular', 'pve', 'season'];
+// What a markerless session falls back to. A session that never writes a
+// "Session mode:" marker is far more likely PvP than seasonal — seasonal always
+// writes its token — but this is a decision, so it is stated once.
+const DEFAULT_MODE = 'regular';
+// The game's own token (lower-cased) -> our bucket. An explicit map, NOT a
+// ternary: the previous `/pve/i.test(t) ? 'pve' : 'regular'` sent the new
+// "PvpSeason" token into the PvP bucket, which silently merged a seasonal
+// character's quests into a permanent one. Anything NOT in this map is treated
+// as UNKNOWN and its events are skipped rather than guessed at — an unrecognised
+// token must never be able to make a live profile look like a wiped one.
+const MODE_TOKENS = { regular: 'regular', pve: 'pve', pvpseason: 'season' };
+const MODE_LABELS = { regular: 'PvP', pve: 'PvE', season: 'SEASON' };
 
 // User-writable storage, resolved after the app is ready (see initStorage).
 let SETTINGS_FILE, PROGRESS_FILE, CACHE_FILE;
@@ -37,7 +57,7 @@ const DEFAULT_SETTINGS = {
   trackingMode: 'manual', // 'manual' | 'auto'
   logsPath: DEFAULT_LOGS_PATH,
   filter: 'ALL',          // last selected tab
-  gameMode: 'regular',    // 'regular' (PvP) | 'pve' — which profile is being viewed
+  gameMode: 'regular',    // 'regular' (PvP) | 'pve' | 'season' — which profile is viewed
   modeAutoResolved: false, // has the initial "open on the populated mode" decision been made
   mapRotation: {},        // per-map quarter-turn count (0-3) from the rotate button
   hintsSeen: {},          // one-time UI explainers already shown (e.g. storyMarks)
@@ -72,7 +92,12 @@ let progress;
 function emptyBucket() { return { completed: {}, failed: {}, objectives: {}, resetAt: 0 }; }
 
 function normalizeProgress(p) {
-  if (p && (p.regular || p.pve)) {
+  // MODES.some, not a fixed pair: this is what quietly adds the `season` bucket
+  // to an existing user's file on first launch of a build that knows about it,
+  // leaving every other key exactly as found. Mutate-and-return is deliberate —
+  // it is also what makes a DOWNGRADE safe, since an older build leaves the
+  // unknown `season` key alone and writes it back verbatim.
+  if (p && MODES.some((m) => p[m])) {
     for (const m of MODES) {
       if (!p[m]) p[m] = emptyBucket();
       if (!p[m].completed) p[m].completed = {};
@@ -84,13 +109,15 @@ function normalizeProgress(p) {
   }
   // a fresh install has no progress at all — start clean, NOT flagged as legacy
   if (!p || typeof p !== 'object' || !p.completed || !Object.keys(p.completed).length) {
-    return { regular: emptyBucket(), pve: emptyBucket() };
+    return Object.fromEntries(MODES.map((m) => [m, emptyBucket()]));
   }
-  // genuine legacy flat progress (single mixed list) -> keep it under "regular"
-  // and flag for a one-time mode-aware re-derivation from the logs.
+  // genuine legacy flat progress (single mixed list) -> keep it under the default
+  // mode and flag for a one-time mode-aware re-derivation from the logs. It stays
+  // pinned to PvP rather than being split: those files predate PvE, and they
+  // certainly predate seasonal.
   return {
-    regular: { completed: p.completed, failed: p.failed || {}, objectives: {}, resetAt: p.resetAt || 0 },
-    pve: emptyBucket(),
+    ...Object.fromEntries(MODES.map((m) => [m, emptyBucket()])),
+    [DEFAULT_MODE]: { completed: p.completed, failed: p.failed || {}, objectives: {}, resetAt: p.resetAt || 0 },
     pendingModeSplit: true,
   };
 }
@@ -115,7 +142,7 @@ function initStorage() {
       || readJson(path.join(APP_DIR, 'progress.json'), null);
   }
   settings = { ...DEFAULT_SETTINGS, ...(ownSettings || legacySettings || {}) };
-  if (!MODES.includes(settings.gameMode)) settings.gameMode = 'regular';
+  if (!MODES.includes(settings.gameMode)) settings.gameMode = DEFAULT_MODE;
   // A hand-edited or truncated settings.json can carry anything here, and the
   // renderer indexes these as objects on every map draw.
   for (const k of ['mapLayers', 'mapLayersOpen']) {
@@ -153,14 +180,28 @@ async function fetchTasksOnline() {
   return modes;
 }
 
-// accept both the new {regular,pve} cache shape and the old {tasks} one
+// accept both the new {regular,pve} cache shape and the old {tasks} one.
+//
+// SEASONAL borrows the PvP list, because there is no seasonal quest data to
+// fetch — json.tarkov.dev's own manifest publishes gameModes ["regular","pve"]
+// and every seasonal endpoint 404s. `seasonAliased` is what the UI keys its
+// "this list is a best guess" banner on, and it is the one line to delete the
+// day a real endpoint exists. The alias lives HERE and never on disk: writing a
+// copy into quests_cache.json would double a 4.7 MB file and, worse, make
+// borrowed data look fetched on the next read.
 function cacheToModes(cache) {
   if (!cache) return null;
   if (Array.isArray(cache.regular) && cache.regular.length) {
-    return { regular: cache.regular, pve: Array.isArray(cache.pve) ? cache.pve : [] };
+    return {
+      regular: cache.regular,
+      pve: Array.isArray(cache.pve) ? cache.pve : [],
+      season: cache.regular,
+      seasonAliased: true,
+    };
   }
   if (Array.isArray(cache.tasks) && cache.tasks.length) {
-    return { regular: cache.tasks, pve: cache.tasks }; // old single-mode cache
+    // old single-mode cache — the same borrow, and the precedent for it
+    return { regular: cache.tasks, pve: cache.tasks, season: cache.tasks, seasonAliased: true };
   }
   return null;
 }
@@ -175,10 +216,7 @@ function questIndex() {
     try { const st = fs.statSync(f); key = f + st.mtimeMs + ':' + st.size; break; } catch {}
   }
   if (questIdx.idx && key && key === questIdx.key) return questIdx.idx;
-  const idx = {
-    regular: { ids: new Set(), prereqs: new Map() },
-    pve: { ids: new Set(), prereqs: new Map() },
-  };
+  const idx = Object.fromEntries(MODES.map((m) => [m, { ids: new Set(), prereqs: new Map() }]));
   const data = readJson(CACHE_FILE, null) || readJson(BUNDLED_CACHE, null);
   if (data) {
     for (const m of MODES) for (const t of data[m] || []) {
@@ -194,6 +232,19 @@ function questIndex() {
       if (need.length) idx[m].prereqs.set(t.id, need);
     }
   }
+  // SEASONAL: no seasonal quest data exists anywhere upstream (json.tarkov.dev
+  // publishes gameModes ["regular","pve"] and every seasonal path 404s), so the
+  // NAMES are borrowed from the PvP list — aliased by reference, one Set, so
+  // nothing here may ever mutate idx.season.ids.
+  //
+  // The prereq map is deliberately left EMPTY, and that is the load-bearing part:
+  // it switches off BOTH inference paths for seasonal at once (this file's
+  // applyImpliedCompletions and the accept-inference inside scanLogs). The
+  // borrowed graph is measurably wrong for seasonal — a five-minute-old seasonal
+  // profile accepted quests the PvP data gates at level 30 — and inferring
+  // completions from a graph we know does not describe this mode is exactly how
+  // 13 quests got invented in the PvP bucket.
+  if (idx.season) idx.season.ids = idx.regular.ids;
   questIdx = { key, idx };
   return idx;
 }
@@ -202,7 +253,7 @@ function questIndex() {
 // be newer than the cache, and dropping it would lose a real completion.
 function knownQuestIds() {
   const idx = questIndex();
-  return { regular: idx.regular.ids, pve: idx.pve.ids };
+  return Object.fromEntries(MODES.map((m) => [m, idx[m].ids]));
 }
 
 // Finishing a quest proves you finished everything it required.
@@ -239,8 +290,12 @@ function applyImpliedCompletions(mode, addedIds) {
 async function loadTasks() {
   try {
     const modes = await fetchTasksOnline();
+    // Only the two REAL modes are persisted; season is aliased on read.
     writeJson(CACHE_FILE, { fetchedAt: Date.now(), regular: modes.regular, pve: modes.pve });
-    return { ...modes, source: 'online', fetchedAt: Date.now() };
+    return {
+      ...modes, season: modes.regular, seasonAliased: true,
+      source: 'online', fetchedAt: Date.now(),
+    };
   } catch (err) {
     for (const f of [CACHE_FILE, BUNDLED_CACHE]) {
       const modes = cacheToModes(readJson(f, null));
@@ -249,7 +304,10 @@ async function loadTasks() {
         return { ...modes, source: 'cache', fetchedAt: cache.fetchedAt, error: String(err.message || err) };
       }
     }
-    return { regular: null, pve: null, source: 'none', error: String(err.message || err) };
+    return {
+      ...Object.fromEntries(MODES.map((m) => [m, null])),
+      source: 'none', error: String(err.message || err),
+    };
   }
 }
 
@@ -300,7 +358,19 @@ let watcherStatus = {
   // progress the user remembers is not showing up.
   oldProfileEvents: 0,
   oldProfiles: 0,
+  // "Session mode:" tokens this build does not know. Skipping them is the safe
+  // half; SAYING SO is the other half, because a silently skipped mode looks
+  // exactly like a tracker that has stopped working.
+  unknownModes: [],
 };
+
+// Filled by folderModeSegments as logs are parsed, drained into watcherStatus on
+// each scan. A Set so one unknown token seen in 200 folders is reported once.
+const unknownModes = new Set();
+
+// How many invented completions the one-shot seasonal cleanup removed, so the
+// renderer can explain it once instead of the number changing behind the user.
+let seasonSplitRemoved = 0;
 
 function sendToRenderer(channel, payload) {
   if (win && !win.isDestroyed()) win.webContents.send(channel, payload);
@@ -350,7 +420,14 @@ function folderModeSegments(dir) {
   let m;
   while ((m = re.exec(text)) !== null) {
     const ts = parseLogTs(m[1]);
-    if (ts !== null) segs.push({ ts, mode: /pve/i.test(m[2]) ? 'pve' : 'regular' });
+    if (ts === null) continue;
+    // Look the token up; do NOT pattern-match it. "PvpSeason" contains no "pve",
+    // so the old ternary filed a whole seasonal character under PvP. An
+    // unrecognised token yields mode:null, and every consumer skips those events
+    // rather than defaulting them into somebody's real progress.
+    const mode = MODE_TOKENS[String(m[2]).toLowerCase()] || null;
+    if (!mode) unknownModes.add(m[2]);
+    segs.push({ ts, mode, token: m[2] });
   }
   segs.sort((a, b) => a.ts - b.ts);
   // Same file, same pass: which PROFILE was selected when. A wipe gives you a
@@ -388,8 +465,10 @@ function profileAtTime(profs, ts) {
   return id;
 }
 
+// May return null: an event inside a segment whose token this build does not
+// recognise belongs to no bucket we can name, and callers must skip it.
 function modeAtTime(segs, ts) {
-  if (!segs.length) return 'regular';
+  if (!segs.length) return DEFAULT_MODE;
   if (ts === null) return segs[0].mode;
   let mode = segs[0].mode; // before the first marker, assume the first session's mode
   for (const s of segs) {
@@ -455,7 +534,7 @@ function scanLogs() {
     watcherStatus.logsFound = false;
     watcherStatus.sessionFolders = 0;
     sendToRenderer('watcher-status', watcherStatus);
-    return { regular: 0, pve: 0 };
+    return Object.fromEntries(MODES.map((m) => [m, 0]));
   }
   watcherStatus.logsFound = true;
   watcherStatus.sessionFolders = folders.length;
@@ -477,13 +556,17 @@ function scanLogs() {
   for (const folder of folders) {
     const ms = folderModeSegments(folder.dir);
     for (const pr of folderProfileSegments(folder.dir)) {
-      profSeen.push({ ts: pr.ts, mode: ms.length ? modeAtTime(ms, pr.ts) : 'regular', id: pr.id });
+      const mode = ms.length ? modeAtTime(ms, pr.ts) : DEFAULT_MODE;
+      // An unrecognised mode's profile must not be filed under a known one, or
+      // it makes that mode's real profile look superseded — i.e. wiped.
+      if (!mode) continue;
+      profSeen.push({ ts: pr.ts, mode, id: pr.id });
     }
   }
   profSeen.sort((a, b) => a.ts - b.ts);
   const curProfile = {};      // mode -> the profile being played now
   const profileFrom = {};     // mode -> when that profile first appears
-  const seenIds = { regular: new Set(), pve: new Set() };
+  const seenIds = Object.fromEntries(MODES.map((m) => [m, new Set()]));
   for (const e of profSeen) { curProfile[e.mode] = e.id; seenIds[e.mode].add(e.id); }
   for (const e of profSeen) {
     if (e.id === curProfile[e.mode] && profileFrom[e.mode] === undefined) profileFrom[e.mode] = e.ts;
@@ -491,10 +574,10 @@ function scanLogs() {
   watcherStatus.oldProfiles = MODES.reduce((n, m) => n + Math.max(0, seenIds[m].size - 1), 0);
   let oldProfileEvents = 0;
 
-  const newByMode = { regular: [], pve: [] };
+  const newByMode = Object.fromEntries(MODES.map((m) => [m, []]));
   const known = knownQuestIds();
   let anyFail = false;
-  let lastKnownMode = 'regular'; // a markerless session inherits the mode around it
+  let lastKnownMode = DEFAULT_MODE; // a markerless session inherits the mode around it
   for (const folder of folders) {
     let inner;
     try { inner = fs.readdirSync(folder.dir); } catch { continue; }
@@ -519,7 +602,13 @@ function scanLogs() {
     if (!changed) continue; // nothing new in this folder
 
     const segs = folderModeSegments(folder.dir);
-    if (segs.length) lastKnownMode = segs[segs.length - 1].mode;
+    // Only inherit a mode we actually recognise — an unknown token must not
+    // become the assumed mode for every markerless session that follows it.
+    if (segs.length) {
+      for (let i = segs.length - 1; i >= 0; i--) {
+        if (segs[i].mode) { lastKnownMode = segs[i].mode; break; }
+      }
+    }
     const isNewest = folder.startTs !== null && folder.startTs === newestTs;
     for (const text of texts) {
       for (const ev of parseQuestEventsWithTime(text)) {
@@ -528,6 +617,10 @@ function scanLogs() {
         if (segs.length) mode = modeAtTime(segs, ev.ts);
         else if (isNewest) continue;  // marker not flushed yet — retry on a later scan
         else mode = lastKnownMode;    // old session with no marker — inherit nearby mode
+        // Unrecognised game mode: skip rather than guess. Reported in Settings so
+        // "my quests stopped importing" has a visible cause instead of being
+        // silently attributed to whichever bucket happened to be the fallback.
+        if (!mode) continue;
         const bucket = progress[mode];
         // per-mode reset cut-off, per event (so resetting mid-session only drops
         // completions from BEFORE the reset, not the rest of the session)
@@ -590,14 +683,19 @@ function scanLogs() {
   // a completion just imported can prove earlier ones the logs never recorded
   for (const m of MODES) applyImpliedCompletions(m, newByMode[m]);
 
-  const total = newByMode.regular.length + newByMode.pve.length;
+  // Sum over MODES, never over a fixed pair. This is a persistence gate: a scan
+  // that imported ONLY seasonal completions would leave total at 0, saveProgress
+  // would never run, and because fileSizes was already advanced the folder is not
+  // re-read next tick — the completions would live in memory and die on quit.
+  const total = MODES.reduce((n, m) => n + newByMode[m].length, 0);
   if (total || anyFail) {
     saveProgress();
     sendToRenderer('auto-completions', { newByMode, progress, initial: isInitialScan });
   }
   isInitialScan = false;
+  watcherStatus.unknownModes = [...unknownModes];
   sendToRenderer('watcher-status', watcherStatus);
-  return { regular: newByMode.regular.length, pve: newByMode.pve.length };
+  return Object.fromEntries(MODES.map((m) => [m, newByMode[m].length]));
 }
 
 // ---------- story chapter state (from output logs) ----------
@@ -631,7 +729,7 @@ const storyFileCache = new Map(); // output log path -> { size, events }
 // subs = still-locked story SUB-quest ids (warning targets owned by a chapter),
 // from the latest informative session — objectives from those sub-quests render
 // as locked in the story tab.
-let storyState = { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } };
+let storyState = Object.fromEntries(MODES.map((m) => [m, { chapters: {}, subs: {} }]));
 
 function parseStoryWarnings(text, chapters) {
   // one entry per warning line that involves a known chapter id
@@ -674,14 +772,15 @@ function folderStoryEvents(dir, chapters) {
 function scanStoryState(folders) {
   const chapters = getStoryChapterIds();
   if (!chapters.size) return false;
-  const next = { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } };
+  const next = Object.fromEntries(MODES.map((m) => [m, { chapters: {}, subs: {} }]));
   for (const folder of folders) { // folders arrive chronological
     const events = folderStoryEvents(folder.dir, chapters);
     if (!events.length) continue; // silent session proves nothing
     const segs = folderModeSegments(folder.dir);
-    const per = { regular: { owner: new Set(), target: new Set(), subs: new Set(), any: false }, pve: { owner: new Set(), target: new Set(), subs: new Set(), any: false } };
+    const per = Object.fromEntries(MODES.map((m) => [m, { owner: new Set(), target: new Set(), subs: new Set(), any: false }]));
     for (const ev of events) {
-      const mode = segs.length ? modeAtTime(segs, ev.ts) : 'regular';
+      const mode = segs.length ? modeAtTime(segs, ev.ts) : DEFAULT_MODE;
+      if (!mode) continue;   // unrecognised game mode — see folderModeSegments
       per[mode].any = true;
       if (chapters.has(ev.owner)) {
         per[mode].owner.add(ev.owner);
@@ -740,7 +839,41 @@ function startWatcher() {
     delete progress.pendingModeSplit;
     saveProgress();
   }
+  // ONE-SHOT, first launch of the build that learned about seasonal.
+  //
+  // Before this build, EFT 1.1.0's "PvpSeason" token fell through to the PvP
+  // bucket, so a seasonal character's quest ACCEPTS ran the accept-implies-
+  // prerequisites rule against the PvP task graph and invented completions there.
+  //
+  // Only `implied` rows are removed, and that is what makes this provably
+  // lossless: an implied row is pure derived data — a function of the non-implied
+  // rows plus the task graph — so dropping it and rescanning rebuilds exactly the
+  // ones the logs still justify. Nothing the user ticked (`manual`) and nothing
+  // the logs stated outright (`auto`) is touched, no bucket is emptied, and
+  // resetAt is deliberately NOT stamped: that would set a cut-off and block
+  // re-import of the real history, which is the one move that cannot be undone.
+  //
+  // NB clearAutoEntries above does NOT cover this — it deletes `auto` only.
+  if (!progress.seasonSplitDone) {
+    let removed = 0;
+    for (const m of MODES) {
+      const c = (progress[m] && progress[m].completed) || {};
+      for (const id of Object.keys(c)) {
+        if (c[id] && c[id].via === 'implied') { delete c[id]; removed++; }
+      }
+    }
+    progress.seasonSplitDone = true;
+    saveProgress();
+    if (removed) {
+      seasonSplitRemoved = removed;   // reported to the renderer after the scan
+      console.log(`[season-split] dropped ${removed} implied completion(s); rescanning with the fixed mode parser`);
+    }
+  }
   scanLogs(); // full catch-up scan of every session folder
+  if (seasonSplitRemoved) {
+    sendToRenderer('season-split', { removed: seasonSplitRemoved });
+    seasonSplitRemoved = 0;
+  }
   watchTimer = setInterval(scanLogs, POLL_MS);
   sendToRenderer('watcher-status', watcherStatus);
 }
@@ -989,7 +1122,13 @@ function applyUpdateAndRestart() {
 
 // ---------- ipc ----------
 
-ipcMain.handle('get-init', () => ({ settings, progress, watcherStatus, storyState, version: currentVersion() }));
+// The mode vocabulary ships with the init payload so the renderer never keeps
+// its own copy of which modes exist — that split is what let four separate
+// hardcoded ['regular','pve'] whitelists drift out of step with MODES.
+ipcMain.handle('get-init', () => ({
+  settings, progress, watcherStatus, storyState, version: currentVersion(),
+  modes: MODES, modeLabels: MODE_LABELS, defaultMode: DEFAULT_MODE,
+}));
 
 ipcMain.handle('check-update', async () => {
   try { return await checkForUpdate(); }

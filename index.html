@@ -12,9 +12,10 @@
       <header id="titlebar">
         <span id="titleText">TARKOV QUESTING COMPANION</span>
         <button id="mapsBtn" title="Browse all maps — including ones you have no quests on">MAPS</button>
-        <div class="mode-switch" title="Switch between your PvP and PvE profiles">
+        <div class="mode-switch" title="Switch between your PvP, PvE and seasonal profiles">
           <button class="mode-btn-top" data-mode="regular">PvP</button>
           <button class="mode-btn-top" data-mode="pve">PvE</button>
+          <button class="mode-btn-top" data-mode="season" title="Seasonal PvP — a separate character that wipes each season">SEASON</button>
         </div>
       </header>
       <nav id="tabs">
@@ -23,6 +24,10 @@
         <button class="tab" data-filter="KAPPA">KAPPA</button>
         <button class="tab" data-filter="LIGHTKEEPER">LIGHTKEEPER</button>
       </nav>
+      <!-- Shown only in seasonal, where the quest list is borrowed from PvP.
+           A persistent strip, not a toast: a toast disappears, and hiding an
+           uncertainty is the same class of mistake as hiding a quest. -->
+      <div id="seasonNote" class="hidden"></div>
       <div id="tree">
         <div class="tree-message">Loading quest data…</div>
       </div>

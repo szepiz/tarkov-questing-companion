@@ -120,6 +120,21 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 
+/* Seasonal notice: shown only in the SEASON mode, where the quest list is
+   borrowed from PvP. Amber like the LOCKED tag, because it is the same kind of
+   statement -- something here is not confirmed. */
+#seasonNote {
+  background: rgba(201, 169, 74, .1);
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #3a3630;
+  color: #cdc6b4;
+  font-size: 11.5px;
+  line-height: 1.45;
+  letter-spacing: .2px;
+  padding: 7px 10px;
+}
+#seasonNote strong { color: #e0c266; font-weight: 700; }
+
 /* tree */
 #tree {
   flex: 1;

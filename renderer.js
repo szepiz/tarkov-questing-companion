@@ -1,5 +1,14 @@
 ﻿'use strict';
 
+// The mode list is OWNED BY main.js and arrives through get-init (state.modes),
+// so the two sides can never disagree about which modes exist. These are only
+// the browser-dev fallback and the value used before get-init resolves.
+const DEV_MODES = ['regular', 'pve', 'season'];
+const DEV_MODE_LABELS = { regular: 'PvP', pve: 'PvE', season: 'SEASON' };
+const modes = () => (state && state.modes && state.modes.length ? state.modes : DEV_MODES);
+const modeLabels = () => (state && state.modeLabels) || DEV_MODE_LABELS;
+const defaultMode = () => (state && state.defaultMode) || 'regular';
+
 // ---------- dev fallback: lets the UI run in a plain browser (no Electron) ----------
 const backend = window.api || (() => {
   const emptyBucket = () => ({ completed: {}, failed: {}, resetAt: 0 });
@@ -14,7 +23,7 @@ const backend = window.api || (() => {
     localStorage.setItem('tqt-settings', JSON.stringify(store.settings));
     localStorage.setItem('tqt-progress', JSON.stringify(store.progress));
   };
-  const bucket = (mode) => store.progress[['regular', 'pve'].includes(mode) ? mode : store.settings.gameMode];
+  const bucket = (mode) => store.progress[DEV_MODES.includes(mode) ? mode : store.settings.gameMode];
   return {
     getInit: async () => ({ settings: store.settings, progress: store.progress, watcherStatus: { active: false, logsFound: false } }),
     loadTasks: async () => {
@@ -48,7 +57,7 @@ const backend = window.api || (() => {
       for (const id of ids || []) delete (b.objectives || {})[id];
       persist(); return store.progress;
     },
-    resetProgress: async (mode) => { store.progress[['regular', 'pve'].includes(mode) ? mode : store.settings.gameMode] = { completed: {}, failed: {}, resetAt: Date.now() }; persist(); return store.progress; },
+    resetProgress: async (mode) => { store.progress[DEV_MODES.includes(mode) ? mode : store.settings.gameMode] = { completed: {}, failed: {}, resetAt: Date.now() }; persist(); return store.progress; },
     rescanAll: async () => ({ progress: store.progress, imported: 0, failsImported: 0, hadReset: false, logsFound: false }),
     browseLogs: async () => null,
     openWiki: async (url) => window.open(url),
@@ -58,6 +67,7 @@ const backend = window.api || (() => {
     applyUpdate: async () => ({ applying: false }),
     onAutoCompletions: () => {},
     onStoryState: () => {},
+    onSeasonSplit: () => {},
     onWatcherStatus: () => {},
     onSettingsChanged: () => {},
     onUpdateAvailable: () => {},
@@ -171,7 +181,11 @@ function taskMapLabel(t) {
 const state = {
   gameMode: 'regular',                          // 'regular' (PvP) | 'pve'
   tasksByMode: { regular: [], pve: [] },        // quest list per mode
-  fullProgress: { regular: { completed: {}, failed: {}, resetAt: 0 }, pve: { completed: {}, failed: {}, resetAt: 0 } },
+  modes: DEV_MODES.slice(),        // replaced by main.js's list at boot
+  modeLabels: { ...DEV_MODE_LABELS },
+  defaultMode: 'regular',
+  seasonAliased: false,            // seasonal is showing the PvP quest list
+  fullProgress: Object.fromEntries(DEV_MODES.map((m) => [m, { completed: {}, failed: {}, resetAt: 0 }])),
   tasks: [],                                    // active mode's task list
   byId: new Map(),                              // active mode's id -> task
   progress: { completed: {}, failed: {} },      // active mode's bucket
@@ -185,7 +199,7 @@ const state = {
   selTrader: null,
   selQuestId: null,
   // story campaign (chapters from storydata.js; auto state from the log watcher)
-  storyState: { regular: { chapters: {}, subs: {} }, pve: { chapters: {}, subs: {} } },
+  storyState: Object.fromEntries(DEV_MODES.map((m) => [m, { chapters: {}, subs: {} }])),
   expandedChapters: new Set(),
   selChapter: null,
 };
@@ -245,6 +259,13 @@ function isFailed(taskId) {
 // Lock detection only runs in automatic mode, where the app reliably knows
 // which quests are completed. In manual mode everything renders normally.
 function lockingActive() {
+  // Seasonal shows the PvP task list because no seasonal quest data exists, and
+  // that borrowed list carries the PvP prerequisites, level gates and trader
+  // requirements. Those are measurably WRONG here — a seasonal character five
+  // minutes old accepted quests the PvP data gates at level 30 — so nothing in
+  // this mode is marked LOCKED. Hiding something reachable on a guess is the one
+  // failure this app refuses; showing an extra quest is the cheap direction.
+  if (state.gameMode === 'season') return false;
   return !!(state.settings && state.settings.trackingMode === 'auto');
 }
 
@@ -1073,17 +1094,50 @@ function renderTabs() {
   });
 }
 
-function modeLabel(mode) { return mode === 'pve' ? 'PvE' : 'PvP'; }
+// One builder for every mode's task list, used by boot and by the refresh button.
+// PvE falls back to the PvP list when upstream returns nothing for it (the
+// long-standing rule); SEASONAL always borrows it, because no seasonal quest
+// data exists anywhere yet. Borrowed lists are FLAGGED, never silently swapped:
+// state.seasonAliased drives the banner that says so.
+function buildTasksByMode() {
+  const d = state.dataInfo || {};
+  if (!d.regular) return;
+  const pve = (d.pve && d.pve.length) ? d.pve : d.regular;
+  state.tasksByMode = { regular: d.regular, pve, season: d.regular };
+  state.seasonAliased = d.seasonAliased !== false;
+}
+
+// Used in the RESET confirmation ("this only affects X"), so a wrong label here
+// mislabels a destructive action.
+function modeLabel(mode) { return modeLabels()[mode] || mode; }
 
 function renderModeSwitch() {
   document.querySelectorAll('.mode-btn-top').forEach((el) => {
     el.classList.toggle('on', el.dataset.mode === state.gameMode);
   });
+  renderSeasonNote();
+}
+
+// The seasonal quest list is borrowed from PvP, and the user is told so plainly
+// rather than being left to discover it. Two claims only, both of which we can
+// actually stand behind: no seasonal data has been published, and because of
+// that nothing here is marked as locked. It does NOT claim the list is wrong —
+// it is unverified, which is a weaker and more honest statement.
+function renderSeasonNote() {
+  const el = $('seasonNote');
+  if (!el) return;
+  const show = state.gameMode === 'season' && state.seasonAliased !== false;
+  el.classList.toggle('hidden', !show);
+  if (!show) return;
+  el.innerHTML = '<strong>Seasonal PvP — this quest list is a best guess.</strong> '
+    + 'No seasonal quest data has been published yet, so this shows the PvP list. '
+    + 'The season may add, remove or re-unlock quests, so nothing here is marked LOCKED. '
+    + 'Your seasonal ticks are stored separately and never touch PvP or PvE.';
 }
 
 // switch the viewed game mode: repoint active views, persist, re-render
 function setGameMode(mode) {
-  if (mode === state.gameMode || !['regular', 'pve'].includes(mode)) return;
+  if (mode === state.gameMode || !modes().includes(mode)) return;
   state.gameMode = mode;
   applyMode();
   if (state.settings) state.settings.modeAutoResolved = true;
@@ -1355,8 +1409,7 @@ $('refreshDataBtn').addEventListener('click', async () => {
   $('dataStatus').textContent = 'Fetching…';
   state.dataInfo = await backend.loadTasks();
   if (state.dataInfo.regular) {
-    const pve = (state.dataInfo.pve && state.dataInfo.pve.length) ? state.dataInfo.pve : state.dataInfo.regular;
-    state.tasksByMode = { regular: state.dataInfo.regular, pve };
+    buildTasksByMode();
     applyObjectiveFixes();   // hand-corrected pin positions (MAP_FIXES)
     applyMode();
   }
@@ -1397,7 +1450,7 @@ $('rescanBtn').addEventListener('click', async () => {
 
 // story chapter state, re-derived by the watcher from the output logs
 backend.onStoryState((data) => {
-  if (data && data.regular) {
+  if (data && modes().some((m) => data[m])) {
     state.storyState = data;
     if (state.filter === 'STORY') renderAll();
   }
@@ -1412,9 +1465,14 @@ backend.onAutoCompletions((data) => {
   // mode the user later chose (data.initial re-fires on every rescan/relaunch).
   if (data.initial && state.settings && !state.settings.modeAutoResolved) {
     const cnt = (m) => Object.keys((state.fullProgress[m] || { completed: {} }).completed).length;
-    const other = state.gameMode === 'regular' ? 'pve' : 'regular';
-    if (cnt(state.gameMode) === 0 && cnt(other) > 0) {
-      state.gameMode = other;
+    // "The other mode" stopped being a single value when a third one arrived.
+    // Land on the fullest OTHER mode, and on a tie stay where we are rather than
+    // picking by array order.
+    const others = modes().filter((m) => m !== state.gameMode).sort((a, b) => cnt(b) - cnt(a));
+    const best = others[0];
+    const tied = others.length > 1 && best && cnt(others[1]) === cnt(best);
+    if (best && !tied && cnt(state.gameMode) === 0 && cnt(best) > 0) {
+      state.gameMode = best;
       applyMode();
       renderModeSwitch();
     }
@@ -1425,8 +1483,13 @@ backend.onAutoCompletions((data) => {
   // announce only completions in the mode currently being viewed
   const mineIds = (data.newByMode && data.newByMode[state.gameMode]) || [];
   const names = mineIds.map((id) => (state.byId.get(id) || {}).name).filter(Boolean);
-  const otherMode = state.gameMode === 'regular' ? 'pve' : 'regular';
-  const otherCount = ((data.newByMode && data.newByMode[otherMode]) || []).length;
+  // aggregate across every other mode — with three of them, naming one is wrong
+  const otherModes = modes().filter((m) => m !== state.gameMode);
+  const otherCount = otherModes
+    .reduce((n, m) => n + (((data.newByMode && data.newByMode[m]) || []).length), 0);
+  const otherLabel = otherModes.length === 1
+    ? modeLabel(otherModes[0])
+    : otherModes.filter((m) => ((data.newByMode && data.newByMode[m]) || []).length).map(modeLabel).join(' / ');
   // count only ids that resolve to a real quest — the logs also carry daily/weekly
   // template ids, which belong to no quest in the list
   if (data.initial && names.length > 3) {
@@ -1436,10 +1499,23 @@ backend.onAutoCompletions((data) => {
     if (names.length > 5) toast(`…and ${names.length - 5} more`);
   }
   if (data.initial && otherCount > 0 && names.length === 0) {
-    toast(`Found ${otherCount} completed ${modeLabel(otherMode)} quests — switch to ${modeLabel(otherMode)} to see them.`);
+    toast(`Found ${otherCount} completed quests in ${otherLabel || 'another mode'} — switch mode to see them.`);
   }
   renderAll();
 });
+// One-shot: the upgrade removed quest completions that a pre-1.1.0 build had
+// invented in the PvP bucket from seasonal activity. Say so plainly — silently
+// changing somebody's completion count is how trust in a tracker dies.
+if (backend.onSeasonSplit) {
+  backend.onSeasonSplit((d) => {
+    if (!d || !d.removed) return;
+    toast('Tarkov 1.1.0 added seasonal PvP, and it now has its own SEASON tab. '
+      + 'Quests it had wrongly marked complete in PvP have been cleared, and every '
+      + 'mode was re-derived from your logs — so some counts may change slightly. '
+      + 'Nothing you ticked by hand was touched.');
+  });
+}
+
 backend.onWatcherStatus((ws) => {
   state.watcherStatus = ws;
   renderStatus();
@@ -3544,9 +3620,13 @@ backend.onUpdateAvailable((r) => {
 (async function boot() {
   const init = await backend.getInit();
   state.settings = init.settings;
+  // main.js owns the mode list; adopt it before anything reads state.gameMode
+  if (Array.isArray(init.modes) && init.modes.length) state.modes = init.modes;
+  if (init.modeLabels) state.modeLabels = init.modeLabels;
+  if (init.defaultMode) state.defaultMode = init.defaultMode;
   upd.current = init.version || '';
-  state.gameMode = ['regular', 'pve'].includes(init.settings.gameMode) ? init.settings.gameMode : 'regular';
-  if (init.progress && (init.progress.regular || init.progress.pve)) state.fullProgress = init.progress;
+  state.gameMode = modes().includes(init.settings.gameMode) ? init.settings.gameMode : defaultMode();
+  if (init.progress && modes().some((m) => init.progress[m])) state.fullProgress = init.progress;
   state.watcherStatus = init.watcherStatus || state.watcherStatus;
   if (init.storyState && init.storyState.regular) state.storyState = init.storyState;
   state.filter = ['STORY', 'ALL', 'KAPPA', 'LIGHTKEEPER'].includes(init.settings.filter) ? init.settings.filter : 'ALL';
@@ -3563,8 +3643,7 @@ backend.onUpdateAvailable((r) => {
 
   state.dataInfo = await backend.loadTasks();
   if (state.dataInfo.regular) {
-    const pve = (state.dataInfo.pve && state.dataInfo.pve.length) ? state.dataInfo.pve : state.dataInfo.regular;
-    state.tasksByMode = { regular: state.dataInfo.regular, pve };
+    buildTasksByMode();
     applyObjectiveFixes();   // hand-corrected pin positions (MAP_FIXES)
     applyMode();
   }

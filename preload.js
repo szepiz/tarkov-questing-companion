@@ -19,6 +19,8 @@ contextBridge.exposeInMainWorld('api', {
   onAutoCompletions: (cb) => ipcRenderer.on('auto-completions', (_e, data) => cb(data)),
   onStoryState: (cb) => ipcRenderer.on('story-state', (_e, data) => cb(data)),
   onWatcherStatus: (cb) => ipcRenderer.on('watcher-status', (_e, data) => cb(data)),
+  // fired once, on the first launch of the build that split seasonal out of PvP
+  onSeasonSplit: (cb) => ipcRenderer.on('season-split', (_e, data) => cb(data)),
   onSettingsChanged: (cb) => ipcRenderer.on('settings-changed', (_e, data) => cb(data)),
   onUpdateAvailable: (cb) => ipcRenderer.on('update-available', (_e, data) => cb(data)),
   onUpdateProgress: (cb) => ipcRenderer.on('update-progress', (_e, data) => cb(data)),
