@@ -217,6 +217,90 @@ function applyMode() {
   if (!state.progress.objectives) state.progress.objectives = {};
 }
 
+// ---------- the Kappa gate ----------
+//
+// EFT 1.1.0 replaced "complete 257 side tasks" with a short, checkable list:
+// loyalty level 4 with seven traders, Fence karma, four named quests and a
+// player level. tarkov.dev still publishes the old 257-quest form, so the gate
+// comes from the wiki (see _dev/build_wikireqs.js).
+//
+// Three states per row, never two: MET, NOT MET, and UNKNOWN. A trader whose
+// loyalty the player has not entered is UNKNOWN — the same rule the rest of the
+// app follows, because showing a red cross for something we simply do not know
+// is a claim, and it is the claim most likely to be wrong.
+function kappaRows() {
+  const rows = [];
+  const state3 = (ok) => (ok === null ? 'unknown' : ok ? 'met' : 'unmet');
+  for (const l of KAPPA_GATE.loyalty || []) {
+    const have = standingFor(l.trader).loyalty;
+    rows.push({
+      kind: 'loyalty',
+      label: `${l.trader} — loyalty level ${l.value}`,
+      detail: Number.isFinite(have) ? `you are LL${have}` : 'not set — open TRADERS',
+      state: state3(Number.isFinite(have) ? have >= l.value : null),
+    });
+  }
+  if (KAPPA_GATE.karma !== null && KAPPA_GATE.karma !== undefined) {
+    const have = standingFor('Fence').rep;
+    rows.push({
+      kind: 'karma',
+      label: `Fence — Scav karma +${KAPPA_GATE.karma}`,
+      detail: Number.isFinite(have) ? `you are at ${have > 0 ? '+' : ''}${have}` : 'not set — open TRADERS',
+      state: state3(Number.isFinite(have) ? have >= KAPPA_GATE.karma : null),
+    });
+  }
+  for (const q of KAPPA_GATE.quests || []) {
+    // "A or B or C" is ONE requirement any of them satisfies
+    const done = (q.ids || []).some((id) => isDone(id));
+    rows.push({
+      kind: 'quest',
+      label: q.names.join('  or  '),
+      detail: done ? 'completed' : 'not completed',
+      state: state3(q.ids && q.ids.length ? done : null),
+    });
+  }
+  const lvl = KAPPA_GATE.minPlayerLevel || 0;
+  if (lvl > 0) {
+    const have = playerLevel();
+    rows.push({
+      kind: 'level',
+      label: `Player level ${lvl}`,
+      detail: have > 0 ? `you are level ${have}` : 'not set — see Settings',
+      state: state3(have > 0 ? have >= lvl : null),
+    });
+  }
+  return rows;
+}
+
+function renderKappaGate(tree) {
+  const rows = kappaRows();
+  const met = rows.filter((r) => r.state === 'met').length;
+  const unknown = rows.filter((r) => r.state === 'unknown').length;
+
+  const note = document.createElement('div');
+  note.className = 'kappa-note';
+  note.innerHTML = `<strong>Patch 1.1.0 rewrote the Kappa requirements.</strong> `
+    + `The old "complete 257 side tasks" rule is gone — this is the new gate. `
+    + `Quest data still ships the old version, so this comes from the wiki and may `
+    + `change as it is confirmed. Set your loyalty levels under <strong>TRADERS</strong> to fill it in.`;
+  tree.appendChild(note);
+
+  const head = document.createElement('div');
+  head.className = 'kappa-head';
+  head.innerHTML = `<span class="kappa-count">${met} / ${rows.length}</span> requirements met`
+    + (unknown ? ` · <span class="kappa-unknown">${unknown} not set yet</span>` : '');
+  tree.appendChild(head);
+
+  for (const r of rows) {
+    const el = document.createElement('div');
+    el.className = `kappa-row ${r.state}`;
+    el.innerHTML = `<span class="kappa-mark"></span>`
+      + `<span class="kappa-label">${escapeHtml(r.label)}</span>`
+      + `<span class="kappa-detail">${escapeHtml(r.detail)}</span>`;
+    tree.appendChild(el);
+  }
+}
+
 // ---------- filtering / grouping ----------
 
 function taskPassesFilter(t) {
@@ -825,6 +909,9 @@ function renderTree() {
   const tree = $('tree');
   tree.innerHTML = '';
   if (state.filter === 'STORY') { renderStoryTree(tree); return; }
+  if (state.filter === 'KAPPA' && typeof KAPPA_GATE !== 'undefined' && KAPPA_GATE) {
+    renderKappaGate(tree); return;
+  }
   if (!state.tasks.length) {
     const msg = document.createElement('div');
     msg.className = 'tree-message error';
@@ -1198,6 +1285,7 @@ function buildTasksByMode() {
   const season = (d.season && d.season.length) ? d.season : d.regular;
   state.tasksByMode = { regular: d.regular, pve, season };
   state.seasonAliased = d.seasonAliased !== false;
+  applyWikiReqs();   // additive: gates the wiki knows and tarkov.dev has not published
 }
 
 // Used in the RESET confirmation ("this only affects X"), so a wrong label here
@@ -1353,8 +1441,8 @@ function renderSettingsPanel() {
   // and beats hard-coding a requirement list the community is still arguing about.
   // Drop this line once the upstream data reflects the new gate.
   $('dataStatus').innerHTML += '<br><span class="warn-note">Kappa changed in patch 1.1.0.</span>'
-    + ' The quest data still carries the old Collector requirements, so the KAPPA tab may be wrong'
-    + ' in every mode until tarkov.dev updates.';
+    + ' The quest data still carries the old 257-task Collector requirement, so the KAPPA tab uses'
+    + ' the new gate from the wiki instead. It may change as that is confirmed.';
 
   if (typeof renderUpdateSection === 'function') renderUpdateSection();
 }
@@ -2448,6 +2536,29 @@ function collectMapPins(mapName) {
 // this must run after every tasksByMode assignment, not once at parse. It sets
 // absolute coordinates, so applying it twice is harmless. Keys are built from
 // the cache's pristine coords: map|objectiveId|round(x)|round(z).
+// Merge in the loyalty gates the wiki documents and tarkov.dev has not
+// published. STRICTLY ADDITIVE: a row is only added for a (quest, trader) pair
+// the fetched data says nothing about, so this can never override or delete a
+// real requirement. Runs wherever tasksByMode is (re)built, and is idempotent —
+// re-running finds the rows already present and adds nothing.
+function applyWikiReqs() {
+  if (typeof WIKI_TRADER_REQS === 'undefined' || !WIKI_TRADER_REQS) return 0;
+  let added = 0;
+  for (const list of Object.values(state.tasksByMode || {})) {
+    for (const t of list || []) {
+      const extra = WIKI_TRADER_REQS[t.id];
+      if (!extra || !extra.length) continue;
+      const have = t.traderRequirements || (t.traderRequirements = []);
+      for (const r of extra) {
+        if (have.some((h) => (h.trader || {}).name === r.trader && h.kind === r.kind)) continue;
+        have.push({ trader: { name: r.trader }, kind: r.kind, compareMethod: '>=', value: r.value, fromWiki: true });
+        added++;
+      }
+    }
+  }
+  return added;
+}
+
 function applyObjectiveFixes() {
   if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
   const fx = MAP_FIXES.objectives || {};
