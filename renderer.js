@@ -228,6 +228,27 @@ function applyMode() {
 // loyalty the player has not entered is UNKNOWN — the same rule the rest of the
 // app follows, because showing a red cross for something we simply do not know
 // is a claim, and it is the claim most likely to be wrong.
+// Which quests Kappa actually NAMES. Patch 1.1.0 replaced "complete 257 side
+// tasks" with a short list, so `kappaRequired` on a task — which tarkov.dev
+// still sets on all 257 — no longer means "needed for Kappa". Everything that
+// used to read that flag reads this instead, so the KAPPA badge, the map's
+// KAPPA pin set and the tab all agree with each other.
+//
+// Falls back to the old flag when no gate is loaded, so an older wikireqs.js (or
+// none at all) degrades to the previous behaviour rather than emptying the set.
+let _kappaIds = null;
+function kappaQuestIds() {
+  if (_kappaIds) return _kappaIds;
+  if (typeof KAPPA_GATE === 'undefined' || !KAPPA_GATE || !KAPPA_GATE.quests) return null;
+  _kappaIds = new Set(KAPPA_GATE.quests.flatMap((q) => q.ids || []));
+  return _kappaIds.size ? _kappaIds : null;
+}
+
+function isKappaQuest(t) {
+  const ids = kappaQuestIds();
+  return ids ? ids.has(t.id) : !!t.kappaRequired;
+}
+
 function kappaRows() {
   const rows = [];
   const state3 = (ok) => (ok === null ? 'unknown' : ok ? 'met' : 'unmet');
@@ -304,7 +325,7 @@ function renderKappaGate(tree) {
 // ---------- filtering / grouping ----------
 
 function taskPassesFilter(t) {
-  if (state.filter === 'KAPPA') return !!t.kappaRequired;
+  if (state.filter === 'KAPPA') return isKappaQuest(t);
   if (state.filter === 'LIGHTKEEPER') return !!t.lightkeeperRequired;
   return true;
 }
@@ -499,6 +520,13 @@ function repChoices(trader) {
       const v = Number(r.value);
       if (Number.isFinite(v) && v > 0) vals.add(v);
     }
+  }
+  // The Kappa gate's karma threshold lives in KAPPA_GATE, not in any task's
+  // requirements, so deriving only from the quest list would offer 0/+1/+4 and
+  // leave no way to say you are at the +3 Kappa needs.
+  if (trader === 'Fence' && typeof KAPPA_GATE !== 'undefined' && KAPPA_GATE
+    && Number.isFinite(Number(KAPPA_GATE.karma)) && Number(KAPPA_GATE.karma) > 0) {
+    vals.add(Number(KAPPA_GATE.karma));
   }
   return [...vals].sort((a, b) => a - b);
 }
@@ -1152,7 +1180,7 @@ function renderQuest() {
       : '<span class="badge failed" title="Tarkov recorded this as failed — usually because you took a competing quest instead. It cannot be handed in this wipe.">FAILED</span>');
   }
   if (!isFailed(t.id) && isLocked(t)) badges.push('<span class="badge locked">LOCKED</span>');
-  if (t.kappaRequired) badges.push('<span class="badge kappa">KAPPA</span>');
+  if (isKappaQuest(t)) badges.push('<span class="badge kappa">KAPPA</span>');
   if (t.lightkeeperRequired) badges.push('<span class="badge lightkeeper">LIGHTKEEPER</span>');
   $('questBadges').innerHTML = badges.join('');
 
@@ -2167,9 +2195,11 @@ function defaultMapSets() {
 function mapSetPass(t) {
   const s = mapView.sets;
   if (!s) return taskPassesFilter(t);
-  if (s.kappa && t.kappaRequired) return true;
+  if (s.kappa && isKappaQuest(t)) return true;
   if (s.lightkeeper && t.lightkeeperRequired) return true;
-  if (s.side && !t.kappaRequired && !t.lightkeeperRequired) return true;
+  // a quest that is no longer specifically needed for Kappa is just a side
+  // task again, so the SIDE set stops excluding those 250-odd
+  if (s.side && !isKappaQuest(t) && !t.lightkeeperRequired) return true;
   return false;
 }
 
