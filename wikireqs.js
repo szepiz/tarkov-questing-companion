@@ -27,6 +27,90 @@ const WIKI_TRADER_REQS = {
    "value": 1
   }
  ],
+ "5979eee086f774311955e614": [
+  {
+   "trader": "Skier",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "5a27b75b86f7742e97191958": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "5a27b7a786f774579c3eb376": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "5a27b7d686f77460d847e6a6": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "5a27b80086f774429a5d7e20": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "5a27b87686f77460de0252a8": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "6086c852c945025d41566124": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "6179b4d1bca27a099552e04e": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "6179aff8f57fb279792c60a1": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "669fa38fad7f1eac2607ed46": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "639135f286e646067c176a87": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "639282134ed9512be67647ed": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
  "639136f086e646067c176a8b": [
   {
    "trader": "Prapor",
@@ -41,11 +125,25 @@ const WIKI_TRADER_REQS = {
    "value": 2
   }
  ],
+ "5edac63b930f5454f51e128b": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
  "5b47926a86f7747ccc057c15": [
   {
    "trader": "Skier",
    "kind": "loyalty",
    "value": 1
+  }
+ ],
+ "63a9b229813bba58a50c9ee5": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
   }
  ],
  "63a9ae24009ffc6a551631a5": [
@@ -62,11 +160,32 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
+ "6179b5eabca27a099552e052": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
  "5c0d4c12d09282029f539173": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 4
+  }
+ ],
+ "5c0d4e61d09282029f53920e": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "639135534b15ca31f76bc317": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
   }
  ],
  "60e71c9ad54b755a3b53eb66": [
@@ -120,6 +239,20 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
+ "60e71dc67fcf9c556f325056": [
+  {
+   "trader": "Ragman",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "60e71ccb5688f6424c7bfec4": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
  "60e71c11d54b755a3b53eb65": [
   {
    "trader": "Skier",
@@ -127,11 +260,11 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
- "60e71dc67fcf9c556f325056": [
+ "60e71ce009d7c801eb0c0ec6": [
   {
-   "trader": "Ragman",
+   "trader": "Peacekeeper",
    "kind": "loyalty",
-   "value": 3
+   "value": 4
   }
  ]
 };

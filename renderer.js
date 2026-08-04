@@ -364,13 +364,15 @@ function isFailed(taskId) {
 // Lock detection only runs in automatic mode, where the app reliably knows
 // which quests are completed. In manual mode everything renders normally.
 function lockingActive() {
-  // Seasonal shows the PvP task list because no seasonal quest data exists, and
-  // that borrowed list carries the PvP prerequisites, level gates and trader
-  // requirements. Those are measurably WRONG here — a seasonal character five
-  // minutes old accepted quests the PvP data gates at level 30 — so nothing in
-  // this mode is marked LOCKED. Hiding something reachable on a guess is the one
-  // failure this app refuses; showing an extra quest is the cheap direction.
-  if (state.gameMode === 'season') return false;
+  // Seasonal has its own published quest list, but its unlock requirements are
+  // byte-identical to PvP's (482 of 483) and are measurably NOT what seasonal
+  // does: this profile's own seasonal character, at level 4, completed Sales
+  // Night (PvP: level 30) and The Blood of War - Part 1 (PvP: level 15) with
+  // none of the listed prerequisites done. Locking on that data would have
+  // hidden both quests while they were being played, so seasonal locks nothing
+  // unless the player asks for it. Hiding something reachable on a guess is the
+  // one failure this app refuses; showing an extra quest is the cheap direction.
+  if (state.gameMode === 'season' && !(state.settings && state.settings.seasonPvpRules)) return false;
   return !!(state.settings && state.settings.trackingMode === 'auto');
 }
 
@@ -604,6 +606,30 @@ function repLocked(t) {
       && !repMet(r, 0)) return true;
   }
   return false;
+}
+
+// Which standing requirement actually locked it, worded for the tooltip. The
+// tooltip used to say "needs Fence reputation your Scav karma does not meet"
+// for every standing lock, which stopped being true the moment 1.1.0's loyalty
+// gates arrived — a Ragman LL3 lock read as a complaint about Scav karma.
+function repLockReason(t) {
+  for (const r of t.traderRequirements || []) {
+    const trader = r.trader && r.trader.name;
+    if (!trader) continue;
+    const st = standingFor(trader);
+    const have = r.kind === 'loyalty' ? st.loyalty : st.rep;
+    if (Number.isFinite(have)) {
+      if (repMet(r, have)) continue;
+      return r.kind === 'loyalty'
+        ? `needs loyalty level ${r.value} with ${trader} and you are LL${have}`
+        : `needs ${trader} reputation ${r.compareMethod} ${r.value} and yours is ${have}`;
+    }
+    if (r.kind !== 'loyalty' && String(r.compareMethod).startsWith('<')
+      && Number(r.value) < 0 && !repMet(r, 0)) {
+      return `needs ${trader} reputation ${r.compareMethod} ${r.value}, which nobody is at by accident`;
+    }
+  }
+  return 'needs trader standing you do not have';
 }
 
 function levelLocked(t) {
@@ -1057,7 +1083,7 @@ function renderTree() {
           : done ? 'mark as not completed'
           : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
           : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
-          : locked && repLocked(t) ? `locked — needs Fence reputation your Scav karma does not meet (yours is ${scavKarma()}). Set it in Settings if that is wrong.`
+          : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
           : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
           : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
           : 'mark as completed';
@@ -1230,16 +1256,29 @@ function renderQuest() {
     reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">LEVEL</span>`
       + `<span>player level ${t.minPlayerLevel}${short ? ` — you are ${playerLevel()}` : ''}</span></div>`);
   }
+  // Trader standing, both kinds. This used to render every row as KARMA and
+  // compare it against Fence's Scav karma, so a "Ragman loyalty level 3" gate
+  // came out as "Ragman reputation at least 3 — yours is 3.64" — the wrong
+  // number, against the wrong requirement, reported as fact.
   for (const r of t.traderRequirements || []) {
     if (!r.trader) continue;
-    // only claim a comparison when the user has actually stated their karma —
+    const loyalty = r.kind === 'loyalty';
+    const have = loyalty ? standingFor(r.trader.name).loyalty : standingFor(r.trader.name).rep;
+    // only claim a comparison when the player has actually stated the value —
     // otherwise the line would report a guess ("yours is 0") as fact
-    const known = r.trader.name === 'Fence' && karmaIsSet();
-    const short = known && !repMet(r, scavKarma());
+    const known = Number.isFinite(have);
+    const short = known && !repMet(r, have);
     const sign = { '<': 'below', '<=': 'at most', '>': 'above', '=': 'exactly', '==': 'exactly' }[r.compareMethod] || 'at least';
-    reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">KARMA</span>`
-      + `<span>${escapeHtml(r.trader.name)} reputation ${sign} ${r.value}`
-      + `${known ? ` — yours is ${scavKarma()}` : ''}</span></div>`);
+    const what = loyalty
+      ? `loyalty level ${sign === 'at least' ? '' : sign + ' '}${r.value}`
+      : `reputation ${sign} ${r.value}`;
+    reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}">`
+      + `<span class="req-tag">${loyalty ? 'TRADER' : 'KARMA'}</span>`
+      + `<span>${escapeHtml(r.trader.name)} ${what}`
+      + `${known ? ` — yours is ${loyalty ? 'LL' + have : have}` : ' — not set'}`
+      // where it came from matters here: tarkov.dev publishes almost none of
+      // 1.1.0's loyalty gates yet, so most of these are read off the wiki
+      + `${r.fromWiki ? ' <span class="req-src">wiki</span>' : ''}</span></div>`);
   }
   // highlight each prerequisite with the same status-aware logic that
   // decides LOCKED: green = positively met, yellow = the one blocking it
@@ -1342,14 +1381,28 @@ function renderSeasonNote() {
   const show = state.gameMode === 'season';
   el.classList.toggle('hidden', !show);
   if (!show) return;
-  el.innerHTML = state.seasonAliased
+  const on = !!(state.settings && state.settings.seasonPvpRules);
+  const source = state.seasonAliased
     ? '<strong>Seasonal PvP — this quest list is a best guess.</strong> '
       + 'The seasonal quest data could not be fetched, so this shows the PvP list. '
-      + 'Nothing here is marked LOCKED, and your seasonal ticks are stored separately.'
     : '<strong>Seasonal PvP — real quest list, unverified unlock requirements.</strong> '
-      + 'This is the published seasonal list. Its level and prerequisite requirements are '
-      + 'still copied from PvP though, and they do not match what seasonal actually does, '
-      + 'so nothing here is marked LOCKED. Your seasonal ticks never touch PvP or PvE.';
+      + 'This is the published seasonal list, but its level, prerequisite and loyalty '
+      + 'requirements are copied from PvP. ';
+  // The choice is offered here rather than buried in Settings, because this
+  // banner is the only place the situation is explained. Both sides of it are
+  // stated plainly: nothing hidden, or a filtered list that can hide too much.
+  const state2 = on
+    ? 'Quests are being locked with <strong>PvP\'s rules</strong>, which seasonal does not '
+      + 'always follow — something you can actually take may be hidden.'
+    : 'They do not match what seasonal actually does, so <strong>nothing here is marked '
+      + 'LOCKED</strong>. Your seasonal ticks never touch PvP or PvE.';
+  el.innerHTML = `${source}${state2} <button id="seasonRulesBtn" class="season-rules-btn">`
+    + `${on ? 'SHOW EVERYTHING' : 'USE PvP UNLOCK RULES'}</button>`;
+  $('seasonRulesBtn').addEventListener('click', async () => {
+    state.settings = await backend.saveSettings({ seasonPvpRules: !on });
+    renderAll();
+    renderSeasonNote();
+  });
 }
 
 // switch the viewed game mode: repoint active views, persist, re-render
@@ -1579,13 +1632,18 @@ const GUIDE_CARDS = [
     title: 'PvP, PvE AND SEASON ARE THREE SEPARATE CHARACTERS',
     body: 'The buttons at the top right switch between them, and each keeps its own progress, its own level and its own trader standing. '
       + 'Patch 1.1.0 added SEASON — a seasonal character that wipes each season, while PvP and PvE now carry over. '
-      + 'Resetting progress only ever affects the mode you are looking at.',
+      + 'Resetting progress only ever affects the mode you are looking at. '
+      + 'Seasonal publishes no unlock requirements of its own yet, so nothing there is marked LOCKED — '
+      + 'the banner at the top of that mode can switch it to PvP\'s rules if you would rather have a shorter list.',
   },
   {
     title: 'TELL IT YOUR LEVEL AND TRADER STANDING',
     body: 'Tarkov never writes your player level, trader loyalty levels or reputation to the logs, so the app cannot know them. '
       + 'Put your level in Settings and your trader standing under <strong>TRADERS</strong> at the top. '
       + 'Patch 1.1.0 unlocks a lot of quests by trader loyalty level, which is why that moved out of Settings. '
+      + 'Be aware that the quest data has barely caught up: the loyalty requirement is published for only a few dozen quests so far, '
+      + 'so setting your levels correctly will still leave plenty of quests showing that the game gates behind a higher trader level. '
+      + 'The TRADERS panel says how many it currently knows about. '
       + '<strong>Anything you leave blank is never used to hide a quest</strong> — the app would rather show you one quest too many than hide one you can take.',
   },
   {
@@ -1663,10 +1721,18 @@ function renderTraders() {
   const gated = tradersWithGates();
   $('traderMode').textContent = modeLabel(state.gameMode);
   const nQuests = new Set(gated.flatMap((g) => [...g.quests])).size;
+  // The denominator is the honest part and it is the question players actually
+  // ask ("I set everything to LL1, why did nothing disappear?"). 1.1.0 hung a
+  // lot of the tree off loyalty, but tarkov.dev publishes the gate for 5 quests
+  // and the wiki for another 32 — so setting a level correctly changes very
+  // little yet, and saying so beats letting it look broken.
+  const total = (state.tasks || []).length;
   $('traderIntro').innerHTML = gated.length
     ? `Tarkov keeps your standing with each trader out of the logs, so it has to be set here.`
-      + ` They gate <strong>${nQuests}</strong> quest(s) in this list.`
-      + ` <strong>Anything left unset is never used to hide a quest</strong> — set it and its quests lock exactly.`
+      + ` <strong>${nQuests}</strong> of the ${total} quests in this list have a published standing`
+      + ` requirement — patch 1.1.0 gates far more than that in game, but the quest data does not`
+      + ` say which yet, so the rest cannot be filtered by loyalty however you set these.`
+      + ` <strong>Anything left unset is never used to hide a quest</strong>.`
       + ` These are your <strong>${escapeHtml(modeLabel(state.gameMode))}</strong> values; each mode is its own character.`
     : `Nothing in the current quest list is gated by trader standing.`
       + ` Patch 1.1.0 moved a lot of unlocks onto trader loyalty level, so expect this to fill in`
@@ -1745,7 +1811,16 @@ function renderTraders() {
     else forMode[trader] = entry;
     all[state.gameMode] = forMode;
     state.settings = { ...state.settings, traderStanding: all };
-    backend.saveSettings({ traderStanding: all }).then((s) => { if (s) state.settings = s; });
+    // ⚠️ Adopt everything the save returns EXCEPT the standing we just wrote.
+    // Each click builds its object from `state.settings`, and the reply to an
+    // EARLIER click carries an older `traderStanding`; taking it wholesale threw
+    // away every click made while that reply was in flight, and the NEXT click
+    // then saved the shrunken object over the good one. Clicking down the list
+    // at a normal pace lost most of it — one profile kept 3 of 10 traders — and
+    // nothing looked wrong, because the buttons never re-rendered from the reply.
+    backend.saveSettings({ traderStanding: all }).then((s) => {
+      if (s) state.settings = { ...s, traderStanding: state.settings.traderStanding };
+    });
     renderAll();
     renderTraders();
   };

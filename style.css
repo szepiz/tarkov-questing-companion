@@ -134,6 +134,21 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   padding: 7px 10px;
 }
 #seasonNote strong { color: #e0c266; font-weight: 700; }
+/* the seasonal locking switch lives in the banner, next to the reason for it */
+.season-rules-btn {
+  background: rgba(201, 169, 74, .16);
+  border: 1px solid #6b5c30;
+  border-radius: 3px;
+  color: #e0c266;
+  cursor: pointer;
+  font: 700 10px/1 inherit;
+  letter-spacing: .6px;
+  margin-left: 6px;
+  padding: 4px 8px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.season-rules-btn:hover { background: rgba(201, 169, 74, .3); color: #f2dc9a; }
 
 /* tree */
 #tree {
@@ -608,6 +623,20 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .req-line.prereq-done { color: #7a9a5a; text-decoration: line-through; text-decoration-color: rgba(122,154,90,.6); }
 .req-line.prereq-missing { color: #d0a943; }
 .fir { color: #d0a943; font-size: 11px; letter-spacing: .5px; }
+/* provenance chip: a requirement read off the wiki, not published by the data
+   source. Quiet on purpose -- it is a footnote, not a warning. */
+.req-src {
+  border: 1px solid #4a4740;
+  border-radius: 2px;
+  color: #7d7a71;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  margin-left: 6px;
+  padding: 1px 4px;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
 
 #wikiBtn {
   margin-top: 22px;

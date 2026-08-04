@@ -72,6 +72,13 @@ const DEFAULT_SETTINGS = {
   // large part of the quest tree by trader LOYALTY LEVEL, and neither number is
   // in any log, so the player states them. Blank is never used to lock.
   traderStanding: {},
+  // Seasonal ships no unlock requirements of its own — the list carries PvP's,
+  // and they are provably not what seasonal does (a level-4 seasonal character
+  // finished quests PvP gates at 30 and 15, with none of their prerequisites
+  // done). So seasonal locks nothing by default. This turns PvP's rules on
+  // there anyway, for players who would rather have a filtered list and accept
+  // that it may hide something they can actually take.
+  seasonPvpRules: false,
   // which app version last showed the first-run guide. Re-shown after every
   // update, because each release has changed something a player would
   // otherwise only find by accident.
