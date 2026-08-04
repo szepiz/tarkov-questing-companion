@@ -2729,9 +2729,18 @@ function collectMapPins(mapName) {
 // re-running finds the rows already present and adds nothing.
 function applyWikiReqs() {
   if (typeof WIKI_TRADER_REQS === 'undefined' || !WIKI_TRADER_REQS) return 0;
+  const gone = (typeof WIKI_NO_LEVEL !== 'undefined' && WIKI_NO_LEVEL) || {};
   let added = 0;
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) {
+      // The one thing the wiki is allowed to REMOVE: a player level its own
+      // Requirements section does not list. 1.1.0 swapped most of those for a
+      // loyalty gate and tarkov.dev still publishes the old number, so the
+      // quest showed a level that has not applied since the patch. Only for
+      // pages that actually have a filled-in section — see build_wikireqs.js.
+      // `_devLevel` keeps the dropped value so this is auditable from a console
+      // rather than being an invisible edit to the data.
+      if (gone[t.id] && t.minPlayerLevel) { t._devLevel = t.minPlayerLevel; t.minPlayerLevel = 0; }
       const extra = WIKI_TRADER_REQS[t.id];
       if (!extra || !extra.length) continue;
       const have = t.traderRequirements || (t.traderRequirements = []);

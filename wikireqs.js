@@ -239,6 +239,13 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
+ "60e71c11d54b755a3b53eb65": [
+  {
+   "trader": "Skier",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
  "60e71dc67fcf9c556f325056": [
   {
    "trader": "Ragman",
@@ -253,13 +260,6 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
- "60e71c11d54b755a3b53eb65": [
-  {
-   "trader": "Skier",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
  "60e71ce009d7c801eb0c0ec6": [
   {
    "trader": "Peacekeeper",
@@ -267,6 +267,61 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ]
+};
+
+// Quests whose wiki Requirements section exists and states NO player level,
+// while tarkov.dev still publishes one — 1.1.0 swapped the level gate for a
+// loyalty gate on most of these. Value is the stale level being dropped, kept
+// so the change is auditable rather than invisible. Pages with no Requirements
+// section at all are NOT in here: that is silence, not a claim.
+const WIKI_NO_LEVEL = {
+ "5d25e2cc86f77443e47ae019": 2,
+ "596b36c586f77450d6045ad2": 5,
+ "5979eee086f774311955e614": 8,
+ "5967725e86f774601a446662": 9,
+ "5a27b75b86f7742e97191958": 10,
+ "5a27b7a786f774579c3eb376": 10,
+ "5a27b7d686f77460d847e6a6": 10,
+ "66058cd19f59e625462acc90": 10,
+ "5a27b80086f774429a5d7e20": 11,
+ "597a160786f77477531d39d2": 11,
+ "597a171586f77405ba6887d3": 11,
+ "5a27b87686f77460de0252a8": 11,
+ "596a101f86f7741ddb481582": 13,
+ "6086c852c945025d41566124": 14,
+ "6179b4d1bca27a099552e04e": 14,
+ "6179aff8f57fb279792c60a1": 15,
+ "665eeca92f7aedcc900b0437": 15,
+ "669fa38fad7f1eac2607ed46": 15,
+ "67a0967c003a9986cb0f5ac1": 15,
+ "639135f286e646067c176a87": 17,
+ "639282134ed9512be67647ed": 20,
+ "6578eb36e5020875d64645cd": 23,
+ "5edac63b930f5454f51e128b": 23,
+ "5b47926a86f7747ccc057c15": 24,
+ "63a9b229813bba58a50c9ee5": 25,
+ "666314b0acf8442f8b0531a1": 27,
+ "666314b2a9290f9e0806cca3": 27,
+ "666314b696a9349baa021bac": 27,
+ "666314b8312343839d032d24": 27,
+ "666314bafd5ca9577902e03a": 27,
+ "666314bc1d3ec95634095e77": 27,
+ "666314bd920800278d0f6748": 27,
+ "666314bf1cd52e3d040a2e78": 27,
+ "666314c10aa5c7436c00908c": 27,
+ "666314c3acf8442f8b0531a3": 27,
+ "666314c5a9290f9e0806cca5": 27,
+ "5c0d4c12d09282029f539173": 30,
+ "5c0d4e61d09282029f53920e": 32,
+ "6764174c86addd02bc033d68": 33,
+ "639135534b15ca31f76bc317": 35,
+ "6942b44f891369fc790e385a": 37,
+ "5e381b0286f77420e3417a74": 42,
+ "5e383a6386f77465910ce1f3": 42,
+ "60e71c9ad54b755a3b53eb66": 45,
+ "60e71dc0a94be721b065bbfc": 45,
+ "5c51aac186f77432ea65c552": 45,
+ "60e71c11d54b755a3b53eb65": 50
 };
 
 // The Collector (Kappa) gate as rewritten in 1.1.0. Replaces the old
@@ -342,7 +397,7 @@ const KAPPA_GATE = {
    ]
   }
  ],
- "minPlayerLevel": 45
+ "minPlayerLevel": 0
 };
 
-if (typeof module !== 'undefined') module.exports = { WIKI_TRADER_REQS, KAPPA_GATE };
+if (typeof module !== 'undefined') module.exports = { WIKI_TRADER_REQS, WIKI_NO_LEVEL, KAPPA_GATE };
