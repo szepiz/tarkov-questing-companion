@@ -188,23 +188,23 @@ async function fetchTasksOnline() {
   return modes;
 }
 
-// accept both the new {regular,pve} cache shape and the old {tasks} one.
+// accept the {regular,pve,season} cache shape, the older {regular,pve} one and
+// the oldest {tasks} one.
 //
-// SEASONAL borrows the PvP list, because there is no seasonal quest data to
-// fetch — json.tarkov.dev's own manifest publishes gameModes ["regular","pve"]
-// and every seasonal endpoint 404s. `seasonAliased` is what the UI keys its
-// "this list is a best guess" banner on, and it is the one line to delete the
-// day a real endpoint exists. The alias lives HERE and never on disk: writing a
-// copy into quests_cache.json would double a 4.7 MB file and, worse, make
-// borrowed data look fetched on the next read.
+// SEASONAL had no data of its own until 2026-08-04, when json.tarkov.dev
+// published `pvp-season` (its manifest's `gameModes` went to
+// ["regular","pve","pvp-season"]). Until then the PvP list was borrowed and the
+// UI said so. A cache written before that has no season array, so the borrow
+// stays as the fallback — and `seasonAliased` still tells the UI which it is.
 function cacheToModes(cache) {
   if (!cache) return null;
   if (Array.isArray(cache.regular) && cache.regular.length) {
+    const real = Array.isArray(cache.season) && cache.season.length;
     return {
       regular: cache.regular,
       pve: Array.isArray(cache.pve) ? cache.pve : [],
-      season: cache.regular,
-      seasonAliased: true,
+      season: real ? cache.season : cache.regular,
+      seasonAliased: !real,
     };
   }
   if (Array.isArray(cache.tasks) && cache.tasks.length) {
@@ -240,19 +240,25 @@ function questIndex() {
       if (need.length) idx[m].prereqs.set(t.id, need);
     }
   }
-  // SEASONAL: no seasonal quest data exists anywhere upstream (json.tarkov.dev
-  // publishes gameModes ["regular","pve"] and every seasonal path 404s), so the
-  // NAMES are borrowed from the PvP list — aliased by reference, one Set, so
-  // nothing here may ever mutate idx.season.ids.
-  //
-  // The prereq map is deliberately left EMPTY, and that is the load-bearing part:
+  // SEASONAL: since 2026-08-04 upstream publishes a real `pvp-season` list, so
+  // the ids above are its own — 483 quests, 27 fewer than PvP (all of Ref's
+  // Arena line, plus a handful of others that do not exist in a season).
+  // A cache written before that has no season array and falls back to PvP's
+  // list, so the alias is kept as a fallback.
+  if (idx.season && !idx.season.ids.size) idx.season.ids = idx.regular.ids;
+
+  // The prereq map stays EMPTY either way, and that is the load-bearing part:
   // it switches off BOTH inference paths for seasonal at once (this file's
-  // applyImpliedCompletions and the accept-inference inside scanLogs). The
-  // borrowed graph is measurably wrong for seasonal — a five-minute-old seasonal
-  // profile accepted quests the PvP data gates at level 30 — and inferring
-  // completions from a graph we know does not describe this mode is exactly how
-  // 13 quests got invented in the PvP bucket.
-  if (idx.season) idx.season.ids = idx.regular.ids;
+  // applyImpliedCompletions and the accept-inference inside scanLogs).
+  //
+  // Having a real seasonal LIST is not the same as having real seasonal GATES.
+  // The published seasonal requirements are byte-identical to PvP's for every
+  // shared quest — Sales Night still reads minPlayerLevel 30 — while the owner's
+  // own logs show a five-minute-old seasonal profile accepting it. So the graph
+  // still does not describe this mode, and inferring completions from a graph we
+  // know is wrong is exactly how 13 quests got invented in the PvP bucket.
+  // Delete this ONLY when the seasonal gates stop being a copy.
+  idx.season.prereqs = new Map();
   questIdx = { key, idx };
   return idx;
 }
@@ -298,10 +304,17 @@ function applyImpliedCompletions(mode, addedIds) {
 async function loadTasks() {
   try {
     const modes = await fetchTasksOnline();
-    // Only the two REAL modes are persisted; season is aliased on read.
-    writeJson(CACHE_FILE, { fetchedAt: Date.now(), regular: modes.regular, pve: modes.pve });
+    // Seasonal is its own list now (upstream `pvp-season`). It is fetched
+    // best-effort — if that one endpoint is down we fall back to borrowing the
+    // PvP list rather than leaving the mode empty, and say which it is.
+    const season = Array.isArray(modes.season) && modes.season.length ? modes.season : null;
+    writeJson(CACHE_FILE, {
+      fetchedAt: Date.now(), regular: modes.regular, pve: modes.pve, season: season || undefined,
+    });
     return {
-      ...modes, season: modes.regular, seasonAliased: true,
+      ...modes,
+      season: season || modes.regular,
+      seasonAliased: !season,
       source: 'online', fetchedAt: Date.now(),
     };
   } catch (err) {

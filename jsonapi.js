@@ -265,11 +265,25 @@ async function fetchMode(mode, shared = {}) {
 }
 
 // -> { regular: [...], pve: [...] } in the exact old cache shape.
+// Upstream's own name for each of our modes. Seasonal appeared as `pvp-season`
+// on 2026-08-04, a day after EFT 1.1.0 shipped it — until then the app borrowed
+// the PvP list and said so. The manifest at json.tarkov.dev/endpoints publishes
+// `gameModes`, which is how a fourth mode would be noticed.
+const API_MODE = { regular: 'regular', pve: 'pve', season: 'pvp-season' };
+
 async function fetchAllModes() {
   const shared = {};
   const regular = await fetchMode('regular', shared);
   const pve = await fetchMode('pve', shared);
-  return { regular, pve };
+  // Seasonal is fetched but never allowed to fail the whole refresh: it is the
+  // newest endpoint and the two permanent modes must not go stale behind it.
+  let season = null;
+  try {
+    season = await fetchMode(API_MODE.season, shared);
+  } catch (e) {
+    season = null;
+  }
+  return { regular, pve, season };
 }
 
-module.exports = { fetchAllModes, fetchMode, fetchJson, applyTranslations, adaptTask, makeNames, cleanDeep, cleanString };
+module.exports = { fetchAllModes, fetchMode, API_MODE, fetchJson, applyTranslations, adaptTask, makeNames, cleanDeep, cleanString };

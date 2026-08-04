@@ -1193,7 +1193,10 @@ function buildTasksByMode() {
   const d = state.dataInfo || {};
   if (!d.regular) return;
   const pve = (d.pve && d.pve.length) ? d.pve : d.regular;
-  state.tasksByMode = { regular: d.regular, pve, season: d.regular };
+  // Seasonal has its own published list now; the PvP borrow is only the fallback
+  // for a cache written before it existed, or a failed seasonal fetch.
+  const season = (d.season && d.season.length) ? d.season : d.regular;
+  state.tasksByMode = { regular: d.regular, pve, season };
   state.seasonAliased = d.seasonAliased !== false;
 }
 
@@ -1216,13 +1219,21 @@ function renderModeSwitch() {
 function renderSeasonNote() {
   const el = $('seasonNote');
   if (!el) return;
-  const show = state.gameMode === 'season' && state.seasonAliased !== false;
+  // Shown in seasonal WHATEVER the source. Having the real list did not make the
+  // unlock requirements real — they are still PvP's, copied — so the caveat has
+  // to survive the data arriving, only reworded. It disappears when the gates
+  // stop being a copy, not when the list does.
+  const show = state.gameMode === 'season';
   el.classList.toggle('hidden', !show);
   if (!show) return;
-  el.innerHTML = '<strong>Seasonal PvP — this quest list is a best guess.</strong> '
-    + 'No seasonal quest data has been published yet, so this shows the PvP list. '
-    + 'The season may add, remove or re-unlock quests, so nothing here is marked LOCKED. '
-    + 'Your seasonal ticks are stored separately and never touch PvP or PvE.';
+  el.innerHTML = state.seasonAliased
+    ? '<strong>Seasonal PvP — this quest list is a best guess.</strong> '
+      + 'The seasonal quest data could not be fetched, so this shows the PvP list. '
+      + 'Nothing here is marked LOCKED, and your seasonal ticks are stored separately.'
+    : '<strong>Seasonal PvP — real quest list, unverified unlock requirements.</strong> '
+      + 'This is the published seasonal list. Its level and prerequisite requirements are '
+      + 'still copied from PvP though, and they do not match what seasonal actually does, '
+      + 'so nothing here is marked LOCKED. Your seasonal ticks never touch PvP or PvE.';
 }
 
 // switch the viewed game mode: repoint active views, persist, re-render
