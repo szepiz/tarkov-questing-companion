@@ -13,6 +13,20 @@
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const WIKI_TRADER_REQS = {
+ "657315ddab5a49b71f098853": [
+  {
+   "trader": "Therapist",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "5936d90786f7742b1420ba5b": [
+  {
+   "trader": "Prapor",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
  "5d25e2cc86f77443e47ae019": [
   {
    "trader": "Jaeger",
@@ -90,6 +104,13 @@ const WIKI_TRADER_REQS = {
    "value": 3
   }
  ],
+ "5ae448bf86f7744d733e55ee": [
+  {
+   "trader": "Ragman",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
  "669fa38fad7f1eac2607ed46": [
   {
    "trader": "Peacekeeper",
@@ -137,6 +158,13 @@ const WIKI_TRADER_REQS = {
    "trader": "Skier",
    "kind": "loyalty",
    "value": 1
+  }
+ ],
+ "5d4bec3486f7743cac246665": [
+  {
+   "trader": "Prapor",
+   "kind": "loyalty",
+   "value": 4
   }
  ],
  "63a9b229813bba58a50c9ee5": [
@@ -188,18 +216,18 @@ const WIKI_TRADER_REQS = {
    "value": 3
   }
  ],
+ "5c0d1c4cd0928202a02a6f5c": [
+  {
+   "trader": "Therapist",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
  "60e71c9ad54b755a3b53eb66": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 3
-  }
- ],
- "60e71dc0a94be721b065bbfc": [
-  {
-   "trader": "Ragman",
-   "kind": "loyalty",
-   "value": 1
   }
  ],
  "5c51aac186f77432ea65c552": [
@@ -239,6 +267,13 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
+ "60e71dc0a94be721b065bbfc": [
+  {
+   "trader": "Ragman",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
  "60e71c11d54b755a3b53eb65": [
   {
    "trader": "Skier",
@@ -253,14 +288,21 @@ const WIKI_TRADER_REQS = {
    "value": 3
   }
  ],
- "60e71ccb5688f6424c7bfec4": [
+ "60e71d6d7fcf9c556f325055": [
+  {
+   "trader": "Mechanic",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "60e71ce009d7c801eb0c0ec6": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 4
   }
  ],
- "60e71ce009d7c801eb0c0ec6": [
+ "60e71ccb5688f6424c7bfec4": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
@@ -275,6 +317,8 @@ const WIKI_TRADER_REQS = {
 // so the change is auditable rather than invisible. Pages with no Requirements
 // section at all are NOT in here: that is silence, not a claim.
 const WIKI_NO_LEVEL = {
+ "657315ddab5a49b71f098853": 1,
+ "5936d90786f7742b1420ba5b": 1,
  "5d25e2cc86f77443e47ae019": 2,
  "596b36c586f77450d6045ad2": 5,
  "5979eee086f774311955e614": 8,
@@ -291,19 +335,21 @@ const WIKI_NO_LEVEL = {
  "6086c852c945025d41566124": 14,
  "6179b4d1bca27a099552e04e": 14,
  "6179aff8f57fb279792c60a1": 15,
- "665eeca92f7aedcc900b0437": 15,
+ "5ae448bf86f7744d733e55ee": 15,
  "669fa38fad7f1eac2607ed46": 15,
+ "665eeca92f7aedcc900b0437": 15,
  "67a0967c003a9986cb0f5ac1": 15,
  "639135f286e646067c176a87": 17,
  "639282134ed9512be67647ed": 20,
  "6578eb36e5020875d64645cd": 23,
  "5edac63b930f5454f51e128b": 23,
  "5b47926a86f7747ccc057c15": 24,
+ "5d4bec3486f7743cac246665": 25,
  "63a9b229813bba58a50c9ee5": 25,
- "666314b0acf8442f8b0531a1": 27,
  "666314b2a9290f9e0806cca3": 27,
- "666314b696a9349baa021bac": 27,
+ "666314b0acf8442f8b0531a1": 27,
  "666314b8312343839d032d24": 27,
+ "666314b696a9349baa021bac": 27,
  "666314bafd5ca9577902e03a": 27,
  "666314bc1d3ec95634095e77": 27,
  "666314bd920800278d0f6748": 27,
@@ -315,13 +361,16 @@ const WIKI_NO_LEVEL = {
  "5c0d4e61d09282029f53920e": 32,
  "6764174c86addd02bc033d68": 33,
  "639135534b15ca31f76bc317": 35,
+ "5c0d1c4cd0928202a02a6f5c": 35,
  "6942b44f891369fc790e385a": 37,
  "5e381b0286f77420e3417a74": 42,
  "5e383a6386f77465910ce1f3": 42,
  "60e71c9ad54b755a3b53eb66": 45,
- "60e71dc0a94be721b065bbfc": 45,
  "5c51aac186f77432ea65c552": 45,
- "60e71c11d54b755a3b53eb65": 50
+ "60e71dc0a94be721b065bbfc": 45,
+ "60e71c11d54b755a3b53eb65": 50,
+ "60e71d6d7fcf9c556f325055": 52,
+ "60e71ce009d7c801eb0c0ec6": 60
 };
 
 // The Collector (Kappa) gate as rewritten in 1.1.0. Replaces the old
