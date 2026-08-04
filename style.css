@@ -57,8 +57,44 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   display: flex;
   align-items: center;
   gap: 8px;
+  /* The app name used to live here and was the flexible element that absorbed
+     the overflow -- with it gone, the row must be allowed to wrap instead, or
+     the SEASON button is pushed under #content and becomes unclickable at the
+     sidebar's 300px floor (which is where it sits until quest data loads). */
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
-#titleText { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* grouping control: always its own line, so it reads the same at 300px and at
+   the 620px the sidebar grows to */
+.group-switch {
+  display: flex;
+  flex: 1 0 100%;
+  border: 1px solid #000;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.5);
+}
+.group-btn {
+  background: #161615;
+  border: none;
+  border-right: 1px solid #000;
+  color: #7d7a72;
+  cursor: pointer;
+  flex: 1 1 auto;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .5px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 5px 4px 4px;
+  text-shadow: none;
+  white-space: nowrap;
+}
+.group-btn:last-child { border-right: none; }
+.group-btn:hover { background: #242421; color: #b3b0a6; }
+.group-btn.on { background: #c9a94a; color: #241f0e; text-shadow: none; }
 
 /* PvP / PvE profile switch */
 .mode-switch {
@@ -191,6 +227,25 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   letter-spacing: .8px;
   color: #b8b5aa;
 }
+/* Depth, not kind, decides how a group row LOOKS — the top level has to read as
+   the top level whether it is a map or a trader. The two default cases (a map at
+   depth 0, a trader at depth 1) are already correct above, so only the two new
+   combinations need saying. The .map-row / .trader-row classes stay on the rows
+   either way: the harnesses in main.js select on them. */
+.trader-row.d0 {
+  margin-left: 0;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: #d8d5cd;
+}
+.map-row.d1 {
+  margin-left: 26px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .8px;
+  color: #b8b5aa;
+}
 .row-name { flex: 0 1 auto; }
 .row-toggle {
   font-weight: 900;
@@ -226,6 +281,23 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   border: 1px solid transparent;
   border-radius: 1px;
 }
+/* Where a quest is and who gives it, shown on the row when the grouping does
+   not already say so. flex:none with the NAME taking the shrink, so a long map
+   list never pushes the count off the row -- the label is elided instead. */
+.quest-where {
+  color: #7d7a72;
+  flex: 0 1 auto;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  margin-left: 8px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quest-where .sep { color: #4f4d47; padding: 0 3px; }
+.quest-row.selected .quest-where { color: #8d8a80; }
 .quest-row:hover { background: #23231f; }
 .quest-row.selected {
   background:

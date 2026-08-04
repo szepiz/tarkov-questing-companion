@@ -10,13 +10,22 @@
   <div id="app">
     <aside id="sidebar">
       <header id="titlebar">
-        <span id="titleText">TARKOV QUESTING COMPANION</span>
         <button id="mapsBtn" title="Browse all maps — including ones you have no quests on">MAPS</button>
         <button id="tradersBtn" title="Your standing with each trader — loyalty level and reputation. Patch 1.1.0 unlocks a lot of quests this way.">TRADERS</button>
         <div class="mode-switch" title="Switch between your PvP, PvE and seasonal profiles">
           <button class="mode-btn-top" data-mode="regular">PvP</button>
           <button class="mode-btn-top" data-mode="pve">PvE</button>
           <button class="mode-btn-top" data-mode="season" title="Seasonal PvP — a separate character that wipes each season">SEASON</button>
+        </div>
+        <!-- How the quest list is grouped. Its own line: the row above is full
+             at the sidebar's 300px floor, and a control that can only be read
+             at the widest window is not a control. -->
+        <div class="group-switch" title="How the quest list is grouped">
+          <button class="group-btn" data-group="map-trader" title="Group by map, then by the trader who gives the quest">MAP&#8594;TRADER</button>
+          <button class="group-btn" data-group="trader-map" title="Group by trader, then by the map the quest is on">TRADER&#8594;MAP</button>
+          <button class="group-btn" data-group="map" title="Group by map only — every quest shows who gives it">MAP</button>
+          <button class="group-btn" data-group="trader" title="Group by trader only — every quest shows where it takes place">TRADER</button>
+          <button class="group-btn" data-group="flat" title="No grouping — one list of every quest, each showing its trader and its map">LIST</button>
         </div>
       </header>
       <nav id="tabs">
@@ -52,7 +61,7 @@
       <div id="hero">
         <div id="heroEmpty">
           <div class="hero-empty-title">TARKOV<br>QUESTING<br>COMPANION</div>
-          <div class="hero-empty-sub">select a map on the left</div>
+          <div class="hero-empty-sub">select a map, a trader or a quest on the left</div>
         </div>
         <img id="heroMap" alt="">
         <img id="heroTrader" alt="">

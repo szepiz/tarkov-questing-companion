@@ -114,6 +114,8 @@ const TRADER_ORDER = [
   'Prapor', 'Therapist', 'Fence', 'Skier', 'Peacekeeper', 'Mechanic',
   'Ragman', 'Jaeger', 'Lightkeeper', 'Ref', 'BTR Driver',
 ];
+// ---------- map naming ----------
+// (_dev/test_groups.js slices from here to "---------- state ----------")
 const ANYWHERE = 'Anywhere';
 
 // normalize a map name coming from the API ("Ground Zero 21+" -> "Ground Zero")
@@ -165,6 +167,21 @@ function effectiveMap(t) {
   return ANYWHERE;
 }
 
+// Where a task takes place, for a TREE ROW rather than the details panel. Two
+// differences that matter: the owner asked for the word "anywhere", and this one
+// has to survive a 300px sidebar. 61 quests span two or more maps and one spans
+// eleven — "Ambulance" joined in full is 137 characters — so the list is capped
+// and the full version goes in the row's tooltip.
+function rowMapLabel(t) {
+  const direct = normMapName(t.map && t.map.name);
+  if (direct) return { text: direct, full: direct };
+  if (isRoamingShootOnly(t)) return { text: 'anywhere', full: 'any location' };
+  const list = [...distinctObjectiveMaps(t)];
+  if (!list.length) return { text: 'anywhere', full: 'any location' };
+  const full = list.join(', ');
+  return { text: list.length > 2 ? `${list.slice(0, 2).join(', ')} +${list.length - 2}` : full, full };
+}
+
 // human description of where a task takes place, for the details panel
 function taskMapLabel(t) {
   const direct = normMapName(t.map && t.map.name);
@@ -193,8 +210,14 @@ const state = {
   watcherStatus: { active: false, logsFound: false },
   dataInfo: null,
   filter: 'ALL',
-  expandedMaps: new Set(),
-  expandedTraders: new Set(), // key: `${map}::${trader}`
+  // How the quest list is grouped. One of the GROUPINGS keys; persisted in
+  // settings.groupBy so it survives a restart like the selected tab does.
+  groupBy: 'map-trader',
+  // Which group rows are open, keyed by the node's PATH ("map:Customs",
+  // "map:Customs|trader:Prapor", "trader:Prapor"). One set instead of the old
+  // expandedMaps/expandedTraders pair, because the levels are no longer fixed:
+  // a trader can be the top level and a map can be nested under it.
+  expandedNodes: new Set(),
   selMap: null,
   selTrader: null,
   selQuestId: null,
@@ -681,32 +704,80 @@ function isLocked(t) {
     && (!isUnlocked(t) || levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
 }
 
-// Map -> Trader -> [tasks]
-function buildTree() {
-  const maps = new Map();
-  for (const t of state.tasks) {
-    if (!taskPassesFilter(t)) continue;
-    const mapName = effectiveMap(t);
-    const traderName = (t.trader && t.trader.name) || 'Unknown';
-    if (!maps.has(mapName)) maps.set(mapName, new Map());
-    const traders = maps.get(mapName);
-    if (!traders.has(traderName)) traders.set(traderName, []);
-    traders.get(traderName).push(t);
-  }
-  const locking = lockingActive();
-  for (const traders of maps.values()) {
-    for (const list of traders.values()) {
-      // sink the ones you cannot act on: locked below the rest, failed below that
-      const rank = new Map(list.map((t) => [t.id,
-        isFailed(t.id) && !isDone(t.id) ? 2 : (locking && isLocked(t)) ? 1 : 0]));
-      list.sort((a, b) =>
-        rank.get(a.id) - rank.get(b.id) ||
-        (a.minPlayerLevel || 0) - (b.minPlayerLevel || 0) ||
-        a.name.localeCompare(b.name));
-    }
-  }
-  return maps;
+// ---------- END OF LOCK LOGIC ----------
+// _dev/test_locks.js slices this file from `function isDone` to this marker and
+// runs the real functions. Renaming or deleting the line breaks that test — it
+// used to end on an incidental "// Map -> Trader -> [tasks]" comment, which the
+// grouping rewrite removed, and the slice silently ran to the end of the file.
+// Keep new lock logic ABOVE this line.
+
+// ---------- grouping ----------
+// The five ways the list can be grouped. The value is the order of the levels;
+// an empty list is the flat "every quest in one list" view. `map-trader` is the
+// original layout and stays the default.
+const GROUPINGS = {
+  'map-trader': ['map', 'trader'],
+  'trader-map': ['trader', 'map'],
+  map: ['map'],
+  trader: ['trader'],
+  flat: [],
+};
+const GROUP_KEY = {
+  map: (t) => effectiveMap(t),
+  trader: (t) => (t.trader && t.trader.name) || 'Unknown',
+};
+const GROUP_ORDER = { map: () => MAP_ORDER, trader: () => TRADER_ORDER };
+
+function groupLevels() {
+  return GROUPINGS[state.groupBy] || GROUPINGS['map-trader'];
 }
+
+// sink the ones you cannot act on: locked below the rest, failed below that
+function sortQuests(list) {
+  const locking = lockingActive();
+  const rank = new Map(list.map((t) => [t.id,
+    isFailed(t.id) && !isDone(t.id) ? 2 : (locking && isLocked(t)) ? 1 : 0]));
+  list.sort((a, b) =>
+    rank.get(a.id) - rank.get(b.id) ||
+    (a.minPlayerLevel || 0) - (b.minPlayerLevel || 0) ||
+    a.name.localeCompare(b.name));
+  return list;
+}
+
+// Nested grouping for any level order. Returns
+//   { tasks: [...] }                                  when there are no levels
+//   { kind, children: Map<name, node> }               otherwise
+// where each child node is itself one of those two shapes. One shape for all
+// five modes means the renderer has no per-mode branches.
+function buildGroups(levels) {
+  const all = state.tasks.filter(taskPassesFilter);
+  const build = (list, depth) => {
+    if (depth >= levels.length) return { tasks: sortQuests(list.slice()) };
+    const kind = levels[depth];
+    const keyOf = GROUP_KEY[kind];
+    const buckets = new Map();
+    for (const t of list) {
+      const k = keyOf(t);
+      if (!buckets.has(k)) buckets.set(k, []);
+      buckets.get(k).push(t);
+    }
+    const children = new Map();
+    for (const k of orderedKeys([...buckets.keys()], GROUP_ORDER[kind]())) {
+      children.set(k, build(buckets.get(k), depth + 1));
+    }
+    return { kind, children };
+  };
+  return build(all, 0);
+}
+
+// every task under a node, at any depth
+function nodeTasks(node) {
+  if (node.tasks) return node.tasks;
+  const out = [];
+  for (const child of node.children.values()) out.push(...nodeTasks(child));
+  return out;
+}
+// ---------- grouping end ----------
 
 function orderedKeys(keys, orderList) {
   const known = orderList.filter((k) => keys.includes(k));
@@ -1015,8 +1086,8 @@ function renderTree() {
     return;
   }
 
-  const grouped = buildTree();
-  const mapNames = orderedKeys([...grouped.keys()], MAP_ORDER);
+  const levels = groupLevels();
+  const root = buildGroups(levels);
 
   // display toggles: hide completed / hide locked quests. Rows are hidden but
   // the x/y counts stay based on the full list so progress context is kept.
@@ -1028,126 +1099,141 @@ function renderTree() {
     && !(hideF && !isDone(t.id) && isFailed(t.id))
     && !(hideL && isLocked(t));
 
-  for (const mapName of mapNames) {
-    const traders = grouped.get(mapName);
-    let mapTotal = 0, mapDone = 0, mapVisible = 0;
-    for (const list of traders.values()) {
-      mapTotal += list.length;
-      mapDone += list.filter((t) => isDone(t.id)).length;
-      mapVisible += list.filter(isVisible).length;
-    }
-    if (hiding && mapVisible === 0) continue; // nothing to show on this map
+  // What a quest row has to say for itself depends on what the grouping has
+  // already said above it: grouped by map only, the row names its trader;
+  // grouped by trader only, it names the map(s) it happens on; ungrouped, both.
+  const grouped = new Set(levels);
+  const wantTrader = !grouped.has('trader');
+  const wantMap = !grouped.has('map');
 
-    const expanded = state.expandedMaps.has(mapName);
-    const mapRow = document.createElement('div');
-    mapRow.className = 'map-row' + (state.selMap === mapName && !state.selTrader ? ' selected' : '');
-    mapRow.innerHTML = `
-      <span class="row-name">${escapeHtml(mapName.toUpperCase())}</span>
-      <span class="row-toggle">${expanded ? '−' : '+'}</span>
-      ${hasMapData(mapName) ? `<button class="map-btn" title="Open the ${escapeHtml(mapName)} map with your objectives pinned">▣</button>` : ''}
-      <span class="row-count${mapDone === mapTotal ? ' done' : ''}">${mapDone}/${mapTotal}</span>`;
-    const mb = mapRow.querySelector('.map-btn');
-    if (mb) mb.addEventListener('click', (e) => { e.stopPropagation(); openQuestMap(mapName); });
-    // the +/- toggle expands or collapses on its own, without first having to
-    // select the row (clicking the name still selects, as before)
-    mapRow.querySelector('.row-toggle').addEventListener('click', (e) => {
+  // The hero panel is driven by a map and a trader, and in three of the five
+  // groupings the tree no longer supplies both. So selection reads whatever the
+  // path DOES supply and takes the rest from the quest itself — that way
+  // clicking a quest in the flat list still lights up the right art, exactly as
+  // clicking it through map -> trader would.
+  const selFrom = (path, t) => {
+    let map = null;
+    let trader = null;
+    for (const p of path) {
+      if (p.kind === 'map') map = p.name;
+      else if (p.kind === 'trader') trader = p.name;
+    }
+    if (t) {
+      if (map === null) map = effectiveMap(t);
+      if (trader === null) trader = (t.trader && t.trader.name) || null;
+    }
+    return { map, trader };
+  };
+  const pathKey = (path) => path.map((p) => `${p.kind}:${p.name}`).join('|');
+
+  const addQuestRow = (t, path) => {
+    const done = isDone(t.id);
+    // a completed record wins: you cannot have both, and completion is the
+    // one the player acted on
+    const failed = !done && isFailed(t.id);
+    const locked = !failed && isLocked(t);
+    const row = document.createElement('div');
+    row.className = 'quest-row' +
+      (done ? ' completed' : '') +
+      (failed ? ' failed' : '') +
+      (locked ? ' locked' : '') +
+      (state.selQuestId === t.id ? ' selected' : '');
+    row.style.marginLeft = (levels.length * 26) + 'px';
+    const via = done && state.progress.completed[t.id] && state.progress.completed[t.id].via;
+    const checkTitle = via === 'implied'
+      ? "completed — worked out from a later quest you finished that required it. Tarkov never logged this one's hand-in. Click to untick."
+      : done ? 'mark as not completed'
+      : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
+      : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
+      : locked && traderNotUnlocked(t) ? `locked — you have not set a loyalty level for ${(t.trader || {}).name}, so none of their quests are shown. Open TRADERS and click your level to bring them back.`
+      : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
+      : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
+      : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
+      : 'mark as completed';
+    const where = [];
+    let whereTitle = '';
+    if (wantTrader && t.trader && t.trader.name) {
+      where.push(escapeHtml(t.trader.name.toUpperCase()));
+      whereTitle = t.trader.name;
+    }
+    if (wantMap) {
+      const m = rowMapLabel(t);
+      where.push(escapeHtml(m.text.toUpperCase()));
+      whereTitle = whereTitle ? `${whereTitle} · ${m.full}` : m.full;
+    }
+    row.innerHTML = `
+      <span class="quest-name" title="${escapeHtml(t.name)}">${escapeHtml(t.name.toUpperCase())}</span>
+      ${where.length ? `<span class="quest-where" title="${escapeHtml(whereTitle)}">${where.join('<span class="sep">·</span>')}</span>` : ''}
+      ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
+      ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}
+      <span class="quest-check" title="${checkTitle}"></span>`;
+    row.querySelector('.quest-name').addEventListener('click', () => {
+      const sel = selFrom(path, t);
+      state.selMap = sel.map;
+      state.selTrader = sel.trader;
+      state.selQuestId = t.id;
+      renderAll();
+    });
+    row.querySelector('.quest-check').addEventListener('click', async (e) => {
       e.stopPropagation();
-      if (state.expandedMaps.has(mapName)) state.expandedMaps.delete(mapName);
-      else state.expandedMaps.add(mapName);
+      state.fullProgress = await backend.toggleTask(t.id, !done, state.gameMode);
+      applyMode();
       renderAll();
     });
-    mapRow.addEventListener('click', () => {
-      if (state.selMap === mapName && state.expandedMaps.has(mapName)) {
-        state.expandedMaps.delete(mapName);
-      } else {
-        state.expandedMaps.add(mapName);
-      }
-      state.selMap = mapName;
-      state.selTrader = null;
-      renderAll();
-    });
-    tree.appendChild(mapRow);
-    if (!expanded) continue;
+    tree.appendChild(row);
+  };
 
-    const traderNames = orderedKeys([...traders.keys()], TRADER_ORDER);
-    for (const traderName of traderNames) {
-      const list = traders.get(traderName);
-      if (hiding && !list.some(isVisible)) continue; // all of this trader's quests hidden
-      const tKey = `${mapName}::${traderName}`;
-      const tExpanded = state.expandedTraders.has(tKey);
-      const doneCount = list.filter((t) => isDone(t.id)).length;
-
-      const traderRow = document.createElement('div');
-      traderRow.className = 'trader-row' +
-        (state.selMap === mapName && state.selTrader === traderName ? ' selected' : '');
-      traderRow.innerHTML = `
-        <span class="row-name">${escapeHtml(traderName.toUpperCase())}</span>
-        <span class="row-toggle">${tExpanded ? '−' : '+'}</span>
-        <span class="row-count${doneCount === list.length ? ' done' : ''}">${doneCount}/${list.length}</span>`;
-      traderRow.querySelector('.row-toggle').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (state.expandedTraders.has(tKey)) state.expandedTraders.delete(tKey);
-        else state.expandedTraders.add(tKey);
-        renderAll();
-      });
-      traderRow.addEventListener('click', () => {
-        if (state.selTrader === traderName && state.selMap === mapName && state.expandedTraders.has(tKey)) {
-          state.expandedTraders.delete(tKey);
-        } else {
-          state.expandedTraders.add(tKey);
-        }
-        state.selMap = mapName;
-        state.selTrader = traderName;
-        renderAll();
-      });
-      tree.appendChild(traderRow);
-      if (!tExpanded) continue;
-
-      for (const t of list) {
-        if (!isVisible(t)) continue;
-        const done = isDone(t.id);
-        // a completed record wins: you cannot have both, and completion is the
-        // one the player acted on
-        const failed = !done && isFailed(t.id);
-        const locked = !failed && isLocked(t);
-        const row = document.createElement('div');
-        row.className = 'quest-row' +
-          (done ? ' completed' : '') +
-          (failed ? ' failed' : '') +
-          (locked ? ' locked' : '') +
-          (state.selQuestId === t.id ? ' selected' : '');
-        const via = done && state.progress.completed[t.id] && state.progress.completed[t.id].via;
-        const checkTitle = via === 'implied'
-          ? "completed — worked out from a later quest you finished that required it. Tarkov never logged this one's hand-in. Click to untick."
-          : done ? 'mark as not completed'
-          : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
-          : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
-          : locked && traderNotUnlocked(t) ? `locked — you have not set a loyalty level for ${(t.trader || {}).name}, so none of their quests are shown. Open TRADERS and click your level to bring them back.`
-          : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
-          : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
-          : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
-          : 'mark as completed';
-        row.innerHTML = `
-          <span class="quest-name" title="${escapeHtml(t.name)}">${escapeHtml(t.name.toUpperCase())}</span>
-          ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
-          ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}
-          <span class="quest-check" title="${checkTitle}"></span>`;
-        row.querySelector('.quest-name').addEventListener('click', () => {
-          state.selMap = mapName;
-          state.selTrader = traderName;
-          state.selQuestId = t.id;
-          renderAll();
-        });
-        row.querySelector('.quest-check').addEventListener('click', async (e) => {
-          e.stopPropagation();
-          state.fullProgress = await backend.toggleTask(t.id, !done, state.gameMode);
-          applyMode();
-          renderAll();
-        });
-        tree.appendChild(row);
-      }
+  const renderNode = (node, path, depth) => {
+    if (node.tasks) {
+      for (const t of node.tasks) if (isVisible(t)) addQuestRow(t, path);
+      return;
     }
-  }
+    for (const [name, child] of node.children) {
+      const all = nodeTasks(child);
+      const total = all.length;
+      const doneCount = all.filter((t) => isDone(t.id)).length;
+      if (hiding && !all.some(isVisible)) continue;   // nothing left to show here
+
+      const here = path.concat([{ kind: node.kind, name }]);
+      const key = pathKey(here);
+      const expanded = state.expandedNodes.has(key);
+      const sel = selFrom(here, null);
+      const isSel = sel.map === state.selMap && sel.trader === state.selTrader;
+      const isMap = node.kind === 'map';
+
+      const row = document.createElement('div');
+      // the kind classes stay whatever the row IS, because the harnesses in
+      // main.js select on them; the depth class decides how it looks
+      row.className = (isMap ? 'map-row' : 'trader-row') + ' d' + depth + (isSel ? ' selected' : '');
+      row.innerHTML = `
+        <span class="row-name">${escapeHtml(name.toUpperCase())}</span>
+        <span class="row-toggle">${expanded ? '−' : '+'}</span>
+        ${isMap && hasMapData(name) ? `<button class="map-btn" title="Open the ${escapeHtml(name)} map with your objectives pinned">▣</button>` : ''}
+        <span class="row-count${doneCount === total ? ' done' : ''}">${doneCount}/${total}</span>`;
+      const mb = row.querySelector('.map-btn');
+      if (mb) mb.addEventListener('click', (e) => { e.stopPropagation(); openQuestMap(name); });
+      // the +/- toggle expands or collapses on its own, without first having to
+      // select the row (clicking the name still selects, as before)
+      row.querySelector('.row-toggle').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.expandedNodes.has(key)) state.expandedNodes.delete(key);
+        else state.expandedNodes.add(key);
+        renderAll();
+      });
+      row.addEventListener('click', () => {
+        if (isSel && state.expandedNodes.has(key)) state.expandedNodes.delete(key);
+        else state.expandedNodes.add(key);
+        state.selMap = sel.map;
+        state.selTrader = sel.trader;
+        renderAll();
+      });
+      tree.appendChild(row);
+      if (expanded) renderNode(child, here, depth + 1);
+    }
+  };
+
+  renderNode(root, [], 0);
+
 
   // A blank loyalty level hides that whole trader, which is a big enough effect
   // that the list has to admit it is happening — at the TOP, and not only when
@@ -1223,8 +1309,12 @@ function renderHero() {
   const mapFile = mapName ? IMG_DIR + mapName : null;
   const traderFile = traderName ? IMG_DIR + traderName : null;
 
-  heroEmpty.style.display = state.selMap ? 'none' : '';
-  heroLabel.textContent = state.selMap ? state.selMap.toUpperCase() : '';
+  // Grouped by trader alone there IS no map to select, so the panel keys off
+  // either one. Without this, picking a trader dropped the hero back to the
+  // "select a map on the left" placeholder with the portrait drawn over it.
+  heroEmpty.style.display = (state.selMap || state.selTrader) ? 'none' : '';
+  heroLabel.textContent = state.selMap ? state.selMap.toUpperCase()
+    : (state.selTrader ? state.selTrader.toUpperCase() : '');
 
   if (mapFile) {
     if (heroMap.getAttribute('src') !== mapFile) heroMap.src = mapFile;
@@ -1441,6 +1531,32 @@ function renderModeSwitch() {
     el.classList.toggle('on', el.dataset.mode === state.gameMode);
   });
   renderSeasonNote();
+}
+
+function renderGroupSwitch() {
+  document.querySelectorAll('.group-btn').forEach((el) => {
+    el.classList.toggle('on', el.dataset.group === state.groupBy);
+  });
+}
+
+// Switching the grouping throws the open/closed state away rather than trying
+// to translate it: "Customs > Prapor" has no counterpart in a trader-only list,
+// and a half-mapped set of open rows is more confusing than a closed one. The
+// SELECTION is kept — the hero and the open quest should not move because you
+// changed how the list is sorted.
+function setGroupBy(mode) {
+  if (!GROUPINGS[mode] || mode === state.groupBy) return;
+  state.groupBy = mode;
+  state.expandedNodes.clear();
+  // Apply locally and do NOT adopt the reply. saveSettings returns the WHOLE
+  // settings object as it was when the write landed, so adopting it throws away
+  // anything changed while the request was in flight — switch grouping, then
+  // immediately toggle "hide completed", and the reply puts the toggle back.
+  // This is the same lost-update the TRADERS panel had; only the field differs.
+  state.settings = { ...state.settings, groupBy: mode };
+  backend.saveSettings({ groupBy: mode });
+  renderGroupSwitch();
+  renderAll();
 }
 
 // The seasonal quest list is borrowed from PvP, and the user is told so plainly
@@ -1676,6 +1792,10 @@ document.querySelectorAll('.mode-btn-top').forEach((el) => {
   el.addEventListener('click', () => setGameMode(el.dataset.mode));
 });
 
+document.querySelectorAll('.group-btn').forEach((el) => {
+  el.addEventListener('click', () => setGroupBy(el.dataset.group));
+});
+
 // ---------- first-run guide ----------
 //
 // Shown once per app VERSION: a new install sees it, and so does an existing
@@ -1724,6 +1844,15 @@ const GUIDE_CARDS = [
       + 'The TRADERS panel says how many it currently knows about. '
       + '<strong>Fill in a level for every trader you have unlocked</strong> — one you leave blank is treated as a trader you have not '
       + 'unlocked yet, and none of their quests are shown until you click a level. That is the first thing to check if the list looks short.',
+  },
+  {
+    title: 'THE LIST CAN BE GROUPED FIVE WAYS',
+    body: 'The row of buttons under MAPS and TRADERS decides how the quest list is arranged. '
+      + '<strong>MAP&#8594;TRADER</strong> is the original: maps, then the traders on them. '
+      + '<strong>TRADER&#8594;MAP</strong> turns that around when you are working through one trader. '
+      + '<strong>MAP</strong> and <strong>TRADER</strong> drop a level and show the other one next to each quest, '
+      + 'and <strong>LIST</strong> drops both and gives you every quest in one run, each labelled with its trader and its map. '
+      + 'A quest that can be done anywhere says so; one that spans several maps names them.',
   },
   {
     title: 'THE MAPS ARE CLICKABLE, AND THE PINS ARE APPROXIMATE',
@@ -4277,8 +4406,12 @@ backend.onUpdateAvailable((r) => {
   state.watcherStatus = init.watcherStatus || state.watcherStatus;
   if (init.storyState && init.storyState.regular) state.storyState = init.storyState;
   state.filter = ['STORY', 'ALL', 'KAPPA', 'LIGHTKEEPER'].includes(init.settings.filter) ? init.settings.filter : 'ALL';
+  // an install from before the grouping existed has no key — fall back to the
+  // original layout rather than to whatever Object.keys happens to yield first
+  if (GROUPINGS[init.settings.groupBy]) state.groupBy = init.settings.groupBy;
   applyMode();
   renderModeSwitch();
+  renderGroupSwitch();
   renderAll();
   renderUpdateSection();   // shows the version in the footer before any check runs
 

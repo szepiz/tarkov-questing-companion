@@ -57,6 +57,10 @@ const DEFAULT_SETTINGS = {
   trackingMode: 'manual', // 'manual' | 'auto'
   logsPath: DEFAULT_LOGS_PATH,
   filter: 'ALL',          // last selected tab
+  // How the quest list is grouped: 'map-trader' (the original) | 'trader-map'
+  // | 'map' | 'trader' | 'flat'. A view preference, so global rather than per
+  // game mode — the same as hideCompleted/hideLocked next door.
+  groupBy: 'map-trader',
   gameMode: 'regular',    // 'regular' (PvP) | 'pve' | 'season' — which profile is viewed
   modeAutoResolved: false, // has the initial "open on the populated mode" decision been made
   mapRotation: {},        // per-map quarter-turn count (0-3) from the rotate button
