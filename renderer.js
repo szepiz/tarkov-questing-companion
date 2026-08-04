@@ -583,8 +583,9 @@ function karmaIsSet() {
 }
 
 // Now covers EVERY trader and BOTH kinds of gate, but the governing rule is
-// unchanged and is the important part: a value the player has not given us is
-// NOT a value we may lock on. Unknown standing keeps the quest visible.
+// unchanged for REPUTATION and is the important part: a value the player has not
+// given us is not a value we may lock on. Loyalty level is now the exception —
+// see below.
 function repLocked(t) {
   for (const r of t.traderRequirements || []) {
     const trader = r.trader && r.trader.name;
@@ -596,16 +597,49 @@ function repLocked(t) {
       if (!repMet(r, have)) return true;
       continue;
     }
-    // UNSET. A guess must never hide a quest someone can actually take, the same
-    // rule the level estimate follows. The single blind exception, kept from
-    // v1.18.0: a gate that requires NEGATIVE reputation describes a state nobody
-    // reaches by accident, so Fence's "Compensation for Damage" line stays
-    // hidden until someone says otherwise. Everything else stays visible.
-    if (r.kind !== 'loyalty'
-      && String(r.compareMethod).startsWith('<') && Number(r.value) < 0
+    // UNSET LOYALTY LEVEL — hidden, by the owner's decision (v1.27.0). This is a
+    // deliberate exception to "never hide on a guess", and it is defensible for
+    // this one field: a loyalty gate is a statement about a number the player
+    // can read off their own trader screen in two seconds, and the alternative
+    // (show it) is what made a list of quests you cannot take look like a list
+    // of quests you can. It is also self-correcting rather than sticky — one
+    // click in TRADERS turns the whole trader back on, and the LOCKED tooltip
+    // says exactly that. REPUTATION keeps the old rule: Fence's karma is a
+    // decimal nobody knows offhand, so an unset one still hides nothing.
+    if (r.kind === 'loyalty') return true;
+    // The one blind reputation exception, kept from v1.18.0: a gate requiring
+    // NEGATIVE reputation describes a state nobody reaches by accident, so
+    // Fence's "Compensation for Damage" line stays hidden until told otherwise.
+    if (String(r.compareMethod).startsWith('<') && Number(r.value) < 0
       && !repMet(r, 0)) return true;
   }
   return false;
+}
+
+// A blank loyalty level means that TRADER IS NOT UNLOCKED YET, so none of their
+// quests are shown. That is the owner's rule and it is a stronger statement than
+// "we don't know your level": Jaeger, Lightkeeper and Ref really are locked
+// traders you earn, and for the rest a blank box after being asked for it reads
+// the same way. One click on any level turns the whole trader back on.
+//
+// Two traders are exempt, because the panel gives them no level to click and the
+// rule would hide them forever: Fence (Scav karma instead — REP_TRADERS) and
+// BTR Driver (a service, not a trader — NO_STANDING).
+let _unsetTraders = null;
+function tradersWithoutLevel() {
+  if (_unsetTraders) return _unsetTraders;
+  _unsetTraders = new Set();
+  for (const t of state.tasks || []) {
+    const n = t.trader && t.trader.name;
+    if (!n || _unsetTraders.has(n) || NO_STANDING.has(n) || REP_TRADERS.has(n)) continue;
+    if (!Number.isFinite(standingFor(n).loyalty)) _unsetTraders.add(n);
+  }
+  return _unsetTraders;
+}
+
+function traderNotUnlocked(t) {
+  const n = t.trader && t.trader.name;
+  return !!n && tradersWithoutLevel().has(n);
 }
 
 // Which standing requirement actually locked it, worded for the tooltip. The
@@ -624,7 +658,11 @@ function repLockReason(t) {
         ? `needs loyalty level ${r.value} with ${trader} and you are LL${have}`
         : `needs ${trader} reputation ${r.compareMethod} ${r.value} and yours is ${have}`;
     }
-    if (r.kind !== 'loyalty' && String(r.compareMethod).startsWith('<')
+    if (r.kind === 'loyalty') {
+      return `needs loyalty level ${r.value} with ${trader}, and you have not set your `
+        + `${trader} loyalty level — open TRADERS and click it to bring these back`;
+    }
+    if (String(r.compareMethod).startsWith('<')
       && Number(r.value) < 0 && !repMet(r, 0)) {
       return `needs ${trader} reputation ${r.compareMethod} ${r.value}, which nobody is at by accident`;
     }
@@ -639,7 +677,8 @@ function levelLocked(t) {
 }
 
 function isLocked(t) {
-  return lockingActive() && !isDone(t.id) && (!isUnlocked(t) || levelLocked(t) || repLocked(t));
+  return lockingActive() && !isDone(t.id)
+    && (!isUnlocked(t) || levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
 }
 
 // Map -> Trader -> [tasks]
@@ -1083,6 +1122,7 @@ function renderTree() {
           : done ? 'mark as not completed'
           : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
           : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
+          : locked && traderNotUnlocked(t) ? `locked — you have not set a loyalty level for ${(t.trader || {}).name}, so none of their quests are shown. Open TRADERS and click your level to bring them back.`
           : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
           : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
           : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
@@ -1106,6 +1146,32 @@ function renderTree() {
         });
         tree.appendChild(row);
       }
+    }
+  }
+
+  // A blank loyalty level hides that whole trader, which is a big enough effect
+  // that the list has to admit it is happening — at the TOP, and not only when
+  // the list comes out empty. A fresh install with nothing filled in otherwise
+  // shows three quests from the two exempt traders and no reason for the rest
+  // being gone, which reads as "the app is broken" rather than "answer the
+  // question in TRADERS". Counts only what this rule ALONE is hiding, so the
+  // number is the one that would come back.
+  if (lockingActive()) {
+    const unset = [...tradersWithoutLevel()];
+    const hidden = unset.length ? (state.tasks || []).filter((t) => !isDone(t.id)
+      && traderNotUnlocked(t) && isUnlocked(t) && !levelLocked(t) && !repLocked(t)).length : 0;
+    if (hidden) {
+      const msg = document.createElement('div');
+      msg.className = 'tree-message trader-note';
+      msg.innerHTML = `<strong>${hidden}</strong> quest${hidden === 1 ? '' : 's'} hidden — no loyalty level set for `
+        + `<strong>${escapeHtml(unset.join(', '))}</strong>. A trader with no level counts as one you have `
+        + `not unlocked. Click a level under <strong>TRADERS</strong> to bring them back.`;
+      tree.insertBefore(msg, tree.firstChild);
+    } else if (!tree.children.length) {
+      const msg = document.createElement('div');
+      msg.className = 'tree-message';
+      msg.textContent = 'Nothing to show with the current filters — try turning off "hide locked" or "hide completed".';
+      tree.appendChild(msg);
     }
   }
 }
@@ -1256,6 +1322,14 @@ function renderQuest() {
     reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">LEVEL</span>`
       + `<span>player level ${t.minPlayerLevel}${short ? ` — you are ${playerLevel()}` : ''}</span></div>`);
   }
+  // The trader themselves. Without this line a quest can show LOCKED with a
+  // Requirements list that explains nothing — the blank loyalty level is not one
+  // of the quest's own requirements, it is a statement about the trader.
+  if (traderNotUnlocked(t)) {
+    reqs.push('<div class="req-line prereq-missing"><span class="req-tag">TRADER</span>'
+      + `<span>${escapeHtml((t.trader || {}).name || '')} counts as not unlocked, because you have not `
+      + 'set a loyalty level for them. Click one under TRADERS and their quests come back.</span></div>');
+  }
   // Trader standing, both kinds. This used to render every row as KARMA and
   // compare it against Fence's Scav karma, so a "Ragman loyalty level 3" gate
   // came out as "Ragman reputation at least 3 — yours is 3.64" — the wrong
@@ -1265,9 +1339,12 @@ function renderQuest() {
     const loyalty = r.kind === 'loyalty';
     const have = loyalty ? standingFor(r.trader.name).loyalty : standingFor(r.trader.name).rep;
     // only claim a comparison when the player has actually stated the value —
-    // otherwise the line would report a guess ("yours is 0") as fact
+    // otherwise the line would report a guess ("yours is 0") as fact. An UNSET
+    // loyalty level is highlighted all the same, because since v1.27.0 it is
+    // what is holding the quest back, and this line is where you look to find
+    // out why.
     const known = Number.isFinite(have);
-    const short = known && !repMet(r, have);
+    const short = loyalty ? (!known || !repMet(r, have)) : (known && !repMet(r, have));
     const sign = { '<': 'below', '<=': 'at most', '>': 'above', '=': 'exactly', '==': 'exactly' }[r.compareMethod] || 'at least';
     const what = loyalty
       ? `loyalty level ${sign === 'at least' ? '' : sign + ' '}${r.value}`
@@ -1532,6 +1609,7 @@ function renderAll() {
   _reachMemo = new Map(); // progress may have changed since last render
   _reachStack.clear();    // defensive: never carry a partial DFS across renders
   _levelFloor = null;     // a new completion can raise the inferred level
+  _unsetTraders = null;   // a level clicked in TRADERS turns a whole trader back on
   renderTabs();
   renderTree();
   renderHero();
@@ -1644,7 +1722,8 @@ const GUIDE_CARDS = [
       + 'Be aware that the quest data has barely caught up: the loyalty requirement is published for only a few dozen quests so far, '
       + 'so setting your levels correctly will still leave plenty of quests showing that the game gates behind a higher trader level. '
       + 'The TRADERS panel says how many it currently knows about. '
-      + '<strong>Anything you leave blank is never used to hide a quest</strong> — the app would rather show you one quest too many than hide one you can take.',
+      + '<strong>Fill in a level for every trader you have unlocked</strong> — one you leave blank is treated as a trader you have not '
+      + 'unlocked yet, and none of their quests are shown until you click a level. That is the first thing to check if the list looks short.',
   },
   {
     title: 'THE MAPS ARE CLICKABLE, AND THE PINS ARE APPROXIMATE',
@@ -1732,7 +1811,9 @@ function renderTraders() {
       + ` <strong>${nQuests}</strong> of the ${total} quests in this list have a published standing`
       + ` requirement — patch 1.1.0 gates far more than that in game, but the quest data does not`
       + ` say which yet, so the rest cannot be filtered by loyalty however you set these.`
-      + ` <strong>Anything left unset is never used to hide a quest</strong>.`
+      + ` <strong>A trader with no loyalty level set counts as one you have not unlocked, so none of`
+      + ` their quests are shown</strong> — click any level to bring them back. Scav karma is the`
+      + ` exception: blank there still hides nothing.`
       + ` These are your <strong>${escapeHtml(modeLabel(state.gameMode))}</strong> values; each mode is its own character.`
     : `Nothing in the current quest list is gated by trader standing.`
       + ` Patch 1.1.0 moved a lot of unlocks onto trader loyalty level, so expect this to fill in`

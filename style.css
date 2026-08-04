@@ -160,7 +160,17 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 #tree::-webkit-scrollbar-thumb { background: #3a3a36; border-radius: 4px; }
 #tree::-webkit-scrollbar-track { background: transparent; }
 
-.tree-message { color: #7a776e; padding: 12px 6px; font-size: 14px; letter-spacing: .5px; }
+.tree-message { color: #7a776e; padding: 12px 6px; font-size: 14px; letter-spacing: .5px; line-height: 1.5; }
+.tree-message strong { color: #c9a94a; }
+/* the "N quests hidden" note sits above the list, so it needs to read as a
+   status line rather than as the first row of it */
+.tree-message.trader-note {
+  background: rgba(201, 169, 74, .08);
+  border-left: 2px solid #6b5c30;
+  font-size: 12.5px;
+  margin: 0 0 6px;
+  padding: 8px 10px;
+}
 .tree-message.error { color: #b03535; }
 
 .map-row, .trader-row {
