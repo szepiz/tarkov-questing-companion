@@ -210,6 +210,9 @@ const state = {
   watcherStatus: { active: false, logsFound: false },
   dataInfo: null,
   filter: 'ALL',
+  // Live quest search. Not persisted on purpose — a stale filter surviving a
+  // restart looks exactly like lost quests.
+  searchQuery: '',
   // How the quest list is grouped. One of the GROUPINGS keys; persisted in
   // settings.groupBy so it survives a restart like the selected tab does.
   groupBy: 'map-trader',
@@ -1138,7 +1141,20 @@ function renderTree() {
     return;
   }
 
-  const levels = groupLevels();
+  // Searching flattens the list: a match buried in a collapsed group is not a
+  // result anyone can see, and expanding every group to reveal three hits is
+  // worse than just showing the three hits. It also ignores the hide-completed/
+  // locked/failed toggles — someone typing a name wants to know where that
+  // quest IS, and "hidden by a filter" is indistinguishable from "missing".
+  // Matches the current name, the pre-1.1.0 name (91 quests were renamed, and
+  // the old names are what people remember), the trader and the map.
+  const q = (state.searchQuery || '').trim().toLowerCase();
+  const matchesSearch = (t) => t.name.toLowerCase().includes(q)
+    || (t._oldName && t._oldName.toLowerCase().includes(q))
+    || ((t.trader && t.trader.name) || '').toLowerCase().includes(q)
+    || rowMapLabel(t).full.toLowerCase().includes(q);
+
+  const levels = q ? [] : groupLevels();
   const root = buildGroups(levels);
 
   // display toggles: hide completed / hide locked quests. Rows are hidden but
@@ -1147,9 +1163,10 @@ function renderTree() {
   const hideL = !!(state.settings && state.settings.hideLocked);
   const hideF = !!(state.settings && state.settings.hideFailed);
   const hiding = hideC || hideL || hideF;
-  const isVisible = (t) => !(hideC && isDone(t.id))
+  const isVisible = (t) => (q ? matchesSearch(t)
+    : !(hideC && isDone(t.id))
     && !(hideF && !isDone(t.id) && isFailed(t.id))
-    && !(hideL && isLocked(t));
+    && !(hideL && isLocked(t)));
 
   // What a quest row has to say for itself depends on what the grouping has
   // already said above it: grouped by map only, the row names its trader;
@@ -1287,6 +1304,18 @@ function renderTree() {
 
   renderNode(root, [], 0);
 
+  // Search gets its own empty-state and skips the hidden-trader note below —
+  // that note explains the hide-filters, and search deliberately ignores them.
+  if (q) {
+    if (!tree.querySelector('.quest-row')) {
+      const msg = document.createElement('div');
+      msg.className = 'tree-message';
+      msg.textContent = `Nothing matches "${state.searchQuery.trim()}" — trader and map names work too, `
+        + 'and so do the pre-patch quest names.';
+      tree.appendChild(msg);
+    }
+    return;
+  }
 
   // A blank loyalty level hides that whole trader, which is a big enough effect
   // that the list has to admit it is happening — at the TOP, and not only when
@@ -1606,6 +1635,9 @@ function renderTabs() {
   document.querySelectorAll('.tab').forEach((el) => {
     el.classList.toggle('active', el.dataset.filter === state.filter);
   });
+  // STORY and KAPPA render checklists, not quest lists — a search box over a
+  // checklist would be a promise the tree cannot keep
+  $('searchBar').classList.toggle('hidden', state.filter === 'STORY' || state.filter === 'KAPPA');
 }
 
 // One builder for every mode's task list, used by boot and by the refresh button.
@@ -1920,6 +1952,24 @@ document.querySelectorAll('.mode-btn-top').forEach((el) => {
 document.querySelectorAll('.group-btn').forEach((el) => {
   el.addEventListener('click', () => setGroupBy(el.dataset.group));
 });
+
+// quest search: live, cheap enough at 510 rows to re-render per keystroke
+$('questSearch').addEventListener('input', () => {
+  state.searchQuery = $('questSearch').value;
+  $('searchClear').classList.toggle('hidden', !state.searchQuery.trim());
+  renderTree();   // only the tree — the hero/details should not jump while typing
+});
+$('questSearch').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { clearSearch(); $('questSearch').blur(); }
+});
+$('searchClear').addEventListener('click', clearSearch);
+function clearSearch() {
+  if (!state.searchQuery) return;
+  state.searchQuery = '';
+  $('questSearch').value = '';
+  $('searchClear').classList.add('hidden');
+  renderTree();
+}
 
 // ---------- first-run guide ----------
 //

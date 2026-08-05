@@ -34,6 +34,13 @@
         <button class="tab" data-filter="KAPPA">KAPPA</button>
         <button class="tab" data-filter="LIGHTKEEPER">LIGHTKEEPER</button>
       </nav>
+      <!-- Search. Matches the current name, the pre-1.1.0 name (91 quests were
+           renamed and people remember the old ones), the trader and the map.
+           Hidden on STORY and KAPPA, which render checklists, not quest lists. -->
+      <div id="searchBar">
+        <input id="questSearch" type="text" placeholder="search quests — old names work too" spellcheck="false" autocomplete="off">
+        <button id="searchClear" class="hidden" title="Clear the search (Esc)">×</button>
+      </div>
       <!-- Shown only in seasonal, where the quest list is borrowed from PvP.
            A persistent strip, not a toast: a toast disappears, and hiding an
            uncertainty is the same class of mistake as hiding a quest. -->

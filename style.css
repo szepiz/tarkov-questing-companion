@@ -196,6 +196,41 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 #tree::-webkit-scrollbar-thumb { background: #3a3a36; border-radius: 4px; }
 #tree::-webkit-scrollbar-track { background: transparent; }
 
+/* quest search — sits between the tabs and the tree */
+#searchBar {
+  background: #141412;
+  border-bottom: 1px solid #000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+}
+#questSearch {
+  background: #1d1d1a;
+  border: 1px solid #3a3a36;
+  border-radius: 2px;
+  color: #cfccc3;
+  flex: 1;
+  font-family: inherit;
+  font-size: 12.5px;
+  letter-spacing: .4px;
+  min-width: 0;
+  padding: 5px 8px 4px;
+}
+#questSearch:focus { border-color: #6b5c30; outline: none; }
+#questSearch::placeholder { color: #5d5b54; letter-spacing: .4px; }
+#searchClear {
+  background: none;
+  border: 1px solid #4a4a44;
+  border-radius: 2px;
+  color: #8a877e;
+  cursor: pointer;
+  flex: none;
+  font: 700 13px/1 inherit;
+  padding: 3px 8px 4px;
+}
+#searchClear:hover { border-color: #6b5c30; color: #c9a94a; }
+
 .tree-message { color: #7a776e; padding: 12px 6px; font-size: 14px; letter-spacing: .5px; line-height: 1.5; }
 .tree-message strong { color: #c9a94a; }
 /* the "N quests hidden" note sits above the list, so it needs to read as a
