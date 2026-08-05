@@ -21,13 +21,16 @@ const QUEST_TRADERS = {
 };
 
 // Renames the wiki has not made yet. wikinames.js harvests the wiki's page
-// moves, which covers 91 quests; these are the ones reported from the game
+// moves, which covers 92 quests; these are the ones reported from the game
 // before an editor got to them. Applied after wikinames.js, so it wins.
-const QUEST_NAMES = {
-  // Reported from the game 2026-08-05. The wiki page is still under the old
-  // title with no redirect, so build_wikinames.js cannot see it yet.
-  '5d25e44386f77409453bce7b': 'The Huntsman Path - Angry Watchman',
-};
+//
+// Empty as of 2026-08-05: its only row was "The Huntsman Path - Evil Watchman"
+// -> "Angry Watchman", reported from the game on Aug 5 while the wiki page was
+// still under the old title. A re-harvest the same day found the page had been
+// moved and the redirect left behind, so wikinames.js now carries it and the
+// row corrected nothing. `test_wikinames.js` fails a row that agrees with
+// either source, so this list cannot quietly accumulate dead overrides.
+const QUEST_NAMES = {};
 
 // Player-level requirements 1.1.0 dropped, reported from the GAME. wikireqs.js
 // already removes 73 of these where the wiki's own Requirements section lists a
@@ -42,16 +45,24 @@ const NO_LEVEL = {
 };
 
 // Quests patch 1.1.0 ADDED that tarkov.dev has never published. Reported from
-// the game 2026-08-05; the first three also have wiki pages, so their objectives
+// the game 2026-08-05; the first two also have wiki pages, so their objectives
 // and requirements are real. The last three have no page anywhere — name and
 // trader are all that is known, and saying so beats leaving them out.
 //
 // ⚠️ The ids are ours, not the game's. A hand-added quest cannot tick itself
 // from the logs, because the log carries BSG's id and we have no way to learn
 // which one it is. They are tick-by-hand entries until tarkov.dev publishes
-// them, at which point these rows should be DELETED rather than left to sit
-// alongside the real thing — `test_wikinames.js` fails a row whose name has
-// appeared in the quest data.
+// them, at which point these rows must be DELETED rather than left to sit
+// alongside the real thing.
+//
+// ⚠️ **Kings of the Rooftops was removed 2026-08-05 — it was never missing.**
+// tarkov.dev had it all along (639136f086e646067c176a8b, Prapor, Streets,
+// level 22), so from v1.36.0 the list carried it TWICE and one copy could not
+// tick. Nothing is lost: wikireqs.js already holds its Prapor LL2 gate against
+// the real id. These notes claimed test_wikinames.js failed a row whose name
+// had appeared in the quest data — it did not; no such check existed, which is
+// exactly why this went unnoticed. It exists now, so check the test rather than
+// eyeballing the API before adding anything here.
 const EXTRA_QUESTS = [
   {
     id: 'hand:fall-ailment', name: 'Fall Ailment', trader: 'Therapist',
@@ -62,11 +73,6 @@ const EXTRA_QUESTS = [
     map: 'Ground Zero',
     objectives: ['Locate and obtain the chemical container on Ground Zero',
       'Stash the container by the police station on Streets of Tarkov'],
-  },
-  {
-    id: 'hand:kings-of-the-rooftops', name: 'Kings of the Rooftops', trader: 'Prapor',
-    map: 'Streets of Tarkov', minPlayerLevel: 22, loyalty: 2,
-    objectives: ['Eliminate 8 snipers on the rooftops on Streets of Tarkov'],
   },
   // No wiki page exists for these three. Trader is what the owner saw in game.
   // Woods reported from the game 2026-08-05, off the in-game task list's own

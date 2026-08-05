@@ -44,7 +44,7 @@ const WIKI_OBJ_TEXT = {
   "5bc84f7a86f774294c2f6862": "Eliminate 5 Sniper Scavs while using a bolt-action rifle"
  },
  "5bc4836986f7740c0152911c": {
-  "5bc483ba86f77415034ba8d0": "Eliminate 5 PMCs from over 45 meters while using a suppressed bolt-action rifle"
+  "5bc483ba86f77415034ba8d0": "Eliminate 5 PMCs while using a suppressed bolt-action rifle"
  },
  "5bc4856986f77454c317bea7": {
   "5bc485b586f774726473a858": "Eliminate 3 PMCs with a headshot and without dying while using a bolt-action rifle"
@@ -138,7 +138,7 @@ const WIKI_OBJ_TEXT = {
   "596a20ac86f7741ddf17dbf4": "Hand over the 2 Gas analyzers to Therapist"
  },
  "596b455186f77457cb50eccb": {
-  "5c9b5e3f86f7744aab7329b5": "Eliminate 3 PMCs while using pistols"
+  "5c9b5e3f86f7744aab7329b5": "Eliminate any 10 target with pistols on Factory"
  },
  "5979ed3886f77431307dc512": {
   "5979ee2986f7743ec214c7a4": "Find 2 Secure flash drives in raid",
@@ -163,7 +163,7 @@ const WIKI_OBJ_TEXT = {
   "5a27d34586f7744e1115b327": "Hand over 5,000 USD to Skier"
  },
  "5c0d190cd09282029f5390d8": {
-  "5c1b760686f77412780211a3": "Eliminate 5 PMC operatives with grenades"
+  "5c1b760686f77412780211a3": "Eliminate 5 of any target with grenades or grenade launchers"
  },
  "66058cb22cee99303f1ba067": {
   "6606b709f7ce34bb26221cab": "Plant the Bison vs Undertaker poster in the living quarters at the Scav base on Customs"
@@ -196,7 +196,7 @@ const WIKI_OBJ_TEXT = {
   "596b472686f77457c7006f8a": "Hand over the 8 spark plugs to Therapist"
  },
  "5979f8bb86f7743ec214c7a6": {
-  "5b0e766b86f7746bfa618964": "Eliminate 25 Scavs on Customs"
+  "5b0e766b86f7746bfa618964": "Eliminate 25 Scavs on Interchange, Ground Zero or Woods (This objective progress counts for all group members)"
  },
  "597a0b2986f77426d66c0633": {
   "597a0be986f774273b74f673": "Find any evidence on Customs that could help with the investigation",
@@ -355,6 +355,9 @@ const WIKI_OBJ_TEXT = {
   "5ac6240786f77417204ca2b9": "Obtain the package of graphics cards",
   "5ac624b286f77416781dd3ac": "Hand over the package of graphics cards to Mechanic"
  },
+ "5a27bc1586f7741f6d40fa2f": {
+  "5a37db0c86f7745b8f4be68a": "Mark Artyom's car with MS2000 Marker"
+ },
  "5a27bc3686f7741c73584026": {
   "5a28221e86f7741d5b719624": "Obtain a list of the resort's tenants on Shoreline",
   "5a28223786f7741c7a0b5401": "Hand over the list of tenants to Peacekeeper"
@@ -443,12 +446,6 @@ const WIKI_OBJ_TEXT = {
  "67d03be712fb5f8fd2096332": {
   "67d03be712fb5f8fd2096334": "Eliminate 24 PMC operatives inside The Labyrinth"
  },
- "5ae448f286f77448d73c0131": {
-  "5ae452c086f774336a397578": "Mark the first fuel tank with an MS2000 Marker on Interchange",
-  "5ae452de86f77450595c4333": "Mark the second fuel tank with an MS2000 Marker on Interchange",
-  "5ae452fa86f774336a39758e": "Mark the third fuel tank with an MS2000 Marker on Interchange",
-  "6926fcc872a6499d1fa29327": "Mark the fourth fuel tank with an MS2000 Marker on Interchange"
- },
  "5ae4493486f7744efa289417": {
   "5ae9b32486f7745bbc72275a": "Obtain the Goshan cargo manifests on Interchange",
   "5ae9b36c86f774307c29df04": "Hand over the Goshan cargo manifests to Ragman",
@@ -528,9 +525,9 @@ const WIKI_OBJ_TEXT = {
   "59ca29ab86f77445ab431c86": "Hand over the 5 Bars A-2607 95Kh18 knives"
  },
  "59ca2eb686f77445a80ed049": {
-  "59ca2fba86f77445e4732b25": "Eliminate 15 PMC operatives while using an SVD rifle (excluding Factory)",
-  "5b0548e686f7740306753506": "Hand over any 7 BEAR dogtags",
-  "5cb3397c88a450159a723d79": "Hand over any 7 USEC dogtags"
+  "59ca2fba86f77445e4732b25": "Eliminate 30 PMC operatives while using specified weapons (Light Machine Guns, 9x39mm weapons such as AS Val or SR-3M, SVDS 7.62x54R sniper rifle, TKPD 9.3x64 carbine, Kalashnikov AKS-74U series weapon or Kalashnikov AKM 7.62x39 assault rifle series weapon) on Lighthouse, Shoreline, Reserve, Ground Zero or The Lab",
+  "5b0548e686f7740306753506": "Hand over any 10 BEAR or USEC dogtags",
+  "5cb3397c88a450159a723d79": "Locate and Neutralize any 5 Bosses"
  },
  "5a68663e86f774501078f78a": {
   "5a68760f86f7743cc55d8709": "Search the room in the Health Resort for any documents about TerraGroup's research on Shoreline"
@@ -668,10 +665,10 @@ const WIKI_OBJ_TEXT = {
   "5ae4562086f774498b05e0dc": "Hand over 1 Pilgrim tourist backpack to Ragman"
  },
  "5d25e46e86f77409453bce7c": {
-  "5d27446f86f77475a86565a3": "Find 1 Portable defibrillator in raid",
-  "5ec1538a92e95f77ac7a2529": "Find 2 CMS surgery kits in raid",
-  "5ec1504183b69d213d3c2ee8": "Hand over 1 Portable defibrillator to Jaeger",
-  "5d7782c686f7742fa732bf07": "Hand over 2 CMS surgery kits to Jaeger"
+  "5d27446f86f77475a86565a3": "Find 4 items from the Medkits category Found In Raid",
+  "5ec1538a92e95f77ac7a2529": "Hand over the items",
+  "5ec1504183b69d213d3c2ee8": "Find 4 items from the Injury treatment category Found In Raid",
+  "5d7782c686f7742fa732bf07": "Hand over the items"
  },
  "5ae4495c86f7744e87761355": {
   "5ae9b77f86f77432c81e3074": "Find 2 WARTECH TV-109 + TV-106 chest rigs in raid",
@@ -736,9 +733,6 @@ const WIKI_OBJ_TEXT = {
   "5b478c7386f7744d1a393fb1": "Stash 2 6B47 helmets (Olive Drab) in the specified place on Interchange",
   "5b478cb586f7744d1a393fb5": "Stash 2 Gzhel-K body armors in the specified place on Interchange"
  },
- "5c112d7e86f7740d6f647486": {
-  "5c112dc486f77465686bff38": "Reach the required Search skill level of 9"
- },
  "68db9c7557bc51a8c804c14b": {
   "68db9ea0e6c69908254eceee": "Eliminate 20 PMC operatives from over 50 meters away while using any 9x39 caliber weapon"
  },
@@ -800,13 +794,13 @@ const WIKI_OBJ_TEXT = {
   "66a0f5a7f9eae6761253114c": "Eliminate any 50 targets while using an SR-2M with suppressor and KP-SR2 sight on Factory"
  },
  "67b45467814ab0ffa000c7e7": {
-  "67b45467814ab0ffa000c7ea": "Eliminate any 35 targets while using grenades or grenade launchers"
+  "67b45467814ab0ffa000c7ea": "Eliminate 20 PMC operatives while using grenades or grenade launchers"
  },
  "600302d73b897b11364cd161": {
   "600303250b79c6604058ce30": "Eliminate Shturman 20 times"
  },
  "65734c186dc1e402c80dc19e": {
-  "65734c186dc1e402c80dc1a2": "Eliminate any 30 enemies while wearing a Bomber beanie and RayBench Hipster Reserve sunglasses on Streets of Tarkov"
+  "65734c186dc1e402c80dc1a2": "Eliminate any 15 enemies while wearing a Bomber beanie and RayBench Hipster Reserve sunglasses on Streets of Tarkov"
  },
  "639135cd8ba6894d155e77cb": {
   "63a7dbefee7b4d0d5507baf8": "Locate the improvised jail warden's apartment on Streets of Tarkov",
@@ -902,14 +896,6 @@ const WIKI_OBJ_TEXT = {
   "63a9b5b2813bba58a50c9eeb": "Eliminate 10 Scavs while using melee weapons on Customs",
   "63a9b5f064b9631d9178276b": "Eliminate 10 Scavs while using melee weapons on Reserve",
   "65e0a329893b7bf535c6a9fd": "Eliminate 10 Scavs while using melee weapons on Ground Zero"
- },
- "5ae449d986f774453a54a7e1": {
-  "5ae9e58886f77423572433f5": "Hand over the Goshan cash register key to Ragman"
- },
- "60e71b9bbd90872cb85440f3": {
-  "60ec18b73b5f7d790a7ad034": "Eliminate 8 PMC operatives at the Scav base on Customs",
-  "60ec1e72d7b7cb55e94c1764": "Eliminate 8 PMC operatives at the Scav base on Woods",
-  "60ec2229fd1bf4491c4e4552": "Eliminate 8 PMC operatives at the Health Resort on Shoreline"
  },
  "5e381b0286f77420e3417a74": {
   "5e38261886f77429853af26c": "Find 5 Aramid fabrics in raid",
@@ -1248,12 +1234,7 @@ const WIKI_OBJ_LIST = {
   "Eliminate 5 Scavs on Woods,Ground Zero,Interchange, or Customs"
  ],
  "5d24b81486f77439c92d6ba8": [
-  "Find 3 Iskra ration packs in raid",
-  "Find 2 Packs of instant noodles in raid",
-  "Find 2 Cans of beef stew (Large) in raid",
-  "Hand over the 3 found in raid Iskra ration packs",
-  "Hand over the 2 found in raid Packs of instant noodles",
-  "Hand over the 2 found in raid Cans of beef stew (Large)"
+  "Hand over any 10 items from the Food Category"
  ],
  "59689ee586f7740d1570bbd5": [
   "Find 2 Gas analyzer in raid",
@@ -1313,11 +1294,21 @@ const WIKI_OBJ_LIST = {
   "Eliminate 10 targests around the chalet area on Lighthouse",
   "Hand over 5 Topographic survey maps, Intelligence folder, or TerraGroup \"Blue Folders\" materials marked with the Found in raid status"
  ],
+ "6578ec473dbd035d04531a8d": [
+  "Mark any of the weather stations with an MS2000 Marker on Woods"
+ ],
+ "5ae448f286f77448d73c0131": [
+  "Locate and mark any fuel tank near the power station with an MS2000 Marker on Interchange",
+  "Locate and mark any fuel tank in the northern territory with an MS2000 Marker on Interchange"
+ ],
  "66aa58245ab22944110db6e9": [
   "Scout the intersection of Mira Ave and the overpass on Ground Zero (In one raid)",
   "Locate the passage leading to Streets of Tarkov on Ground Zero (In one raid)",
   "Use the transit from Ground Zero to Streets of Tarkov (In one raid)",
   "Survive and extract from Streets of Tarkov (or transit to the next location)"
+ ],
+ "675c03d1f7da9792a405549a": [
+  "Mark any of the special TerraGroup cargo boxes with an MS2000 Marker on Customs"
  ],
  "5a27ba1c86f77461ea5a3c56": [
   "Locate and mark the first ritual spot with an MS2000 Marker on Woods",
@@ -1354,6 +1345,7 @@ const WIKI_OBJ_LIST = {
   "Eliminate 20 Scavs with Light machine guns"
  ],
  "64f5aac4b63b74469b6c14c2": [
+  "(Optional) Locate the apartment of Prapor's friend on Streets of Tarkov",
   "Locate the place of work of Prapor's friend on Streets of Tarkov",
   "Obtain any information on the fate of Prapor's friend",
   "Survive and extract from the location",
@@ -1414,6 +1406,13 @@ const WIKI_OBJ_LIST = {
   "Mark any of the ATMs inside Klimov Shopping Mall with an MS2000 Marker on Streets of Tarkov",
   "Mark any of the ATMs on Klimov Street with an MS2000 Marker on Streets of Tarkov"
  ],
+ "5c112d7e86f7740d6f647486": [
+  "Hand over any Found in Raid items from the Facecovers category x15",
+  "Hand over any Found in Raid items from the Headgear category x15",
+  "Hand over any Found in Raid items from the Headests category x15",
+  "Hand over any Found in Raid items from the Eyewear category category x15",
+  "Hand over any Found in Raid items from the Body Armor category category x15"
+ ],
  "5ae449c386f7744bde357697": [
   "Visit the Railway Exfil exit",
   "Visit the Emercom Checkpoint exit",
@@ -1425,6 +1424,11 @@ const WIKI_OBJ_LIST = {
   "Eliminate 12 Scavs while using a UNTAR helmet, MF-UNTAR armor, and 5.56 UN weapons on Shoreline or Streets of Tarkov",
   "Eliminate 12 Scavs while using a UNTAR helmet, MF-UNTAR armor, and 5.56 UN weapons on Ground Zero or Interchange"
  ],
+ "639dbaf17c898a131e1cffff": [
+  "Locate the debtor on Streets of Tarkov",
+  "Locate the private prison warden's apartment on Streets of Tarkov",
+  "Hand over the item: Iron gate key"
+ ],
  "5c0d4e61d09282029f53920e": [
   "Survive and extract from Woods or Interchange with the \"Survived\" exit status",
   "Survive and extract from Factory or Customs with the \"Survived\" exit status",
@@ -1432,6 +1436,14 @@ const WIKI_OBJ_LIST = {
   "Survive and extract from The Lab or Lighthouse with the \"Survived\" exit status",
   "Survive and extract from Ground Zero or Streets of Tarkov with the \"Survived\" exit status",
   "Eliminate 15 targets"
+ ],
+ "5ae449d986f774453a54a7e1": [
+  "Stash the Goshan cash register key at the BIZARRO store fitting rooms on Interchange.",
+  "Stash the IDEA cash register key at Register #9 on Interchange.",
+  "Stash the OLI cash register key at Register #7-8 on Interchange."
+ ],
+ "60e71b9bbd90872cb85440f3": [
+  "Eliminate 12 PMC operatives at any Scav base on Customs,Woods, or Shoreline"
  ],
  "5c51aac186f77432ea65c552": [
   "Hand over the found in raid item: 42 Signature Blend English Tea",
@@ -1442,7 +1454,7 @@ const WIKI_OBJ_LIST = {
   "Hand over the found in raid item: Baddie's red beard",
   "Hand over the found in raid item: BakeEzy cook book",
   "Hand over the found in raid item: Battered antique book",
-  "Hand over the found in raid item: Bottle of YXMC water",
+  "Hand over the found in raid item: Bottle of YMXC water",
   "Hand over the found in raid item: Can of Dr. Lupo's coffee beans",
   "Hand over the found in raid item: Can of GigaBeef meat",
   "Hand over the found in raid item: Can of RatCola soda",

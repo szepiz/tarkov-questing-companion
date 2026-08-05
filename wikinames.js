@@ -12,6 +12,7 @@
 
 const WIKI_NAMES = {
  "5ac23c6186f7741247042bad": "Gunsmith - MP-133",
+ "5d25e44386f77409453bce7b": "The Huntsman Path - Angry Watchman",
  "59689ee586f7740d1570bbd5": "Sanitary Standards",
  "5ac2426c86f774138762edfe": "Gunsmith - AKS-74U",
  "59c124d686f774189b3c843f": "Oil Run",
