@@ -707,6 +707,11 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .fir { color: #d0a943; font-size: 11px; letter-spacing: .5px; }
 /* provenance chip: a requirement read off the wiki, not published by the data
    source. Quiet on purpose -- it is a footnote, not a warning. */
+/* the "tell me what the game says" row in a quest's requirements */
+.req-line.user-gate { color: #8d8a80; }
+.req-line.user-gate strong { color: #c9a94a; }
+.ll-buttons.inline { display: inline-flex; gap: 3px; margin-left: 8px; vertical-align: middle; }
+.ll-buttons.inline .ll-btn { font-size: 11px; min-width: 22px; padding: 2px 0 1px; }
 .req-src {
   border: 1px solid #4a4740;
   border-radius: 2px;

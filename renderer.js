@@ -609,7 +609,32 @@ function karmaIsSet() {
 // unchanged for REPUTATION and is the important part: a value the player has not
 // given us is not a value we may lock on. Loyalty level is now the exception —
 // see below.
+// A loyalty level the PLAYER recorded for one quest, because the game gates it
+// and no data source says so. Global rather than per mode: it is a fact about
+// the quest, not about a character. Returns 0 when unset.
+function questLoyalty(taskId) {
+  const all = (state.settings && state.settings.questLoyalty) || {};
+  const v = Number(all[taskId]);
+  return Number.isFinite(v) && v >= 1 && v <= 4 ? v : 0;
+}
+
+// the same shape as a published gate, so every reader treats it identically
+function userGate(t) {
+  const need = questLoyalty(t.id);
+  const trader = (t.trader || {}).name;
+  if (!need || !trader) return null;
+  return { trader: { name: trader }, kind: 'loyalty', compareMethod: '>=', value: need, fromUser: true };
+}
+
 function repLocked(t) {
+  const mine = userGate(t);
+  if (mine) {
+    const have = standingFor(mine.trader.name).loyalty;
+    // Unset standing still locks, exactly as an unset loyalty level does
+    // everywhere else — the player has told us this quest needs a level, so
+    // "I don't know mine" cannot mean "show it anyway".
+    if (!Number.isFinite(have) || !repMet(mine, have)) return true;
+  }
   for (const r of t.traderRequirements || []) {
     const trader = r.trader && r.trader.name;
     if (!trader) continue;
@@ -670,6 +695,18 @@ function traderNotUnlocked(t) {
 // for every standing lock, which stopped being true the moment 1.1.0's loyalty
 // gates arrived — a Ragman LL3 lock read as a complaint about Scav karma.
 function repLockReason(t) {
+  const mine = userGate(t);
+  if (mine) {
+    const have = standingFor(mine.trader.name).loyalty;
+    if (!Number.isFinite(have)) {
+      return `you recorded this as needing loyalty level ${mine.value} with ${mine.trader.name}, `
+        + `and your ${mine.trader.name} level is not set`;
+    }
+    if (!repMet(mine, have)) {
+      return `you recorded this as needing loyalty level ${mine.value} with ${mine.trader.name}, `
+        + `and you are LL${have}`;
+    }
+  }
   for (const r of t.traderRequirements || []) {
     const trader = r.trader && r.trader.name;
     if (!trader) continue;
@@ -1490,7 +1527,34 @@ function renderQuest() {
     const names = items.slice(0, 3).map((i) => escapeHtml(i.name)).join(' / ') + (items.length > 3 ? ' / …' : '');
     reqs.push(`<div class="req-line"><span class="req-tag">ITEM</span><span>${names} ×${o.count}${fir}</span></div>`);
   }
+  // THE GAP, and why this control exists: 1.1.0 hung the quest tree off trader
+  // loyalty, and 468 of 510 quests have no loyalty requirement published by
+  // anyone — not tarkov.dev, not the wiki, whose page for "New Day, New Paths"
+  // is a 23-byte stub. The game knows and the player can read it off the trader
+  // screen in two seconds, so let them say it, the same way they already state
+  // their level and their standing. Offered only where nothing is published for
+  // the quest's OWN trader; a gate that is already known needs no override.
+  const ownTrader = (t.trader || {}).name;
+  const published = (t.traderRequirements || []).some((r) => r.kind === 'loyalty'
+    && (r.trader || {}).name === ownTrader);
+  if (ownTrader && !published && !REP_TRADERS.has(ownTrader) && !NO_STANDING.has(ownTrader)) {
+    const cur = questLoyalty(t.id);
+    reqs.push(`<div class="req-line user-gate"><span class="req-tag">IN GAME</span><span>`
+      + `${cur ? `You set this to need <strong>${escapeHtml(ownTrader)} loyalty level ${cur}</strong>`
+        : `Locked in game but shown here? No loyalty requirement is published for this one — `
+          + `set the level ${escapeHtml(ownTrader)} needs`}`
+      + `<span class="ll-buttons inline">${[1, 2, 3, 4].map((n) =>
+        `<button class="ll-btn${cur === n ? ' on' : ''}" data-quest-ll="${n}" `
+        + `title="${cur === n ? 'Click again to clear' : `Needs loyalty level ${n} with ${escapeHtml(ownTrader)}`}">${n}</button>`).join('')}`
+      + `</span></span></div>`);
+  }
+
   $('questRequirements').innerHTML = reqs.length ? `<h3>REQUIREMENTS</h3>${reqs.join('')}` : '';
+  for (const b of $('questRequirements').querySelectorAll('.ll-btn[data-quest-ll]')) {
+    b.addEventListener('click', () => {
+      setQuestLoyalty(t.id, b.classList.contains('on') ? null : Number(b.dataset.questLl));
+    });
+  }
 
   const wikiBtn = $('wikiBtn');
   wikiBtn.classList.toggle('hidden', !t.wikiLink);
@@ -1531,6 +1595,17 @@ function renderModeSwitch() {
     el.classList.toggle('on', el.dataset.mode === state.gameMode);
   });
   renderSeasonNote();
+}
+
+// Record (or clear) the loyalty level a quest needs, as read off the trader
+// screen in game. Applied locally and not adopted back from the reply — the
+// same lost-update the TRADERS panel and setGroupBy both had.
+function setQuestLoyalty(taskId, value) {
+  const all = { ...((state.settings && state.settings.questLoyalty) || {}) };
+  if (value === null) delete all[taskId]; else all[taskId] = value;
+  state.settings = { ...state.settings, questLoyalty: all };
+  backend.saveSettings({ questLoyalty: all });
+  renderAll();
 }
 
 function renderGroupSwitch() {
@@ -1843,7 +1918,10 @@ const GUIDE_CARDS = [
       + 'so setting your levels correctly will still leave plenty of quests showing that the game gates behind a higher trader level. '
       + 'The TRADERS panel says how many it currently knows about. '
       + '<strong>Fill in a level for every trader you have unlocked</strong> — one you leave blank is treated as a trader you have not '
-      + 'unlocked yet, and none of their quests are shown until you click a level. That is the first thing to check if the list looks short.',
+      + 'unlocked yet, and none of their quests are shown until you click a level. That is the first thing to check if the list looks short. '
+      + '<strong>If a quest shows here but the game will not give it to you</strong>, open it and use the IN GAME row at the bottom of its requirements '
+      + 'to record the loyalty level the trader is asking for. Most quests have no published requirement yet, so this is often the only place that number exists — '
+      + 'and once you reach that level the quest comes back on its own.',
   },
   {
     title: 'THE LIST CAN BE GROUPED FIVE WAYS',

@@ -76,6 +76,11 @@ const DEFAULT_SETTINGS = {
   // large part of the quest tree by trader LOYALTY LEVEL, and neither number is
   // in any log, so the player states them. Blank is never used to lock.
   traderStanding: {},
+  // Loyalty levels the player read off the trader screen for ONE quest, where
+  // no data source publishes the gate — 468 of 510 quests have none. Keyed by
+  // task id, global rather than per mode: it describes the quest, not the
+  // character. { "<taskId>": 1-4 }
+  questLoyalty: {},
   // Seasonal ships no unlock requirements of its own — the list carries PvP's,
   // and they are provably not what seasonal does (a level-4 seasonal character
   // finished quests PvP gates at 30 and 15, with none of their prerequisites
