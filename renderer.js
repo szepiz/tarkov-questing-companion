@@ -4487,6 +4487,15 @@ backend.onUpdateAvailable((r) => {
   // an install from before the grouping existed has no key — fall back to the
   // original layout rather than to whatever Object.keys happens to yield first
   if (GROUPINGS[init.settings.groupBy]) state.groupBy = init.settings.groupBy;
+  // A quest count dropping on its own is alarming, so say what happened and
+  // why, in one breath. The number reported is what was thrown away before the
+  // rescan — most of it comes straight back.
+  if (init.impliedRepaired > 0) {
+    setTimeout(() => toast('When patch 1.1.0 first launched, the game re-offered 80+ quests at once and the app '
+      + 'read that as you accepting them, so it marked their earlier quests complete. Those guesses have been '
+      + 'thrown away and everything re-read from your logs. Some quests may go back to unticked — tick any you '
+      + 'really did finish.'), 1200);
+  }
   applyMode();
   renderModeSwitch();
   renderGroupSwitch();

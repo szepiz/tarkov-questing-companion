@@ -408,6 +408,12 @@ const unknownModes = new Set();
 // How many invented completions the one-shot seasonal cleanup removed, so the
 // renderer can explain it once instead of the number changing behind the user.
 let seasonSplitRemoved = 0;
+// completions dropped by the one-shot repair, reported once the window is up
+let impliedRepaired = 0;
+// How many quest offers in ONE session stop counting as "the player accepted
+// these". Real sessions in the corpus: 0-5. The 1.1.0 patch launch: 89.
+const ACCEPT_BURST_MAX = 20;
+const burstReported = new Set();   // log each such session once, not every scan
 
 function sendToRenderer(channel, payload) {
   if (win && !win.isDestroyed()) win.webContents.send(channel, payload);
@@ -638,6 +644,21 @@ function scanLogs() {
     }
     if (!changed) continue; // nothing new in this folder
 
+    // Is this session a genuine run of play, or the game re-issuing quest
+    // offers? Counted over the whole file (the read above is not a delta), so
+    // the verdict is stable across incremental scans. Measured over the owner's
+    // 218-session corpus: every real session carries 0-5 quest "description"
+    // notifications; the first launch of patch 1.1.0 carried 89, for 83
+    // distinct quests. Nobody accepts 83 quests in one sitting.
+    const descCount = texts.reduce((n, t) =>
+      n + (t.match(/"templateId"\s*:\s*"[a-f0-9]{24} description/g) || []).length, 0);
+    const looksReissued = descCount > ACCEPT_BURST_MAX;
+    if (looksReissued && !burstReported.has(folder.dir)) {
+      burstReported.add(folder.dir);
+      console.log(`[accept-burst] ${path.basename(folder.dir)} has ${descCount} quest offers in one `
+        + 'session — a re-issue, not gameplay. Kept as a diagnostic; nothing is inferred from offers at all now.');
+    }
+
     const segs = folderModeSegments(folder.dir);
     // Only inherit a mode we actually recognise — an unknown token must not
     // become the assumed mode for every markerless session that follows it.
@@ -691,17 +712,37 @@ function scanLogs() {
         } else if (ev.kind === 'accept') {
           // taking the quest again undoes an earlier failure
           if (bucket.failed[ev.questId]) { delete bucket.failed[ev.questId]; anyFail = true; }
-          // ACCEPTING a quest proves its prerequisites were finished — the
-          // trader will not hand it over otherwise. Same inference as
-          // applyImpliedCompletions, just triggered by the other event: it is
-          // the only evidence for quests whose completion never reaches
-          // notifications.log (Ref's Arena-side ones write no success message).
-          // Applied here, at scan time, so it survives incremental scans.
-          for (const pid of (questIndex()[mode].prereqs.get(ev.questId) || [])) {
-            if (bucket.completed[pid] || !questIndex()[mode].ids.has(pid)) continue;
-            bucket.completed[pid] = { via: 'implied', at: Date.now(), by: ev.questId };
-            if (!known[mode].size || known[mode].has(pid)) newByMode[mode].push(pid);
-          }
+          // ⚠️ THE ACCEPT-BASED INFERENCE IS GONE, AND MUST NOT COME BACK
+          // WITHOUT A NEW ARGUMENT. It read "the player was offered/took quest
+          // X" as "X's prerequisites are complete, because the trader would not
+          // hand it over otherwise". Patch 1.1.0 falsified that premise: it
+          // moved unlocking onto trader loyalty level, so a quest can now be
+          // offered with its listed prerequisite chain untouched — and the
+          // chain tarkov.dev publishes is the pre-patch one.
+          //
+          // Measured on the owner's profile, which is what found this: PvE
+          // carried 82 inferred completions and PvP carried 19 — every single
+          // row in that bucket inferred, with no observed completion anywhere
+          // underneath it. Whole Cargo X and Wet Job lines were marked finished
+          // for quests they had never touched, which then unlocked later ones
+          // (Insomnia, Mentor) that the game refuses to give them.
+          //
+          // Two separate falsifications, both from the real logs:
+          //   - the 1.1.0 launch session re-offered 83 quests at once; every
+          //     genuine session in the 218-folder corpus carries 0-5. A volume
+          //     guard fixed that half and NOT the rest.
+          //   - Psycho Sniper was offered in an ordinary session (2 offers) and
+          //     still back-filled a Wet Job line the player never ran.
+          // The second is unfixable by any heuristic about volume, because the
+          // accept is real — it is the GRAPH that is wrong. So the rule goes.
+          //
+          // What is lost: quests whose completion never reaches
+          // notifications.log (Ref's Arena line — 13 of its 21) no longer tick
+          // themselves. They must be ticked by hand, which the guide already
+          // says, and a missing tick the player can add beats an invented one
+          // they have to find. Completion-based inference is untouched:
+          // "you FINISHED X" is evidence of a different order to "X was
+          // offered", and it is what applyImpliedCompletions still runs on.
         } else if (!bucket.failed[ev.questId] && !bucket.completed[ev.questId]) {
           // record WHEN it failed, not when we happened to scan
           bucket.failed[ev.questId] = { at: evTs !== null ? evTs : Date.now() };
@@ -851,14 +892,25 @@ function scanStoryState(folders) {
 
 // Drop auto-detected entries (keeping manual ticks) so a fresh mode-aware scan
 // can re-derive them into the correct per-mode buckets.
+//
+// ⚠️ IT MUST DROP `implied` TOO, and for a long time it did not. An implied row
+// is a CONCLUSION drawn from auto/manual rows; deleting the evidence while
+// keeping the conclusion leaves a completion nothing justifies, and nothing
+// ever re-audited them. Worse, applyImpliedCompletions does not care how a row
+// got there, so the next scan drew fresh conclusions from the orphans and the
+// fiction compounded. One real profile ended up with a PvP bucket holding 19
+// completions of which every single one was implied — not one observed
+// completion anywhere underneath — and 74 orphans in PvE.
 function clearAutoEntries() {
   for (const m of MODES) {
     for (const id of Object.keys(progress[m].completed)) {
-      if (progress[m].completed[id].via === 'auto') delete progress[m].completed[id];
+      const via = progress[m].completed[id].via;
+      if (via === 'auto' || via === 'implied') delete progress[m].completed[id];
     }
     progress[m].failed = {};
   }
 }
+
 
 function startWatcher() {
   stopWatcher();
@@ -904,6 +956,29 @@ function startWatcher() {
     if (removed) {
       seasonSplitRemoved = removed;   // reported to the renderer after the scan
       console.log(`[season-split] dropped ${removed} implied completion(s); rescanning with the fixed mode parser`);
+    }
+  }
+  // ONE-SHOT, first launch of the build that learned to spot a re-issue.
+  //
+  // Same shape and the same safety argument as the seasonal one above: only
+  // `implied` rows go, they are pure derived data, and a full rescan follows
+  // immediately — so everything the logs still justify comes straight back,
+  // this time without the 83 quests the 1.1.0 patch launch re-offered being
+  // read as accepts. Nothing observed (`auto`), nothing hand-ticked (`manual`),
+  // and no resetAt is stamped.
+  if (!progress.acceptBurstFixDone) {
+    let removed = 0;
+    for (const m of MODES) {
+      const c = (progress[m] && progress[m].completed) || {};
+      for (const id of Object.keys(c)) {
+        if (c[id] && c[id].via === 'implied') { delete c[id]; removed++; }
+      }
+    }
+    progress.acceptBurstFixDone = true;
+    saveProgress();
+    if (removed) {
+      impliedRepaired = removed;
+      console.log(`[accept-burst] dropped ${removed} inferred completion(s); rescanning without the re-issue`);
     }
   }
   scanLogs(); // full catch-up scan of every session folder
@@ -1162,10 +1237,17 @@ function applyUpdateAndRestart() {
 // The mode vocabulary ships with the init payload so the renderer never keeps
 // its own copy of which modes exist — that split is what let four separate
 // hardcoded ['regular','pve'] whitelists drift out of step with MODES.
-ipcMain.handle('get-init', () => ({
-  settings, progress, watcherStatus, storyState, version: currentVersion(),
-  modes: MODES, modeLabels: MODE_LABELS, defaultMode: DEFAULT_MODE,
-}));
+ipcMain.handle('get-init', () => {
+  // Reported through get-init rather than a push, so it reaches manual-mode
+  // users too — the boot repair runs for everyone, the log watcher does not.
+  const repaired = impliedRepaired;
+  impliedRepaired = 0;
+  return {
+    settings, progress, watcherStatus, storyState, version: currentVersion(),
+    modes: MODES, modeLabels: MODE_LABELS, defaultMode: DEFAULT_MODE,
+    impliedRepaired: repaired,
+  };
+});
 
 ipcMain.handle('check-update', async () => {
   try { return await checkForUpdate(); }
@@ -2670,7 +2752,8 @@ app.whenReady().then(() => {
   refuseIfRealProfile();
   initStorage();
   // catch up on inferences from before this existed, and for manual-mode users
-  // who never run a log scan at all
+  // who never run a log scan at all. This one only ADDS — the repair that
+  // removes lives in startWatcher, where a full rescan immediately follows it.
   let implied = 0;
   for (const m of MODES) implied += applyImpliedCompletions(m);
   if (implied) saveProgress();
