@@ -29,4 +29,37 @@ const QUEST_NAMES = {
   '5d25e44386f77409453bce7b': 'The Huntsman Path - Angry Watchman',
 };
 
-if (typeof module !== 'undefined') module.exports = { QUEST_TRADERS, QUEST_NAMES };
+// Quests patch 1.1.0 ADDED that tarkov.dev has never published. Reported from
+// the game 2026-08-05; the first three also have wiki pages, so their objectives
+// and requirements are real. The last three have no page anywhere — name and
+// trader are all that is known, and saying so beats leaving them out.
+//
+// ⚠️ The ids are ours, not the game's. A hand-added quest cannot tick itself
+// from the logs, because the log carries BSG's id and we have no way to learn
+// which one it is. They are tick-by-hand entries until tarkov.dev publishes
+// them, at which point these rows should be DELETED rather than left to sit
+// alongside the real thing — `test_wikinames.js` fails a row whose name has
+// appeared in the quest data.
+const EXTRA_QUESTS = [
+  {
+    id: 'hand:fall-ailment', name: 'Fall Ailment', trader: 'Therapist',
+    objectives: ['Find 5 Disposable syringe in raid', 'Hand over the items'],
+  },
+  {
+    id: 'hand:the-tarkov-butcher', name: 'The Tarkov Butcher', trader: 'Therapist',
+    map: 'Ground Zero',
+    objectives: ['Locate and obtain the chemical container on Ground Zero',
+      'Stash the container by the police station on Streets of Tarkov'],
+  },
+  {
+    id: 'hand:kings-of-the-rooftops', name: 'Kings of the Rooftops', trader: 'Prapor',
+    map: 'Streets of Tarkov', minPlayerLevel: 22, loyalty: 2,
+    objectives: ['Eliminate 8 snipers on the rooftops on Streets of Tarkov'],
+  },
+  // No wiki page exists for these three. Trader is what the owner saw in game.
+  { id: 'hand:hiking', name: 'Hiking', trader: 'Peacekeeper', objectives: [] },
+  { id: 'hand:secret-message', name: 'Secret Message', trader: 'Peacekeeper', objectives: [] },
+  { id: 'hand:demonstration-model', name: 'Demonstration Model', trader: 'Peacekeeper', objectives: [] },
+];
+
+if (typeof module !== 'undefined') module.exports = { QUEST_TRADERS, QUEST_NAMES, EXTRA_QUESTS };

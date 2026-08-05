@@ -302,6 +302,21 @@ function knownQuestIds() {
 //
 // Runs to a fixpoint, because an implied completion proves its own prerequisites.
 function applyImpliedCompletions(mode, addedIds) {
+  // ⚠️ SWITCHED OFF, and it is the last thing that trusted the prerequisite
+  // graph. The rule reads "you finished X, so you finished what X required" —
+  // sound only while the chain is real. 1.1.0 unlocks by trader loyalty and
+  // BOTH sources still publish the pre-patch chain (the wiki's `previous` is the
+  // same graph, 23 of 31 identical), which is why 234 of 297 unfinished quests
+  // were wrongly locked. The same staleness runs the other way through here: of
+  // 11 rows it had left on the owner's profile, they identified 4 as quests they
+  // have not done — Glory to CPSU, One-Way Ticket, Minibus, Spa Tour - Part 2.
+  //
+  // Its sibling, the accept-based rule, went in v1.31.0 for the same reason.
+  // This is the same argument reaching the same conclusion, so the app now
+  // infers NO completions at all: it records what the logs state and what the
+  // player ticks, and nothing else. Restoring either needs a chain that
+  // describes THIS game, not a smarter way of reading the old one.
+  if (!INFER_FROM_PREREQS) return 0;
   const idx = questIndex()[mode];
   if (!idx || !idx.ids.size) return 0;      // no quest data yet — infer nothing
   const bucket = progress[mode];
@@ -419,6 +434,9 @@ let impliedRepaired = 0;
 // How many quest offers in ONE session stop counting as "the player accepted
 // these". Real sessions in the corpus: 0-5. The 1.1.0 patch launch: 89.
 const ACCEPT_BURST_MAX = 20;
+// Whether finishing a quest may mark its prerequisites finished. OFF: the chain
+// it reasons over is pre-1.1.0. See applyImpliedCompletions.
+const INFER_FROM_PREREQS = false;
 const burstReported = new Set();   // log each such session once, not every scan
 
 function sendToRenderer(channel, payload) {
@@ -985,6 +1003,26 @@ function startWatcher() {
     if (removed) {
       impliedRepaired = removed;
       console.log(`[accept-burst] dropped ${removed} inferred completion(s); rescanning without the re-issue`);
+    }
+  }
+  // ONE-SHOT: clear what the prerequisite rule inferred, now that it is off.
+  // Same argument as the two before it — implied rows are derived data, so
+  // dropping them and rescanning leaves exactly what the logs state plus what
+  // the player ticked. The difference this time is that nothing re-derives
+  // them, which is the point.
+  if (!progress.prereqInferOff) {
+    let removed = 0;
+    for (const m of MODES) {
+      const c = (progress[m] && progress[m].completed) || {};
+      for (const id of Object.keys(c)) {
+        if (c[id] && c[id].via === 'implied') { delete c[id]; removed++; }
+      }
+    }
+    progress.prereqInferOff = true;
+    saveProgress();
+    if (removed) {
+      impliedRepaired = removed;
+      console.log(`[prereq-infer-off] dropped ${removed} inferred completion(s); nothing re-derives them now`);
     }
   }
   scanLogs(); // full catch-up scan of every session folder

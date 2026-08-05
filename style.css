@@ -1875,3 +1875,21 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .ld-story li { animation: none; background: rgba(90,160,200,.09); }
 }
+
+/* the current objective list, for the 47 quests 1.1.0 reworked. Shown above the
+   tickable rows rather than replacing them — see renderQuest. */
+.obj-current {
+  background: rgba(201, 169, 74, .07);
+  border-left: 2px solid #6b5c30;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+}
+.obj-current-head {
+  color: #c9a94a;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  margin-bottom: 5px;
+}
+.obj-current-row { color: #cfccc3; font-size: 14px; line-height: 1.5; }
+.obj-current-note { color: #7d7a72; font-size: 11px; line-height: 1.45; margin-top: 6px; }

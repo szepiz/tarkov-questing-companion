@@ -1487,7 +1487,21 @@ function renderQuest() {
   }).join('');
   const objDone = (t.objectives || []).filter((o) => !done && isObjectiveDone(o.id)).length;
   const heading = objDone ? `OBJECTIVES <span class="obj-count">${objDone}/${(t.objectives || []).length} done</span>` : 'OBJECTIVES';
-  $('questObjectives').innerHTML = objectives ? `<h3>${heading}</h3>${objectives}` : '';
+  // 1.1.0 reworked 47 quests' objectives outright, and tarkov.dev still ships
+  // the old list. Where the COUNT differs there is no honest one-to-one swap, so
+  // the current list is shown as text above the tickable rows rather than
+  // reshaping them: the objective ids carry the tick state and the map pins, and
+  // inventing or dropping rows to match would move someone's ticks onto a
+  // different objective. Same-length rewordings are already swapped in place by
+  // applyWikiObjectives (they mostly ADD the count the data leaves out).
+  const fresh = (typeof WIKI_OBJ_LIST !== 'undefined' && WIKI_OBJ_LIST && WIKI_OBJ_LIST[t.id]) || null;
+  const freshBlock = fresh ? `<div class="obj-current"><div class="obj-current-head">`
+    + `THE GAME NOW LISTS ${fresh.length}</div>`
+    + fresh.map((line) => `<div class="obj-current-row">▪ ${escapeHtml(line)}</div>`).join('')
+    + `<div class="obj-current-note">Patch 1.1.0 changed this quest's objectives. The tickable list below is `
+    + `the older one the quest data still publishes — it is kept because your ticks and the map pins hang off it.`
+    + `</div></div>` : '';
+  $('questObjectives').innerHTML = objectives ? `<h3>${heading}</h3>${freshBlock}${objectives}` : '';
   if (!done) {
     for (const el of $('questObjectives').querySelectorAll('.objective[data-obj]')) {
       const id = el.dataset.obj;
@@ -1507,6 +1521,11 @@ function renderQuest() {
 
   // requirements: level, prerequisite quests, keys, items
   const reqs = [];
+  if (t._handAdded) {
+    reqs.push('<div class="req-line"><span class="req-tag">ADDED</span><span>'
+      + 'Patch 1.1.0 added this quest and the quest data has never published it, so it was entered by hand. '
+      + 'It cannot tick itself from your logs — tick it here when you finish it.</span></div>');
+  }
   if (t.minPlayerLevel) {
     const short = levelLocked(t);
     reqs.push(`<div class="req-line${short ? ' prereq-missing' : ''}"><span class="req-tag">LEVEL</span>`
@@ -1681,6 +1700,8 @@ function buildTasksByMode() {
   state.seasonAliased = d.seasonAliased !== false;
   applyWikiReqs();   // additive: gates the wiki knows and tarkov.dev has not published
   applyWikiNames();  // 1.1.0 renamed ~90 quests; the data source still has the old names
+  addExtraQuests();      // quests 1.1.0 added that tarkov.dev has never published
+  applyWikiObjectives(); // 1.1.0 reworked objectives; the data still has the old text
   applyQuestFixes(); // last: what the owner has read off the game itself
 }
 
@@ -3106,6 +3127,61 @@ function applyWikiNames() {
 // both data sources, because that is the whole point: it is for the cases where
 // tarkov.dev and the wiki agree with each other and are both wrong. "From Hand
 // to Hand" is Skier's now; both sources still say Peacekeeper.
+// Objective text the wiki has and tarkov.dev has not. Only the same-length
+// case is swapped here, so every objective keeps its id and nothing that hangs
+// off an id — a hand tick, a map pin — moves. Most of these ADD the count the
+// data's description leaves out ("Eliminate 5 Scavs…" against "Eliminate Scavs…").
+function applyWikiObjectives() {
+  if (typeof WIKI_OBJ_TEXT === 'undefined' || !WIKI_OBJ_TEXT) return 0;
+  let n = 0;
+  for (const list of Object.values(state.tasksByMode || {})) {
+    for (const t of list || []) {
+      const map = WIKI_OBJ_TEXT[t.id];
+      if (!map) continue;
+      for (const o of t.objectives || []) {
+        if (map[o.id] && map[o.id] !== o.description) { o.description = map[o.id]; n++; }
+      }
+    }
+  }
+  return n;
+}
+
+// Quests 1.1.0 added that tarkov.dev has never published. Built into the same
+// shape a real task has, so every screen treats them normally — they group,
+// search, tick and lock like anything else. They carry `_handAdded` so the
+// details panel can say where they came from, and they hold OUR id, so they can
+// never tick themselves from a log: the log carries BSG's id.
+function addExtraQuests() {
+  if (typeof EXTRA_QUESTS === 'undefined' || !EXTRA_QUESTS) return 0;
+  let n = 0;
+  // PvP and PvE only. Seasonal ships its own shorter list and there is no
+  // evidence either way about these, which is not a reason to invent some.
+  for (const mode of ['regular', 'pve']) {
+    const list = state.tasksByMode[mode];
+    if (!Array.isArray(list)) continue;
+    for (const q of EXTRA_QUESTS) {
+      if (list.some((t) => t.id === q.id)) continue;
+      list.push({
+        id: q.id,
+        name: q.name,
+        trader: { name: q.trader },
+        map: q.map ? { name: q.map } : null,
+        minPlayerLevel: q.minPlayerLevel || 0,
+        objectives: (q.objectives || []).map((d, i) => ({ id: `${q.id}:${i}`, description: d, optional: false })),
+        taskRequirements: [],
+        traderRequirements: q.loyalty
+          ? [{ trader: { name: q.trader }, kind: 'loyalty', compareMethod: '>=', value: q.loyalty, fromWiki: true }]
+          : [],
+        kappaRequired: false,
+        lightkeeperRequired: false,
+        _handAdded: true,
+      });
+      n++;
+    }
+  }
+  return n;
+}
+
 function applyQuestFixes() {
   if (typeof QUEST_TRADERS === 'undefined' || !QUEST_TRADERS) return 0;
   const names = (typeof QUEST_NAMES !== 'undefined' && QUEST_NAMES) || {};
@@ -4695,10 +4771,10 @@ backend.onUpdateAvailable((r) => {
   // why, in one breath. The number reported is what was thrown away before the
   // rescan — most of it comes straight back.
   if (init.impliedRepaired > 0) {
-    setTimeout(() => toast('When patch 1.1.0 first launched, the game re-offered 80+ quests at once and the app '
-      + 'read that as you accepting them, so it marked their earlier quests complete. Those guesses have been '
-      + 'thrown away and everything re-read from your logs. Some quests may go back to unticked — tick any you '
-      + 'really did finish.'), 1200);
+    setTimeout(() => toast(`${init.impliedRepaired} quest(s) were only ever a guess — worked out from the quest `
+      + 'data\'s "finish this before that" chain, which patch 1.1.0 replaced with trader loyalty. The app no '
+      + 'longer guesses at all: it records what your logs state and what you tick. Tick any of these you really '
+      + 'did finish.'), 1200);
   }
   applyMode();
   renderModeSwitch();
