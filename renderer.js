@@ -1584,6 +1584,7 @@ function buildTasksByMode() {
   state.tasksByMode = { regular: d.regular, pve, season };
   state.seasonAliased = d.seasonAliased !== false;
   applyWikiReqs();   // additive: gates the wiki knows and tarkov.dev has not published
+  applyWikiNames();  // 1.1.0 renamed ~90 quests; the data source still has the old names
 }
 
 // Used in the RESET confirmation ("this only affects X"), so a wrong label here
@@ -2934,6 +2935,29 @@ function collectMapPins(mapName) {
 // the fetched data says nothing about, so this can never override or delete a
 // real requirement. Runs wherever tasksByMode is (re)built, and is idempotent —
 // re-running finds the rows already present and adds nothing.
+// Patch 1.1.0 renamed a large part of the quest tree and tarkov.dev still
+// publishes the pre-patch names — a live diff of all three modes found zero
+// renames there. So the names come from the wiki's own page moves (a renamed
+// quest leaves a #REDIRECT at its old title), applied over the top.
+//
+// Keyed by task id, which never changes, so this cannot touch progress: the
+// same quest keeps the same record whatever it is called. The old name is kept
+// on `_oldName` so a search for what someone remembers still finds it.
+function applyWikiNames() {
+  if (typeof WIKI_NAMES === 'undefined' || !WIKI_NAMES) return 0;
+  let n = 0;
+  for (const list of Object.values(state.tasksByMode || {})) {
+    for (const t of list || []) {
+      const fresh = WIKI_NAMES[t.id];
+      if (!fresh || fresh === t.name) continue;
+      t._oldName = t.name;
+      t.name = fresh;
+      n++;
+    }
+  }
+  return n;
+}
+
 function applyWikiReqs() {
   if (typeof WIKI_TRADER_REQS === 'undefined' || !WIKI_TRADER_REQS) return 0;
   const gone = (typeof WIKI_NO_LEVEL !== 'undefined' && WIKI_NO_LEVEL) || {};
