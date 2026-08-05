@@ -251,13 +251,19 @@
         <div id="mapHeader">
           <span id="mapTitle">CUSTOMS</span>
           <div id="mapSets"></div>
-          <div id="floorTabs"></div>
           <button id="rotateMapBtn" title="Rotate the map 90°">⟳ ROTATE</button>
           <span id="mapPinCount"></span>
           <button id="closeMapBtn">CLOSE</button>
         </div>
         <div id="mapBody">
           <aside id="mapLoadout">
+            <!-- Floors live here rather than in the header: Icebreaker has 16
+                 decks, which a row of buttons cannot show at once. Collapsible
+                 like the sections below it. -->
+            <details id="mapFloorSec" open>
+              <summary><span>FLOORS</span><span id="mapFloorCount"></span></summary>
+              <div id="floorTabs"></div>
+            </details>
             <details id="mapStorySec" open>
               <summary><span>STORY OBJECTIVES HERE</span><span id="mapStoryCount"></span></summary>
               <div id="mapStoryList"></div>

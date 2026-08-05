@@ -1893,3 +1893,45 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 .obj-current-row { color: #cfccc3; font-size: 14px; line-height: 1.5; }
 .obj-current-note { color: #7d7a72; font-size: 11px; line-height: 1.45; margin-top: 6px; }
+
+/* floors, now a column in the map's left panel — Icebreaker has 16 decks */
+#mapFloorSec .floor-tab {
+  background: #1d1d1a;
+  border: 1px solid #3a3a36;
+  border-radius: 2px;
+  color: #b3b0a6;
+  cursor: pointer;
+  display: block;
+  font: 700 11.5px/1 inherit;
+  letter-spacing: .5px;
+  margin: 0 0 3px;
+  padding: 6px 8px 5px;
+  text-align: left;
+  width: 100%;
+}
+#mapFloorSec .floor-tab:hover { background: #26261f; color: #d8d5cd; }
+#mapFloorSec .floor-tab.active { background: #c9a94a; border-color: #6b5c30; color: #241f0e; }
+
+/* a quest the app can never tick for you */
+.manual-tag {
+  border: 1px solid #4a4740;
+  border-radius: 2px;
+  color: #8a877e;
+  flex: none;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  margin-left: 6px;
+  padding: 1px 4px;
+}
+.badge.manual { background: #2b2b25; color: #a8a49a; }
+
+/* the container carried the header's flex-row rules; in the panel it stacks */
+#mapFloorSec #floorTabs {
+  display: block;
+  max-height: 42vh;
+  overflow-y: auto;
+  padding: 2px 0 0;
+}
+#mapFloorSec #floorTabs::-webkit-scrollbar { width: 7px; }
+#mapFloorSec #floorTabs::-webkit-scrollbar-thumb { background: #3a3a36; border-radius: 4px; }

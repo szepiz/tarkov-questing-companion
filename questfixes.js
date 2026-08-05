@@ -62,4 +62,17 @@ const EXTRA_QUESTS = [
   { id: 'hand:demonstration-model', name: 'Demonstration Model', trader: 'Peacekeeper', objectives: [] },
 ];
 
-if (typeof module !== 'undefined') module.exports = { QUEST_TRADERS, QUEST_NAMES, EXTRA_QUESTS };
+// Quests that can NEVER tick themselves, beyond the hand-added ones above
+// (which cannot by construction — the log carries BSG's id and these carry
+// ours). A quest belongs here only when it is KNOWN to write no completion
+// message, not when it merely has not written one yet.
+//
+// The obvious candidates are Ref's Arena-side quests, where 8 of the 21 do
+// write and the rest do not. Which 8 is not recorded anywhere, and marking all
+// 21 would tell you to watch quests that tick themselves fine — so the line
+// stays out until the split is known. Add ids here as they are confirmed.
+const MANUAL_ONLY = [];
+
+if (typeof module !== 'undefined') {
+  module.exports = { QUEST_TRADERS, QUEST_NAMES, EXTRA_QUESTS, MANUAL_ONLY };
+}

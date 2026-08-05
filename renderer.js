@@ -633,6 +633,18 @@ function questAbsent(taskId) {
 // so there is nothing to switch to. Dropping prerequisite locking outright is
 // no answer either: that shows 252 quests at once. So the player overrides the
 // individual quests they can see, and the app stops arguing.
+// Quests that can never tick themselves off your logs, so the only way they
+// ever get ticked is by hand. Two kinds: the ones added here by hand (they
+// carry OUR id, and the log carries the game's), and any confirmed to write
+// no completion message at all. Saying so on the row beats letting someone
+// wait for a tick that is never coming.
+function manualOnly(t) {
+  if (!t) return false;
+  if (t._handAdded) return true;
+  return typeof MANUAL_ONLY !== 'undefined' && Array.isArray(MANUAL_ONLY)
+    && MANUAL_ONLY.includes(t.id);
+}
+
 function questOpen(taskId) {
   const all = (state.settings && state.settings.questOpen) || {};
   return !!all[taskId];
@@ -1254,6 +1266,7 @@ function renderTree() {
       ${where.length ? `<span class="quest-where" title="${escapeHtml(whereTitle)}">${where.join('<span class="sep">·</span>')}</span>` : ''}
       ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
       ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}
+      ${!done && manualOnly(t) ? '<span class="manual-tag" title="This one never writes anything to the logs, so it can only be ticked by hand">MANUAL ONLY</span>' : ''}
       <span class="quest-check" title="${checkTitle}"></span>`;
     row.querySelector('.quest-name').addEventListener('click', () => {
       const sel = selFrom(path, t);
@@ -1280,6 +1293,11 @@ function renderTree() {
       const all = nodeTasks(child);
       const total = all.length;
       const doneCount = all.filter((t) => isDone(t.id)).length;
+      // What the row reports is how many you can actually go and do now.
+      // "12/21" answered a question nobody was asking: the completed ones are
+      // already visible as struck-through rows and the total is trivia. This
+      // is the number you plan a raid around.
+      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t)).length;
       if (hiding && !all.some(isVisible)) continue;   // nothing left to show here
 
       const here = path.concat([{ kind: node.kind, name }]);
@@ -1297,7 +1315,7 @@ function renderTree() {
         <span class="row-name">${escapeHtml(name.toUpperCase())}</span>
         <span class="row-toggle">${expanded ? '−' : '+'}</span>
         ${isMap && hasMapData(name) ? `<button class="map-btn" title="Open the ${escapeHtml(name)} map with your objectives pinned">▣</button>` : ''}
-        <span class="row-count${doneCount === total ? ' done' : ''}">${doneCount}/${total}</span>`;
+        <span class="row-count${doneCount === total ? ' done' : ''}" title="${doable} available now · ${doneCount} of ${total} finished">${doneCount === total ? 'all done' : doable}</span>`;
       const mb = row.querySelector('.map-btn');
       if (mb) mb.addEventListener('click', (e) => { e.stopPropagation(); openQuestMap(name); });
       // the +/- toggle expands or collapses on its own, without first having to
@@ -1462,6 +1480,7 @@ function renderQuest() {
       : '<span class="badge failed" title="Tarkov recorded this as failed — usually because you took a competing quest instead. It cannot be handed in this wipe.">FAILED</span>');
   }
   if (!isFailed(t.id) && isLocked(t)) badges.push('<span class="badge locked">LOCKED</span>');
+  if (!isDone(t.id) && manualOnly(t)) badges.push('<span class="badge manual" title="Nothing about this quest reaches the game logs, so the app can never tick it for you">MANUAL ONLY</span>');
   if (isKappaQuest(t)) badges.push('<span class="badge kappa">KAPPA</span>');
   if (t.lightkeeperRequired) badges.push('<span class="badge lightkeeper">LIGHTKEEPER</span>');
   $('questBadges').innerHTML = badges.join('');
@@ -4134,22 +4153,13 @@ function renderFloorTabs() {
   const host = $('floorTabs');
   const count = (idx) => mapView.pins.filter((p) => p.floor === idx).length;
 
-  if (tabs.length > FLOOR_TABS_MAX) {
-    const cur = tabs.find((t) => t.idx === mapView.floor) || tabs[0];
-    host.innerHTML = `<select class="floor-pick" title="Deck">`
-      + tabs.map((t) => {
-        const n = count(t.idx);
-        return `<option value="${t.idx}"${t.idx === cur.idx ? ' selected' : ''}>`
-          + `${escapeHtml(t.name)}${n ? ` (${n})` : ''}</option>`;
-      }).join('')
-      + '</select>';
-    host.querySelector('.floor-pick').addEventListener('change', (e) => {
-      mapView.floor = Number(e.target.value);
-      mapView.selected = null; mapView.selectedMarker = null;
-      drawMap();
-    });
-    return;
-  }
+  // The dropdown this used to fall back to for Icebreaker's 16 decks is gone:
+  // the list lives in the left panel now, where a column of 16 fits and every
+  // deck is readable at once. The section collapses if it is in the way.
+  const sec = $('mapFloorSec');
+  if (sec) sec.classList.toggle('hidden', tabs.length < 2);
+  const cnt = $('mapFloorCount');
+  if (cnt) cnt.textContent = tabs.length > 1 ? String(tabs.length) : '';
 
   host.innerHTML = tabs.map((t) => {
     const n = count(t.idx);
