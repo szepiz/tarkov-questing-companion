@@ -412,6 +412,19 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   font-size: 10px;
 }
 
+/* "+3" on the visible part of a numbered line: the parts folded behind it. The
+   list must never hide anything without saying so, and this is the saying-so. */
+.part-tag {
+  flex: none;
+  margin-left: 6px;
+  padding: 0 3px;
+  border: 1px solid #4a4740;
+  border-radius: 2px;
+  color: #8a877e;
+  font-size: 9px;
+  font-weight: 700;
+}
+
 /* checkbox circle on the right */
 /* failed quests: Tarkov recorded a failure, usually a mutually-exclusive quest
    taken from another trader. Not completable this wipe, so it reads as struck

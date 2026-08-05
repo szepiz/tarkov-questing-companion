@@ -836,6 +836,73 @@ function chainBlocker(t) {
 // grouping rewrite removed, and the slice silently ran to the end of the file.
 // Keep new lock logic ABOVE this line.
 
+// ---------- numbered quest lines ----------
+// (_dev/test_series.js slices from here to "---------- grouping ----------")
+//
+// "Spa Tour - Part 2" cannot be done before Part 1, whatever any data source
+// says, so a line of numbered parts shows ONE row: the lowest-numbered part you
+// have not finished. Tick it and the next number takes its place.
+//
+// This is the one place the app hides something on its own reasoning, so it is
+// worth being clear about why it is allowed here when the prerequisite chain is
+// not. The chain is a claim about the GAME that patch 1.1.0 falsified. This is a
+// claim about ARITHMETIC — Part 3 comes after Part 2 — and no patch changes
+// that. It is also never silent: the visible row carries the count of the parts
+// behind it, and search ignores the rule entirely, so typing the line's name
+// still shows every part.
+//
+// Names are read AFTER the rename overlays, which is why the zone marker has to
+// be handled: 1.1.0 renames moved the "[PVP ZONE]" suffix past the number.
+const PART_RE = /^(.*?)[\s–-]+part\s+(\d+)\s*(\[(?:PVP|PVE) ZONE\])?\s*$/i;
+
+function parsePart(name) {
+  const m = PART_RE.exec(String(name || ''));
+  if (!m) return null;
+  return { base: m[1].trim().toLowerCase(), n: Number(m[2]), zone: (m[3] || '').toLowerCase() };
+}
+
+// id -> the parts of its line that are hidden behind it. Memoized per render,
+// cleared in renderAll alongside the other progress-dependent memos.
+let _seriesHidden = null;
+function seriesState() {
+  if (_seriesHidden) return _seriesHidden;
+  const lines = new Map();
+  for (const t of state.tasks || []) {
+    const p = parsePart(t.name);
+    if (!p) continue;
+    const key = `${p.base}|${p.zone}`;
+    if (!lines.has(key)) lines.set(key, []);
+    lines.get(key).push({ id: t.id, n: p.n });
+  }
+  const hidden = new Set();
+  const behind = new Map();
+  for (const parts of lines.values()) {
+    if (parts.length < 2) continue;
+    // ⚠️ Two lines ship the same number twice — Drip-Out and Textile are
+    // faction/edition variants sharing one name (see DEV-NOTES). There is no way
+    // to tell which Part 1 pairs with which Part 2, so collapsing would hide a
+    // variant at random. Leave those alone: showing four rows beats hiding the
+    // wrong two.
+    if (new Set(parts.map((p) => p.n)).size !== parts.length) continue;
+    const open = parts.filter((p) => !isDone(p.id)).map((p) => p.n);
+    if (!open.length) continue;              // whole line finished, nothing to fold
+    const current = Math.min(...open);
+    const later = parts.filter((p) => p.n > current);
+    for (const p of later) hidden.add(p.id);
+    const cur = parts.find((p) => p.n === current);
+    if (cur && later.length) behind.set(cur.id, later.length);
+  }
+  _seriesHidden = { hidden, behind };
+  return _seriesHidden;
+}
+
+// a later part of a line whose current part is still open
+function laterPart(t) { return seriesState().hidden.has(t.id); }
+
+// how many parts sit behind this one, for the row's tag (0 = none)
+function partsBehind(t) { return seriesState().behind.get(t.id) || 0; }
+// ---------- numbered lines end ----------
+
 // ---------- grouping ----------
 // The five ways the list can be grouped. The value is the order of the levels;
 // an empty list is the flat "every quest in one list" view. `map-trader` is the
@@ -1238,9 +1305,11 @@ function renderTree() {
   const hideC = !!(state.settings && state.settings.hideCompleted);
   const hideL = !!(state.settings && state.settings.hideLocked);
   const hideF = !!(state.settings && state.settings.hideFailed);
-  const hiding = hideC || hideL || hideF;
+  // Search deliberately ignores every one of these, laterPart included: typing
+  // "spa tour" is how you see a whole line at once.
   const isVisible = (t) => (q ? matchesSearch(t)
-    : !(hideC && isDone(t.id))
+    : !laterPart(t)
+    && !(hideC && isDone(t.id))
     && !(hideF && !isDone(t.id) && isFailed(t.id))
     && !(hideL && isLocked(t)));
 
@@ -1278,6 +1347,7 @@ function renderTree() {
     const failed = !done && isFailed(t.id);
     const locked = !failed && isLocked(t);
     const chain = !done && !failed && !locked && chainPending(t);
+    const behind = partsBehind(t);
     const row = document.createElement('div');
     row.className = 'quest-row' +
       (done ? ' completed' : '') +
@@ -1318,6 +1388,7 @@ function renderTree() {
       ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
       ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}
       ${chain ? `<span class="chain-tag" title="${escapeHtml(chainBlocker(t) || '')}">FOLLOWS</span>` : ''}
+      ${behind ? `<span class="part-tag" title="${behind} more part${behind === 1 ? '' : 's'} in this line, held back until you tick this one off. Search the line's name to see them all.">+${behind}</span>` : ''}
       ${!done && manualOnly(t) ? '<span class="manual-tag" title="This one never writes anything to the logs, so it can only be ticked by hand">MANUAL ONLY</span>' : ''}
       <span class="quest-check" title="${checkTitle}"></span>`;
     row.querySelector('.quest-name').addEventListener('click', () => {
@@ -1354,14 +1425,20 @@ function renderTree() {
       // was found: Woods read 5 above four rows, the fifth being a failed
       // Supply Plans. Excluded whatever the hide toggles say, so the number
       // means the same thing in every view.
+      // laterPart is excluded from BOTH numbers for the same reason failed is:
+      // a count that includes rows the list does not draw is the bug this whole
+      // pair of numbers exists to avoid.
       const doable = all.filter((t) => !isDone(t.id) && !isLocked(t) && !isFailed(t.id)
-        && !chainPending(t)).length;
+        && !chainPending(t) && !laterPart(t)).length;
       // ...and the dim ones get their own number rather than being folded into
       // that one or left out of it. Folded in, the count claims a confidence
       // the chain no longer earns; left out, the row reads "5" above twenty
       // rows, which is the exact complaint that started this.
-      const pending = all.filter(chainPending).length;
-      if (hiding && !all.some(isVisible)) continue;   // nothing left to show here
+      const pending = all.filter((t) => chainPending(t) && !laterPart(t)).length;
+      // Not gated on the hide toggles any more: a line-folded node can be empty
+      // with every toggle off, and search prunes non-matching groups through the
+      // same test.
+      if (!all.some(isVisible)) continue;   // nothing left to show here
 
       const here = path.concat([{ kind: node.kind, name }]);
       const key = pathKey(here);
@@ -2032,6 +2109,7 @@ function renderAll() {
   _reachStack.clear();    // defensive: never carry a partial DFS across renders
   _levelFloor = null;     // a new completion can raise the inferred level
   _unsetTraders = null;   // a level clicked in TRADERS turns a whole trader back on
+  _seriesHidden = null;   // ticking Part 2 promotes Part 3 into its place
   renderTabs();
   renderTree();
   renderHero();
@@ -2179,6 +2257,13 @@ const GUIDE_CARDS = [
       + 'Instead those sit further down the list, dimmed, with <strong>FOLLOWS</strong> and the name of the quest they used to come after. '
       + 'Plenty of them are sitting at the trader right now — check. '
       + 'Each map shows two numbers for that reason: how many you can definitely start, and how many more are only held back by the old order.',
+  },
+  {
+    title: 'QUEST LINES SHOW ONE PART AT A TIME',
+    body: 'Part 3 of anything cannot be done before Part 2, so a numbered line shows only the part you are actually on. '
+      + 'Tick it off and the next number takes its place. The small <strong>+3</strong> next to the quest is how many parts are waiting behind it. '
+      + 'This is the one thing the app hides by its own reasoning rather than because a trader is gating it — '
+      + 'search the line\'s name any time you want to see all of it at once.',
   },
   {
     title: 'THE LIST CAN BE GROUPED FIVE WAYS',
@@ -2828,7 +2913,9 @@ function mapSetPass(t) {
 // if not hidden.
 function* mapTasks() {
   for (const t of state.tasks) {
-    if (!mapSetPass(t) || isDone(t.id) || isFailed(t.id)) continue;
+    // laterPart too, or the map contradicts the list it was opened from: pins
+    // for Part 4 while the sidebar is telling you to go and do Part 2
+    if (!mapSetPass(t) || isDone(t.id) || isFailed(t.id) || laterPart(t)) continue;
     const locked = isLocked(t);
     if (locked && state.settings && state.settings.hideLocked) continue;
     yield [t, locked];
