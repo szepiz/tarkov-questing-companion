@@ -623,6 +623,21 @@ function questAbsent(taskId) {
   return !!all[taskId];
 }
 
+// Quests the player has confirmed the game is OFFERING them, whatever this app
+// worked out. It is the mirror of questAbsent and it exists for the same
+// reason: 1.1.0 unlocks by trader loyalty, while both data sources still
+// publish the pre-patch prerequisite chain. Measured on the owner's profile:
+// 234 of 297 unfinished quests are prerequisite-locked, and they hand-checked
+// 50 of them in game — 49 were available. The chain is not describing this
+// game any more, and the wiki's copy of it is the same one (23 of 31 identical),
+// so there is nothing to switch to. Dropping prerequisite locking outright is
+// no answer either: that shows 252 quests at once. So the player overrides the
+// individual quests they can see, and the app stops arguing.
+function questOpen(taskId) {
+  const all = (state.settings && state.settings.questOpen) || {};
+  return !!all[taskId];
+}
+
 // A loyalty level the PLAYER recorded for one quest, because the game gates it
 // and no data source says so. Global rather than per mode: it is a fact about
 // the quest, not about a character. Returns 0 when unset.
@@ -755,6 +770,9 @@ function isLocked(t) {
   // statement, not an inference, so it holds even in manual mode where nothing
   // else locks.
   if (questAbsent(t.id) && !isDone(t.id)) return true;
+  // ...and the player saying the game DOES offer it beats every derived reason,
+  // for the same cause: their screen outranks a stale requirement graph.
+  if (questOpen(t.id)) return false;
   return lockingActive() && !isDone(t.id)
     && (!isUnlocked(t) || levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
 }
@@ -1608,8 +1626,13 @@ function renderQuest() {
         `<button class="ll-btn${cur === n ? ' on' : ''}" data-quest-ll="${n}" `
         + `title="${cur === n ? 'Click again to clear' : `Needs loyalty level ${n} with ${escapeHtml(ownTrader)}`}">${n}</button>`).join('')}</span>`
       : '';
+    const open = questOpen(t.id);
+    if (open) body = 'You marked this as <strong>available in your game</strong>, so it is shown as open.';
     reqs.push(`<div class="req-line user-gate${absent ? ' prereq-missing' : ''}">`
       + `<span class="req-tag">IN GAME</span><span>${body}${llButtons}`
+      + (absent ? '' : `<button class="absent-btn${open ? ' on' : ''}" data-quest-open="1" `
+        + `title="${open ? 'Go back to what the app works out' : 'The trader is offering you this now, whatever the app thinks — show it as open'}">`
+        + `${open ? 'UNDO' : 'I HAVE THIS'}</button>`)
       + `<button class="absent-btn${absent ? ' on' : ''}" data-quest-absent="1" `
       + `title="${absent ? 'Put it back in the list' : 'This quest does not exist in your game at all — hide it'}">`
       + `${absent ? 'PUT IT BACK' : 'NOT IN MY GAME'}</button></span></div>`);
@@ -1621,8 +1644,10 @@ function renderQuest() {
       setQuestLoyalty(t.id, b.classList.contains('on') ? null : Number(b.dataset.questLl));
     });
   }
-  const ab = $('questRequirements').querySelector('.absent-btn');
+  const ab = $('questRequirements').querySelector('.absent-btn[data-quest-absent]');
   if (ab) ab.addEventListener('click', () => setQuestAbsent(t.id, !absent));
+  const ob = $('questRequirements').querySelector('.absent-btn[data-quest-open]');
+  if (ob) ob.addEventListener('click', () => setQuestOpen(t.id, !questOpen(t.id)));
 
   const wikiBtn = $('wikiBtn');
   wikiBtn.classList.toggle('hidden', !t.wikiLink);
@@ -1679,6 +1704,16 @@ function setQuestAbsent(taskId, absent) {
   if (absent) all[taskId] = true; else delete all[taskId];
   state.settings = { ...state.settings, questAbsent: all };
   backend.saveSettings({ questAbsent: all });
+  renderAll();
+}
+
+// Mark a quest as one the game is offering, or hand it back to the app's own
+// reasoning.
+function setQuestOpen(taskId, open) {
+  const all = { ...((state.settings && state.settings.questOpen) || {}) };
+  if (open) all[taskId] = true; else delete all[taskId];
+  state.settings = { ...state.settings, questOpen: all };
+  backend.saveSettings({ questOpen: all });
   renderAll();
 }
 
@@ -3073,16 +3108,31 @@ function applyWikiNames() {
 // to Hand" is Skier's now; both sources still say Peacekeeper.
 function applyQuestFixes() {
   if (typeof QUEST_TRADERS === 'undefined' || !QUEST_TRADERS) return 0;
+  const names = (typeof QUEST_NAMES !== 'undefined' && QUEST_NAMES) || {};
   let n = 0;
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) {
       const trader = QUEST_TRADERS[t.id];
-      if (!trader || !t.trader || t.trader.name === trader) continue;
-      t._oldTrader = t.trader.name;
-      // a fresh object: the trader is per task, but never assume that of data
-      // that arrived from somewhere else
-      t.trader = { ...t.trader, name: trader };
-      n++;
+      if (trader && t.trader && t.trader.name !== trader) {
+        t._oldTrader = t.trader.name;
+        // a fresh object: the trader is per task, but never assume that of data
+        // that arrived from somewhere else
+        t.trader = { ...t.trader, name: trader };
+        n++;
+      }
+      const fresh = names[t.id];
+      if (fresh && fresh !== t.name) {
+        if (!t._oldName) t._oldName = t.name;   // keep the ORIGINAL for search
+        t.name = fresh;
+        n++;
+      }
+    }
+    // renamed here too, so a prerequisite reference never shows the old title
+    for (const t of list || []) {
+      for (const r of t.taskRequirements || []) {
+        const fresh = r.task && names[r.task.id];
+        if (fresh && r.task.name !== fresh) r.task.name = fresh;
+      }
     }
   }
   return n;

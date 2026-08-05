@@ -84,6 +84,9 @@ const DEFAULT_SETTINGS = {
   // Quests the player has confirmed are not in their game at all — 1.1.0 cut
   // and reworked some while both data sources still list them. { "<taskId>": true }
   questAbsent: {},
+  // The mirror: quests the player has confirmed the game IS offering, whatever
+  // the app worked out from the pre-1.1.0 prerequisite chain. { "<taskId>": true }
+  questOpen: {},
   // Seasonal ships no unlock requirements of its own — the list carries PvP's,
   // and they are provably not what seasonal does (a level-4 seasonal character
   // finished quests PvP gates at 30 and 15, with none of their prerequisites

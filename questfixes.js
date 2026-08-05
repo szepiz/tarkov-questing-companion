@@ -20,4 +20,13 @@ const QUEST_TRADERS = {
   '5c0d0f1886f77457b8210226': 'Skier',
 };
 
-if (typeof module !== 'undefined') module.exports = { QUEST_TRADERS };
+// Renames the wiki has not made yet. wikinames.js harvests the wiki's page
+// moves, which covers 91 quests; these are the ones reported from the game
+// before an editor got to them. Applied after wikinames.js, so it wins.
+const QUEST_NAMES = {
+  // Reported from the game 2026-08-05. The wiki page is still under the old
+  // title with no redirect, so build_wikinames.js cannot see it yet.
+  '5d25e44386f77409453bce7b': 'The Huntsman Path - Angry Watchman',
+};
+
+if (typeof module !== 'undefined') module.exports = { QUEST_TRADERS, QUEST_NAMES };
