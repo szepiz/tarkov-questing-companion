@@ -1624,6 +1624,7 @@ function buildTasksByMode() {
   state.seasonAliased = d.seasonAliased !== false;
   applyWikiReqs();   // additive: gates the wiki knows and tarkov.dev has not published
   applyWikiNames();  // 1.1.0 renamed ~90 quests; the data source still has the old names
+  applyQuestFixes(); // last: what the owner has read off the game itself
 }
 
 // Used in the RESET confirmation ("this only affects X"), so a wrong label here
@@ -3011,6 +3012,27 @@ function applyWikiNames() {
         const fresh = r.task && WIKI_NAMES[r.task.id];
         if (fresh && r.task.name !== fresh) r.task.name = fresh;
       }
+    }
+  }
+  return n;
+}
+
+// The owner's own corrections, read off the game screen. Applied LAST, after
+// both data sources, because that is the whole point: it is for the cases where
+// tarkov.dev and the wiki agree with each other and are both wrong. "From Hand
+// to Hand" is Skier's now; both sources still say Peacekeeper.
+function applyQuestFixes() {
+  if (typeof QUEST_TRADERS === 'undefined' || !QUEST_TRADERS) return 0;
+  let n = 0;
+  for (const list of Object.values(state.tasksByMode || {})) {
+    for (const t of list || []) {
+      const trader = QUEST_TRADERS[t.id];
+      if (!trader || !t.trader || t.trader.name === trader) continue;
+      t._oldTrader = t.trader.name;
+      // a fresh object: the trader is per task, but never assume that of data
+      // that arrived from somewhere else
+      t.trader = { ...t.trader, name: trader };
+      n++;
     }
   }
   return n;
