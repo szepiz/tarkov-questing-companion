@@ -388,6 +388,30 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   line-height: 1;
 }
 
+/* the pre-patch quest chain: a note, not a lock (see chainPending). Dimmer than
+   an open quest so the ones you can definitely start read first, brighter than
+   LOCKED and in slate rather than the warning yellow — nothing is stopping you,
+   the old data just says it comes later. The checkbox stays perfectly normal:
+   these are tickable. */
+.quest-row.chain .quest-name { opacity: .62; }
+.quest-row.chain.selected .quest-name { opacity: .85; }
+/* sized down and dimmed deliberately: on a map like Woods this tag repeats on
+   sixteen consecutive rows, and at LOCKED's weight that column of text pulls
+   harder than the quest names it is annotating */
+.chain-tag {
+  flex: none;
+  margin-left: 6px;
+  color: #5d6873;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .9px;
+}
+.row-more {
+  margin-left: 3px;
+  color: #5b6670;
+  font-size: 10px;
+}
+
 /* checkbox circle on the right */
 /* failed quests: Tarkov recorded a failure, usually a mutually-exclusive quest
    taken from another trader. Not completable this wipe, so it reads as struck
@@ -691,6 +715,7 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .badge.lightkeeper { color: #5aa0c8; border-color: #33607c; background: rgba(90,160,200,.08); }
 .badge.done { color: #7a9a5a; border-color: #4d6338; background: rgba(122,154,90,.08); }
 .badge.failed { color: #c05050; border-color: #7e2626; background: rgba(192,80,80,.1); }
+.badge.chain { color: #8b98a4; border-color: #4a545e; background: rgba(139,152,164,.08); }
 
 #questMeta {
   margin-top: 6px;

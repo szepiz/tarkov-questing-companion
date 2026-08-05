@@ -29,6 +29,18 @@ const QUEST_NAMES = {
   '5d25e44386f77409453bce7b': 'The Huntsman Path - Angry Watchman',
 };
 
+// Player-level requirements 1.1.0 dropped, reported from the GAME. wikireqs.js
+// already removes 73 of these where the wiki's own Requirements section lists a
+// loyalty gate and no level; this list is for the ones where the wiki is still
+// carrying the old number too, so that harvest cannot see them.
+const NO_LEVEL = {
+  // "Swift" (Jaeger). tarkov.dev and the wiki both say level 50. Reported from
+  // the game 2026-08-05 by a player who is exactly level 40 and has it in their
+  // active task list — so whatever gates it now, it is not the level. Jaeger
+  // was at loyalty 4, which is the likely replacement.
+  '60e729cf5698ee7b05057439': true,
+};
+
 // Quests patch 1.1.0 ADDED that tarkov.dev has never published. Reported from
 // the game 2026-08-05; the first three also have wiki pages, so their objectives
 // and requirements are real. The last three have no page anywhere — name and
@@ -57,7 +69,10 @@ const EXTRA_QUESTS = [
     objectives: ['Eliminate 8 snipers on the rooftops on Streets of Tarkov'],
   },
   // No wiki page exists for these three. Trader is what the owner saw in game.
-  { id: 'hand:hiking', name: 'Hiking', trader: 'Peacekeeper', objectives: [] },
+  // Woods reported from the game 2026-08-05, off the in-game task list's own
+  // Location column. Without a map a hand-added quest files under "Anywhere",
+  // which is where this one was hiding while the owner was looking at Woods.
+  { id: 'hand:hiking', name: 'Hiking', trader: 'Peacekeeper', map: 'Woods', objectives: [] },
   { id: 'hand:secret-message', name: 'Secret Message', trader: 'Peacekeeper', objectives: [] },
   { id: 'hand:demonstration-model', name: 'Demonstration Model', trader: 'Peacekeeper', objectives: [] },
 ];
@@ -74,5 +89,5 @@ const EXTRA_QUESTS = [
 const MANUAL_ONLY = [];
 
 if (typeof module !== 'undefined') {
-  module.exports = { QUEST_TRADERS, QUEST_NAMES, EXTRA_QUESTS, MANUAL_ONLY };
+  module.exports = { QUEST_TRADERS, QUEST_NAMES, NO_LEVEL, EXTRA_QUESTS, MANUAL_ONLY };
 }

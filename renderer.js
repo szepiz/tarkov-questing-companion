@@ -786,7 +786,47 @@ function isLocked(t) {
   // for the same cause: their screen outranks a stale requirement graph.
   if (questOpen(t.id)) return false;
   return lockingActive() && !isDone(t.id)
-    && (!isUnlocked(t) || levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
+    && (levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
+}
+
+// The pre-patch prerequisite chain, DEMOTED FROM A LOCK TO A NOTE (v1.38.0).
+//
+// It used to sit in isLocked above, next to the real gates. What settled it was
+// the owner reading their own Woods list off the in-game task screen: the game
+// showed 8, the app showed 4, and three of the four missing ones were held back
+// by nothing but the chain. One of those, The Huntsman Path - Woods Keeper,
+// requires Supply Plans — which they FAILED, so the app was hiding it forever
+// while the game handed it over.
+//
+// It cannot be repaired quest by quest, which is the reason it is demoted
+// rather than corrected. Three sources were checked against those four quests:
+//   - the player's own logs recorded an offer for exactly 1 of them;
+//   - the wiki has no Requirements section for 214 chained quests, so "no
+//     section" looks like proof the chain is stale — until you notice
+//     "To Great Heights! - Part 4" sitting in the same bucket. It documents
+//     level, loyalty and timed unlocks; plain chains it just leaves out.
+//   - tarkov.dev has not changed a single requirement since the patch.
+// So there is nothing to switch to and nothing to filter with.
+//
+// Hence: still worth showing (the line order is real information, and Gunsmith
+// really does run in sequence), but it may not HIDE anything. Chain-pending
+// quests render dim, sort below the clear ones, and say what they follow.
+// Hiding something reachable is the one failure this app refuses; an extra dim
+// row is the cheap direction.
+function chainPending(t) {
+  if (!lockingActive() || isDone(t.id) || isFailed(t.id)) return false;
+  if (questAbsent(t.id) || questOpen(t.id)) return false;
+  if (isLocked(t)) return false;   // a gate the game really does apply outranks it
+  return !isUnlocked(t);
+}
+
+// Which prerequisite the chain is waiting on, for the row tooltip. First unmet
+// one only — the details panel lists them all, and a 300px row cannot.
+function chainBlocker(t) {
+  for (const r of t.taskRequirements || []) {
+    if (r.task && !reqSatisfied(r)) return r.task.name;
+  }
+  return null;
 }
 
 // ---------- END OF LOCK LOGIC ----------
@@ -817,11 +857,17 @@ function groupLevels() {
   return GROUPINGS[state.groupBy] || GROUPINGS['map-trader'];
 }
 
-// sink the ones you cannot act on: locked below the rest, failed below that
+// sink the ones you cannot act on, without hiding any of them
 function sortQuests(list) {
   const locking = lockingActive();
-  const rank = new Map(list.map((t) => [t.id,
-    isFailed(t.id) && !isDone(t.id) ? 2 : (locking && isLocked(t)) ? 1 : 0]));
+  // four tiers, best first: go and do it / the old chain says it comes later /
+  // a gate the game really applies / failed. The middle one is the reason this
+  // is a rank and not a boolean — see chainPending.
+  const rankOf = (t) => (isFailed(t.id) && !isDone(t.id)) ? 3
+    : (locking && isLocked(t)) ? 2
+    : chainPending(t) ? 1
+    : 0;
+  const rank = new Map(list.map((t) => [t.id, rankOf(t)]));
   list.sort((a, b) =>
     rank.get(a.id) - rank.get(b.id) ||
     (a.minPlayerLevel || 0) - (b.minPlayerLevel || 0) ||
@@ -1231,11 +1277,13 @@ function renderTree() {
     // one the player acted on
     const failed = !done && isFailed(t.id);
     const locked = !failed && isLocked(t);
+    const chain = !done && !failed && !locked && chainPending(t);
     const row = document.createElement('div');
     row.className = 'quest-row' +
       (done ? ' completed' : '') +
       (failed ? ' failed' : '') +
       (locked ? ' locked' : '') +
+      (chain ? ' chain' : '') +
       (state.selQuestId === t.id ? ' selected' : '');
     row.style.marginLeft = (levels.length * 26) + 'px';
     const via = done && state.progress.completed[t.id] && state.progress.completed[t.id].via;
@@ -1248,7 +1296,10 @@ function renderTree() {
       : locked && traderNotUnlocked(t) ? `locked — you have not set a loyalty level for ${(t.trader || {}).name}, so none of their quests are shown. Open TRADERS and click your level to bring them back.`
       : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
       : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
-      : locked ? 'locked — prerequisite quests not completed (you can still tick it manually)'
+      : locked ? 'locked — a requirement is not met (you can still tick it manually)'
+      : chain ? `the pre-patch quest chain puts this after ${chainBlocker(t) || 'an earlier quest'}`
+        + ' — patch 1.1.0 unlocks by trader loyalty instead, so the trader may well be offering'
+        + ' it already. Shown for that reason, just further down.'
       : 'mark as completed';
     const where = [];
     let whereTitle = '';
@@ -1266,6 +1317,7 @@ function renderTree() {
       ${where.length ? `<span class="quest-where" title="${escapeHtml(whereTitle)}">${where.join('<span class="sep">·</span>')}</span>` : ''}
       ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
       ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}
+      ${chain ? `<span class="chain-tag" title="${escapeHtml(chainBlocker(t) || '')}">FOLLOWS</span>` : ''}
       ${!done && manualOnly(t) ? '<span class="manual-tag" title="This one never writes anything to the logs, so it can only be ticked by hand">MANUAL ONLY</span>' : ''}
       <span class="quest-check" title="${checkTitle}"></span>`;
     row.querySelector('.quest-name').addEventListener('click', () => {
@@ -1297,7 +1349,18 @@ function renderTree() {
       // "12/21" answered a question nobody was asking: the completed ones are
       // already visible as struck-through rows and the total is trivia. This
       // is the number you plan a raid around.
-      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t)).length;
+      // A FAILED quest is not one you can go and do, so it cannot count here —
+      // and with "hide failed" on it is not even on screen, which is how this
+      // was found: Woods read 5 above four rows, the fifth being a failed
+      // Supply Plans. Excluded whatever the hide toggles say, so the number
+      // means the same thing in every view.
+      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t) && !isFailed(t.id)
+        && !chainPending(t)).length;
+      // ...and the dim ones get their own number rather than being folded into
+      // that one or left out of it. Folded in, the count claims a confidence
+      // the chain no longer earns; left out, the row reads "5" above twenty
+      // rows, which is the exact complaint that started this.
+      const pending = all.filter(chainPending).length;
       if (hiding && !all.some(isVisible)) continue;   // nothing left to show here
 
       const here = path.concat([{ kind: node.kind, name }]);
@@ -1315,7 +1378,8 @@ function renderTree() {
         <span class="row-name">${escapeHtml(name.toUpperCase())}</span>
         <span class="row-toggle">${expanded ? '−' : '+'}</span>
         ${isMap && hasMapData(name) ? `<button class="map-btn" title="Open the ${escapeHtml(name)} map with your objectives pinned">▣</button>` : ''}
-        <span class="row-count${doneCount === total ? ' done' : ''}" title="${doable} available now · ${doneCount} of ${total} finished">${doneCount === total ? 'all done' : doable}</span>`;
+        <span class="row-count${doneCount === total ? ' done' : ''}" title="${doable} you can start now${pending ? ` · ${pending} more the pre-patch chain puts later, which 1.1.0 may already have opened` : ''} · ${doneCount} of ${total} finished">${doneCount === total ? 'all done'
+          : doable + (pending ? `<span class="row-more">+${pending}</span>` : '')}</span>`;
       const mb = row.querySelector('.map-btn');
       if (mb) mb.addEventListener('click', (e) => { e.stopPropagation(); openQuestMap(name); });
       // the +/- toggle expands or collapses on its own, without first having to
@@ -1362,8 +1426,10 @@ function renderTree() {
   // number is the one that would come back.
   if (lockingActive()) {
     const unset = [...tradersWithoutLevel()];
+    // no longer excludes chain-pending quests: since v1.38.0 the chain does not
+    // hide anything, so setting the level really does bring those back too
     const hidden = unset.length ? (state.tasks || []).filter((t) => !isDone(t.id)
-      && traderNotUnlocked(t) && isUnlocked(t) && !levelLocked(t) && !repLocked(t)).length : 0;
+      && traderNotUnlocked(t) && !levelLocked(t) && !repLocked(t)).length : 0;
     if (hidden) {
       const msg = document.createElement('div');
       msg.className = 'tree-message trader-note';
@@ -1480,6 +1546,12 @@ function renderQuest() {
       : '<span class="badge failed" title="Tarkov recorded this as failed — usually because you took a competing quest instead. It cannot be handed in this wipe.">FAILED</span>');
   }
   if (!isFailed(t.id) && isLocked(t)) badges.push('<span class="badge locked">LOCKED</span>');
+  if (chainPending(t)) {
+    badges.push(`<span class="badge chain" title="The pre-patch quest chain puts this after `
+      + `${escapeHtml(chainBlocker(t) || 'an earlier quest')}. Patch 1.1.0 unlocks by trader `
+      + `loyalty instead, so check the trader — it is not hidden for this.">FOLLOWS `
+      + `${escapeHtml(chainBlocker(t) || 'AN EARLIER QUEST')}</span>`);
+  }
   if (!isDone(t.id) && manualOnly(t)) badges.push('<span class="badge manual" title="Nothing about this quest reaches the game logs, so the app can never tick it for you">MANUAL ONLY</span>');
   if (isKappaQuest(t)) badges.push('<span class="badge kappa">KAPPA</span>');
   if (t.lightkeeperRequired) badges.push('<span class="badge lightkeeper">LIGHTKEEPER</span>');
@@ -1587,7 +1659,9 @@ function renderQuest() {
   }
   // highlight each prerequisite with the same status-aware logic that
   // decides LOCKED: green = positively met, yellow = the one blocking it
-  const showMissing = isLocked(t);
+  // chain-pending counts here too: it no longer hides the quest, but naming the
+  // one it is waiting on is the whole point of the FOLLOWS note
+  const showMissing = isLocked(t) || chainPending(t);
   for (const req of t.taskRequirements || []) {
     if (!req.task) continue;
     const statuses = reqStatuses(req);
@@ -2073,8 +2147,8 @@ const GUIDE_CARDS = [
     title: 'SOME NORMAL QUESTS ALSO NEED A HAND',
     body: 'A few quests never write a completion message either — Ref\'s Arena line is the worst offender, '
       + 'and quests that break and get fixed server-side can complete in silence. '
-      + 'Click any quest to tick it yourself. The app also works backwards: accepting a quest proves you finished '
-      + 'the ones it required, so those get filled in for you.',
+      + 'Click any quest to tick it yourself. Nothing is ever filled in on a guess — if the log did not say it, '
+      + 'the app will not tick it for you.',
   },
   {
     title: 'PvP, PvE AND SEASON ARE THREE SEPARATE CHARACTERS',
@@ -2097,6 +2171,14 @@ const GUIDE_CARDS = [
       + '<strong>If a quest shows here but the game will not give it to you</strong>, open it and use the IN GAME row at the bottom of its requirements '
       + 'to record the loyalty level the trader is asking for. Most quests have no published requirement yet, so this is often the only place that number exists — '
       + 'and once you reach that level the quest comes back on its own.',
+  },
+  {
+    title: 'FOLLOWS MEANS "OLD DATA SAYS LATER", NOT "LOCKED"',
+    body: 'Before patch 1.1.0, quests unlocked by finishing the ones before them, and the published quest data still describes it that way. '
+      + 'The game does not work like that any more, so the app no longer hides a quest for it. '
+      + 'Instead those sit further down the list, dimmed, with <strong>FOLLOWS</strong> and the name of the quest they used to come after. '
+      + 'Plenty of them are sitting at the trader right now — check. '
+      + 'Each map shows two numbers for that reason: how many you can definitely start, and how many more are only held back by the old order.',
   },
   {
     title: 'THE LIST CAN BE GROUPED FIVE WAYS',
@@ -3204,6 +3286,7 @@ function addExtraQuests() {
 function applyQuestFixes() {
   if (typeof QUEST_TRADERS === 'undefined' || !QUEST_TRADERS) return 0;
   const names = (typeof QUEST_NAMES !== 'undefined' && QUEST_NAMES) || {};
+  const noLevel = (typeof NO_LEVEL !== 'undefined' && NO_LEVEL) || {};
   let n = 0;
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) {
@@ -3219,6 +3302,14 @@ function applyQuestFixes() {
       if (fresh && fresh !== t.name) {
         if (!t._oldName) t._oldName = t.name;   // keep the ORIGINAL for search
         t.name = fresh;
+        n++;
+      }
+      // a level requirement the game has demonstrably stopped applying. Same
+      // removal applyWikiReqs does, from the owner's screen instead of the wiki,
+      // and it keeps the dropped value the same way so it stays auditable.
+      if (noLevel[t.id] && t.minPlayerLevel) {
+        t._devLevel = t.minPlayerLevel;
+        t.minPlayerLevel = 0;
         n++;
       }
     }
