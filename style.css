@@ -710,6 +710,21 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 /* the "tell me what the game says" row in a quest's requirements */
 .req-line.user-gate { color: #8d8a80; }
 .req-line.user-gate strong { color: #c9a94a; }
+.absent-btn {
+  background: none;
+  border: 1px solid #4a4740;
+  border-radius: 2px;
+  color: #8a877e;
+  cursor: pointer;
+  font: 700 10px/1 inherit;
+  letter-spacing: .6px;
+  margin-left: 10px;
+  padding: 4px 7px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.absent-btn:hover { border-color: #6b5c30; color: #c9a94a; }
+.absent-btn.on { background: rgba(201, 169, 74, .18); border-color: #6b5c30; color: #e0c266; }
 .ll-buttons.inline { display: inline-flex; gap: 3px; margin-left: 8px; vertical-align: middle; }
 .ll-buttons.inline .ll-btn { font-size: 11px; min-width: 22px; padding: 2px 0 1px; }
 .req-src {

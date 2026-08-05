@@ -609,6 +609,17 @@ function karmaIsSet() {
 // unchanged for REPUTATION and is the important part: a value the player has not
 // given us is not a value we may lock on. Loyalty level is now the exception —
 // see below.
+// Quests the player has confirmed are simply NOT in their game. 1.1.0 cut and
+// reworked quests while both data sources still list them: "New Paths" appears
+// in no trader's list at all, yet tarkov.dev publishes it and the wiki gives it
+// a Peacekeeper LL1 gate the owner already meets. Nothing can be inferred from
+// that — a quest being absent leaves no trace anywhere — so the player says so
+// and the app believes them. Global, because it describes the game.
+function questAbsent(taskId) {
+  const all = (state.settings && state.settings.questAbsent) || {};
+  return !!all[taskId];
+}
+
 // A loyalty level the PLAYER recorded for one quest, because the game gates it
 // and no data source says so. Global rather than per mode: it is a fact about
 // the quest, not about a character. Returns 0 when unset.
@@ -737,6 +748,10 @@ function levelLocked(t) {
 }
 
 function isLocked(t) {
+  // "not in my game" outranks the tracking mode: it is the player's own
+  // statement, not an inference, so it holds even in manual mode where nothing
+  // else locks.
+  if (questAbsent(t.id) && !isDone(t.id)) return true;
   return lockingActive() && !isDone(t.id)
     && (!isUnlocked(t) || levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
 }
@@ -1182,6 +1197,7 @@ function renderTree() {
       : done ? 'mark as not completed'
       : failed && t.restartable ? 'failed — but this one can be taken again from the trader. It will clear itself once you re-accept it in game.'
       : failed ? 'failed — Tarkov recorded this quest as failed, usually because you took a competing one instead. It cannot be handed in this wipe. Click to tick it anyway.'
+      : locked && questAbsent(t.id) ? 'not in your game — you marked it as missing. Open it and use PUT IT BACK if that was wrong.'
       : locked && traderNotUnlocked(t) ? `locked — you have not set a loyalty level for ${(t.trader || {}).name}, so none of their quests are shown. Open TRADERS and click your level to bring them back.`
       : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
       : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
@@ -1537,16 +1553,37 @@ function renderQuest() {
   const ownTrader = (t.trader || {}).name;
   const published = (t.traderRequirements || []).some((r) => r.kind === 'loyalty'
     && (r.trader || {}).name === ownTrader);
-  if (ownTrader && !published && !REP_TRADERS.has(ownTrader) && !NO_STANDING.has(ownTrader)) {
-    const cur = questLoyalty(t.id);
-    reqs.push(`<div class="req-line user-gate"><span class="req-tag">IN GAME</span><span>`
-      + `${cur ? `You set this to need <strong>${escapeHtml(ownTrader)} loyalty level ${cur}</strong>`
-        : `Locked in game but shown here? No loyalty requirement is published for this one — `
-          + `set the level ${escapeHtml(ownTrader)} needs`}`
-      + `<span class="ll-buttons inline">${[1, 2, 3, 4].map((n) =>
+  const canSetLoyalty = ownTrader && !published
+    && !REP_TRADERS.has(ownTrader) && !NO_STANDING.has(ownTrader);
+  const absent = questAbsent(t.id);
+  const cur = questLoyalty(t.id);
+  {
+    // One row for everything only the player can tell us about this quest. The
+    // loyalty half is offered where no gate is published (468 of 510 quests);
+    // the "not in my game" half is offered always, because a quest that 1.1.0
+    // cut leaves no trace in any data source and the level it once needed is
+    // beside the point.
+    let body;
+    if (absent) {
+      body = 'Marked as <strong>not in your game</strong> — hidden with the locked quests.';
+    } else if (canSetLoyalty) {
+      body = cur
+        ? `You set this to need <strong>${escapeHtml(ownTrader)} loyalty level ${cur}</strong>`
+        : 'Shown here but not in game? Set the loyalty level '
+          + `${escapeHtml(ownTrader)} is asking for`;
+    } else {
+      body = 'Shown here but not in game?';
+    }
+    const llButtons = (!absent && canSetLoyalty)
+      ? `<span class="ll-buttons inline">${[1, 2, 3, 4].map((n) =>
         `<button class="ll-btn${cur === n ? ' on' : ''}" data-quest-ll="${n}" `
-        + `title="${cur === n ? 'Click again to clear' : `Needs loyalty level ${n} with ${escapeHtml(ownTrader)}`}">${n}</button>`).join('')}`
-      + `</span></span></div>`);
+        + `title="${cur === n ? 'Click again to clear' : `Needs loyalty level ${n} with ${escapeHtml(ownTrader)}`}">${n}</button>`).join('')}</span>`
+      : '';
+    reqs.push(`<div class="req-line user-gate${absent ? ' prereq-missing' : ''}">`
+      + `<span class="req-tag">IN GAME</span><span>${body}${llButtons}`
+      + `<button class="absent-btn${absent ? ' on' : ''}" data-quest-absent="1" `
+      + `title="${absent ? 'Put it back in the list' : 'This quest does not exist in your game at all — hide it'}">`
+      + `${absent ? 'PUT IT BACK' : 'NOT IN MY GAME'}</button></span></div>`);
   }
 
   $('questRequirements').innerHTML = reqs.length ? `<h3>REQUIREMENTS</h3>${reqs.join('')}` : '';
@@ -1555,6 +1592,8 @@ function renderQuest() {
       setQuestLoyalty(t.id, b.classList.contains('on') ? null : Number(b.dataset.questLl));
     });
   }
+  const ab = $('questRequirements').querySelector('.absent-btn');
+  if (ab) ab.addEventListener('click', () => setQuestAbsent(t.id, !absent));
 
   const wikiBtn = $('wikiBtn');
   wikiBtn.classList.toggle('hidden', !t.wikiLink);
@@ -1601,6 +1640,15 @@ function renderModeSwitch() {
 // Record (or clear) the loyalty level a quest needs, as read off the trader
 // screen in game. Applied locally and not adopted back from the reply — the
 // same lost-update the TRADERS panel and setGroupBy both had.
+// Mark a quest as absent from this player's game, or put it back.
+function setQuestAbsent(taskId, absent) {
+  const all = { ...((state.settings && state.settings.questAbsent) || {}) };
+  if (absent) all[taskId] = true; else delete all[taskId];
+  state.settings = { ...state.settings, questAbsent: all };
+  backend.saveSettings({ questAbsent: all });
+  renderAll();
+}
+
 function setQuestLoyalty(taskId, value) {
   const all = { ...((state.settings && state.settings.questLoyalty) || {}) };
   if (value === null) delete all[taskId]; else all[taskId] = value;
@@ -2953,6 +3001,16 @@ function applyWikiNames() {
       t._oldName = t.name;
       t.name = fresh;
       n++;
+    }
+    // A quest is also named inside OTHER quests, as their prerequisite, and
+    // those are separate objects carrying their own copy of the name. Renaming
+    // only the quest itself left "I Need More Power" listing "Spa Tour - Part 3"
+    // as what it requires — the same quest under two names, one screen apart.
+    for (const t of list || []) {
+      for (const r of t.taskRequirements || []) {
+        const fresh = r.task && WIKI_NAMES[r.task.id];
+        if (fresh && r.task.name !== fresh) r.task.name = fresh;
+      }
     }
   }
   return n;
