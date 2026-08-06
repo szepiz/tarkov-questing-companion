@@ -1155,7 +1155,11 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 #mapLoadout summary:hover { color: #cfccc3; }
 #mapStorySec summary span:first-of-type { color: #7dc4ec; text-shadow: 0 0 8px rgba(90,160,200,.55); }
 #mapLoadoutCount, #mapStoryCount { font-weight: 400; letter-spacing: .3px; color: #55524a; margin-left: auto; }
-#mapLoadoutList, #mapStoryList { flex: 1; overflow-y: auto; padding: 6px 0 10px; }
+/* All three side-panel lists share one set of rules. A new list added to the
+   markup without being added HERE inherits none of it — it keeps the browser's
+   default bullets and 16px body text, which is what the BP DOCUMENTS list did
+   on its first outing and read as "the font doesn't match the rest of the app". */
+#mapLoadoutList, #mapStoryList, #mapBpList { flex: 1; overflow-y: auto; padding: 6px 0 10px; }
 .ld-group { margin-top: 6px; }
 .ld-head {
   padding: 4px 10px;
@@ -1164,8 +1168,8 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   letter-spacing: 1.2px;
   color: #d0a943;
 }
-#mapLoadoutList ul, #mapStoryList ul { list-style: none; }
-#mapLoadoutList li, #mapStoryList li {
+#mapLoadoutList ul, #mapStoryList ul, #mapBpList ul { list-style: none; }
+#mapLoadoutList li, #mapStoryList li, #mapBpList li {
   display: flex;
   align-items: baseline;
   gap: 6px;
@@ -1917,6 +1921,16 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .ld-story li { animation: none; background: rgba(90,160,200,.09); }
 }
+
+/* BattlePass documents — built like the story block above (same left accent,
+   same divider) but in the BP amber and without the glow: the story pulse marks
+   "you must tick this yourself", which is not what these are. */
+.ld-bp { border-bottom: 1px solid #26261f; margin-bottom: 10px; padding-bottom: 4px; }
+.ld-bp li { box-shadow: inset 2px 0 0 #d98f3f; background: rgba(217,143,63,.05); }
+.ld-bp li:hover { background: rgba(217,143,63,.13); }
+.ld-bp .ld-name { color: #e0d6c6; }
+.ld-bp .ld-qty { color: #d98f3f; font-size: 10px; font-weight: 700; }
+.ld-bp em { color: #8a877e; font-style: normal; }
 
 /* the current objective list, for the 47 quests 1.1.0 reworked. Shown above the
    tickable rows rather than replacing them — see renderQuest. */

@@ -121,6 +121,16 @@ const BP_DOCS = [
   }
  },
  {
+  "id": "6a31830dde69ceafd805afa0",
+  "name": "Technical documentation",
+  "source": "owner",
+  "spots": {
+   "Lighthouse": [],
+   "Shoreline": [],
+   "Woods": []
+  }
+ },
+ {
   "id": "6a31828557705071410ca00e",
   "name": "Test documentation",
   "spots": {
