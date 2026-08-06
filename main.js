@@ -105,6 +105,13 @@ const DEFAULT_SETTINGS = {
   // it did before. Unknown ids are kept, not pruned, so downgrading and
   // upgrading again doesn't silently lose a layer a newer build added.
   mapLayers: {},          // { extractPmc?: true, hazardMinefield?: true, ... }
+  // Which artwork to draw for a map that ships more than one. Keyed by map name
+  // -> variant id (see `art` in mapdata.js). Absent means the map's default,
+  // which is what every install had before this existed. The Lab is the first:
+  // its schematic omits the southern containment block entirely, so the render
+  // that draws it became the default — and the schematic stays selectable,
+  // because it is cleaner to read where the two agree.
+  mapArt: {},             // { "The Lab": "shebuka" }
   mapLayersOpen: {},      // which panel groups are expanded { extracts?: true, ... }
   mapLayersCollapsed: false, // the whole panel folded down to its title chip
 };

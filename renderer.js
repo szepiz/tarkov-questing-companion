@@ -2101,6 +2101,7 @@ function renderSettingsPanel() {
     + ' The quest data still carries the old 257-task Collector requirement, so the KAPPA tab uses'
     + ' the new gate from the wiki instead. It may change as that is confirmed.';
 
+  renderMapArtSettings();
   if (typeof renderUpdateSection === 'function') renderUpdateSection();
 }
 
@@ -2110,6 +2111,7 @@ function renderAll() {
   _levelFloor = null;     // a new completion can raise the inferred level
   _unsetTraders = null;   // a level clicked in TRADERS turns a whole trader back on
   _seriesHidden = null;   // ticking Part 2 promotes Part 3 into its place
+  applyMapArt();          // the chosen artwork, before anything reads MAP_DATA
   renderTabs();
   renderTree();
   renderHero();
@@ -3032,11 +3034,18 @@ function bpDocsOnMap(mapName) {
   return bpDocs().filter((d) => d.spots && Object.prototype.hasOwnProperty.call(d.spots, mapName));
 }
 
-// Hand-placed pins, once they exist: MAP_DATA[map].bpDocs = [{type, x, y, z}].
-// Absent today by design — this is the half that fills in over time.
+// Hand-placed pins, baked into bpdocs.js from the dev map editor. Empty until
+// somebody places one, which is the state this spends most of its life in.
+// Each pin knows which described spot it is (`spot`, an index into that map's
+// list, or null for a spawn the wiki never wrote up).
 function bpPins(mapName) {
-  const md = (typeof MAP_DATA !== 'undefined' && MAP_DATA[mapName]) || null;
-  return (md && Array.isArray(md.bpDocs)) ? md.bpDocs : [];
+  const out = [];
+  for (const d of bpDocs()) {
+    for (const p of ((d.pins && d.pins[mapName]) || [])) {
+      out.push({ ...p, type: d.id || d.name, name: d.name });
+    }
+  }
+  return out;
 }
 
 // What the side panel shows: every described spot of every TICKED type on this
@@ -3044,12 +3053,22 @@ function bpPins(mapName) {
 // governs both halves and they can never disagree.
 function bpSpotsFor(mapName) {
   const out = [];
+  const pins = bpPins(mapName);
   for (const d of bpDocsOnMap(mapName)) {
     if (!layerOn(bpLayerId(d))) continue;
+    const key = d.id || d.name;
     const spots = (d.spots && d.spots[mapName]) || [];
-    const placed = bpPins(mapName).filter((p) => p.type === (d.id || d.name)).length;
-    if (!spots.length) out.push({ type: d.name, desc: null, placed: 0 });
-    else spots.forEach((desc, i) => out.push({ type: d.name, desc, placed: i < placed }));
+    // matched by SPOT INDEX, not by counting: pins get placed in whatever order
+    // suits the person placing them, and "the first three are done" would put
+    // the marker against the wrong lines the moment one is skipped
+    const placedSpots = new Set(pins.filter((p) => p.type === key && p.spot !== null)
+      .map((p) => p.spot));
+    if (!spots.length) out.push({ type: d.name, desc: null, placed: false });
+    else spots.forEach((desc, i) => out.push({ type: d.name, desc, placed: placedSpots.has(i) }));
+    // spawns found in game that the wiki never listed still deserve a line
+    for (const p of pins.filter((x) => x.type === key && x.spot === null)) {
+      out.push({ type: d.name, desc: 'a spot not listed on the wiki', placed: true, extra: true });
+    }
   }
   return out;
 }
@@ -3086,8 +3105,8 @@ function renderMapLoadout(mapName) {
   $('mapBpSec').hidden = !bpAny;
   $('mapBpCount').textContent = bpAny ? String(bp.length || '') : '';
   $('mapBpList').innerHTML = bpAny ? `<div class="ld-group ld-bp">
-      <ul>${bp.length ? bp.map((o) => `<li title="${escapeHtml(o.type)}">
-        <span class="ld-name">${o.desc ? escapeHtml(o.desc) : '<em>spots not written up yet</em>'}</span>
+      <ul>${bp.length ? bp.map((o) => `<li class="${o.placed ? 'bp-pinned' : ''}" title="${escapeHtml(o.type)}${o.placed ? ' — pinned on the map' : ''}">
+        <span class="ld-name">${o.placed ? '<span class="bp-dot">◆</span>' : ''}${o.desc ? escapeHtml(o.desc) : '<em>spots not written up yet</em>'}</span>
         <span class="ld-qty">${escapeHtml(o.type.replace(/ documentation| documents| files/i, ''))}</span></li>`).join('')
       : '<li><span class="ld-name"><em>tick a document type in LAYERS to list its spots</em></span></li>'}</ul>
     </div>` : '';
@@ -3555,6 +3574,75 @@ const handMarkersFor = (name) => {
 const hasAnyMarkers = (name) => hasMapMarkers(name) || handMarkersFor(name) > 0
   || bpDocsOnMap(name).length > 0;
 
+// ---------- map artwork variants ----------
+// Some maps ship more than one picture. The Lab is the first: tarkov.dev's
+// render draws the southern containment block, Shebuka's schematic does not,
+// and the schematic is still the cleaner read where the two agree — so both
+// ship and the player picks.
+//
+// Switching is a DATA SWAP, not a branch: the chosen variant's fields are copied
+// onto MAP_DATA before anything reads it, so mapPoint, floorOf, drawMap, the
+// floor machinery and the dev editor all keep working without knowing variants
+// exist. Each variant carries its own bounds, because different artwork covers
+// a different rectangle of the world — that is the whole point here.
+function mapArtVariants(name) {
+  const md = (typeof MAP_DATA !== 'undefined' && MAP_DATA[name]) || null;
+  return (md && Array.isArray(md.art)) ? md.art : [];
+}
+function chosenArtId(name) {
+  const list = mapArtVariants(name);
+  if (!list.length) return null;
+  const want = ((state.settings && state.settings.mapArt) || {})[name];
+  return (list.find((a) => a.id === want) || list[0]).id;
+}
+// One row per map that ships more than one picture. Built from the data, so a
+// second variant added to any other map needs no code here.
+function renderMapArtSettings() {
+  const group = $('mapArtGroup');
+  const host = $('mapArtRows');
+  if (!group || !host) return;
+  const maps = Object.keys((typeof MAP_DATA !== 'undefined' && MAP_DATA) || {})
+    .filter((n) => mapArtVariants(n).length > 1);
+  group.hidden = !maps.length;
+  if (!maps.length) { host.innerHTML = ''; return; }
+  host.innerHTML = maps.map((n) => `<div class="toggle-row">
+      <span>${escapeHtml(n)}</span>
+      <select class="art-select" data-map="${escapeHtml(n)}">${mapArtVariants(n).map((a) =>
+        `<option value="${escapeHtml(a.id)}"${a.id === chosenArtId(n) ? ' selected' : ''}>${escapeHtml(a.label || a.id)}</option>`).join('')}</select>
+    </div>`).join('');
+  for (const sel of host.querySelectorAll('select[data-map]')) {
+    sel.addEventListener('change', async () => {
+      const next = { ...((state.settings && state.settings.mapArt) || {}), [sel.dataset.map]: sel.value };
+      state.settings = { ...state.settings, mapArt: next };
+      applyMapArt();
+      // a map already open has to be rebuilt against the new bounds, or it
+      // keeps drawing the old artwork's geometry under the new picture
+      if (mapView && mapView.name === sel.dataset.map) await openQuestMap(sel.dataset.map);
+      state.settings = await backend.saveSettings({ mapArt: next });
+    });
+  }
+}
+
+// idempotent: safe to call on every render, and it must be, because the setting
+// can change while a map is open
+function applyMapArt() {
+  if (typeof MAP_DATA === 'undefined') return;
+  for (const name of Object.keys(MAP_DATA)) {
+    const list = mapArtVariants(name);
+    if (!list.length) continue;
+    const pick = list.find((a) => a.id === chosenArtId(name)) || list[0];
+    for (const k of ['svg', 'viewBox', 'bounds', 'rotate', 'baseLayer', 'approx']) {
+      if (pick[k] !== undefined) MAP_DATA[name][k] = pick[k];
+    }
+    // `credit` matters as much as the geometry — the footer names whoever drew
+    // what is on screen — and it is assigned UNCONDITIONALLY, including to
+    // undefined. Skipping it when a variant has none would leave the previous
+    // variant's credit on screen, which is worse than crediting nobody: it
+    // credits the wrong artist for someone else's work.
+    MAP_DATA[name].credit = pick.credit;
+  }
+}
+
 // One row per checkbox. This is the single source of truth: it drives the panel,
 // the glyph, the legend swatch, the settings key and the filter, so none of
 // those can drift apart. `cat` indexes mapmarkers.js's category codes.
@@ -3661,7 +3749,11 @@ const MARKER_GROUPS = [
         // be a lie about the game rather than about our data
         count: () => {
           const list = (d.spots && d.spots[mapView.name]) || null;
-          return list ? (list.length || 0) : 0;
+          const spots = list ? (list.length || 0) : 0;
+          // pins can outnumber descriptions once spawns the wiki never listed
+          // get placed, so the row reports whichever is the bigger truth
+          const pins = ((d.pins && d.pins[mapView.name]) || []).length;
+          return Math.max(spots, pins);
         },
         // ...and it stays tickable even at zero, because "this type spawns here,
         // spots not written up yet" is worth being able to switch on
@@ -4006,6 +4098,16 @@ function collectMapMarkers(mapName) {
     add(cx, 0, cz, ['switchAll'], 'lever', 'mk-switch',
       h.label || 'Interactable', [['', 'Marked by hand — not in the API data']],
       { floor: typeof h.floor === 'number' ? h.floor : -1 });
+  }
+  // Hand-placed BattlePass documents (dev editor -> bpdocs.js). The ONLY
+  // positions these will ever have — no source publishes them — so the pin
+  // carries the wiki's description of the spot it was placed for.
+  for (const p of bpPins(mapName)) {
+    const d = bpDocs().find((x) => (x.id || x.name) === p.type);
+    const desc = (d && p.spot !== null && ((d.spots || {})[mapName] || [])[p.spot]) || '';
+    add(p.x, 0, p.z, ['bp:' + p.type], 'folder', 'mk-bp', p.name,
+      [['', desc || 'Placed by hand — the wiki does not list this spot']],
+      { floor: typeof p.floor === 'number' ? p.floor : -1 });
   }
   return out;
 }

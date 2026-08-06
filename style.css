@@ -1931,6 +1931,9 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .ld-bp .ld-name { color: #e0d6c6; }
 .ld-bp .ld-qty { color: #d98f3f; font-size: 10px; font-weight: 700; }
 .ld-bp em { color: #8a877e; font-style: normal; }
+/* a spot that has a pin on the map, so the list doubles as the placing worklist */
+.ld-bp .bp-dot { color: #d98f3f; margin-right: 5px; font-size: 9px; vertical-align: 1px; }
+.ld-bp li.bp-pinned .ld-name { color: #f0e2cc; }
 
 /* the current objective list, for the 47 quests 1.1.0 reworked. Shown above the
    tickable rows rather than replacing them — see renderQuest. */

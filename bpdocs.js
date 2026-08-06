@@ -20,9 +20,28 @@ const BP_DOCS = [
   "id": "6a31824878450ec91c0ea1ae",
   "name": "Blueprints and technical documentation",
   "spots": {
-   "Factory": [],
-   "Interchange": [],
-   "The Labyrinth": []
+   "Factory": [
+    "In the laboratory zone 1st floor in the breachable room.",
+    "In the laboratory zone, 2nd floor on a desk.",
+    "In the offices 1st floor next to the safe inside a open drawer.",
+    "Inside the hallway of offices 3rd floor inside a cabinet.",
+    "Inside the medical tent on a table.",
+    "In the window office room on the desk",
+    "Inside the office on 3rd floor in a opened drawer",
+    "Inside the Factory emergency exit key room on 3rd floor on top of drawers.",
+    "Inside the 3rd floor office on the floor next to the drawers.",
+    "On a dead USEC body in basement under the medical area."
+   ],
+   "Interchange": [
+    "In the PC cubicle in the back of OLI.",
+    "Inside GOSHAN north offices.",
+    "Inside the back offices of OLI.",
+    "Inside IDEA in the southern part of the store on the floor.",
+    "In the office between GOSHAN and OLI."
+   ],
+   "The Labyrinth": [
+    "On top of a wooden box."
+   ]
   }
  },
  {
@@ -77,7 +96,7 @@ const BP_DOCS = [
    "Lighthouse": [
     "Inside the WTP Building 2 in the radio room next to the car.",
     "At the scav villave inside a red two floor house in the bedroom on 2nd floor.",
-    "At the WTP inside a tent",
+    "At the WTP inside a tent at the southeastern water basin.",
     "Inside the blue chalet upstairs on a rounded table in a bedroom."
    ],
    "Reserve": [
@@ -116,14 +135,14 @@ const BP_DOCS = [
    ],
    "Reserve": [
     "In the bunker in the command office, under a desk.",
-    "In the 1-room office next to command office next to a printer."
+    "In the 1-room office next to command office next to a printer.",
+    "Behind RB-KORL key door, between two shelves."
    ]
   }
  },
  {
   "id": "6a31830dde69ceafd805afa0",
   "name": "Technical documentation",
-  "source": "owner",
   "spots": {
    "Lighthouse": [],
    "Shoreline": [],
@@ -134,9 +153,30 @@ const BP_DOCS = [
   "id": "6a31828557705071410ca00e",
   "name": "Test documentation",
   "spots": {
-   "Icebreaker": [],
-   "Shoreline": [],
-   "Woods": []
+   "Icebreaker": [
+    "Inside Med. storage room on level 1",
+    "Inside the east room of the canteen on level 3",
+    "Inside the green flare room at spawn on level 1",
+    "Inside the drone room before the helipad on level 2"
+   ],
+   "Shoreline": [
+    "At pier on a emergency beds in front of the building.",
+    "Inside the smuggler camp in the southern warehouse.",
+    "At the weather station, 2nd floor of the building.",
+    "In the resort east wing room 326 inside a opened drawer of the nightstand."
+   ],
+   "Woods": [
+    "At the old sawmill in the 2 floor shack on a table.",
+    "At scav village inside the red brick house within the floor.",
+    "At USEC checkpoint on top of drawers.",
+    "At scav village inside the 2 floor house.",
+    "At USEC Camp inside a tent next to a bed.",
+    "At USEC Camp on top of a wooden crate.",
+    "At old sawmill inside the small shack.",
+    "At USEC Camp on the medical table with the corpse.",
+    "At Emercom base inside the white container with the bodies.",
+    "At USEC Camp on a sleeping bag."
+   ]
   }
  },
  {
@@ -152,7 +192,8 @@ const BP_DOCS = [
     "Inside the counter on 2nd floor of the Terragroup Building in the reception.",
     "On a desk inside TerraGroup science office key.",
     "On a chair on 2nd floor of the Terragroup building in the reception room.",
-    "On a rounded table inside Coffee Maniac store in front of the Terragroup building."
+    "On a rounded table inside Coffee Maniac store in front of the Terragroup building.",
+    "In the room next to TerraGroup science office key door on a couch"
    ],
    "Streets of Tarkov": [
     "Behind Cardinal apartment key door on a table.",
@@ -173,6 +214,110 @@ const BP_DOCS = [
     "In the office where Kruglov Office is located (R22) on the shelves.",
     "In the hall between violet and kruglov office on 1st floor (R12) on the counter.",
     "Inside the cafeteria on 2nd floor (R24)."
+   ]
+  },
+  "pins": {
+   "Ground Zero": [
+    {
+     "x": 61.06,
+     "z": 150.22,
+     "floor": 1,
+     "spot": 2
+    },
+    {
+     "x": -36.45,
+     "z": 65.01,
+     "floor": 1,
+     "spot": 5
+    },
+    {
+     "x": -10.78,
+     "z": 40.85,
+     "floor": 1,
+     "spot": 6
+    },
+    {
+     "x": -44.74,
+     "z": 64.44,
+     "floor": 1,
+     "spot": 7
+    },
+    {
+     "x": 14.18,
+     "z": 66.05,
+     "floor": -1,
+     "spot": 8
+    },
+    {
+     "x": 52.65,
+     "z": 137.1,
+     "floor": -1,
+     "spot": 3
+    },
+    {
+     "x": -6.85,
+     "z": 56.26,
+     "floor": 1,
+     "spot": 0
+    },
+    {
+     "x": -27.63,
+     "z": 80.47,
+     "floor": 1,
+     "spot": 1
+    },
+    {
+     "x": -22.95,
+     "z": 83.67,
+     "floor": 1,
+     "spot": 4
+    }
+   ],
+   "Streets of Tarkov": [
+    {
+     "x": 62.41,
+     "z": -76.33,
+     "floor": -1,
+     "spot": 1
+    },
+    {
+     "x": 67.51,
+     "z": -58.46,
+     "floor": -1,
+     "spot": 2
+    },
+    {
+     "x": -172.38,
+     "z": 224.9,
+     "floor": 1,
+     "spot": 3
+    },
+    {
+     "x": 85.64,
+     "z": -24.65,
+     "floor": -1,
+     "spot": 4
+    }
+   ],
+   "The Lab": [
+    {
+     "x": -267.39,
+     "z": -318.61,
+     "floor": 0,
+     "spot": 2
+    },
+    {
+     "x": -232.62,
+     "z": -342.91,
+     "floor": 0,
+     "spot": 3
+    },
+    {
+     "x": -161.18,
+     "z": -347.31,
+     "floor": 0,
+     "spot": 4
+    }
    ]
   }
  }

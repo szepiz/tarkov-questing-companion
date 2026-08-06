@@ -380,6 +380,11 @@ const MAP_DATA = {
     rotate: 270,
     baseLayer: "First_Level",
     approx: true,   // pin positions unverified — see _dev/build_mapdata.js
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"shebuka","label":"Schematic (Shebuka)","svg":"maps/Labs.svg","viewBox":{"w":720,"h":586},"bounds":[[-94.62,-439.31],[-290,-223.42]],"rotate":270,"approx":true},
+      {"id":"tarkovdev","label":"Render (tarkov.dev) — includes the containment block","svg":"maps/Labs_v4.svg","viewBox":{"w":3787,"h":2729},"bounds":[[-80.97,-478.4],[-283.7,-197]],"rotate":270,"approx":true,"credit":"Map tiles by tarkov.dev"},
+    ],
 
     floors: [
       {
