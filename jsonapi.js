@@ -21,6 +21,22 @@
 
 const JSON_API = 'https://json.tarkov.dev/';
 
+// tarkov.dev asked (2026-07-18) that every request carry a User-Agent naming
+// the project, ideally with a URL, so their traffic can be attributed and not
+// mistaken for something malicious and blocked.
+//
+// ⚠️ Not optional, and not already handled by Electron. The main process's
+// `fetch` is Node's, not Chromium's: with no header set it sends the literal
+// User-Agent `node`, which is exactly the anonymous traffic that notice is
+// about. (`app.userAgentFallback` and the session UA govern the RENDERER and do
+// not touch this call — measured, after that mistake was made here.) A header
+// passed to fetch does survive, which was measured too.
+const UA = (() => {
+  let v = '';
+  try { v = '/' + require('./package.json').version; } catch { /* packaged oddly */ }
+  return `TarkovQuestingCompanion${v} (+https://github.com/szepiz/tarkov-questing-companion)`;
+})();
+
 async function fetchJson(path, { retries = 3, timeoutMs = 30000 } = {}) {
   let lastErr;
   for (let attempt = 0; attempt < retries; attempt++) {
@@ -28,7 +44,7 @@ async function fetchJson(path, { retries = 3, timeoutMs = 30000 } = {}) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const res = await fetch(JSON_API + path, {
-        headers: { Accept: 'application/json' },
+        headers: { Accept: 'application/json', 'User-Agent': UA },
         cache: 'no-cache',
         signal: controller.signal,
       });

@@ -10,22 +10,344 @@
 // tick state and the map coordinates, and reshaping them would move someone's
 // ticks onto a different objective.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-05.
+// Source: escapefromtarkov.fandom.com, read 2026-08-06.
 
 const WIKI_OBJ_TEXT = {
- "657315ddab5a49b71f098853": {
-  "65817bf31404f3565aef9fec": "Hand over any 3 found in raid medicine items"
+ "5936da9e86f7742d65037edf": {
+  "5968ec9986f7741ddd6c1012": "Obtain the Bronze pocket watch on a chain on Customs",
+  "5967920f86f77468d219d632": "Hand over the pocket watch"
  },
- "657315df034d76585f032e01": {
-  "657334311dbb8b7569bb83c4": "Eliminate any 5 targets on Ground Zero"
+ "59674cd986f7744ab26e32f2": {
+  "5cb31b6188a450159d330a18": "Eliminate 15 Scavs on Woods"
+ },
+ "59674eb386f774539f14813a": {
+  "5968929e86f7740d121082d3": "Obtain the secure folder in the Tarcone Director's office at the Customs terminal warehouse"
+ },
+ "5967530a86f77462ba22226b": {
+  "5968948986f7740d121082d4": "Hand over the folder to Prapor"
+ },
+ "59675d6c86f7740a842fc482": {
+  "5968ed3186f77420d2328013": "Find 3 AK-74 5.45x39 6L31 60-round magazines in raid",
+  "59675e1d86f77414b07f137d": "Hand over the 3 AK-74 5.45x39 6L31 60-round magazines"
+ },
+ "59675ea386f77414b32bded2": {
+  "596895f986f7740d14064722": "Obtain the letter on the messenger's body on Factory"
+ },
+ "5967725e86f774601a446662": {
+  "5968981986f7740d1648df42": "Obtain the valuable item in dorm room 203 on Customs"
  },
  "5967733e86f774602332fc84": {
   "5968edc086f77420d2328014": "Find 3 Salewa first aid kit in raid",
   "59689eb886f7740d137ebfc3": "Hand over the 3 first aid kits"
  },
- "5936da9e86f7742d65037edf": {
-  "5968ec9986f7741ddd6c1012": "Obtain the Bronze pocket watch on a chain on Customs",
-  "5967920f86f77468d219d632": "Hand over the pocket watch"
+ "59689fbd86f7740d137ebfc4": {
+  "5a3fb73b86f77458e0324376": "Locate the water hidden inside of the dorms on Customs"
+ },
+ "5968eb3186f7741dde183a4d": {
+  "5968eb9b86f7741ddb481543": "Eliminate 15 Scavs on Customs"
+ },
+ "5969f90786f77420d2328015": {
+  "5969f98286f774576d4c9542": "Find 4 Morphine injectors in raid",
+  "5969f99286f77456630ea442": "Hand over the 4 injectors to Therapist"
+ },
+ "5969f9e986f7741dde183a50": {
+  "5969fa4886f7741ddb481544": "Obtain the case containing the device on Customs",
+  "5969fa8986f7741ddc2d3154": "Hand over the case"
+ },
+ "596a101f86f7741ddb481582": {
+  "596a10d886f7741ddf17dbf0": "Hand over Secure Folder 0052 to Skier"
+ },
+ "596a1e6c86f7741ddc2d3206": {
+  "596a1f0486f77456630ea4d2": "Find 15 Cans of beef stew (Small) in raid",
+  "596a1f1586f77420d2328077": "Hand over 15 cans to Therapist"
+ },
+ "596a204686f774576d4c95de": {
+  "5ec1398886f7561e047757a5": "Find 2 Gas analyzers in raid",
+  "596a20ac86f7741ddf17dbf4": "Hand over the 2 Gas analyzers to Therapist"
+ },
+ "596a218586f77420d232807c": {
+  "596b46d886f77457ca186189": "Find 4 Car batteries in raid",
+  "596b46ec86f77457c7006f89": "Find 8 Spark plugs in raid",
+  "596b470c86f77457ca18618a": "Hand over the 4 batteries to Therapist",
+  "596b472686f77457c7006f8a": "Hand over the 8 spark plugs to Therapist"
+ },
+ "596b36c586f77450d6045ad2": {
+  "597867e986f7741b265c6bd3": "Hand over 1 found in raid Module-3M armor to Skier",
+  "5ab8d44c86f7745b2325bd0c": "Hand over 1 found in raid TOZ-106 shotgun to Skier"
+ },
+ "596b43fb86f77457ca186186": {
+  "596b44b686f77457cb50ecca": "Obtain the hidden valuable cargo on Customs",
+  "596b450986f7745a7e510b54": "Hand over the valuable cargo to Skier"
+ },
+ "596b455186f77457cb50eccb": {
+  "5c9b5e3f86f7744aab7329b5": "Eliminate any 10 target with pistols on Factory"
+ },
+ "5979ed3886f77431307dc512": {
+  "5979ee2986f7743ec214c7a4": "Find 2 Secure flash drives in raid",
+  "5979ee4586f7743ec214c7a5": "Hand over 2 Secure flash drives to Skier"
+ },
+ "5979eee086f774311955e614": {
+  "5979ef4586f77431307dc513": "Find the Golden Zibbo lighter",
+  "5979ef7986f77431307dc514": "Stash a regular zibbo lighter at Doom room 303 on Customs"
+ },
+ "5979f8bb86f7743ec214c7a6": {
+  "5b0e766b86f7746bfa618964": "Eliminate 25 Scavs on Interchange, Ground Zero or Woods (This objective progress counts for all group members)"
+ },
+ "5979f9ba86f7740f6c3fe9f2": {
+  "5979fc2686f77426d702a0f2": "Obtain information about the Deputy Chief's past life on Customs",
+  "5979fc5386f77426d702a0f3": "Hand over the information to Skier",
+  "5979fc7e86f77426d702a0f4": "Obtain items that can help the investigation",
+  "5979fc9286f77426d702a0f5": "Hand over the items to Skier"
+ },
+ "597a0b2986f77426d66c0633": {
+  "597a0be986f774273b74f673": "Find any evidence on Customs that could help with the investigation",
+  "597a0bb486f77426d66c0634": "Hand over the evidence to Skier",
+  "597a0bf886f7742717106d13": "Find any information on Customs that could help with the investigation",
+  "597a0bdb86f7742717106d12": "Hand over the info to Skier"
+ },
+ "597a0e5786f77426d66c0636": {
+  "597a15b386f774799e5cd152": "Obtain the chemical-filled syringe hidden in Factory",
+  "597a15c386f77405ba6887d2": "Hand over the chemical-filled syringe to Skier"
+ },
+ "59c50a9e86f7745fef66f4ff": {
+  "59674d5186f00443b872d5f7": "Eliminate 25 Scavs while using an AKS-74U series assault rifle on Customs"
+ },
+ "59c9392986f7742f6923add2": {
+  "59c93bdb86f7742a19140434": "Obtain 1 Dorm room 303 key",
+  "59c93c1986f7742a424eaa33": "Obtain 1 ZB-014 key",
+  "59c93cbb86f7742a19140435": "Obtain 1 Military checkpoint key",
+  "59c93cea86f7742a08623162": "Obtain 1 Gas station storage room key",
+  "59c93d4e86f774496b698953": "Hand over 1 Dorm room 303 key",
+  "59c93d8086f7742a19140436": "Hand over 1 ZB-014 key",
+  "59c93d9c86f7742f6923add3": "Hand over 1 Customs military checkpoint key",
+  "59c93dbf86f7742a424eaa34": "Hand over 1 Gas station storage room key"
+ },
+ "59c93e8e86f7742a406989c4": {
+  "596a10d886f7741ddf11dbf0": "Hand over 1,000,000 RUB to Skier"
+ },
+ "59ca1a6286f774509a270942": {
+  "59ca1b1b86f7741b067dba42": "Obtain 10 M67 grenades",
+  "59ca1b4f86f774509a270943": "Hand over 10 grenades to Prapor"
+ },
+ "59ca264786f77445a80ed044": {
+  "59674d5986f77446b872d5f7": "Eliminate 10 Scavs while using an SVDS 7.62x54R sniper rifle or TKPD 9.3x64 carbine on Lighthouse",
+  "59ca27f786f77445aa0ddc14": "Eliminate 10 Scavs while wearing a Scav Vest on Lighthouse",
+  "59ca293c86f91445a80ed047": "Find 5 Bars A-2607 95Kh18 knives in raid",
+  "59ca29ab86f77445ab431c86": "Hand over the 5 Bars A-2607 95Kh18 knives"
+ },
+ "59ca2eb686f77445a80ed049": {
+  "59ca2fba86f77445e4732b25": "Eliminate 30 PMC operatives while using specified weapons (Light Machine Guns, 9x39mm weapons such as AS Val or SR-3M, SVDS 7.62x54R sniper rifle, TKPD 9.3x64 carbine, Kalashnikov AKS-74U series weapon or Kalashnikov AKM 7.62x39 assault rifle series weapon) on Lighthouse, Shoreline, Reserve, Ground Zero or The Lab",
+  "5b0548e686f7740306753506": "Hand over any 10 BEAR or USEC dogtags",
+  "5cb3397c88a450159a723d79": "Locate and Neutralize any 5 Bosses"
+ },
+ "5a03153686f77442d90e2171": {
+  "5c9a17c686f7747dbe2da3c1": "Eliminate 15 targets with headshots while using an AUG on Factory"
+ },
+ "5a03173786f77451cb427172": {
+  "5a0317da86f77451cb427295": "Mark the helicopter at the Health Resort with an MS2000 Marker on Shoreline",
+  "5a0325f286f7744384509230": "Mark the safe road to the helicopter with an MS2000 Marker on Shoreline"
+ },
+ "5a0449d586f77474e66227b7": {
+  "5a044a6c86f7747370402d91": "Obtain the key to the closed premises of the Sanatorium on Shoreline",
+  "5a280f8d86f774141b501756": "Hand over the key to Peacekeeper"
+ },
+ "5a27b75b86f7742e97191958": {
+  "5a27d81a86f774472a6e0456": "Stash the MF-UNTAR body armor in the boat",
+  "5a27d85286f77448d82084e7": "Stash the multitool in the boat"
+ },
+ "5a27b7d686f77460d847e6a6": {
+  "5a37e8ae86f77415076b401d": "Mark the first T-90 tank with an MS2000 Marker on Shoreline",
+  "5a27fc8186f7746371546243": "Mark the second T-90 tank with an MS2000 Marker on Shoreline",
+  "5a27fc9686f774675744bb60": "Mark the third T-90 tank with an MS2000 Marker on Shoreline"
+ },
+ "5a27b80086f774429a5d7e20": {
+  "5a294f1686f774340c7b7e4a": "Obtain the SAS disk from the first crashed drone",
+  "5a27ffb186f774192932b3d5": "Hand over the first SAS disk to Peacekeeper",
+  "5a27ffc786f77415ca58ae47": "Locate the second UAV crash site on Shoreline",
+  "5a3ba3b086f7745ab1081101": "Obtain the SAS disk from the second crashed drone",
+  "5a294f3386f77433e923f9cd": "Hand over the second SAS disk to Peacekeeper"
+ },
+ "5a27b87686f77460de0252a8": {
+  "5a28017786f77452f6318b1b": "Locate and mark the first truck with an MS2000 Marker",
+  "5a2801f986f774531b679875": "Locate and mark the second truck with an MS2000 Marker",
+  "5cb5fd3d86f7746ef64ca33c": "Obtain 5 MRE ration packs",
+  "5a28023f86f774528903dd1e": "Hand over 5 MRE ration packs to Peacekeeper",
+  "5c9a170386f77438c80164eb": "Eliminate 10 Scavs while wearing a UN uniform (MF-UNTAR body armor and UN helmet) on Shoreline"
+ },
+ "5a27ba9586f7741b543d8e85": {
+  "5a28127b86f7743808504ecc": "Hand over 8,000 USD to Peacekeeper"
+ },
+ "5a27bb1e86f7741f27621b7e": {
+  "5a28183186f774398675d127": "Obtain the data in the computer room in the east wing of the Health Resort on Shoreline",
+  "5a28184c86f774376e43772a": "Hand over the retrieved data to Peacekeeper"
+ },
+ "5a27bb3d86f77411ea361a21": {
+  "5a2819c886f77460ba564f38": "Locate the room with reservoirs in the Health Resort on Shoreline",
+  "5a3ba76486f7744d39436da2": "Obtain any information about the second part of the cargo shipment",
+  "5a2e966286f7742f6c4f27a6": "Hand over the retrieved information to Peacekeeper"
+ },
+ "5a27bb8386f7741c770d2d0a": {
+  "5c9de99286f7741ced54c902": "Eliminate 10 Scavs while using a suppressed M4A1, ADAR or TX-15 on Shoreline"
+ },
+ "5a27bc1586f7741f6d40fa2f": {
+  "5a37db0c86f7745b8f4be68a": "Mark Artyom's car with MS2000 Marker"
+ },
+ "5a27bc3686f7741c73584026": {
+  "5a28221e86f7741d5b719624": "Obtain a list of the resort's tenants on Shoreline",
+  "5a28223786f7741c7a0b5401": "Hand over the list of tenants to Peacekeeper"
+ },
+ "5a27bc6986f7741c7358402b": {
+  "5a2e958d86f77416be092111": "Obtain information on Artyom's work on Shoreline",
+  "5a2822de86f7740a245249ce": "Hand over the information to Peacekeeper"
+ },
+ "5a27bc8586f7741b543d8ea4": {
+  "5a28235e86f7741da250b438": "Eliminate 15 targets from over 50 meters away using a 7.62x51mm NATO DMRs on Shoreline or Lighthouse"
+ },
+ "5a27d2af86f7744e1115b323": {
+  "5a27d34586f7744e1115b327": "Hand over 5,000 USD to Skier"
+ },
+ "5a68663e86f774501078f78a": {
+  "5a68760f86f7743cc55d8709": "Search the room in the Health Resort for any documents about TerraGroup's research on Shoreline"
+ },
+ "5a68665c86f774255929b4c7": {
+  "5a68776786f774759f1f55f6": "Locate the van of the Health Resort medical services director on Woods",
+  "5a68770f86f774747d4b0d8b": "Take a sample of the blood"
+ },
+ "5a68667486f7742607157d28": {
+  "5a6878e886f7745e65687985": "Reach the required 4 Health skill level"
+ },
+ "5ac3460c86f7742880308185": {
+  "5ac502a786f7740bde1b000c": "Find 2 Power cords in raid",
+  "5ac5055a86f7745cae22b582": "Find 4 T-Shaped Plugs in raid",
+  "5ac505c386f7740be0424d19": "Find 2 Printed circuit boards in raid",
+  "5ac505e186f7740bdf2ceabe": "Hand over 2 Power cords to Mechanic",
+  "5ac5061386f77417e429ce7a": "Hand over 4 T-Shaped Plugs to Mechanic",
+  "5ac5062586f774587c327395": "Hand over 2 Printed circuit boards to Mechanic"
+ },
+ "5ac3462b86f7741d6118b983": {
+  "5ac6248586f77416781dd3a3": "Locate the warehouse of seized goods on Customs",
+  "5ac6240786f77417204ca2b9": "Obtain the package of graphics cards",
+  "5ac624b286f77416781dd3ac": "Hand over the package of graphics cards to Mechanic"
+ },
+ "5ac3464c86f7741d651d6877": {
+  "5ac5081086f7740bde1b002f": "Find 3 Graphics cards in raid",
+  "5ac5082586f77418804f7d4c": "Find 15 CPU fans in raid",
+  "5ac5083d86f7740be2744eed": "Hand over 3 Graphics cards to Mechanic",
+  "5ac5084d86f7740bde1b0031": "Hand over 15 CPU fans to Mechanic"
+ },
+ "5ac346a886f7744e1b083d67": {
+  "5cb6f81d86f7740e9d452683": "Find 3 PC CPUs in raid",
+  "5ac5e79986f7747398341847": "Hand over 3 PC CPUs to Mechanic",
+  "5cb6f88d86f7747d215f09c1": "Find 3 Rechargeable batteries in raid",
+  "5ac5e88e86f7741c5804f9db": "Hand over 3 Rechargeable batteries to Mechanic",
+  "5cb6f8de86f7740e9d452685": "Find 3 Printed circuit boards in raid",
+  "5ac5e98886f77479bc6ca201": "Hand over 3 Printed circuit boards to Mechanic",
+  "5cb6f9c586f7740ace254c44": "Find 3 Broken GPhone smartphones in raid",
+  "5ac5ea0586f774609f36280c": "Hand over 3 Broken GPhone smartphones to Mechanic"
+ },
+ "5ac346cf86f7741d63233a02": {
+  "5ac7a7bf86f774132252a524": "Place the first Signal Jammer on the specified place on Shoreline",
+  "5ac7a83b86f774665012340b": "Place the second Signal Jammer on the specified place on Shoreline",
+  "5ac7a8d386f7741321499e3c": "Place the third Signal Jammer on the specified place on Shoreline"
+ },
+ "5ac346e886f7741d6118b99b": {
+  "5ac5eb3286f7746e7a509a09": "Reach the required Attention skill level of 8"
+ },
+ "5ac3475486f7741d6224abd3": {
+  "5ac5ee9986f7746e7a509a26": "Find 5 Malboro cigarettes in raid",
+  "5ac5eee986f77401fd341c9e": "Find 5 Strike cigarettes in raid",
+  "5ac5ef2a86f7741c5804f9f5": "Find 5 Wilston cigarettes in raid",
+  "5ac5ef5686f77416ca60f644": "Hand over 5 Malboro cigarettes to Mechanic",
+  "5ac5ef9886f7746e7a509a2d": "Hand over 5 Strike cigarettes to Mechanic",
+  "5ac5eff886f7740f43322559": "Hand over 5 Wilston cigarettes to Mechanic"
+ },
+ "5ae448bf86f7744d733e55ee": {
+  "5ae44ecd86f77414a13c970e": "Eliminate 10 any target on Interchange"
+ },
+ "5ae4490786f7744ca822adcc": {
+  "5fd89799c54dc00f463272d3": "Find 2 Kinda Cowboy hats in raid",
+  "5fd89729a8c881276c560433": "Find 2 Ushanka ear-flap caps in raid",
+  "5ae4543686f7742dc043c903": "Hand over 2 Ushanka ear-flap caps to Ragman",
+  "5ae454a086f7742be909a81a": "Hand over 2 Kinda Cowboy hats to Ragman"
+ },
+ "5ae4493486f7744efa289417": {
+  "5ae9b32486f7745bbc72275a": "Obtain the Goshan cargo manifests on Interchange",
+  "5ae9b36c86f774307c29df04": "Hand over the Goshan cargo manifests to Ragman",
+  "5ae9b3b186f7745bbc722762": "Obtain the OLI cargo manifests on Interchange",
+  "5ae9b34686f7743129512ccf": "Hand over the OLI cargo manifests to Ragman",
+  "5ae9b38a86f77432c81e2ce3": "Obtain the IDEA cargo manifests on Interchange",
+  "5ae9b3c986f77432c81e2ce6": "Hand over the IDEA cargo manifests to Ragman"
+ },
+ "5ae4493d86f7744b8e15aa8f": {
+  "5ae9b5bd86f774307c29df37": "Obtain the OLI cargo route documents on Interchange",
+  "5ae9b63286f774229110402d": "Hand over the documents to Ragman"
+ },
+ "5ae4495086f77443c122bc40": {
+  "5ae4559386f7742dc043c95e": "Find 1 Ski hat with holes for eyes in raid",
+  "5ae455be86f7742dc043c969": "Hand over 1 Ski hat with holes for eyes to Ragman",
+  "5ae455fb86f7744dd8242380": "Find 1 Pilgrim tourist backpack in raid",
+  "5ae4562086f774498b05e0dc": "Hand over 1 Pilgrim tourist backpack to Ragman"
+ },
+ "5ae4495c86f7744e87761355": {
+  "5ae9b77f86f77432c81e3074": "Find 2 WARTECH TV-109 + TV-106 chest rigs in raid",
+  "5ae9b91386f77415a869b3f3": "Hand over the chest rigs",
+  "5ae9b7c886f774307c29df56": "Find 2 BlackRock chest rigs in raid",
+  "5ae9b93b86f7746e0026221a": "Hand over the chest rigs"
+ },
+ "5ae4498786f7744bde357695": {
+  "5ae9c0a686f774703201f143": "Obtain the Clothes design handbook - Part 1 on Interchange",
+  "5ae9c0e186f7746419683c5e": "Hand over the Clothes design handbook - Part 1 to Ragman",
+  "5ae9c0c986f77468ab400f88": "Obtain the Clothes design handbook - Part 2 on Interchange",
+  "5ae9c10686f774703201f146": "Hand over the Clothes design handbook - Part 2 to Ragman"
+ },
+ "5ae4499a86f77449783815db": {
+  "5ae9c29386f77427153c7fb0": "Reach the required Charisma skill level of 10"
+ },
+ "5ae449b386f77446d8741719": {
+  "5ae9e17c86f77440d37ce03c": "Stash 1 Ghost balaclava at the sawmill docks on Woods",
+  "5ae9e1c786f77403fb3f9674": "Stash 1 Shemagh (Green) at the sawmill docks on Woods",
+  "5ae9e2a286f7740de4152a0a": "Stash 1 RayBench Hipster Reserve sunglasses at the sawmill docks on Woods",
+  "5ae9e2e386f7740de4152a0d": "Stash 1 Round frame sunglasses at the sawmill docks on Woods"
+ },
+ "5b47876e86f7744d1c353205": {
+  "5b47884886f7744d1c35327d": "Find 4 Fuel conditioners in raid",
+  "5b47886986f7744d1a393e65": "Hand over 4 Fuel conditioners to Ragman"
+ },
+ "5b478b1886f7744d1b23c57d": {
+  "5b478c4c86f7744d1a393fac": "Stash 2 ComTac II headsets in the specified place on Interchange",
+  "5b478c7386f7744d1a393fb1": "Stash 2 6B47 helmets (Olive Drab) in the specified place on Interchange",
+  "5b478cb586f7744d1a393fb5": "Stash 2 Gzhel-K body armors in the specified place on Interchange"
+ },
+ "5b478eca86f7744642012254": {
+  "5b478f6886f774464201225a": "Obtain the first Chemical container",
+  "5b478f8886f7744d1b23c622": "Hand over the first Chemical container to Skier",
+  "5b4c826b86f7743cc87bcee4": "Obtain the second Chemical container",
+  "5b4c832686f77419603eb8f0": "Hand over the second Chemical container to Skier",
+  "5b4c82cd86f774170c6e4169": "Obtain the third Chemical container",
+  "5b4c836486f77417063a09dc": "Hand over the third Chemical container to Skier"
+ },
+ "5b478ff486f7744d184ecbbf": {
+  "5b47905886f7746807461fe2": "Find 4 Respirators in raid",
+  "5cb5ffd986f7746ef55de2c7": "Hand over 4 Respirators to Skier",
+  "5ec1388d83b69d213d3c2ee0": "Find 3 Medical bloodsets in raid",
+  "5b4790a886f774563c7a489f": "Hand over 3 Medical bloodsets to Skier"
+ },
+ "5b4794cb86f774598100d5d4": {
+  "66d07de6c7ef9040fff0b789": "Obtain the second Motor Controller on Shoreline",
+  "5b4c742886f7745cef1d02f5": "Obtain the third Motor Controller on Shoreline",
+  "5b4c769686f7746e535a5c0e": "Obtain the first Single-axis Fiber Optic Gyroscope on Woods",
+  "5b4c75a786f7747332534b52": "Obtain the second Single-axis Fiber Optic Gyroscope on Shoreline",
+  "5b4c76d886f77471d31735a3": "Hand over the first controller to Skier",
+  "5b47958e86f774598100d5e2": "Hand over the second controller to Skier",
+  "5b4795a586f774587a39506d": "Hand over the third controller to Skier",
+  "5b4c8e6586f77474396a5400": "Hand over the first Single-axis Fiber Optic Gyroscope to Skier",
+  "5b4c7aec86f77459732b4b08": "Hand over the second Single-axis Fiber Optic Gyroscope to Skier"
+ },
+ "5b4795fb86f7745876267770": {
+  "5b47968e86f7745877352c28": "Stash 3 Golden neck chains under the mattress next to BTR-82A in Generic Store on Interchange",
+  "5b4796c086f7745877352c2c": "Stash 3 Golden neck chains in the microwave on the 3rd floor of the dorm on Customs",
+  "5b47971086f774587877ad34": "Stash 3 Golden neck chains in the middle wooden cabin at the sawmill on Woods",
+  "5c923d3d86f774556e08d7a5": "Eliminate 5 PMC operatives in the time period of 22:00-10:00 on Interchange"
  },
  "5bc4776586f774512d07cf05": {
   "5bc850d186f7747213700892": "Eliminate 5 Scavs from over 40 meters away while using a bolt-action rifle with iron sights"
@@ -48,6 +370,65 @@ const WIKI_OBJ_TEXT = {
  },
  "5bc4856986f77454c317bea7": {
   "5bc485b586f774726473a858": "Eliminate 3 PMCs with a headshot and without dying while using a bolt-action rifle"
+ },
+ "5c0bc91486f7746ab41857a2": {
+  "5c0bc95086f7746e784f39ec": "Eliminate 20 Scavs while using a suppressed 12 gauge shotgun",
+  "5c0bcc9c86f7746fe16dbba9": "Eliminate 10 PMCs while using a suppressed 12 gauge shotgun"
+ },
+ "5c0bd01e86f7747cdd799e56": {
+  "5c1242fa86f7742aa04fed52": "Eliminate 40 targets in the time period of 21:00-06:00 on Streets of Tarkov, Lighthouse, Reserve, Ground Zero or Shoreline"
+ },
+ "5c0bd94186f7747a727f09b2": {
+  "5c1b765d86f77413193fa4f2": "Eliminate 10 PMCs using an SR-25 with Hybrid 46 suppressor and Schmidt & Bender PM II 1-8x24 scope"
+ },
+ "5c0bdb5286f774166e38eed4": {
+  "5c0bdbb586f774166e38eed5": "Reach the required Stress resistance skill level of 5"
+ },
+ "5c0be5fc86f774467a116593": {
+  "5fd892bc37b6e511a4734969": "Find 1 Ophthalmoscope in raid",
+  "5fd8935b7dd32f724e0fe7ee": "Find 1 LEDX Skin Transilluminator in raid",
+  "5c0be66c86f7744523489ab2": "Hand over the 1 Ophthalmoscope",
+  "5c0be69086f7743c9c1ecf43": "Hand over the 1 LEDX Skin Transilluminator"
+ },
+ "5c0d0d5086f774363760aef2": {
+  "5c0d0dfd86f7747f482a89a5": "Reach the required 10 Health skill level"
+ },
+ "5c0d0f1886f77457b8210226": {
+  "5ec13d45a1032866196c939b": "Find 2 Virtex programmable processors in raid",
+  "5ec13da983b69d213d3c2ee4": "Find 1 Military COFDM Wireless Signal Transmitter in raid",
+  "5c138c4486f7743b056e2943": "Hand over 2 Virtex programmable processors to Peacekeeper",
+  "5c138d4286f774276a6504aa": "Hand over 1 Military COFDM Wireless Signal Transmitter to Peacekeeper"
+ },
+ "5c0d190cd09282029f5390d8": {
+  "5c1b760686f77412780211a3": "Eliminate 5 of any target with grenades or grenade launchers"
+ },
+ "5c0d1c4cd0928202a02a6f5c": {
+  "5c1b778286f774294438b536": "Eliminate 40 any target from less than 60 meters away while wearing a gas mask or respirator on The Lab"
+ },
+ "5c1128e386f7746565181106": {
+  "5ca719ef86f7740a78020783": "Find 5 Bundle of wires in raid",
+  "5ca71a1e86f7740f5a5b88a2": "Find 5 Capacitors in raid",
+  "5c1129ed86f7746569440e88": "Handover 5 Bundle of wires to Mechanic",
+  "5c112a1b86f774656777d1ae": "Handover 5 Capacitors to Mechanic"
+ },
+ "5c1141f386f77430ff393792": {
+  "5ca7254e86f7740d424a2043": "Find 3 Antique teapots in raid",
+  "5ca7258986f7740d424a2044": "Find 2 Antique vases in raid",
+  "62a700893e015d7ce1151d90": "Find 1 Axel parrot figurine in raid",
+  "62a700a37230237f257cac2d": "Find 2 Raven figurines in raid",
+  "5c11427386f77430ff393793": "Hand over 3 Antique teapots to Ragman",
+  "5c122c5f86f77437e44bcb0e": "Hand over 2 Antique vases to Ragman",
+  "62a70094ec21e50cad3b670b": "Hand over 1 Axel parrot figurine to Ragman",
+  "62a700c2ec21e50cad3b670c": "Hand over 2 Raven figurines to Ragman"
+ },
+ "5c1234c286f77406fa13baeb": {
+  "5c1fa9c986f7740de474cb3d": "Eliminate 8 PMC operatives while wearing the specified gear on Customs"
+ },
+ "5c139eb686f7747878361a6f": {
+  "5ec14003e16f6c41ee73525f": "Find 1 UHF RFID Fixed Reader in raid",
+  "5ec14080c9ffe55cca300867": "Find 1 VPX Flash Storage Module in raid",
+  "5c139eb686f7747878361a72": "Hand over 1 UHF RFID Fixed Reader to Mechanic",
+  "5c139eb686f7747878361a73": "Hand over 1 VPX Flash Storage Module to Mechanic"
  },
  "5d2495a886f77425cd51e403": {
   "5d249aa286f77475e8376399": "Hand over the message to Mechanic"
@@ -76,6 +457,9 @@ const WIKI_OBJ_TEXT = {
  "5d25e2a986f77409dd5cdf2a": {
   "5d2605ef86f77469ef0f7622": "Reach the required Vitality skill level of 5"
  },
+ "5d25e2b486f77409de05bba0": {
+  "5d26143c86f77469ef0f894c": "Eliminate 6 PMСs in the office area (any floor) on Factory"
+ },
  "5d25e2c386f77443e7549029": {
   "5d66741c86f7744a2e70f039": "Eliminate Reshala",
   "5d26fd8886f77469f0445745": "Find 1 Reshala's Golden TT in raid",
@@ -87,582 +471,27 @@ const WIKI_OBJ_TEXT = {
  "5d25e2d886f77442734d335e": {
   "5d307fc886f77447f15f5b23": "Eliminate 2 PMCs while they are suffering from the stun effect"
  },
- "5d25e43786f7740a212217fa": {
-  "5d272bd386f77446085fa4f9": "Eliminate 3 Scavs dressed in police uniform (Reshala's bodyguards)"
- },
- "5d25e44386f77409453bce7b": {
-  "5d2733c586f7741dea4f3072": "Eliminate 5 PMCs in the Dorms area on Customs"
- },
- "5eaaaa7c93afa0558f3b5a1c": {
-  "5eaaaa7c93afa0558f3b5a1f": "Eliminate 15 Scavs while under any stimulant effect on Woods"
- },
- "669fa3979b0ce3feae01a130": {
-  "669fb1ffe34e78d618792b41": "Eliminate any 5 targets in the old cellars while using a shotgun on Factory"
- },
- "675c1ec7a46173572a0bf20a": {
-  "675c1f040a1128e59422a876": "Eliminate 10 Scavs at the old gas station on Customs",
-  "675c1f17cf59d5433be7ae77": "Eliminate 10 Scavs at the new gas station on Customs",
-  "675c1f311bd716cdb87947d1": "Hand over 2 found in raid Metal fuel tanks"
- },
- "5d25e2b486f77409de05bba0": {
-  "5d26143c86f77469ef0f894c": "Eliminate 6 PMСs in the office area (any floor) on Factory"
- },
- "59674cd986f7744ab26e32f2": {
-  "5cb31b6188a450159d330a18": "Eliminate 15 Scavs on Woods"
- },
- "596b36c586f77450d6045ad2": {
-  "597867e986f7741b265c6bd3": "Hand over 1 found in raid Module-3M armor to Skier",
-  "5ab8d44c86f7745b2325bd0c": "Hand over 1 found in raid TOZ-106 shotgun to Skier"
- },
- "59674eb386f774539f14813a": {
-  "5968929e86f7740d121082d3": "Obtain the secure folder in the Tarcone Director's office at the Customs terminal warehouse"
- },
- "63a88045abf76d719f42d715": {
-  "63a98cdf655ec5555b4aa9e6": "Hand over 1 found in raid Salty Dog beef sausage"
- },
- "59689fbd86f7740d137ebfc4": {
-  "5a3fb73b86f77458e0324376": "Locate the water hidden inside of the dorms on Customs"
- },
- "5967530a86f77462ba22226b": {
-  "5968948986f7740d121082d4": "Hand over the folder to Prapor"
- },
- "5968eb3186f7741dde183a4d": {
-  "5968eb9b86f7741ddb481543": "Eliminate 15 Scavs on Customs"
- },
- "596b43fb86f77457ca186186": {
-  "596b44b686f77457cb50ecca": "Obtain the hidden valuable cargo on Customs",
-  "596b450986f7745a7e510b54": "Hand over the valuable cargo to Skier"
- },
- "596a204686f774576d4c95de": {
-  "5ec1398886f7561e047757a5": "Find 2 Gas analyzers in raid",
-  "596a20ac86f7741ddf17dbf4": "Hand over the 2 Gas analyzers to Therapist"
- },
- "596b455186f77457cb50eccb": {
-  "5c9b5e3f86f7744aab7329b5": "Eliminate any 10 target with pistols on Factory"
- },
- "5979ed3886f77431307dc512": {
-  "5979ee2986f7743ec214c7a4": "Find 2 Secure flash drives in raid",
-  "5979ee4586f7743ec214c7a5": "Hand over 2 Secure flash drives to Skier"
- },
- "5969f90786f77420d2328015": {
-  "5969f98286f774576d4c9542": "Find 4 Morphine injectors in raid",
-  "5969f99286f77456630ea442": "Hand over the 4 injectors to Therapist"
- },
- "5979eee086f774311955e614": {
-  "5979ef4586f77431307dc513": "Find the Golden Zibbo lighter",
-  "5979ef7986f77431307dc514": "Stash a regular zibbo lighter at Doom room 303 on Customs"
- },
- "59675d6c86f7740a842fc482": {
-  "5968ed3186f77420d2328013": "Find 3 AK-74 5.45x39 6L31 60-round magazines in raid",
-  "59675e1d86f77414b07f137d": "Hand over the 3 AK-74 5.45x39 6L31 60-round magazines"
- },
- "5967725e86f774601a446662": {
-  "5968981986f7740d1648df42": "Obtain the valuable item in dorm room 203 on Customs"
- },
- "5a27d2af86f7744e1115b323": {
-  "5a27d34586f7744e1115b327": "Hand over 5,000 USD to Skier"
- },
- "5c0d190cd09282029f5390d8": {
-  "5c1b760686f77412780211a3": "Eliminate 5 of any target with grenades or grenade launchers"
- },
- "66058cb22cee99303f1ba067": {
-  "6606b709f7ce34bb26221cab": "Plant the Bison vs Undertaker poster in the living quarters at the Scav base on Customs"
- },
- "5969f9e986f7741dde183a50": {
-  "5969fa4886f7741ddb481544": "Obtain the case containing the device on Customs",
-  "5969fa8986f7741ddc2d3154": "Hand over the case"
- },
- "5979f9ba86f7740f6c3fe9f2": {
-  "5979fc2686f77426d702a0f2": "Obtain information about the Deputy Chief's past life on Customs",
-  "5979fc5386f77426d702a0f3": "Hand over the information to Skier",
-  "5979fc7e86f77426d702a0f4": "Obtain items that can help the investigation",
-  "5979fc9286f77426d702a0f5": "Hand over the items to Skier"
- },
- "59675ea386f77414b32bded2": {
-  "596895f986f7740d14064722": "Obtain the letter on the messenger's body on Factory"
- },
- "5a27b75b86f7742e97191958": {
-  "5a27d81a86f774472a6e0456": "Stash the MF-UNTAR body armor in the boat",
-  "5a27d85286f77448d82084e7": "Stash the multitool in the boat"
- },
- "596a1e6c86f7741ddc2d3206": {
-  "596a1f0486f77456630ea4d2": "Find 15 Cans of beef stew (Small) in raid",
-  "596a1f1586f77420d2328077": "Hand over 15 cans to Therapist"
- },
- "596a218586f77420d232807c": {
-  "596b46d886f77457ca186189": "Find 4 Car batteries in raid",
-  "596b46ec86f77457c7006f89": "Find 8 Spark plugs in raid",
-  "596b470c86f77457ca18618a": "Hand over the 4 batteries to Therapist",
-  "596b472686f77457c7006f8a": "Hand over the 8 spark plugs to Therapist"
- },
- "5979f8bb86f7743ec214c7a6": {
-  "5b0e766b86f7746bfa618964": "Eliminate 25 Scavs on Interchange, Ground Zero or Woods (This objective progress counts for all group members)"
- },
- "597a0b2986f77426d66c0633": {
-  "597a0be986f774273b74f673": "Find any evidence on Customs that could help with the investigation",
-  "597a0bb486f77426d66c0634": "Hand over the evidence to Skier",
-  "597a0bf886f7742717106d13": "Find any information on Customs that could help with the investigation",
-  "597a0bdb86f7742717106d12": "Hand over the info to Skier"
- },
- "5a27b7d686f77460d847e6a6": {
-  "5a37e8ae86f77415076b401d": "Mark the first T-90 tank with an MS2000 Marker on Shoreline",
-  "5a27fc8186f7746371546243": "Mark the second T-90 tank with an MS2000 Marker on Shoreline",
-  "5a27fc9686f774675744bb60": "Mark the third T-90 tank with an MS2000 Marker on Shoreline"
- },
- "675c15fbf7da9792a4059871": {
-  "675c1c980fd114390c638b89": "Eliminate any 15 targets inside the industrial plant on Customs"
- },
- "66058cb7c7f3584787181476": {
-  "6606d133fcb99b9004aa2d1d": "Eliminate 5 Scavs while using a Steyr AUG on any location"
- },
- "66058cbd9f59e625462acc8e": {
-  "660a9dc64c0927ead4fcfeef": "Plant 3 TP-200 TNT bricks on the second floor of the cafe on Ground Zero"
- },
- "66058cb9e8e4f17985230805": {
-  "660a9c99c650fa4d531f4c96": "Eliminate 2 PMC operatives while wearing a PACA Soft Armor on any location"
- },
- "66058cb5ae4719735349b9e8": {
-  "6606bd2aa49db36b69b6dbf9": "Hand over 5 found in raid items from the Drinks category",
-  "6606bd6768f8018fffebd998": "Hand over 5 found in raid items from the Food category"
- },
- "66058cc72cee99303f1ba069": {
-  "6633a85e347a2a2b4051a26b": "Hand over 1,000,000 Roubles"
- },
- "66058ccde8e4f17985230807": {
-  "663b9bb7fe7953705cb09114": "Eliminate 100 enemies in any game mode in Arena"
- },
- "66058cbb06ef1d50a60c1f46": {
-  "6606d08b4e2e27ca2d80085e": "Hand over 3 found in raid class 4 or higher ballistic plates to Ref"
- },
- "66058cc9ae4719735349b9ea": {
-  "662ba87106e44407b79e9ab2": "Win a match claiming at least 2nd place in the team in TeamFight, BlastGang, or CheckPoint mode in Arena"
- },
- "597a0e5786f77426d66c0636": {
-  "597a15b386f774799e5cd152": "Obtain the chemical-filled syringe hidden in Factory",
-  "597a15c386f77405ba6887d2": "Hand over the chemical-filled syringe to Skier"
- },
- "5a27b80086f774429a5d7e20": {
-  "5a294f1686f774340c7b7e4a": "Obtain the SAS disk from the first crashed drone",
-  "5a27ffb186f774192932b3d5": "Hand over the first SAS disk to Peacekeeper",
-  "5a27ffc786f77415ca58ae47": "Locate the second UAV crash site on Shoreline",
-  "5a3ba3b086f7745ab1081101": "Obtain the SAS disk from the second crashed drone",
-  "5a294f3386f77433e923f9cd": "Hand over the second SAS disk to Peacekeeper"
- },
- "59c9392986f7742f6923add2": {
-  "59c93bdb86f7742a19140434": "Obtain 1 Dorm room 303 key",
-  "59c93c1986f7742a424eaa33": "Obtain 1 ZB-014 key",
-  "59c93cbb86f7742a19140435": "Obtain 1 Military checkpoint key",
-  "59c93cea86f7742a08623162": "Obtain 1 Gas station storage room key",
-  "59c93d4e86f774496b698953": "Hand over 1 Dorm room 303 key",
-  "59c93d8086f7742a19140436": "Hand over 1 ZB-014 key",
-  "59c93d9c86f7742f6923add3": "Hand over 1 Customs military checkpoint key",
-  "59c93dbf86f7742a424eaa34": "Hand over 1 Gas station storage room key"
- },
- "59c93e8e86f7742a406989c4": {
-  "596a10d886f7741ddf11dbf0": "Hand over 1,000,000 RUB to Skier"
- },
- "59ca1a6286f774509a270942": {
-  "59ca1b1b86f7741b067dba42": "Obtain 10 M67 grenades",
-  "59ca1b4f86f774509a270943": "Hand over 10 grenades to Prapor"
- },
- "5a27b87686f77460de0252a8": {
-  "5a28017786f77452f6318b1b": "Locate and mark the first truck with an MS2000 Marker",
-  "5a2801f986f774531b679875": "Locate and mark the second truck with an MS2000 Marker",
-  "5cb5fd3d86f7746ef64ca33c": "Obtain 5 MRE ration packs",
-  "5a28023f86f774528903dd1e": "Hand over 5 MRE ration packs to Peacekeeper",
-  "5c9a170386f77438c80164eb": "Eliminate 10 Scavs while wearing a UN uniform (MF-UNTAR body armor and UN helmet) on Shoreline"
- },
- "5a03153686f77442d90e2171": {
-  "5c9a17c686f7747dbe2da3c1": "Eliminate 15 targets with headshots while using an AUG on Factory"
- },
- "5a03173786f77451cb427172": {
-  "5a0317da86f77451cb427295": "Mark the helicopter at the Health Resort with an MS2000 Marker on Shoreline",
-  "5a0325f286f7744384509230": "Mark the safe road to the helicopter with an MS2000 Marker on Shoreline"
- },
- "5a0449d586f77474e66227b7": {
-  "5a044a6c86f7747370402d91": "Obtain the key to the closed premises of the Sanatorium on Shoreline",
-  "5a280f8d86f774141b501756": "Hand over the key to Peacekeeper"
- },
- "5a27ba9586f7741b543d8e85": {
-  "5a28127b86f7743808504ecc": "Hand over 8,000 USD to Peacekeeper"
- },
- "5a27bb1e86f7741f27621b7e": {
-  "5a28183186f774398675d127": "Obtain the data in the computer room in the east wing of the Health Resort on Shoreline",
-  "5a28184c86f774376e43772a": "Hand over the retrieved data to Peacekeeper"
- },
- "5a27bb3d86f77411ea361a21": {
-  "5a2819c886f77460ba564f38": "Locate the room with reservoirs in the Health Resort on Shoreline",
-  "5a3ba76486f7744d39436da2": "Obtain any information about the second part of the cargo shipment",
-  "5a2e966286f7742f6c4f27a6": "Hand over the retrieved information to Peacekeeper"
- },
- "5ac3460c86f7742880308185": {
-  "5ac502a786f7740bde1b000c": "Find 2 Power cords in raid",
-  "5ac5055a86f7745cae22b582": "Find 4 T-Shaped Plugs in raid",
-  "5ac505c386f7740be0424d19": "Find 2 Printed circuit boards in raid",
-  "5ac505e186f7740bdf2ceabe": "Hand over 2 Power cords to Mechanic",
-  "5ac5061386f77417e429ce7a": "Hand over 4 T-Shaped Plugs to Mechanic",
-  "5ac5062586f774587c327395": "Hand over 2 Printed circuit boards to Mechanic"
- },
- "5ac346a886f7744e1b083d67": {
-  "5cb6f81d86f7740e9d452683": "Find 3 PC CPUs in raid",
-  "5ac5e79986f7747398341847": "Hand over 3 PC CPUs to Mechanic",
-  "5cb6f88d86f7747d215f09c1": "Find 3 Rechargeable batteries in raid",
-  "5ac5e88e86f7741c5804f9db": "Hand over 3 Rechargeable batteries to Mechanic",
-  "5cb6f8de86f7740e9d452685": "Find 3 Printed circuit boards in raid",
-  "5ac5e98886f77479bc6ca201": "Hand over 3 Printed circuit boards to Mechanic",
-  "5cb6f9c586f7740ace254c44": "Find 3 Broken GPhone smartphones in raid",
-  "5ac5ea0586f774609f36280c": "Hand over 3 Broken GPhone smartphones to Mechanic"
- },
- "5ac3475486f7741d6224abd3": {
-  "5ac5ee9986f7746e7a509a26": "Find 5 Malboro cigarettes in raid",
-  "5ac5eee986f77401fd341c9e": "Find 5 Strike cigarettes in raid",
-  "5ac5ef2a86f7741c5804f9f5": "Find 5 Wilston cigarettes in raid",
-  "5ac5ef5686f77416ca60f644": "Hand over 5 Malboro cigarettes to Mechanic",
-  "5ac5ef9886f7746e7a509a2d": "Hand over 5 Strike cigarettes to Mechanic",
-  "5ac5eff886f7740f43322559": "Hand over 5 Wilston cigarettes to Mechanic"
- },
- "66aa74571e5e199ecd094f18": {
-  "66aa74571e5e199ecd094f1e": "Eliminate 3 Scavs on Factory (In one raid)"
- },
- "60c0c018f7afb4354815096a": {
-  "60c0d187938d68438757cda2": "Eliminate Tagilla",
-  "60cfa590f81cc57f471718cc": "Find 1 BOSS cap in raid",
-  "60cfa5a85f9e6175514de2e3": "Hand over 1 BOSS cap to Jaeger"
- },
- "596a101f86f7741ddb481582": {
-  "596a10d886f7741ddf17dbf0": "Hand over Secure Folder 0052 to Skier"
+ "5d25e2e286f77444001e2e48": {
+  "5d667a8e86f774131e206b46": "Eliminate Killa",
+  "5d2719b186f7740701348573": "Find 1 Killa's Maska-1SCh bulletproof helmet in raid",
+  "5d271a3486f774483c7bdb12": "Hand over 1 Killa's Maska-1SCh bulletproof helmet to Jaeger"
  },
  "5d25e2ee86f77443e35162ea": {
   "5d2f464e498f71c8886f7656": "Eliminate Shturman",
   "5d27276886f7740701348578": "Find 1 Shturman's stash key in raid",
   "5d272a0b86f7745ba2701532": "Hand over 1 Shturman's stash key to Jaeger"
  },
- "6086c852c945025d41566124": {
-  "60882695949eb1096c454fcd": "Mark the first BMP-2 with an MS2000 Marker",
-  "608826f3949eb1096c454fd0": "Locate and inspect the second BMP-2 on Reserve",
-  "6088274a82e40b3c727fd164": "Mark the second BMP-2 with an MS2000 Marker",
-  "60892585b90d6f39cb74b114": "Locate and inspect the third BMP-2 on Reserve",
-  "6086c8ed1b0bb8063d5babb7": "Mark the third BMP-2 with an MS2000 Marker",
-  "608826d0a3994358a0751cfc": "Locate and inspect the fourth BMP-2 on Reserve",
-  "60882714c18cfa2a4e2afe59": "Mark the fourth BMP-2 with an MS2000 Marker",
-  "60882779d241f77b8a49785d": "Locate and inspect the first LAV III on Reserve"
+ "5d25e43786f7740a212217fa": {
+  "5d272bd386f77446085fa4f9": "Eliminate 3 Scavs dressed in police uniform (Reshala's bodyguards)"
  },
- "5a27bb8386f7741c770d2d0a": {
-  "5c9de99286f7741ced54c902": "Eliminate 10 Scavs while using a suppressed M4A1, ADAR or TX-15 on Shoreline"
- },
- "5ac3462b86f7741d6118b983": {
-  "5ac6248586f77416781dd3a3": "Locate the warehouse of seized goods on Customs",
-  "5ac6240786f77417204ca2b9": "Obtain the package of graphics cards",
-  "5ac624b286f77416781dd3ac": "Hand over the package of graphics cards to Mechanic"
- },
- "5a27bc1586f7741f6d40fa2f": {
-  "5a37db0c86f7745b8f4be68a": "Mark Artyom's car with MS2000 Marker"
- },
- "5a27bc3686f7741c73584026": {
-  "5a28221e86f7741d5b719624": "Obtain a list of the resort's tenants on Shoreline",
-  "5a28223786f7741c7a0b5401": "Hand over the list of tenants to Peacekeeper"
- },
- "5a27bc6986f7741c7358402b": {
-  "5a2e958d86f77416be092111": "Obtain information on Artyom's work on Shoreline",
-  "5a2822de86f7740a245249ce": "Hand over the information to Peacekeeper"
- },
- "5a27bc8586f7741b543d8ea4": {
-  "5a28235e86f7741da250b438": "Eliminate 15 targets from over 50 meters away using a 7.62x51mm NATO DMRs on Shoreline or Lighthouse"
- },
- "5ac3464c86f7741d651d6877": {
-  "5ac5081086f7740bde1b002f": "Find 3 Graphics cards in raid",
-  "5ac5082586f77418804f7d4c": "Find 15 CPU fans in raid",
-  "5ac5083d86f7740be2744eed": "Hand over 3 Graphics cards to Mechanic",
-  "5ac5084d86f7740bde1b0031": "Hand over 15 CPU fans to Mechanic"
- },
- "5d6fbc2886f77449d825f9d3": {
-  "5d6fbf0f86f77449d97f738e": "Hand over 50,000 EUR to Peacekeeper"
- },
- "60896888e4a85c72ef3fa300": {
-  "60929afc35915c62b44fd05c": "Hand over the package to Peacekeeper"
- },
- "6089732b59b92115597ad789": {
-  "6092947635915c62b44fd05b": "Hand over the navigation system to Mechanic"
- },
- "6179b4d1bca27a099552e04e": {
-  "61952308aa0f643f9a0ae20f": "Locate and mark the first BRDM with an MS2000 Marker",
-  "6195231dd07bdc6de57b40a5": "Locate and mark the second BRDM with an MS2000 Marker",
-  "61952325aa0f643f9a0ae212": "Locate and mark the first Stryker with an MS2000 Marker",
-  "6195232a1e972a652931edb6": "Locate and mark the second Stryker with an MS2000 Marker"
- },
- "665eeacf5d86b6c8aa03c79b": {
-  "665eed28bdbf7b1f92394ecb": "Eliminate 12 Scavs in the time period of 22:00-7:00 on Shoreline"
- },
- "5ede567cfa6dc072ce15d6e3": {
-  "5ee8ecd75eb3205dae135d17": "Locate one of two hermetic doors leading to the academy building (Black Bishop) on Reserve",
-  "5ee8ed18d72d953f5d2aabd4": "Locate one of two hermetic doors leading to barracks #1 (Black Pawn) on Reserve",
-  "5ee8eddde932d53763761b2c": "Locate one of two hermetic doors leading to barracks #2 (White Pawn) on Reserve"
- },
- "60896e28e4a85c72ef3fa301": {
-  "609169cfeca522371e5725c5": "Hand over the first journal to Therapist",
-  "60ae134cabb9675f0062cf6e": "Hand over the second journal to Therapist"
- },
- "6089743983426423753cd58a": {
-  "608ab22755f4ac386d7e7fdc": "Eliminate 10 Scavs in the underground warehouse on Reserve"
- },
- "5ac346cf86f7741d63233a02": {
-  "5ac7a7bf86f774132252a524": "Place the first Signal Jammer on the specified place on Shoreline",
-  "5ac7a83b86f774665012340b": "Place the second Signal Jammer on the specified place on Shoreline",
-  "5ac7a8d386f7741321499e3c": "Place the third Signal Jammer on the specified place on Shoreline"
- },
- "5ac346e886f7741d6118b99b": {
-  "5ac5eb3286f7746e7a509a09": "Reach the required Attention skill level of 8"
- },
- "5ae448bf86f7744d733e55ee": {
-  "5ae44ecd86f77414a13c970e": "Eliminate 10 any target on Interchange"
- },
- "5ae4490786f7744ca822adcc": {
-  "5fd89799c54dc00f463272d3": "Find 2 Kinda Cowboy hats in raid",
-  "5fd89729a8c881276c560433": "Find 2 Ushanka ear-flap caps in raid",
-  "5ae4543686f7742dc043c903": "Hand over 2 Ushanka ear-flap caps to Ragman",
-  "5ae454a086f7742be909a81a": "Hand over 2 Kinda Cowboy hats to Ragman"
- },
- "5ae4493d86f7744b8e15aa8f": {
-  "5ae9b5bd86f774307c29df37": "Obtain the OLI cargo route documents on Interchange",
-  "5ae9b63286f774229110402d": "Hand over the documents to Ragman"
- },
- "665eec1f5e47a79f8605565a": {
-  "665ef4d93bd11acd294ac48c": "Find 2 Propane tanks (5L) in raid"
- },
- "665eeca92f7aedcc900b0437": {
-  "6661a28be2cdba6a469447c7": "Hand over the 2 found in raid items: Adrenaline injector",
-  "6661a2ae387c59056c822add": "Hand over the 4 found in raid items: Bottle of OLOLO Multivitamins",
-  "6661a2bf4846fd2b6ba30f90": "Hand over the 3 found in raid items: Bottle of saline solution"
- },
- "67a0970f05d1611ed90be75d": {
-  "67a0dcf4ff6f74931359b9f9": "Hand over 5 found in raid Labrys research notes"
- },
- "67a09724972c11a3f5077324": {
-  "67a0de2750fdff39d267ea16": "Plant a hand grenade in the assembly workshop inside Labyrinth"
- },
- "67a097379f2068e74603c6ac": {
-  "67a0df7f2cd4d4413cd29b45": "Eliminate 6 of \"Minotaur's\" guards inside The Labyrinth"
- },
- "67d03be712fb5f8fd2096332": {
-  "67d03be712fb5f8fd2096334": "Eliminate 24 PMC operatives inside The Labyrinth"
- },
- "5ae4493486f7744efa289417": {
-  "5ae9b32486f7745bbc72275a": "Obtain the Goshan cargo manifests on Interchange",
-  "5ae9b36c86f774307c29df04": "Hand over the Goshan cargo manifests to Ragman",
-  "5ae9b3b186f7745bbc722762": "Obtain the OLI cargo manifests on Interchange",
-  "5ae9b34686f7743129512ccf": "Hand over the OLI cargo manifests to Ragman",
-  "5ae9b38a86f77432c81e2ce3": "Obtain the IDEA cargo manifests on Interchange",
-  "5ae9b3c986f77432c81e2ce6": "Hand over the IDEA cargo manifests to Ragman"
- },
- "5ae449b386f77446d8741719": {
-  "5ae9e17c86f77440d37ce03c": "Stash 1 Ghost balaclava at the sawmill docks on Woods",
-  "5ae9e1c786f77403fb3f9674": "Stash 1 Shemagh (Green) at the sawmill docks on Woods",
-  "5ae9e2a286f7740de4152a0a": "Stash 1 RayBench Hipster Reserve sunglasses at the sawmill docks on Woods",
-  "5ae9e2e386f7740de4152a0d": "Stash 1 Round frame sunglasses at the sawmill docks on Woods"
- },
- "59c50a9e86f7745fef66f4ff": {
-  "59674d5186f00443b872d5f7": "Eliminate 25 Scavs while using an AKS-74U series assault rifle on Customs"
- },
- "6179b3bdc7560e13d23eeb8d": {
-  "617bf6c70cf4a041de5b3972": "Find the data on water pump operation",
-  "61951c30aa0f643f9a0ae1b7": "Hand over the extracted data",
-  "617bf77a3de8a6689b533a2a": "Find the data on pumping station operation"
- },
- "60896bca6ee58f38c417d4f2": {
-  "608bffeee0cc9c2d4d2ccb29": "Eliminate 5 Raiders in the command bunker on Reserve"
- },
- "638fcd23dc65553116701d33": {
-  "638fd0805e5a195d2c443754": "Hand over the journal to Ragman"
- },
- "676529af9c90953d090882e7": {
-  "676529e759261ce07bc47b62": "Modify a PP-19-01 to comply with the given specifications",
-  "676529af9c90953d090882ea": "Modify a T-5000M to comply with the given specifications"
- },
- "64e7b971f9d6fa49d6769b44": {
-  "64e7ba17220ee966bf425ecb": "Locate and eliminate Kaban",
-  "64e7ba4a6393886f74119f3d": "Locate and eliminate Basmach",
-  "65bb698050fd7c32f5d666d1": "Locate and eliminate Gus",
-  "65bb6a61a845e4eb51390b4e": "Eliminate 5 of Kaban's guards at the car dealership on Streets of Tarkov"
- },
- "5c0bd94186f7747a727f09b2": {
-  "5c1b765d86f77413193fa4f2": "Eliminate 10 PMCs using an SR-25 with Hybrid 46 suppressor and Schmidt & Bender PM II 1-8x24 scope"
- },
- "5c1234c286f77406fa13baeb": {
-  "5c1fa9c986f7740de474cb3d": "Eliminate 8 PMC operatives while wearing the specified gear on Customs"
- },
- "6179acbdc760af5ad2053585": {
-  "617bd94c5a52d2390a2630c7": "Eliminate any 10 targets around the helicopter area at the water treatment plant on Lighthouse"
- },
- "60896b7bfa70fc097863b8f5": {
-  "60916aeac49cf53e4772cc3c": "Obtain the first folder with military on Reserve",
-  "60ae0dfe2d6a8320983d19ba": "Obtain the second folder with military on Reserve",
-  "60ae0e2c79e83a2cf96f35ce": "Obtain the third folder with military on Reserve",
-  "60916b41b89a3c264d7296f9": "Hand over the first documents to Prapor",
-  "60ae0f0586046842a754e21e": "Hand over the second documents to Prapor",
-  "60ae0f17b809a4748759078c": "Hand over the third documents to Prapor"
- },
- "5d25e48186f77443e625e386": {
-  "629f4f080f57046e362e6e9e": "Survive and extract from Shoreline with the \"Survived\" exit status"
- },
- "61904daa7d0d857927447b9c": {
-  "61904ebb22e6d82ee97ccbbe": "Hand over the message to Jaeger"
- },
- "6193850f60b34236ee0483de": {
-  "6193dabd5f6468204470571f": "Eliminate 4 Scavs along the shore and the main road on Lighthouse"
- },
- "5d25e48d86f77408251c4bfb": {
-  "5d6949e786f774238a38d9e0": "Find 3 Secure Flash drives in raid",
-  "5d27491686f77475aa5cf5b9": "Hand over 3 Secure Flash drives to Jaeger"
- },
- "639282134ed9512be67647ed": {
-  "63a7d461f32fa1316250c3d7": "Locate the cargo convoy on Streets of Tarkov",
-  "63a7d444f32fa1316250c3d5": "Determine the ambush spot"
- },
- "59ca264786f77445a80ed044": {
-  "59674d5986f77446b872d5f7": "Eliminate 10 Scavs while using an SVDS 7.62x54R sniper rifle or TKPD 9.3x64 carbine on Lighthouse",
-  "59ca27f786f77445aa0ddc14": "Eliminate 10 Scavs while wearing a Scav Vest on Lighthouse",
-  "59ca293c86f91445a80ed047": "Find 5 Bars A-2607 95Kh18 knives in raid",
-  "59ca29ab86f77445ab431c86": "Hand over the 5 Bars A-2607 95Kh18 knives"
- },
- "59ca2eb686f77445a80ed049": {
-  "59ca2fba86f77445e4732b25": "Eliminate 30 PMC operatives while using specified weapons (Light Machine Guns, 9x39mm weapons such as AS Val or SR-3M, SVDS 7.62x54R sniper rifle, TKPD 9.3x64 carbine, Kalashnikov AKS-74U series weapon or Kalashnikov AKM 7.62x39 assault rifle series weapon) on Lighthouse, Shoreline, Reserve, Ground Zero or The Lab",
-  "5b0548e686f7740306753506": "Hand over any 10 BEAR or USEC dogtags",
-  "5cb3397c88a450159a723d79": "Locate and Neutralize any 5 Bosses"
- },
- "5a68663e86f774501078f78a": {
-  "5a68760f86f7743cc55d8709": "Search the room in the Health Resort for any documents about TerraGroup's research on Shoreline"
- },
- "5a68665c86f774255929b4c7": {
-  "5a68776786f774759f1f55f6": "Locate the van of the Health Resort medical services director on Woods",
-  "5a68770f86f774747d4b0d8b": "Take a sample of the blood"
- },
- "5a68667486f7742607157d28": {
-  "5a6878e886f7745e65687985": "Reach the required 4 Health skill level"
+ "5d25e44386f77409453bce7b": {
+  "5d2733c586f7741dea4f3072": "Eliminate 5 PMCs in the Dorms area on Customs"
  },
  "5d25e44f86f77443e625e385": {
   "5d27369586f774457411b264": "Eliminate Glukhar"
  },
- "5d6fb2c086f77449da599c24": {
-  "5d6fb8a886f77449db3db8b6": "Hand over 400,000 RUB to Therapist"
- },
- "608a768d82e40b3c727fd17d": {
-  "608a8356fa70fc097863b8f8": "Eliminate 10 Scavs inside the main barracks on Reserve"
- },
- "64e7b99017ab941a6f7bf9d7": {
-  "64e7bc2c5e6d3e61ca2ca097": "Eliminate any 15 targets at the Stylobate building while using Pistols on Streets of Tarkov"
- },
- "64e7b9a4aac4cd0a726562cb": {
-  "64e7bd0c6393886f74119f41": "Eliminate any 25 targets at the Rodina cinema while using SMGs on Streets of Tarkov"
- },
- "64e7b9bffd30422ed03dad38": {
-  "64e7bdd52d369a1c0172722f": "Eliminate any 20 any target using Assault rifles or Assault carbines on Streets of Tarkov"
- },
- "68ee1c18b4e5bc9a68018cd7": {
-  "68ee1cc7e8b13097f525e6f2": "Hand over 1 found in raid Red Rebel ice pick to Prapor"
- },
- "5edaba7c0c502106f869bc02": {
-  "5edabb950c502106f869bc04": "Hand over Sanitar's surgery kit to Therapist",
-  "5edabc2ca0055865214cb5a6": "Hand over Sanitar's ophthalmoscope to Therapist"
- },
- "5edac020218d181e29451446": {
-  "5edac0e02ddc9e4c802cd969": "Find 1 M.U.L.E. stimulant injector in raid",
-  "5edac1040880da21347b3845": "Hand over 1 M.U.L.E. stimulant injector to Peacekeeper",
-  "5edac13760bdcc7ff355811f": "Find 1 Obdolbos cocktail injector in raid",
-  "5edac1530880da21347b3846": "Hand over 1 Obdolbos cocktail injector to Peacekeeper",
-  "5edac190cecc0069284c0ed2": "Find 1 Meldonin stimulant injector in raid",
-  "5edac1b2930f5454f51dcac4": "Hand over 1 Meldonin stimulant injector to Peacekeeper",
-  "5edac1e116d985118871ba24": "Find 1 AHF1-M stimulant injector in raid",
-  "5edac1fccc183c769d778bd3": "Hand over 1 AHF1-M stimulant injector to Peacekeeper",
-  "5edac22860bdcc7ff3558124": "Find 1 P22 (Product 22) stimulant injector in raid",
-  "5edac2582ddc9e4c802cd970": "Hand over 1 P22 (Product 22) stimulant injector to Peacekeeper",
-  "5edac2897869412e9c669c32": "Find 1 L1 (Norepinephrine) stimulant injector in raid",
-  "5edac2a260bdcc7ff3558127": "Hand over 1 L1 (Norepinephrine) stimulant injector to Peacekeeper",
-  "5edac2cc16d985118871ba29": "Find 1 3-(b-TG) stimulant injector in raid",
-  "5edac2e10bb72a50635c2bf9": "Hand over 1 3-(b-TG) stimulant injector to Peacekeeper"
- },
- "6179ad0a6e9dd54ac275e3f2": {
-  "617bf1e1d93d977d2452051f": "Eliminate 10 Rogues on Lighthouse"
- },
- "5b478eca86f7744642012254": {
-  "5b478f6886f774464201225a": "Obtain the first Chemical container",
-  "5b478f8886f7744d1b23c622": "Hand over the first Chemical container to Skier",
-  "5b4c826b86f7743cc87bcee4": "Obtain the second Chemical container",
-  "5b4c832686f77419603eb8f0": "Hand over the second Chemical container to Skier",
-  "5b4c82cd86f774170c6e4169": "Obtain the third Chemical container",
-  "5b4c836486f77417063a09dc": "Hand over the third Chemical container to Skier"
- },
- "63a5cf262964a7488f5243ce": {
-  "63a5cf262964a7488f5243d1": "Eliminate 20 PMCs using an MP5SD on Streets of Tarkov, Ground Zero or Interchange"
- },
- "639136f086e646067c176a8b": {
-  "63929224744e45201147081a": "Eliminate 8 snipers on the rooftops on Streets of Tarkov"
- },
- "5b478ff486f7744d184ecbbf": {
-  "5b47905886f7746807461fe2": "Find 4 Respirators in raid",
-  "5cb5ffd986f7746ef55de2c7": "Hand over 4 Respirators to Skier",
-  "5ec1388d83b69d213d3c2ee0": "Find 3 Medical bloodsets in raid",
-  "5b4790a886f774563c7a489f": "Hand over 3 Medical bloodsets to Skier"
- },
- "5edac34d0bb72a50635c2bfa": {
-  "5f07025e27cec53d5d24fe25": "Find 10 TerraGroup Labs access keycards in raid"
- },
- "5edab4b1218d181e29451435": {
-  "5edab5a6cecc0069284c0ec2": "Eliminate Sanitar"
- },
- "639136df4b15ca31f76bc31f": {
-  "639285879444fb141f4e6f25": "Shoot a yellow signal flare in the Train depot.",
-  "63aaccae87413d64ae079631": "Eliminate any target in the train depot on reserve (6)"
- },
- "5edac63b930f5454f51e128b": {
-  "5eff5674befb6436ce3bbaf7": "Find Sanitar's workplace in the Lab",
-  "5eec9d054110547f1f545c99": "Obtain information about Sanitar's work",
-  "5edac8483c809a44ef12b4d2": "Hand over the Flash drive marked with blue tape to Peacekeeper"
- },
- "5b4795fb86f7745876267770": {
-  "5b47968e86f7745877352c28": "Stash 3 Golden neck chains under the mattress next to BTR-82A in Generic Store on Interchange",
-  "5b4796c086f7745877352c2c": "Stash 3 Golden neck chains in the microwave on the 3rd floor of the dorm on Customs",
-  "5b47971086f774587877ad34": "Stash 3 Golden neck chains in the middle wooden cabin at the sawmill on Woods",
-  "5c923d3d86f774556e08d7a5": "Eliminate 5 PMC operatives in the time period of 22:00-10:00 on Interchange"
- },
- "6613f3007f6666d56807c929": {
-  "6613f36ca4dc044e13e02295": "Eliminate 100 Raiders",
-  "6616819ac7c53d7769413d9c": "Hand over 50 found in raid WARTECH brand equipment"
- },
- "66151401efb0539ae10875ae": {
-  "66151401efb0539ae10875af": "Eliminate 100 Raiders",
-  "66168239957ac58c30b29135": "Hand over 50 found in raid WARTECH brand equipment"
- },
- "66d9cbb67b491f9d5304f6e6": {
-  "66d9cbb67b491f9d5304f6eb": "Install a WI-FI Camera at the amphibian pizza lovers' hideout on Streets of Tarkov",
-  "66d9cbb67b491f9d5304f6e9": "Install a WI-FI Camera at the burned girl's sickroom on Streets of Tarkov",
-  "66dacf2a88c7001436a67390": "Install a WI-FI Camera at the barbed wire body on Streets of Tarkov",
-  "66d9cbb67b491f9d5304f6ea": "Install a WI-FI Camera at the really scary hole in the wall on Streets of Tarkov"
- },
- "5b4794cb86f774598100d5d4": {
-  "66d07de6c7ef9040fff0b789": "Obtain the second Motor Controller on Shoreline",
-  "5b4c742886f7745cef1d02f5": "Obtain the third Motor Controller on Shoreline",
-  "5b4c769686f7746e535a5c0e": "Obtain the first Single-axis Fiber Optic Gyroscope on Woods",
-  "5b4c75a786f7747332534b52": "Obtain the second Single-axis Fiber Optic Gyroscope on Shoreline",
-  "5b4c76d886f77471d31735a3": "Hand over the first controller to Skier",
-  "5b47958e86f774598100d5e2": "Hand over the second controller to Skier",
-  "5b4795a586f774587a39506d": "Hand over the third controller to Skier",
-  "5b4c8e6586f77474396a5400": "Hand over the first Single-axis Fiber Optic Gyroscope to Skier",
-  "5b4c7aec86f77459732b4b08": "Hand over the second Single-axis Fiber Optic Gyroscope to Skier"
- },
- "5d4bec3486f7743cac246665": {
-  "5d4bfe4b86f7744a9d4fe032": "Find 1 6-STEN-140-M military battery in raid",
-  "5d4bfe7c86f7744a9c66b316": "Hand over 1 military battery to Prapor",
-  "5d4c020a86f77449c463ced6": "Find 3 OFZ 30x165mm shells in raid",
-  "5d4c028c86f774389001e027": "Hand over the 3 OFZ shells to Prapor"
- },
- "5c0bd01e86f7747cdd799e56": {
-  "5c1242fa86f7742aa04fed52": "Eliminate 40 targets in the time period of 21:00-06:00 on Streets of Tarkov, Lighthouse, Reserve, Ground Zero or Shoreline"
- },
- "5ae4495086f77443c122bc40": {
-  "5ae4559386f7742dc043c95e": "Find 1 Ski hat with holes for eyes in raid",
-  "5ae455be86f7742dc043c969": "Hand over 1 Ski hat with holes for eyes to Ragman",
-  "5ae455fb86f7744dd8242380": "Find 1 Pilgrim tourist backpack in raid",
-  "5ae4562086f774498b05e0dc": "Hand over 1 Pilgrim tourist backpack to Ragman"
+ "5d25e45e86f77408251c4bfa": {
+  "5d273a4d86f774457411b266": "Eliminate 6 Raiders"
  },
  "5d25e46e86f77409453bce7c": {
   "5d27446f86f77475a86565a3": "Find 4 items from the Medkits category Found In Raid",
@@ -670,232 +499,33 @@ const WIKI_OBJ_TEXT = {
   "5ec1504183b69d213d3c2ee8": "Find 4 items from the Injury treatment category Found In Raid",
   "5d7782c686f7742fa732bf07": "Hand over the items"
  },
- "5ae4495c86f7744e87761355": {
-  "5ae9b77f86f77432c81e3074": "Find 2 WARTECH TV-109 + TV-106 chest rigs in raid",
-  "5ae9b91386f77415a869b3f3": "Hand over the chest rigs",
-  "5ae9b7c886f774307c29df56": "Find 2 BlackRock chest rigs in raid",
-  "5ae9b93b86f7746e0026221a": "Hand over the chest rigs"
+ "5d25e48186f77443e625e386": {
+  "629f4f080f57046e362e6e9e": "Survive and extract from Shoreline with the \"Survived\" exit status"
  },
- "63a9b229813bba58a50c9ee5": {
-  "63a9b229813bba58a50c9ee6": "Eliminate any 30 enemies from over 100 meters away while using AR-15 platform weapons on Reserve, Lighthouse, Shoreline, or Ground Zero"
- },
- "5ae4499a86f77449783815db": {
-  "5ae9c29386f77427153c7fb0": "Reach the required Charisma skill level of 10"
- },
- "5b47876e86f7744d1c353205": {
-  "5b47884886f7744d1c35327d": "Find 4 Fuel conditioners in raid",
-  "5b47886986f7744d1a393e65": "Hand over 4 Fuel conditioners to Ragman"
- },
- "63a9ae24009ffc6a551631a5": {
-  "63a9ae63da7999196148ba5c": "Eliminate any 30 enemies with AK-74 series weapons on Reserve or Lighthouse"
- },
- "639135bbc115f907b14700a6": {
-  "639135bbc115f907b14700a8": "Hand over the guitar pick to Ragman"
- },
- "5ae4498786f7744bde357695": {
-  "5ae9c0a686f774703201f143": "Obtain the Clothes design handbook - Part 1 on Interchange",
-  "5ae9c0e186f7746419683c5e": "Hand over the Clothes design handbook - Part 1 to Ragman",
-  "5ae9c0c986f77468ab400f88": "Obtain the Clothes design handbook - Part 2 on Interchange",
-  "5ae9c10686f774703201f146": "Hand over the Clothes design handbook - Part 2 to Ragman"
- },
- "666314b4d7f171c4c20226c3": {
-  "666333e93962787efd64004a": "Eliminate 10 PMC operatives while using Colt M4A1 or M16, 6B43 body armor, and Kiver-M helmet on Factory"
- },
- "666314b2a9290f9e0806cca3": {
-  "66632deea5607d352f3aa844": "Eliminate 3 hooded men while using the double barrel shotgun"
- },
- "666314bafd5ca9577902e03a": {
-  "6663389aa257916ad3c89529": "Eliminate any 10 targets while using the golden TT-33 pistol"
- },
- "666314bd920800278d0f6748": {
-  "66d07fa69d373d977f437fe0": "Install a WI-FI Camera on the mountain ledge on Woods",
-  "667bf8370849ce7edf2b124e": "Install a WI-FI Camera at the pier tower on Shoreline",
-  "667bf840981b1c594af358ce": "Install a WI-FI Camera at the office corridor on Factory"
+ "5d25e48d86f77408251c4bfb": {
+  "5d6949e786f774238a38d9e0": "Find 3 Secure Flash drives in raid",
+  "5d27491686f77475aa5cf5b9": "Hand over 3 Secure Flash drives to Jaeger"
  },
  "5d25e4ad86f77443e625e387": {
   "5d357e8786f7745b5e66a51a": "Locate Jaeger's Health Resort room with a view of the bay on Shoreline",
   "5d357e0e86f7745b3f307c56": "Obtain Jaeger's Photo album",
   "5d27522686f774304e316405": "Hand over the Photo album to Jaeger"
  },
- "6574e0dedc0d635f633a5805": {
-  "6574e0dedc0d635f633a5807": "Eliminate any 40 targets while using an RPDN with EKP-1S-03 sight on Shoreline, Interchange or Woods"
- },
  "5d25e4b786f77408251c4bfc": {
   "5d2f375186f7745916404955": "Find 2 TerraGroup Labs access keycards in raid",
   "5d8a09d386f77410b4225d13": "Hand over 2 TerraGroup Labs access keycards to Jaeger"
  },
- "66ab9da7eb102b9bcd08591c": {
-  "66ab9da7eb102b9bcd08591d": "Eliminate 5 Scavs on Lighthouse (In one raid)",
-  "66ab9da7eb102b9bcd085922": "Eliminate 5 Scavs on Shoreline (In one raid)"
+ "5d4bec3486f7743cac246665": {
+  "5d4bfe4b86f7744a9d4fe032": "Find 1 6-STEN-140-M military battery in raid",
+  "5d4bfe7c86f7744a9c66b316": "Hand over 1 military battery to Prapor",
+  "5d4c020a86f77449c463ced6": "Find 3 OFZ 30x165mm shells in raid",
+  "5d4c028c86f774389001e027": "Hand over the 3 OFZ shells to Prapor"
  },
- "5b478b1886f7744d1b23c57d": {
-  "5b478c4c86f7744d1a393fac": "Stash 2 ComTac II headsets in the specified place on Interchange",
-  "5b478c7386f7744d1a393fb1": "Stash 2 6B47 helmets (Olive Drab) in the specified place on Interchange",
-  "5b478cb586f7744d1a393fb5": "Stash 2 Gzhel-K body armors in the specified place on Interchange"
+ "5d6fb2c086f77449da599c24": {
+  "5d6fb8a886f77449db3db8b6": "Hand over 400,000 RUB to Therapist"
  },
- "68db9c7557bc51a8c804c14b": {
-  "68db9ea0e6c69908254eceee": "Eliminate 20 PMC operatives from over 50 meters away while using any 9x39 caliber weapon"
- },
- "6179b5eabca27a099552e052": {
-  "61a61c085d06a344766f3a29": "Eliminate 20 BEAR PMC operatives on Lighthouse, Ground Zero, Reserve, Shoreline, or Streets of Tarkov",
-  "617fc08b30ccff6c7c37fcd3": "Hand over 20 found in raid BEAR PMC dogtags"
- },
- "5c1128e386f7746565181106": {
-  "5ca719ef86f7740a78020783": "Find 5 Bundle of wires in raid",
-  "5ca71a1e86f7740f5a5b88a2": "Find 5 Capacitors in raid",
-  "5c1129ed86f7746569440e88": "Handover 5 Bundle of wires to Mechanic",
-  "5c112a1b86f774656777d1ae": "Handover 5 Capacitors to Mechanic"
- },
- "5c0d0d5086f774363760aef2": {
-  "5c0d0dfd86f7747f482a89a5": "Reach the required 10 Health skill level"
- },
- "6179b4f16e9dd54ac275e407": {
-  "61a00eff2d708d41a34f19b4": "Locate the crashed helicopter on Lighthouse",
-  "63ac1a941b5c95746621ddb2": "Find the informant's intelligence folder",
-  "61a00f3f177fb945751bbe92": "Hand over the folder to Skier"
- },
- "6179b5b06e9dd54ac275e409": {
-  "6193dc1e6623e330c82e0be9": "Eliminate 20 USEC PMC operatives on Lighthouse",
-  "6194fbf785a6d62c481a7aee": "Hand over 20 found in raid USEC PMC dogtags"
- },
- "5d25e45e86f77408251c4bfa": {
-  "5d273a4d86f774457411b266": "Eliminate 6 Raiders"
- },
- "5c0bc91486f7746ab41857a2": {
-  "5c0bc95086f7746e784f39ec": "Eliminate 20 Scavs while using a suppressed 12 gauge shotgun",
-  "5c0bcc9c86f7746fe16dbba9": "Eliminate 10 PMCs while using a suppressed 12 gauge shotgun"
- },
- "5c0d0f1886f77457b8210226": {
-  "5ec13d45a1032866196c939b": "Find 2 Virtex programmable processors in raid",
-  "5ec13da983b69d213d3c2ee4": "Find 1 Military COFDM Wireless Signal Transmitter in raid",
-  "5c138c4486f7743b056e2943": "Hand over 2 Virtex programmable processors to Peacekeeper",
-  "5c138d4286f774276a6504aa": "Hand over 1 Military COFDM Wireless Signal Transmitter to Peacekeeper"
- },
- "66aa61663aa37705c5024277": {
-  "66aa61663aa37705c5024278": "Eliminate any 5 targets on Streets of Tarkov (In one raid)",
-  "66aa61663aa37705c502427e": "Eliminate any 5 targets on Interchange (In one raid)"
- },
- "5d25e2e286f77444001e2e48": {
-  "5d667a8e86f774131e206b46": "Eliminate Killa",
-  "5d2719b186f7740701348573": "Find 1 Killa's Maska-1SCh bulletproof helmet in raid",
-  "5d271a3486f774483c7bdb12": "Hand over 1 Killa's Maska-1SCh bulletproof helmet to Jaeger"
- },
- "5c1141f386f77430ff393792": {
-  "5ca7254e86f7740d424a2043": "Find 3 Antique teapots in raid",
-  "5ca7258986f7740d424a2044": "Find 2 Antique vases in raid",
-  "62a700893e015d7ce1151d90": "Find 1 Axel parrot figurine in raid",
-  "62a700a37230237f257cac2d": "Find 2 Raven figurines in raid",
-  "5c11427386f77430ff393793": "Hand over 3 Antique teapots to Ragman",
-  "5c122c5f86f77437e44bcb0e": "Hand over 2 Antique vases to Ragman",
-  "62a70094ec21e50cad3b670b": "Hand over 1 Axel parrot figurine to Ragman",
-  "62a700c2ec21e50cad3b670c": "Hand over 2 Raven figurines to Ragman"
- },
- "669fa3a40c828825de06d6a1": {
-  "66a0f5a7f9eae6761253114c": "Eliminate any 50 targets while using an SR-2M with suppressor and KP-SR2 sight on Factory"
- },
- "67b45467814ab0ffa000c7e7": {
-  "67b45467814ab0ffa000c7ea": "Eliminate 20 PMC operatives while using grenades or grenade launchers"
- },
- "600302d73b897b11364cd161": {
-  "600303250b79c6604058ce30": "Eliminate Shturman 20 times"
- },
- "65734c186dc1e402c80dc19e": {
-  "65734c186dc1e402c80dc1a2": "Eliminate any 15 enemies while wearing a Bomber beanie and RayBench Hipster Reserve sunglasses on Streets of Tarkov"
- },
- "639135cd8ba6894d155e77cb": {
-  "63a7dbefee7b4d0d5507baf8": "Locate the improvised jail warden's apartment on Streets of Tarkov",
-  "63a7dbc31943b749b5021ec3": "Find out what happened to the warden"
- },
- "6613f307fca4f2f386029409": {
-  "6615127fd998c5f2aaa4a8a0": "Eliminate 100 Rogues",
-  "661681edabe376e7d6eab98f": "Hand over 50 found in raid LBT brand equipment"
- },
- "6615141bfda04449120269a7": {
-  "6615141bfda04449120269a8": "Eliminate 100 Rogues",
-  "661682aed31d408548016468": "Hand over 50 found in raid LBT brand equipment"
- },
- "6764174c86addd02bc033d68": {
-  "676418a60b9bcbe280972288": "Eliminate 20 PMC operatives from over 40 meters away while using a bolt-action rifle with night or thermal scope"
- },
- "639135534b15ca31f76bc317": {
-  "639135534b15ca31f76bc319": "Hand over the digital storage device"
- },
- "5c139eb686f7747878361a6f": {
-  "5ec14003e16f6c41ee73525f": "Find 1 UHF RFID Fixed Reader in raid",
-  "5ec14080c9ffe55cca300867": "Find 1 VPX Flash Storage Module in raid",
-  "5c139eb686f7747878361a72": "Hand over 1 UHF RFID Fixed Reader to Mechanic",
-  "5c139eb686f7747878361a73": "Hand over 1 VPX Flash Storage Module to Mechanic"
- },
- "6663149cfd5ca9577902e037": {
-  "66696cd3997231debad40d19": "Eliminate any 15 targets that are using a 20+ container size backpack"
- },
- "5c0be5fc86f774467a116593": {
-  "5fd892bc37b6e511a4734969": "Find 1 Ophthalmoscope in raid",
-  "5fd8935b7dd32f724e0fe7ee": "Find 1 LEDX Skin Transilluminator in raid",
-  "5c0be66c86f7744523489ab2": "Hand over the 1 Ophthalmoscope",
-  "5c0be69086f7743c9c1ecf43": "Hand over the 1 LEDX Skin Transilluminator"
- },
- "5c0bdb5286f774166e38eed4": {
-  "5c0bdbb586f774166e38eed5": "Reach the required Stress resistance skill level of 5"
- },
- "675c1ff1a757ddd00404f0aa": {
-  "675c1ff1a757ddd00404f0ae": "Eliminate any 50 targets while using an Aklys Defense Velociraptor on Customs"
- },
- "6663149f1d3ec95634095e75": {
-  "666973ee1d80fbbbfeaf46c9": "Sell Ragman any 250 backpacks or tactical rigs"
- },
- "666314a1920800278d0f6746": {
-  "6669769ff0cb253ff7649f27": "Find Crye Precision AVS plate carrier (Tagilla Edition) in raid",
-  "66697774640ec1284ed1621f": "Find LBT-1961A Load Bearing Chest Rig (Goons Edition) in raid",
-  "666977bfe975ac480a8f914e": "Find Mystery Ranch NICE COMM 3 BVS frame system (Coyote) in raid",
-  "666977f2dd6e511e9f33005a": "Find Crye Precision CPC plate carrier (Goons Edition) in raid"
- },
- "666314a31cd52e3d040a2e76": {
-  "6669abb8dac5788ebd0ff74a": "Locate and neutralize any 5 Bosses (excluding The Goons, The Wedge and Partisan) while using any Goons Edition tactical rig"
- },
- "666314a50aa5c7436c00908a": {
-  "6669acb8c4d34bd547a4d2ac": "Hand over 15 Physical Bitcoins"
- },
- "671a59e43d73dac1360765cc": {
-  "671ac68e30609eb2c7e9a7f7": "Eliminate any 20 targets while using the MPS Auto Assault-12 shotgun"
- },
- "67e993f5ed537409f009da75": {
-  "67ebc5f501052193cdb4c9ac": "Hand over a Lega Medal to Ref"
- },
- "626bdcc3a371ee3a7a3514c5": {
-  "626c317e05f287031503c7fd": "Locate and eliminate Knight",
-  "626c318147ea7f506e5493c7": "Locate and eliminate Big Pipe",
-  "626c3183af14a41d9a1f4ea7": "Locate and eliminate Birdeye"
- },
- "5c0d1c4cd0928202a02a6f5c": {
-  "5c1b778286f774294438b536": "Eliminate 40 any target from less than 60 meters away while wearing a gas mask or respirator on The Lab"
- },
- "6942b44f891369fc790e385a": {
-  "6942b48e6998a45a7b90cd5b": "Eliminate 10 PMC operatives while using an active headset without wearing any armor",
-  "6942b72980d7f587b5b3ca86": "Eliminate 10 PMC operatives while wearing the TSh-4M-L soft tank crew helmet without wearing any active headset"
- },
- "60e71c48c1bfa3050473b8e5": {
-  "60e8658571035f300c301ac6": "Find 3 Portable defibrillators in raid",
-  "60e865a60cef122b414a156a": "Find 3 Ophthalmoscopes in raid",
-  "60e866175d67b234af3d392a": "Find 2 LEDX Skin Transilluminators in raid",
-  "60f028ca86abc00cdc03ab89": "Find 20 Piles of meds in raid",
-  "62a701587230237f257cac30": "Find 10 Bottles of OLOLO Multivitamins in raid",
-  "60e866c50cef122b414a156c": "Hand over the 3 ophthalmoscopes",
-  "60e866f926b88043510e0adf": "Hand over the 3 defibrillators",
-  "60e867265d67b234af3d392c": "Hand over the 2 LEDX",
-  "60f028f85caf08029e0d6277": "Hand over the 20 Piles of meds",
-  "62a70168eb3cb46d9a0bba7a": "Hand over the 10 multivitamins"
- },
- "63a9b36cc31b00242d28a99f": {
-  "63a9b3d7813bba58a50c9ee9": "Eliminate 10 Scavs while using melee weapons on daytime Factory",
-  "63a9b41dad5cc12f22162022": "Eliminate 10 Scavs while using melee weapons on Streets of Tarkov",
-  "63a9b45bda7999196148ba5f": "Eliminate 10 Scavs while using melee weapons on Lighthouse",
-  "63a9b52b009ffc6a551631a7": "Eliminate 10 Scavs while using melee weapons on Woods",
-  "63a9b557da7999196148ba61": "Eliminate 10 Scavs while using melee weapons on Shoreline",
-  "63a9b591da7999196148ba63": "Eliminate 10 Scavs while using melee weapons on Interchange",
-  "63a9b5b2813bba58a50c9eeb": "Eliminate 10 Scavs while using melee weapons on Customs",
-  "63a9b5f064b9631d9178276b": "Eliminate 10 Scavs while using melee weapons on Reserve",
-  "65e0a329893b7bf535c6a9fd": "Eliminate 10 Scavs while using melee weapons on Ground Zero"
+ "5d6fbc2886f77449d825f9d3": {
+  "5d6fbf0f86f77449d97f738e": "Hand over 50,000 EUR to Peacekeeper"
  },
  "5e381b0286f77420e3417a74": {
   "5e38261886f77429853af26c": "Find 5 Aramid fabrics in raid",
@@ -929,48 +559,111 @@ const WIKI_OBJ_TEXT = {
   "5e4d515e86f77438b2195249": "Find 5 KEKTAPE duct tapes in raid",
   "5e4d515e86f77438b219524a": "Hand over 5 KEKTAPE duct tapes to Ragman"
  },
- "68400926706e0a55e90b0007": {
-  "684180b0b22d582a57c5a8d7": "Hand over 50,000 EUR"
+ "5eaaaa7c93afa0558f3b5a1c": {
+  "5eaaaa7c93afa0558f3b5a1f": "Eliminate 15 Scavs while under any stimulant effect on Woods"
+ },
+ "5edab4b1218d181e29451435": {
+  "5edab5a6cecc0069284c0ec2": "Eliminate Sanitar"
+ },
+ "5edaba7c0c502106f869bc02": {
+  "5edabb950c502106f869bc04": "Hand over Sanitar's surgery kit to Therapist",
+  "5edabc2ca0055865214cb5a6": "Hand over Sanitar's ophthalmoscope to Therapist"
+ },
+ "5edac020218d181e29451446": {
+  "5edac0e02ddc9e4c802cd969": "Find 1 M.U.L.E. stimulant injector in raid",
+  "5edac1040880da21347b3845": "Hand over 1 M.U.L.E. stimulant injector to Peacekeeper",
+  "5edac13760bdcc7ff355811f": "Find 1 Obdolbos cocktail injector in raid",
+  "5edac1530880da21347b3846": "Hand over 1 Obdolbos cocktail injector to Peacekeeper",
+  "5edac190cecc0069284c0ed2": "Find 1 Meldonin stimulant injector in raid",
+  "5edac1b2930f5454f51dcac4": "Hand over 1 Meldonin stimulant injector to Peacekeeper",
+  "5edac1e116d985118871ba24": "Find 1 AHF1-M stimulant injector in raid",
+  "5edac1fccc183c769d778bd3": "Hand over 1 AHF1-M stimulant injector to Peacekeeper",
+  "5edac22860bdcc7ff3558124": "Find 1 P22 (Product 22) stimulant injector in raid",
+  "5edac2582ddc9e4c802cd970": "Hand over 1 P22 (Product 22) stimulant injector to Peacekeeper",
+  "5edac2897869412e9c669c32": "Find 1 L1 (Norepinephrine) stimulant injector in raid",
+  "5edac2a260bdcc7ff3558127": "Hand over 1 L1 (Norepinephrine) stimulant injector to Peacekeeper",
+  "5edac2cc16d985118871ba29": "Find 1 3-(b-TG) stimulant injector in raid",
+  "5edac2e10bb72a50635c2bf9": "Hand over 1 3-(b-TG) stimulant injector to Peacekeeper"
+ },
+ "5edac34d0bb72a50635c2bfa": {
+  "5f07025e27cec53d5d24fe25": "Find 10 TerraGroup Labs access keycards in raid"
+ },
+ "5edac63b930f5454f51e128b": {
+  "5eff5674befb6436ce3bbaf7": "Find Sanitar's workplace in the Lab",
+  "5eec9d054110547f1f545c99": "Obtain information about Sanitar's work",
+  "5edac8483c809a44ef12b4d2": "Hand over the Flash drive marked with blue tape to Peacekeeper"
+ },
+ "5ede567cfa6dc072ce15d6e3": {
+  "5ee8ecd75eb3205dae135d17": "Locate one of two hermetic doors leading to the academy building (Black Bishop) on Reserve",
+  "5ee8ed18d72d953f5d2aabd4": "Locate one of two hermetic doors leading to barracks #1 (Black Pawn) on Reserve",
+  "5ee8eddde932d53763761b2c": "Locate one of two hermetic doors leading to barracks #2 (White Pawn) on Reserve"
+ },
+ "600302d73b897b11364cd161": {
+  "600303250b79c6604058ce30": "Eliminate Shturman 20 times"
+ },
+ "6086c852c945025d41566124": {
+  "60882695949eb1096c454fcd": "Mark the first BMP-2 with an MS2000 Marker",
+  "608826f3949eb1096c454fd0": "Locate and inspect the second BMP-2 on Reserve",
+  "6088274a82e40b3c727fd164": "Mark the second BMP-2 with an MS2000 Marker",
+  "60892585b90d6f39cb74b114": "Locate and inspect the third BMP-2 on Reserve",
+  "6086c8ed1b0bb8063d5babb7": "Mark the third BMP-2 with an MS2000 Marker",
+  "608826d0a3994358a0751cfc": "Locate and inspect the fourth BMP-2 on Reserve",
+  "60882714c18cfa2a4e2afe59": "Mark the fourth BMP-2 with an MS2000 Marker",
+  "60882779d241f77b8a49785d": "Locate and inspect the first LAV III on Reserve"
+ },
+ "60896888e4a85c72ef3fa300": {
+  "60929afc35915c62b44fd05c": "Hand over the package to Peacekeeper"
+ },
+ "60896b7bfa70fc097863b8f5": {
+  "60916aeac49cf53e4772cc3c": "Obtain the first folder with military on Reserve",
+  "60ae0dfe2d6a8320983d19ba": "Obtain the second folder with military on Reserve",
+  "60ae0e2c79e83a2cf96f35ce": "Obtain the third folder with military on Reserve",
+  "60916b41b89a3c264d7296f9": "Hand over the first documents to Prapor",
+  "60ae0f0586046842a754e21e": "Hand over the second documents to Prapor",
+  "60ae0f17b809a4748759078c": "Hand over the third documents to Prapor"
+ },
+ "60896bca6ee58f38c417d4f2": {
+  "608bffeee0cc9c2d4d2ccb29": "Eliminate 5 Raiders in the command bunker on Reserve"
+ },
+ "60896e28e4a85c72ef3fa301": {
+  "609169cfeca522371e5725c5": "Hand over the first journal to Therapist",
+  "60ae134cabb9675f0062cf6e": "Hand over the second journal to Therapist"
+ },
+ "6089732b59b92115597ad789": {
+  "6092947635915c62b44fd05b": "Hand over the navigation system to Mechanic"
+ },
+ "6089743983426423753cd58a": {
+  "608ab22755f4ac386d7e7fdc": "Eliminate 10 Scavs in the underground warehouse on Reserve"
+ },
+ "608a768d82e40b3c727fd17d": {
+  "608a8356fa70fc097863b8f8": "Eliminate 10 Scavs inside the main barracks on Reserve"
+ },
+ "60c0c018f7afb4354815096a": {
+  "60c0d187938d68438757cda2": "Eliminate Tagilla",
+  "60cfa590f81cc57f471718cc": "Find 1 BOSS cap in raid",
+  "60cfa5a85f9e6175514de2e3": "Hand over 1 BOSS cap to Jaeger"
  },
  "60e71bb4e456d449cd47ca75": {
   "60e8650e5d67b234af3d3926": "Eliminate 40 Scavs with headshots"
  },
+ "60e71c48c1bfa3050473b8e5": {
+  "60e8658571035f300c301ac6": "Find 3 Portable defibrillators in raid",
+  "60e865a60cef122b414a156a": "Find 3 Ophthalmoscopes in raid",
+  "60e866175d67b234af3d392a": "Find 2 LEDX Skin Transilluminators in raid",
+  "60f028ca86abc00cdc03ab89": "Find 20 Piles of meds in raid",
+  "62a701587230237f257cac30": "Find 10 Bottles of OLOLO Multivitamins in raid",
+  "60e866c50cef122b414a156c": "Hand over the 3 ophthalmoscopes",
+  "60e866f926b88043510e0adf": "Hand over the 3 defibrillators",
+  "60e867265d67b234af3d392c": "Hand over the 2 LEDX",
+  "60f028f85caf08029e0d6277": "Hand over the 20 Piles of meds",
+  "62a70168eb3cb46d9a0bba7a": "Hand over the 10 multivitamins"
+ },
  "60e71c9ad54b755a3b53eb66": {
   "60e745d6479eef59b01b0bdc": "Eliminate 10 Raiders or Black Division operatives on Reserve or The Lab"
- },
- "60e71dc0a94be721b065bbfc": {
-  "60e73ee8b567ff641b129570": "Eliminate 4 PMCs on Interchange"
- },
- "60e71d23c1bfa3050473b8e6": {
-  "60e740b8b567ff641b129573": "Eliminate 20 PMC operatives from over 100 meters away"
- },
- "60effd818b669d08a35bfad5": {
-  "60effdac12fec20321367038": "Handover Secure container Epsilon"
- },
- "60e729cf5698ee7b05057439": {
-  "60e729cf5698ee7b0505743c": "Eliminate 15 PMCs without using any armor or helmets on Woods"
- },
- "60e71dc67fcf9c556f325056": {
-  "60e73333465ea8368012cc5b": "Find 10 Bottles of Tarkovskaya vodka in raid",
-  "60e733590367e10a450f7805": "Find 10 Bottles of Dan Jackiel whiskey in raid",
-  "60f028268b669d08a35bfad8": "Find 3 Canister with purified water in raid",
-  "62a700fb7230237f257cac2e": "Find 20 Bottles of Pevko Light beer in raid",
-  "60e73397479eef59b01b0bd5": "Hand over 10 Bottles of Tarkovskaya vodka to Ragman",
-  "60e733b80367e10a450f7807": "Hand over 10 Bottles of Dan Jackiel whiskey to Ragman",
-  "60f0284e8b669d08a35bfada": "Hand over 3 Canister with purified water to Ragman",
-  "62a70110eb3cb46d9a0bba78": "Hand over 20 Bottles of Pevko Light beer to Ragman"
  },
  "60e71ccb5688f6424c7bfec4": {
   "60e8174d0367e10a450f7818": "Find in raid and hand over 10 BEAR PMC dogtags of Prestige 1 or higher to Peacekeeper",
   "60e81795479eef59b01b0bdf": "Find in raid and hand over 10 USEC PMC dogtags of Prestige 1 or higher to Peacekeeper"
- },
- "60e71e8ed54b755a3b53eb67": {
-  "60e7259e465ea8368012cc45": "Eliminate Tagilla",
-  "60e725d8b567ff641b129555": "Eliminate Killa",
-  "60e72604a6e322250215f066": "Eliminate Reshala",
-  "60e7261382576b5f4f21c495": "Eliminate Shturman",
-  "60e7261eb567ff641b129557": "Eliminate Glukhar",
-  "60e72629465ea8368012cc47": "Eliminate Sanitar"
  },
  "60e71ce009d7c801eb0c0ec6": {
   "60e7434ed1a062318d3d2260": "Find 5 VPX Flash Storage Modules in raid",
@@ -984,41 +677,71 @@ const WIKI_OBJ_TEXT = {
   "60e744c9d1a062318d3d2262": "Handover 5 Military COFDM Wireless Signal Transmitters to Peacekeeper",
   "62a7019ea9a0ea77981b57da": "Handover 4 Military flash drives"
  },
- "67af4c1405c58dc6f7056667": {
-  "67af6dd0f5685508d9050158": "Hand over 15 Trijicon REAP-IR thermal scopes"
+ "60e71d23c1bfa3050473b8e6": {
+  "60e740b8b567ff641b129573": "Eliminate 20 PMC operatives from over 100 meters away"
  },
- "67af4c169d95ad16e004fd86": {
-  "67af6e1ee67a772b14e08061": "Hand over 15 BNTI Zhuk body armors (EMR)",
-  "67af6f1d268fd33c21524a02": "Hand over 12 Vulkan-5 LShZ-5 bulletproof helmets",
-  "67af6f7961ee5d07d0c210c9": "Hand over 3 Maska-1SCh face shields (Killa Edition)"
+ "60e71dc0a94be721b065bbfc": {
+  "60e73ee8b567ff641b129570": "Eliminate 4 PMCs on Interchange"
  },
- "67af4c17f4f1fb58a907f8f6": {
-  "67af7037f7937389517f0569": "Hand over the item: 15 HK 416A5 5.56x45 assault rifle",
-  "67af7055a7ffd02753b8c5bd": "Hand over the item: 4,500 5.56x45mm MK 318 Mod 0 (SOST)",
-  "67af70650fa4c937ca034063": "Hand over the item: 8 UVSR Taiga-1 survival machete"
+ "60e71dc67fcf9c556f325056": {
+  "60e73333465ea8368012cc5b": "Find 10 Bottles of Tarkovskaya vodka in raid",
+  "60e733590367e10a450f7805": "Find 10 Bottles of Dan Jackiel whiskey in raid",
+  "60f028268b669d08a35bfad8": "Find 3 Canister with purified water in raid",
+  "62a700fb7230237f257cac2e": "Find 20 Bottles of Pevko Light beer in raid",
+  "60e73397479eef59b01b0bd5": "Hand over 10 Bottles of Tarkovskaya vodka to Ragman",
+  "60e733b80367e10a450f7807": "Hand over 10 Bottles of Dan Jackiel whiskey to Ragman",
+  "60f0284e8b669d08a35bfada": "Hand over 3 Canister with purified water to Ragman",
+  "62a70110eb3cb46d9a0bba78": "Hand over 20 Bottles of Pevko Light beer to Ragman"
  },
- "67af4c1991ee75c6d7060a16": {
-  "67af70d60ef31f2d26f1a4d5": "Hand over the item: 30 SJ6 TGLabs combat stimulant injector",
-  "67af70e894e1096f325b8050": "Hand over the item: 30 Obdolbos 2 cocktail injector",
-  "67af70f3cfdf90b749b5eb36": "Hand over the item: 30 Propital regenerative stimulant injector",
-  "67af70fe8c503a010078afd0": "Hand over the item: 30 M.U.L.E. stimulant injector",
-  "67af710c5662b533d9f5b9ca": "Hand over the item: 30 ETG-change regenerative stimulant injector",
-  "67af7117f8c948d02b632085": "Hand over the item: 30 SJ9 TGLabs combat stimulant injector",
-  "67af7121aeed86a73d8653be": "Hand over the item: 30 SJ12 TGLabs combat stimulant injector",
-  "67af712cf5f86ab56db8f198": "Hand over the item: 30 Meldonin injector"
+ "60e71e8ed54b755a3b53eb67": {
+  "60e7259e465ea8368012cc45": "Eliminate Tagilla",
+  "60e725d8b567ff641b129555": "Eliminate Killa",
+  "60e72604a6e322250215f066": "Eliminate Reshala",
+  "60e7261382576b5f4f21c495": "Eliminate Shturman",
+  "60e7261eb567ff641b129557": "Eliminate Glukhar",
+  "60e72629465ea8368012cc47": "Eliminate Sanitar"
  },
- "67af4c1a6c3ebfd8e6034916": {
-  "67af7168fab0681948d9ed8b": "Hand over the item: 30 Graphics card",
-  "67af7178ea4fed9c667abb17": "Hand over the item: 15 Physical Bitcoin"
+ "60e729cf5698ee7b05057439": {
+  "60e729cf5698ee7b0505743c": "Eliminate 15 PMCs without using any armor or helmets on Woods"
  },
- "67af4c1cc0e59d55e2010b97": {
-  "67af71c90036a462a17a72d3": "Hand over the item: 8 Bottle of Tarkovskaya vodka",
-  "67af71d6a6e77337205f5bfe": "Hand over the item: 15 Bottle of Dan Jackiel whiskey",
-  "67af71f19ce81d8ebb21530f": "Hand over the item: 15 Bottle of Fierce Hatchling moonshine"
+ "60effd818b669d08a35bfad5": {
+  "60effdac12fec20321367038": "Handover Secure container Epsilon"
  },
- "67af4c1d8c9482eca103e477": {
-  "67af727750e1b6f21d9f5511": "Survive and extract from The Lab 15 times",
-  "67af730c69887224a61084ac": "Eliminate 100 Raiders in The Lab"
+ "6179acbdc760af5ad2053585": {
+  "617bd94c5a52d2390a2630c7": "Eliminate any 10 targets around the helicopter area at the water treatment plant on Lighthouse"
+ },
+ "6179ad0a6e9dd54ac275e3f2": {
+  "617bf1e1d93d977d2452051f": "Eliminate 10 Rogues on Lighthouse"
+ },
+ "6179b3bdc7560e13d23eeb8d": {
+  "617bf6c70cf4a041de5b3972": "Find the data on water pump operation",
+  "61951c30aa0f643f9a0ae1b7": "Hand over the extracted data",
+  "617bf77a3de8a6689b533a2a": "Find the data on pumping station operation"
+ },
+ "6179b4d1bca27a099552e04e": {
+  "61952308aa0f643f9a0ae20f": "Locate and mark the first BRDM with an MS2000 Marker",
+  "6195231dd07bdc6de57b40a5": "Locate and mark the second BRDM with an MS2000 Marker",
+  "61952325aa0f643f9a0ae212": "Locate and mark the first Stryker with an MS2000 Marker",
+  "6195232a1e972a652931edb6": "Locate and mark the second Stryker with an MS2000 Marker"
+ },
+ "6179b4f16e9dd54ac275e407": {
+  "61a00eff2d708d41a34f19b4": "Locate the crashed helicopter on Lighthouse",
+  "63ac1a941b5c95746621ddb2": "Find the informant's intelligence folder",
+  "61a00f3f177fb945751bbe92": "Hand over the folder to Skier"
+ },
+ "6179b5b06e9dd54ac275e409": {
+  "6193dc1e6623e330c82e0be9": "Eliminate 20 USEC PMC operatives on Lighthouse",
+  "6194fbf785a6d62c481a7aee": "Hand over 20 found in raid USEC PMC dogtags"
+ },
+ "6179b5eabca27a099552e052": {
+  "61a61c085d06a344766f3a29": "Eliminate 20 BEAR PMC operatives on Lighthouse, Ground Zero, Reserve, Shoreline, or Streets of Tarkov",
+  "617fc08b30ccff6c7c37fcd3": "Hand over 20 found in raid BEAR PMC dogtags"
+ },
+ "61904daa7d0d857927447b9c": {
+  "61904ebb22e6d82ee97ccbbe": "Hand over the message to Jaeger"
+ },
+ "6193850f60b34236ee0483de": {
+  "6193dabd5f6468204470571f": "Eliminate 4 Scavs along the shore and the main road on Lighthouse"
  },
  "61e6e5e0f5b9633f6719ed95": {
   "61e6e679b350e406c823a205": "Hand over the 5 found in raid BEAR PMC dogtags",
@@ -1026,6 +749,9 @@ const WIKI_OBJ_TEXT = {
  },
  "61e6e60223374d168a4576a6": {
   "61e6ed30d007ca50d54baae5": "Eliminate 7 PMC operatives while using any AK-series assault rifle"
+ },
+ "61e6e60c5ca3b3783662be27": {
+  "61e6f5a1eea2935bc018a2c7": "Hand over 1,000,000 RUB"
  },
  "61e6e615eea2935bc018a2c5": {
   "61e7034b95a8910716185486": "Hand over the 3 found in raid Can of TarCola soda"
@@ -1054,8 +780,55 @@ const WIKI_OBJ_TEXT = {
  "6261482fa4eb80027c4f2e11": {
   "62616b17e7578c305945c9c9": "Hand over the 4 found in raid SVDS sniper rifles"
  },
+ "626148334149f1149b5b12ca": {
+  "62668b98ddc94657c21a1628": "Place a WI-FI Camera at the yellow bus on the southern bridge approaching the water treatment plant on Lighthouse",
+  "62668ba11ed3bb5bcc5bd9ef": "Place a WI-FI Camera at the yellow bulldozer in the south-eastern part of the water treatment plant on Lighthouse",
+  "62668ba4aa168e51321d69e0": "Place a WI-FI Camera at the police truck in the western part of the water treatment plant on Lighthouse",
+  "62668ba9a4eb80027c4f2e16": "Place a WI-FI Camera at the army truck near the industrial zone in the northern part of the water treatment plant on Lighthouse"
+ },
+ "62614836f7308432be1d44cc": {
+  "626171a0f7308432be1d44cd": "Eliminate 25 Raiders on Reserve"
+ },
+ "6261483ac48e6c62a440fab7": {
+  "626676e1c48e6c62a440faba": "Hand over 15 found in raid Secure Flash drives"
+ },
+ "626bdcc3a371ee3a7a3514c5": {
+  "626c317e05f287031503c7fd": "Locate and eliminate Knight",
+  "626c318147ea7f506e5493c7": "Locate and eliminate Big Pipe",
+  "626c3183af14a41d9a1f4ea7": "Locate and eliminate Birdeye"
+ },
+ "638fcd23dc65553116701d33": {
+  "638fd0805e5a195d2c443754": "Hand over the journal to Ragman"
+ },
+ "639135534b15ca31f76bc317": {
+  "639135534b15ca31f76bc319": "Hand over the digital storage device"
+ },
+ "639135bbc115f907b14700a6": {
+  "639135bbc115f907b14700a8": "Hand over the guitar pick to Ragman"
+ },
+ "639135cd8ba6894d155e77cb": {
+  "63a7dbefee7b4d0d5507baf8": "Locate the improvised jail warden's apartment on Streets of Tarkov",
+  "63a7dbc31943b749b5021ec3": "Find out what happened to the warden"
+ },
+ "639136df4b15ca31f76bc31f": {
+  "639285879444fb141f4e6f25": "Shoot a yellow signal flare in the Train depot.",
+  "63aaccae87413d64ae079631": "Eliminate any target in the train depot on reserve (6)"
+ },
+ "639136f086e646067c176a8b": {
+  "63929224744e45201147081a": "Eliminate 8 snipers on the rooftops on Streets of Tarkov"
+ },
  "6391d90f4ed9512be67647df": {
   "6391d9fd8ba6894d155e77db": "Hand over the flash drive to Mechanic"
+ },
+ "6391d912f8e5dd32bf4e3ab2": {
+  "6391d9fd8ba6894d155e77db": "Hand over the flash drive to Mechanic"
+ },
+ "6391d9144b15ca31f76bc323": {
+  "6391d9fd8ba6894d155e77db": "Hand over the flash drive to Mechanic"
+ },
+ "639282134ed9512be67647ed": {
+  "63a7d461f32fa1316250c3d7": "Locate the cargo convoy on Streets of Tarkov",
+  "63a7d444f32fa1316250c3d5": "Determine the ambush spot"
  },
  "63966fd9ea19ac7ed845db30": {
   "6397ae22e301557ae24cbfe7": "Locate and eliminate Glukhar",
@@ -1080,6 +853,111 @@ const WIKI_OBJ_TEXT = {
  "63967028c4a91c5cb76abd81": {
   "639ae7423174277743234bb7": "Secure the area from 50 hostile PMC operatives"
  },
+ "63a5cf262964a7488f5243ce": {
+  "63a5cf262964a7488f5243d1": "Eliminate 20 PMCs using an MP5SD on Streets of Tarkov, Ground Zero or Interchange"
+ },
+ "63a88045abf76d719f42d715": {
+  "63a98cdf655ec5555b4aa9e6": "Hand over 1 found in raid Salty Dog beef sausage"
+ },
+ "63a9ae24009ffc6a551631a5": {
+  "63a9ae63da7999196148ba5c": "Eliminate any 30 enemies with AK-74 series weapons on Reserve or Lighthouse"
+ },
+ "63a9b229813bba58a50c9ee5": {
+  "63a9b229813bba58a50c9ee6": "Eliminate any 30 enemies from over 100 meters away while using AR-15 platform weapons on Reserve, Lighthouse, Shoreline, or Ground Zero"
+ },
+ "63a9b36cc31b00242d28a99f": {
+  "63a9b3d7813bba58a50c9ee9": "Eliminate 10 Scavs while using melee weapons on daytime Factory",
+  "63a9b41dad5cc12f22162022": "Eliminate 10 Scavs while using melee weapons on Streets of Tarkov",
+  "63a9b45bda7999196148ba5f": "Eliminate 10 Scavs while using melee weapons on Lighthouse",
+  "63a9b52b009ffc6a551631a7": "Eliminate 10 Scavs while using melee weapons on Woods",
+  "63a9b557da7999196148ba61": "Eliminate 10 Scavs while using melee weapons on Shoreline",
+  "63a9b591da7999196148ba63": "Eliminate 10 Scavs while using melee weapons on Interchange",
+  "63a9b5b2813bba58a50c9eeb": "Eliminate 10 Scavs while using melee weapons on Customs",
+  "63a9b5f064b9631d9178276b": "Eliminate 10 Scavs while using melee weapons on Reserve",
+  "65e0a329893b7bf535c6a9fd": "Eliminate 10 Scavs while using melee weapons on Ground Zero"
+ },
+ "64e7b971f9d6fa49d6769b44": {
+  "64e7ba17220ee966bf425ecb": "Locate and eliminate Kaban",
+  "64e7ba4a6393886f74119f3d": "Locate and eliminate Basmach",
+  "65bb698050fd7c32f5d666d1": "Locate and eliminate Gus",
+  "65bb6a61a845e4eb51390b4e": "Eliminate 5 of Kaban's guards at the car dealership on Streets of Tarkov"
+ },
+ "64e7b99017ab941a6f7bf9d7": {
+  "64e7bc2c5e6d3e61ca2ca097": "Eliminate any 15 targets at the Stylobate building while using Pistols on Streets of Tarkov"
+ },
+ "64e7b9a4aac4cd0a726562cb": {
+  "64e7bd0c6393886f74119f41": "Eliminate any 25 targets at the Rodina cinema while using SMGs on Streets of Tarkov"
+ },
+ "64e7b9bffd30422ed03dad38": {
+  "64e7bdd52d369a1c0172722f": "Eliminate any 20 any target using Assault rifles or Assault carbines on Streets of Tarkov"
+ },
+ "657315ddab5a49b71f098853": {
+  "65817bf31404f3565aef9fec": "Hand over any 3 found in raid medicine items"
+ },
+ "657315df034d76585f032e01": {
+  "657334311dbb8b7569bb83c4": "Eliminate any 5 targets on Ground Zero"
+ },
+ "65734c186dc1e402c80dc19e": {
+  "65734c186dc1e402c80dc1a2": "Eliminate any 15 enemies while wearing a Bomber beanie and RayBench Hipster Reserve sunglasses on Streets of Tarkov"
+ },
+ "6574e0dedc0d635f633a5805": {
+  "6574e0dedc0d635f633a5807": "Eliminate any 40 targets while using an RPDN with EKP-1S-03 sight on Shoreline, Interchange or Woods"
+ },
+ "66058cb22cee99303f1ba067": {
+  "6606b709f7ce34bb26221cab": "Plant the Bison vs Undertaker poster in the living quarters at the Scav base on Customs"
+ },
+ "66058cb5ae4719735349b9e8": {
+  "6606bd2aa49db36b69b6dbf9": "Hand over 5 found in raid items from the Drinks category",
+  "6606bd6768f8018fffebd998": "Hand over 5 found in raid items from the Food category"
+ },
+ "66058cb7c7f3584787181476": {
+  "6606d133fcb99b9004aa2d1d": "Eliminate 5 Scavs while using a Steyr AUG on any location"
+ },
+ "66058cb9e8e4f17985230805": {
+  "660a9c99c650fa4d531f4c96": "Eliminate 2 PMC operatives while wearing a PACA Soft Armor on any location"
+ },
+ "66058cbb06ef1d50a60c1f46": {
+  "6606d08b4e2e27ca2d80085e": "Hand over 3 found in raid class 4 or higher ballistic plates to Ref"
+ },
+ "66058cbd9f59e625462acc8e": {
+  "660a9dc64c0927ead4fcfeef": "Plant 3 TP-200 TNT bricks on the second floor of the cafe on Ground Zero"
+ },
+ "66058cc72cee99303f1ba069": {
+  "6633a85e347a2a2b4051a26b": "Hand over 1,000,000 Roubles"
+ },
+ "66058cc9ae4719735349b9ea": {
+  "662ba87106e44407b79e9ab2": "Win a match claiming at least 2nd place in the team in TeamFight, BlastGang, or CheckPoint mode in Arena"
+ },
+ "66058ccde8e4f17985230807": {
+  "663b9bb7fe7953705cb09114": "Eliminate 100 enemies in any game mode in Arena"
+ },
+ "6613f3007f6666d56807c929": {
+  "6613f36ca4dc044e13e02295": "Eliminate 100 Raiders",
+  "6616819ac7c53d7769413d9c": "Hand over 50 found in raid WARTECH brand equipment"
+ },
+ "6613f307fca4f2f386029409": {
+  "6615127fd998c5f2aaa4a8a0": "Eliminate 100 Rogues",
+  "661681edabe376e7d6eab98f": "Hand over 50 found in raid LBT brand equipment"
+ },
+ "66151401efb0539ae10875ae": {
+  "66151401efb0539ae10875af": "Eliminate 100 Raiders",
+  "66168239957ac58c30b29135": "Hand over 50 found in raid WARTECH brand equipment"
+ },
+ "6615141bfda04449120269a7": {
+  "6615141bfda04449120269a8": "Eliminate 100 Rogues",
+  "661682aed31d408548016468": "Hand over 50 found in raid LBT brand equipment"
+ },
+ "665eeacf5d86b6c8aa03c79b": {
+  "665eed28bdbf7b1f92394ecb": "Eliminate 12 Scavs in the time period of 22:00-7:00 on Shoreline"
+ },
+ "665eec1f5e47a79f8605565a": {
+  "665ef4d93bd11acd294ac48c": "Find 2 Propane tanks (5L) in raid"
+ },
+ "665eeca92f7aedcc900b0437": {
+  "6661a28be2cdba6a469447c7": "Hand over the 2 found in raid items: Adrenaline injector",
+  "6661a2ae387c59056c822add": "Hand over the 4 found in raid items: Bottle of OLOLO Multivitamins",
+  "6661a2bf4846fd2b6ba30f90": "Hand over the 3 found in raid items: Bottle of saline solution"
+ },
  "66631489acf8442f8b05319f": {
   "6667193a41b0135d2df10fd9": "Eliminate 7 PMC operatives without killing Scavs, Scav Raiders, Rogues or Bosses"
  },
@@ -1097,8 +975,66 @@ const WIKI_OBJ_TEXT = {
  "6663149196a9349baa021baa": {
   "666732298477f79f3f6ea229": "Eliminate any 10 Boss guards without killing the Bosses"
  },
+ "6663149cfd5ca9577902e037": {
+  "66696cd3997231debad40d19": "Eliminate any 15 targets that are using a 20+ container size backpack"
+ },
+ "6663149f1d3ec95634095e75": {
+  "666973ee1d80fbbbfeaf46c9": "Sell Ragman any 250 backpacks or tactical rigs"
+ },
+ "666314a1920800278d0f6746": {
+  "6669769ff0cb253ff7649f27": "Find Crye Precision AVS plate carrier (Tagilla Edition) in raid",
+  "66697774640ec1284ed1621f": "Find LBT-1961A Load Bearing Chest Rig (Goons Edition) in raid",
+  "666977bfe975ac480a8f914e": "Find Mystery Ranch NICE COMM 3 BVS frame system (Coyote) in raid",
+  "666977f2dd6e511e9f33005a": "Find Crye Precision CPC plate carrier (Goons Edition) in raid"
+ },
+ "666314a31cd52e3d040a2e76": {
+  "6669abb8dac5788ebd0ff74a": "Locate and neutralize any 5 Bosses (excluding The Goons, The Wedge and Partisan) while using any Goons Edition tactical rig"
+ },
+ "666314a50aa5c7436c00908a": {
+  "6669acb8c4d34bd547a4d2ac": "Hand over 15 Physical Bitcoins"
+ },
+ "666314b2a9290f9e0806cca3": {
+  "66632deea5607d352f3aa844": "Eliminate 3 hooded men while using the double barrel shotgun"
+ },
+ "666314b4d7f171c4c20226c3": {
+  "666333e93962787efd64004a": "Eliminate 10 PMC operatives while using Colt M4A1 or M16, 6B43 body armor, and Kiver-M helmet on Factory"
+ },
+ "666314bafd5ca9577902e03a": {
+  "6663389aa257916ad3c89529": "Eliminate any 10 targets while using the golden TT-33 pistol"
+ },
+ "666314bd920800278d0f6748": {
+  "66d07fa69d373d977f437fe0": "Install a WI-FI Camera on the mountain ledge on Woods",
+  "667bf8370849ce7edf2b124e": "Install a WI-FI Camera at the pier tower on Shoreline",
+  "667bf840981b1c594af358ce": "Install a WI-FI Camera at the office corridor on Factory"
+ },
  "6672d9def1c88688a707d042": {
   "66813c01decf4560581ca0c0": "Reach 5.0 standing with Fence"
+ },
+ "669fa3979b0ce3feae01a130": {
+  "669fb1ffe34e78d618792b41": "Eliminate any 5 targets in the old cellars while using a shotgun on Factory"
+ },
+ "669fa3a40c828825de06d6a1": {
+  "66a0f5a7f9eae6761253114c": "Eliminate any 50 targets while using an SR-2M with suppressor and KP-SR2 sight on Factory"
+ },
+ "66aa61663aa37705c5024277": {
+  "66aa61663aa37705c5024278": "Eliminate any 5 targets on Streets of Tarkov (In one raid)",
+  "66aa61663aa37705c502427e": "Eliminate any 5 targets on Interchange (In one raid)"
+ },
+ "66aa74571e5e199ecd094f18": {
+  "66aa74571e5e199ecd094f1e": "Eliminate 3 Scavs on Factory (In one raid)"
+ },
+ "66ab9da7eb102b9bcd08591c": {
+  "66ab9da7eb102b9bcd08591d": "Eliminate 5 Scavs on Lighthouse (In one raid)",
+  "66ab9da7eb102b9bcd085922": "Eliminate 5 Scavs on Shoreline (In one raid)"
+ },
+ "66d9cbb67b491f9d5304f6e6": {
+  "66d9cbb67b491f9d5304f6eb": "Install a WI-FI Camera at the amphibian pizza lovers' hideout on Streets of Tarkov",
+  "66d9cbb67b491f9d5304f6e9": "Install a WI-FI Camera at the burned girl's sickroom on Streets of Tarkov",
+  "66dacf2a88c7001436a67390": "Install a WI-FI Camera at the barbed wire body on Streets of Tarkov",
+  "66d9cbb67b491f9d5304f6ea": "Install a WI-FI Camera at the really scary hole in the wall on Streets of Tarkov"
+ },
+ "671a59e43d73dac1360765cc": {
+  "671ac68e30609eb2c7e9a7f7": "Eliminate any 20 targets while using the MPS Auto Assault-12 shotgun"
  },
  "673f2cd5d3346c2167020484": {
   "673f2d9a73ff76dd6d5a6344": "Locate and scout the warehouses at the depot on Woods",
@@ -1150,48 +1086,77 @@ const WIKI_OBJ_TEXT = {
  "67460662d0fbbc74ca0f7229": {
   "674607317781508c405fb979": "Eliminate 5 PMC operatives while completing the other objectives"
  },
- "69c26c07683c9831020018c7": {
-  "69c26dfeaa4283497aab0d36": "Eliminate 30 Rogues"
+ "675c15fbf7da9792a4059871": {
+  "675c1c980fd114390c638b89": "Eliminate any 15 targets inside the industrial plant on Customs"
  },
- "69ce204c8702b378f9091e4b": {
-  "69ce204c8702b378f9091e4d": "Find 10 Nooby Shield potassium iodide tablets in raid"
+ "675c1ec7a46173572a0bf20a": {
+  "675c1f040a1128e59422a876": "Eliminate 10 Scavs at the old gas station on Customs",
+  "675c1f17cf59d5433be7ae77": "Eliminate 10 Scavs at the new gas station on Customs",
+  "675c1f311bd716cdb87947d1": "Hand over 2 found in raid Metal fuel tanks"
  },
- "69ce1de03e15cd80bd06f6c9": {
-  "69ce1e2614b1a16885f61da4": "Find 5 AMG-10 hydraulic fluid in raid"
+ "675c1ff1a757ddd00404f0aa": {
+  "675c1ff1a757ddd00404f0ae": "Eliminate any 50 targets while using an Aklys Defense Velociraptor on Customs"
  },
- "69ce21e990144e437802b1e0": {
-  "69ce21e990144e437802b1e2": "Find 5 Black Division plate carriers in raid"
+ "6764174c86addd02bc033d68": {
+  "676418a60b9bcbe280972288": "Eliminate 20 PMC operatives from over 40 meters away while using a bolt-action rifle with night or thermal scope"
  },
- "69ce1cfb298a6529b30d712b": {
-  "69ce1cfb298a6529b30d712d": "Locate and neutralize 4 members of The Wedge's squad"
+ "676529af9c90953d090882e7": {
+  "676529e759261ce07bc47b62": "Modify a PP-19-01 to comply with the given specifications",
+  "676529af9c90953d090882ea": "Modify a T-5000M to comply with the given specifications"
  },
- "69c277f3ea6da9c23e07f8d2": {
-  "69c27887c921a0bbeb1889f5": "Hand over 2 Bottles of Fierce Hatchling moonshine to the BTR Driver",
-  "69c278f14dc0363079d5bb40": "Hand over 4 Rye croutons to the BTR Driver",
-  "69c294f2bffe2159a3e4d56a": "Hand over 4 Bottles of Tarkovskaya vodka to the BTR Driver",
-  "69c27909f96f171f6982c4c7": "Hand over 2 Salty Dog beef sausages to the BTR Driver",
-  "69c278fff569bda0e2652705": "Talk to the BTR Driver"
+ "67a0970f05d1611ed90be75d": {
+  "67a0dcf4ff6f74931359b9f9": "Hand over 5 found in raid Labrys research notes"
  },
- "61e6e60c5ca3b3783662be27": {
-  "61e6f5a1eea2935bc018a2c7": "Hand over 1,000,000 RUB"
+ "67a09724972c11a3f5077324": {
+  "67a0de2750fdff39d267ea16": "Plant a hand grenade in the assembly workshop inside Labyrinth"
  },
- "626148334149f1149b5b12ca": {
-  "62668b98ddc94657c21a1628": "Place a WI-FI Camera at the yellow bus on the southern bridge approaching the water treatment plant on Lighthouse",
-  "62668ba11ed3bb5bcc5bd9ef": "Place a WI-FI Camera at the yellow bulldozer in the south-eastern part of the water treatment plant on Lighthouse",
-  "62668ba4aa168e51321d69e0": "Place a WI-FI Camera at the police truck in the western part of the water treatment plant on Lighthouse",
-  "62668ba9a4eb80027c4f2e16": "Place a WI-FI Camera at the army truck near the industrial zone in the northern part of the water treatment plant on Lighthouse"
+ "67a097379f2068e74603c6ac": {
+  "67a0df7f2cd4d4413cd29b45": "Eliminate 6 of \"Minotaur's\" guards inside The Labyrinth"
  },
- "62614836f7308432be1d44cc": {
-  "626171a0f7308432be1d44cd": "Eliminate 25 Raiders on Reserve"
+ "67af4c1405c58dc6f7056667": {
+  "67af6dd0f5685508d9050158": "Hand over 15 Trijicon REAP-IR thermal scopes"
  },
- "6391d912f8e5dd32bf4e3ab2": {
-  "6391d9fd8ba6894d155e77db": "Hand over the flash drive to Mechanic"
+ "67af4c169d95ad16e004fd86": {
+  "67af6e1ee67a772b14e08061": "Hand over 15 BNTI Zhuk body armors (EMR)",
+  "67af6f1d268fd33c21524a02": "Hand over 12 Vulkan-5 LShZ-5 bulletproof helmets",
+  "67af6f7961ee5d07d0c210c9": "Hand over 3 Maska-1SCh face shields (Killa Edition)"
  },
- "6261483ac48e6c62a440fab7": {
-  "626676e1c48e6c62a440faba": "Hand over 15 found in raid Secure Flash drives"
+ "67af4c17f4f1fb58a907f8f6": {
+  "67af7037f7937389517f0569": "Hand over the item: 15 HK 416A5 5.56x45 assault rifle",
+  "67af7055a7ffd02753b8c5bd": "Hand over the item: 4,500 5.56x45mm MK 318 Mod 0 (SOST)",
+  "67af70650fa4c937ca034063": "Hand over the item: 8 UVSR Taiga-1 survival machete"
  },
- "6391d9144b15ca31f76bc323": {
-  "6391d9fd8ba6894d155e77db": "Hand over the flash drive to Mechanic"
+ "67af4c1991ee75c6d7060a16": {
+  "67af70d60ef31f2d26f1a4d5": "Hand over the item: 30 SJ6 TGLabs combat stimulant injector",
+  "67af70e894e1096f325b8050": "Hand over the item: 30 Obdolbos 2 cocktail injector",
+  "67af70f3cfdf90b749b5eb36": "Hand over the item: 30 Propital regenerative stimulant injector",
+  "67af70fe8c503a010078afd0": "Hand over the item: 30 M.U.L.E. stimulant injector",
+  "67af710c5662b533d9f5b9ca": "Hand over the item: 30 ETG-change regenerative stimulant injector",
+  "67af7117f8c948d02b632085": "Hand over the item: 30 SJ9 TGLabs combat stimulant injector",
+  "67af7121aeed86a73d8653be": "Hand over the item: 30 SJ12 TGLabs combat stimulant injector",
+  "67af712cf5f86ab56db8f198": "Hand over the item: 30 Meldonin injector"
+ },
+ "67af4c1a6c3ebfd8e6034916": {
+  "67af7168fab0681948d9ed8b": "Hand over the item: 30 Graphics card",
+  "67af7178ea4fed9c667abb17": "Hand over the item: 15 Physical Bitcoin"
+ },
+ "67af4c1cc0e59d55e2010b97": {
+  "67af71c90036a462a17a72d3": "Hand over the item: 8 Bottle of Tarkovskaya vodka",
+  "67af71d6a6e77337205f5bfe": "Hand over the item: 15 Bottle of Dan Jackiel whiskey",
+  "67af71f19ce81d8ebb21530f": "Hand over the item: 15 Bottle of Fierce Hatchling moonshine"
+ },
+ "67af4c1d8c9482eca103e477": {
+  "67af727750e1b6f21d9f5511": "Survive and extract from The Lab 15 times",
+  "67af730c69887224a61084ac": "Eliminate 100 Raiders in The Lab"
+ },
+ "67b45467814ab0ffa000c7e7": {
+  "67b45467814ab0ffa000c7ea": "Eliminate 20 PMC operatives while using grenades or grenade launchers"
+ },
+ "67d03be712fb5f8fd2096332": {
+  "67d03be712fb5f8fd2096334": "Eliminate 24 PMC operatives inside The Labyrinth"
+ },
+ "67e993f5ed537409f009da75": {
+  "67ebc5f501052193cdb4c9ac": "Hand over a Lega Medal to Ref"
  },
  "6834145ebc1f443d7603c8a7": {
   "6834145ebc1f443d7603c8ab": "Plant the Bison vs Undertaker poster in the living quarters at the Scav base on Customs"
@@ -1221,11 +1186,46 @@ const WIKI_OBJ_TEXT = {
  "68342446a8d674b5740b31fc": {
   "68342446a8d674b5740b31ff": "Eliminate 100 enemies in any game mode in Arena"
  },
+ "6834287b7559f4e6d50bc0fa": {
+  "6834287b7559f4e6d50bc0fd": "Hand over a Lega Medal to Ref"
+ },
+ "68400926706e0a55e90b0007": {
+  "684180b0b22d582a57c5a8d7": "Hand over 50,000 EUR"
+ },
+ "68db9c7557bc51a8c804c14b": {
+  "68db9ea0e6c69908254eceee": "Eliminate 20 PMC operatives from over 50 meters away while using any 9x39 caliber weapon"
+ },
+ "68ee1c18b4e5bc9a68018cd7": {
+  "68ee1cc7e8b13097f525e6f2": "Hand over 1 found in raid Red Rebel ice pick to Prapor"
+ },
+ "6942b44f891369fc790e385a": {
+  "6942b48e6998a45a7b90cd5b": "Eliminate 10 PMC operatives while using an active headset without wearing any armor",
+  "6942b72980d7f587b5b3ca86": "Eliminate 10 PMC operatives while wearing the TSh-4M-L soft tank crew helmet without wearing any active headset"
+ },
  "69788d4e963f08d9140bce19": {
   "69788d4e963f08d9140bce1c": "Play a match in CheckPoint or Last Hero mode in Arena"
  },
- "6834287b7559f4e6d50bc0fa": {
-  "6834287b7559f4e6d50bc0fd": "Hand over a Lega Medal to Ref"
+ "69c26c07683c9831020018c7": {
+  "69c26dfeaa4283497aab0d36": "Eliminate 30 Rogues"
+ },
+ "69c277f3ea6da9c23e07f8d2": {
+  "69c27887c921a0bbeb1889f5": "Hand over 2 Bottles of Fierce Hatchling moonshine to the BTR Driver",
+  "69c278f14dc0363079d5bb40": "Hand over 4 Rye croutons to the BTR Driver",
+  "69c294f2bffe2159a3e4d56a": "Hand over 4 Bottles of Tarkovskaya vodka to the BTR Driver",
+  "69c27909f96f171f6982c4c7": "Hand over 2 Salty Dog beef sausages to the BTR Driver",
+  "69c278fff569bda0e2652705": "Talk to the BTR Driver"
+ },
+ "69ce1cfb298a6529b30d712b": {
+  "69ce1cfb298a6529b30d712d": "Locate and neutralize 4 members of The Wedge's squad"
+ },
+ "69ce1de03e15cd80bd06f6c9": {
+  "69ce1e2614b1a16885f61da4": "Find 5 AMG-10 hydraulic fluid in raid"
+ },
+ "69ce204c8702b378f9091e4b": {
+  "69ce204c8702b378f9091e4d": "Find 10 Nooby Shield potassium iodide tablets in raid"
+ },
+ "69ce21e990144e437802b1e0": {
+  "69ce21e990144e437802b1e2": "Find 5 Black Division plate carriers in raid"
  }
 };
 
@@ -1233,106 +1233,25 @@ const WIKI_OBJ_LIST = {
  "5936d90786f7742b1420ba5b": [
   "Eliminate 5 Scavs on Woods,Ground Zero,Interchange, or Customs"
  ],
- "5d24b81486f77439c92d6ba8": [
-  "Hand over any 10 items from the Food Category"
- ],
  "59689ee586f7740d1570bbd5": [
   "Find 2 Gas analyzer in raid",
   "Hand over the 2 Gas analyzer to Therapist",
   "Stash a Gas analyzer in the specified place on Factory."
  ],
- "5fd9fad9c1ce6b1a3b486d00": [
-  "Locate Prapor's missing convoy on Woods",
-  "Locate the temporary USEC camp on Woods"
- ],
- "59c124d686f774189b3c843f": [
-  "Locate and mark any of the fuel tank trucks with an MS2000 Marker on Customs"
- ],
- "5a27c99a86f7747d2c6bdd8e": [
-  "Eliminate 5 PMCs operatives"
- ],
- "5a27b7a786f774579c3eb376": [
-  "Locate and mark any UN Tigr vehicle with an MS2000 Marker on Customs"
- ],
- "66058cbf2f19c31a5a1337ec": [
-  "Eliminate 2 of Kaban's or Kollontay's guards on Streets of Tarkov",
-  "Do not harm Kaban or Kollontay"
- ],
- "66058cd19f59e625462acc90": [
-  "Return to the old champion's hideout on Customs",
-  "Locate and obtain the compromising information on Ref",
-  "Hand over the found info"
- ],
- "5a0327ba86f77456b9154236": [
-  "Hand over 5 items from the Household goods category with the Found in raid status",
-  "Hand over 5 items from the Flammable materials category with the Found in raid status"
- ],
- "5a03296886f774569778596a": [
-  "Locate the generators in the east wing of the Health Resort on Shoreline",
-  "Locate the generators in the west wing of the Health Resort on Shoreline",
-  "Hand over 3 Metal fuel tanks or Expeditionary fuel tanks marked with the found in raid stats",
-  "Survive and extract from the location"
- ],
- "5a27bafb86f7741c73584017": [
-  "Stash a Corrugated hose in the med lab on Customs"
- ],
- "61958c366726521dd96828ec": [
-  "Locate and mark the TerraGroup cargo with an MS2000 Marker on Lighthouse",
-  "Eliminate 10 of any targets using M203 40mm underbarrel grenade launcher on Lighthouse or Reserve"
- ],
  "596a0e1686f7741ddf17dbee": [
   "Obtain the Secure Folder 0052 in the sawmill cabin on Woods",
   "Hand over the folder"
  ],
- "5c0bde0986f77479cf22c2f8": [
-  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Customs or Lighthouse",
-  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Streets of Tarkov or Shoreline",
-  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Interchange or Ground Zero",
-  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Woods or Reserve"
- ],
- "6179aff8f57fb279792c60a1": [
-  "Eliminate 10 targests around the chalet area on Lighthouse",
-  "Hand over 5 Topographic survey maps, Intelligence folder, or TerraGroup \"Blue Folders\" materials marked with the Found in raid status"
- ],
- "6578ec473dbd035d04531a8d": [
-  "Mark any of the weather stations with an MS2000 Marker on Woods"
- ],
- "5ae448f286f77448d73c0131": [
-  "Locate and mark any fuel tank near the power station with an MS2000 Marker on Interchange",
-  "Locate and mark any fuel tank in the northern territory with an MS2000 Marker on Interchange"
- ],
- "66aa58245ab22944110db6e9": [
-  "Scout the intersection of Mira Ave and the overpass on Ground Zero (In one raid)",
-  "Locate the passage leading to Streets of Tarkov on Ground Zero (In one raid)",
-  "Use the transit from Ground Zero to Streets of Tarkov (In one raid)",
-  "Survive and extract from Streets of Tarkov (or transit to the next location)"
- ],
- "675c03d1f7da9792a405549a": [
-  "Mark any of the special TerraGroup cargo boxes with an MS2000 Marker on Customs"
- ],
- "5a27ba1c86f77461ea5a3c56": [
-  "Locate and mark the first ritual spot with an MS2000 Marker on Woods",
-  "Locate and mark the second ritual spot with an MS2000 Marker on Woods",
-  "Locate and mark the the ritual spot with an MS2000 Marker on Shoreline"
+ "59c124d686f774189b3c843f": [
+  "Locate and mark any of the fuel tank trucks with an MS2000 Marker on Customs"
  ],
  "59c50c8886f7745fed3193bf": [
   "Eliminate 15 Scavs while using an AKM series weapon on Shoreline"
- ],
- "6179ac7511973d018217d0b9": [
-  "Locate the helicopter at the water treatment plant on Lighthouse",
-  "Mark the helicopter with an MS2000 Marker",
-  "Eliminate any 10 targets around the helicopter area"
  ],
  "59c512ad86f7741f0d09de9b": [
   "Eliminate 12 Scavs with 9x39mm caliber weapons on Reserve",
   "Find 7 Lower half-masks in raid",
   "Hand over the 7 half-masks"
- ],
- "5a68661a86f774500f48afb0": [
-  "Locate and mark the first ambulance with an MS2000 Marker on Shoreline",
-  "Locate and mark the second ambulance with an MS2000 Marker on Shoreline",
-  "Locate and mark the third ambulance with an MS2000 Marker on Shoreline",
-  "Locate and mark the fourth ambulance with an MS2000 Marker on Shoreline"
  ],
  "59ca29fb86f77445ab465c87": [
   "Find any Kalashnikov AK-74 assault rifle in raid",
@@ -1344,30 +1263,39 @@ const WIKI_OBJ_LIST = {
   "Eliminate 10 PMC operatives with Light machine guns",
   "Eliminate 20 Scavs with Light machine guns"
  ],
- "64f5aac4b63b74469b6c14c2": [
-  "(Optional) Locate the apartment of Prapor's friend on Streets of Tarkov",
-  "Locate the place of work of Prapor's friend on Streets of Tarkov",
-  "Obtain any information on the fate of Prapor's friend",
-  "Survive and extract from the location",
-  "Hand over the found data"
+ "5a0327ba86f77456b9154236": [
+  "Hand over 5 items from the Household goods category with the Found in raid status",
+  "Hand over 5 items from the Flammable materials category with the Found in raid status"
  ],
- "6578eb36e5020875d64645cd": [
-  "Locate and neutralize Kollontay",
-  "Hand over the found in raid Kollontay's police baton"
+ "5a03296886f774569778596a": [
+  "Locate the generators in the east wing of the Health Resort on Shoreline",
+  "Locate the generators in the west wing of the Health Resort on Shoreline",
+  "Hand over 3 Metal fuel tanks or Expeditionary fuel tanks marked with the found in raid stats",
+  "Survive and extract from the location"
  ],
- "5b47926a86f7747ccc057c15": [
-  "Install a WI-FI Camera to watch the sawmill dock on Woods",
-  "Install a WI-FI Camera to watch the Kiba Arms store entrance on Interchange"
+ "5a27b7a786f774579c3eb376": [
+  "Locate and mark any UN Tigr vehicle with an MS2000 Marker on Customs"
  ],
- "5c0bbaa886f7746941031d82": [
-  "Obtain the False flash drive from the specified spot on Customs",
-  "Stash the False flash drive in the trash opposite of the stairs on the 3rd floor of the dorm on Customs",
-  "Stash 1 SV-98 sniper rifle in the trash opposite of the stairs on the 3rd floor of the dorm on Customs",
-  "Stash 1 Roler Submariner gold wrist watch in the trash opposite of the stairs on the 3rd floor of the dorm on Customs",
-  "You must not kill any Scavs on Customs while the task is active"
+ "5a27ba1c86f77461ea5a3c56": [
+  "Locate and mark the first ritual spot with an MS2000 Marker on Woods",
+  "Locate and mark the second ritual spot with an MS2000 Marker on Woods",
+  "Locate and mark the the ritual spot with an MS2000 Marker on Shoreline"
  ],
- "658027799634223183395339": [
-  "Eliminate any 10 enemies in the base area"
+ "5a27bafb86f7741c73584017": [
+  "Stash a Corrugated hose in the med lab on Customs"
+ ],
+ "5a27c99a86f7747d2c6bdd8e": [
+  "Eliminate 5 PMCs operatives"
+ ],
+ "5a68661a86f774500f48afb0": [
+  "Locate and mark the first ambulance with an MS2000 Marker on Shoreline",
+  "Locate and mark the second ambulance with an MS2000 Marker on Shoreline",
+  "Locate and mark the third ambulance with an MS2000 Marker on Shoreline",
+  "Locate and mark the fourth ambulance with an MS2000 Marker on Shoreline"
+ ],
+ "5ae448f286f77448d73c0131": [
+  "Locate and mark any fuel tank near the power station with an MS2000 Marker on Interchange",
+  "Locate and mark any fuel tank in the northern territory with an MS2000 Marker on Interchange"
  ],
  "5ae4496986f774459e77beb6": [
   "Obtain BNTI Gzhel-K armor in 0-50% durability",
@@ -1379,14 +1307,15 @@ const WIKI_OBJ_LIST = {
   "Hand over the 6B43 assault armor in 0-75% durability",
   "Hand over the 6B43 assault armor in 75-100% durability"
  ],
- "5c0be13186f7746f016734aa": [
-  "Eliminate any 15 targets without dying while using a bolt-action rifle"
+ "5ae449c386f7744bde357697": [
+  "Visit the Railway Exfil exit",
+  "Visit the Emercom Checkpoint exit",
+  "Visit the Power Station V-Ex exit"
  ],
- "64ee99639878a0569d6ec8c9": [
-  "Eliminate Priest",
-  "Locate the ritual spot on Chekannaya st. on Streets of Tarkov",
-  "Stash a Cultist knife at the ritual spot",
-  "Survive and extract from the location"
+ "5ae449d986f774453a54a7e1": [
+  "Stash the Goshan cash register key at the BIZARRO store fitting rooms on Interchange.",
+  "Stash the IDEA cash register key at Register #9 on Interchange.",
+  "Stash the OLI cash register key at Register #7-8 on Interchange."
  ],
  "5b47891f86f7744d1b23c571": [
   "Find 2 Bronze lion figurines in raid",
@@ -1402,32 +1331,31 @@ const WIKI_OBJ_LIST = {
   "Hand over 2 Roler Submariner gold wrist watch to Ragman",
   "Hand over 2 Golden egg to Ragman"
  ],
- "6572e876dc0d635f633a5714": [
-  "Mark any of the ATMs inside Klimov Shopping Mall with an MS2000 Marker on Streets of Tarkov",
-  "Mark any of the ATMs on Klimov Street with an MS2000 Marker on Streets of Tarkov"
+ "5b47926a86f7747ccc057c15": [
+  "Install a WI-FI Camera to watch the sawmill dock on Woods",
+  "Install a WI-FI Camera to watch the Kiba Arms store entrance on Interchange"
  ],
- "5c112d7e86f7740d6f647486": [
-  "Hand over any Found in Raid items from the Facecovers category x15",
-  "Hand over any Found in Raid items from the Headgear category x15",
-  "Hand over any Found in Raid items from the Headests category x15",
-  "Hand over any Found in Raid items from the Eyewear category category x15",
-  "Hand over any Found in Raid items from the Body Armor category category x15"
+ "5c0bbaa886f7746941031d82": [
+  "Obtain the False flash drive from the specified spot on Customs",
+  "Stash the False flash drive in the trash opposite of the stairs on the 3rd floor of the dorm on Customs",
+  "Stash 1 SV-98 sniper rifle in the trash opposite of the stairs on the 3rd floor of the dorm on Customs",
+  "Stash 1 Roler Submariner gold wrist watch in the trash opposite of the stairs on the 3rd floor of the dorm on Customs",
+  "You must not kill any Scavs on Customs while the task is active"
  ],
- "5ae449c386f7744bde357697": [
-  "Visit the Railway Exfil exit",
-  "Visit the Emercom Checkpoint exit",
-  "Visit the Power Station V-Ex exit"
+ "5c0bde0986f77479cf22c2f8": [
+  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Customs or Lighthouse",
+  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Streets of Tarkov or Shoreline",
+  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Interchange or Ground Zero",
+  "Eliminate 5 PMC operatives with a headshot while using a bolt-action rifle on Woods or Reserve"
+ ],
+ "5c0be13186f7746f016734aa": [
+  "Eliminate any 15 targets without dying while using a bolt-action rifle"
  ],
  "5c0d4c12d09282029f539173": [
   "Eliminate 12 Scavs while using a UNTAR helmet, MF-UNTAR armor, and 5.56 UN weapons on Woods or Reserve",
   "Eliminate 12 Scavs while using a UNTAR helmet, MF-UNTAR armor, and 5.56 UN weapons on Customs or Lighthouse",
   "Eliminate 12 Scavs while using a UNTAR helmet, MF-UNTAR armor, and 5.56 UN weapons on Shoreline or Streets of Tarkov",
   "Eliminate 12 Scavs while using a UNTAR helmet, MF-UNTAR armor, and 5.56 UN weapons on Ground Zero or Interchange"
- ],
- "639dbaf17c898a131e1cffff": [
-  "Locate the debtor on Streets of Tarkov",
-  "Locate the private prison warden's apartment on Streets of Tarkov",
-  "Hand over the item: Iron gate key"
  ],
  "5c0d4e61d09282029f53920e": [
   "Survive and extract from Woods or Interchange with the \"Survived\" exit status",
@@ -1437,13 +1365,12 @@ const WIKI_OBJ_LIST = {
   "Survive and extract from Ground Zero or Streets of Tarkov with the \"Survived\" exit status",
   "Eliminate 15 targets"
  ],
- "5ae449d986f774453a54a7e1": [
-  "Stash the Goshan cash register key at the BIZARRO store fitting rooms on Interchange.",
-  "Stash the IDEA cash register key at Register #9 on Interchange.",
-  "Stash the OLI cash register key at Register #7-8 on Interchange."
- ],
- "60e71b9bbd90872cb85440f3": [
-  "Eliminate 12 PMC operatives at any Scav base on Customs,Woods, or Shoreline"
+ "5c112d7e86f7740d6f647486": [
+  "Hand over any Found in Raid items from the Facecovers category x15",
+  "Hand over any Found in Raid items from the Headgear category x15",
+  "Hand over any Found in Raid items from the Headests category x15",
+  "Hand over any Found in Raid items from the Eyewear category category x15",
+  "Hand over any Found in Raid items from the Body Armor category category x15"
  ],
  "5c51aac186f77432ea65c552": [
   "Hand over the found in raid item: 42 Signature Blend English Tea",
@@ -1492,6 +1419,13 @@ const WIKI_OBJ_LIST = {
   "Hand over the found in raid item: Viibiin sneaker",
   "Hand over the found in raid item: WZ Wallet"
  ],
+ "5d24b81486f77439c92d6ba8": [
+  "Hand over any 10 items from the Food Category"
+ ],
+ "5fd9fad9c1ce6b1a3b486d00": [
+  "Locate Prapor's missing convoy on Woods",
+  "Locate the temporary USEC camp on Woods"
+ ],
  "60e71b62a0beca400d69efc4": [
   "Eliminate 2 PMC operatives on daytime Factory",
   "Eliminate 2 PMC operatives on Customs",
@@ -1502,6 +1436,9 @@ const WIKI_OBJ_LIST = {
   "Eliminate 2 PMC operatives in The Lab",
   "Eliminate 2 PMC operatives on Ground Zero"
  ],
+ "60e71b9bbd90872cb85440f3": [
+  "Eliminate 12 PMC operatives at any Scav base on Customs,Woods, or Shoreline"
+ ],
  "60e71c11d54b755a3b53eb65": [
   "Obtain 12 unusual knives",
   "Hand over 12 knives to Skier",
@@ -1509,6 +1446,19 @@ const WIKI_OBJ_LIST = {
  ],
  "60e71d6d7fcf9c556f325055": [
   "Stash a Trijicon REAP-IR scope behind the trash containers at the \"new\" gas station on Customs"
+ ],
+ "6179ac7511973d018217d0b9": [
+  "Locate the helicopter at the water treatment plant on Lighthouse",
+  "Mark the helicopter with an MS2000 Marker",
+  "Eliminate any 10 targets around the helicopter area"
+ ],
+ "6179aff8f57fb279792c60a1": [
+  "Eliminate 10 targests around the chalet area on Lighthouse",
+  "Hand over 5 Topographic survey maps, Intelligence folder, or TerraGroup \"Blue Folders\" materials marked with the Found in raid status"
+ ],
+ "61958c366726521dd96828ec": [
+  "Locate and mark the TerraGroup cargo with an MS2000 Marker on Lighthouse",
+  "Eliminate 10 of any targets using M203 40mm underbarrel grenade launcher on Lighthouse or Reserve"
  ],
  "625d7001c4874104f230c0c5": [
   "Eliminate 7 Raiders in The Lab",
@@ -1539,9 +1489,55 @@ const WIKI_OBJ_LIST = {
   "Obtain the informant's journal",
   "Bring the information to Lightkeeper"
  ],
- "69ce213a298a6529b30d7134": [
-  "Find 3 Aceso Xpress semi-automatic biochemical analyzers in raid",
-  "Hand over the items"
+ "639dbaf17c898a131e1cffff": [
+  "Locate the debtor on Streets of Tarkov",
+  "Locate the private prison warden's apartment on Streets of Tarkov",
+  "Hand over the item: Iron gate key"
+ ],
+ "64ee99639878a0569d6ec8c9": [
+  "Eliminate Priest",
+  "Locate the ritual spot on Chekannaya st. on Streets of Tarkov",
+  "Stash a Cultist knife at the ritual spot",
+  "Survive and extract from the location"
+ ],
+ "64f5aac4b63b74469b6c14c2": [
+  "(Optional) Locate the apartment of Prapor's friend on Streets of Tarkov",
+  "Locate the place of work of Prapor's friend on Streets of Tarkov",
+  "Obtain any information on the fate of Prapor's friend",
+  "Survive and extract from the location",
+  "Hand over the found data"
+ ],
+ "6572e876dc0d635f633a5714": [
+  "Mark any of the ATMs inside Klimov Shopping Mall with an MS2000 Marker on Streets of Tarkov",
+  "Mark any of the ATMs on Klimov Street with an MS2000 Marker on Streets of Tarkov"
+ ],
+ "6578eb36e5020875d64645cd": [
+  "Locate and neutralize Kollontay",
+  "Hand over the found in raid Kollontay's police baton"
+ ],
+ "6578ec473dbd035d04531a8d": [
+  "Mark any of the weather stations with an MS2000 Marker on Woods"
+ ],
+ "658027799634223183395339": [
+  "Eliminate any 10 enemies in the base area"
+ ],
+ "66058cbf2f19c31a5a1337ec": [
+  "Eliminate 2 of Kaban's or Kollontay's guards on Streets of Tarkov",
+  "Do not harm Kaban or Kollontay"
+ ],
+ "66058cd19f59e625462acc90": [
+  "Return to the old champion's hideout on Customs",
+  "Locate and obtain the compromising information on Ref",
+  "Hand over the found info"
+ ],
+ "66aa58245ab22944110db6e9": [
+  "Scout the intersection of Mira Ave and the overpass on Ground Zero (In one raid)",
+  "Locate the passage leading to Streets of Tarkov on Ground Zero (In one raid)",
+  "Use the transit from Ground Zero to Streets of Tarkov (In one raid)",
+  "Survive and extract from Streets of Tarkov (or transit to the next location)"
+ ],
+ "675c03d1f7da9792a405549a": [
+  "Mark any of the special TerraGroup cargo boxes with an MS2000 Marker on Customs"
  ],
  "68341d7d7559f4e6d50bc0db": [
   "Eliminate 2 of Kaban's or Kollontay's guards on Streets of Tarkov",
@@ -1551,6 +1547,10 @@ const WIKI_OBJ_LIST = {
   "Return to the old champion's hideout on Customs",
   "Locate and obtain the compromising information on Ref",
   "Hand over the found info"
+ ],
+ "69ce213a298a6529b30d7134": [
+  "Find 3 Aceso Xpress semi-automatic biochemical analyzers in raid",
+  "Hand over the items"
  ]
 };
 

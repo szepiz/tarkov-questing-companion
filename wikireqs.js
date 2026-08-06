@@ -9,17 +9,10 @@
 // it. This matters: 58 quests carry a minPlayerLevel the wiki page never
 // mentions, so a wholesale import would silently delete real requirements.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-05.
+// Source: escapefromtarkov.fandom.com, read 2026-08-06.
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const WIKI_TRADER_REQS = {
- "657315ddab5a49b71f098853": [
-  {
-   "trader": "Therapist",
-   "kind": "loyalty",
-   "value": 1
-  }
- ],
  "5936d90786f7742b1420ba5b": [
   {
    "trader": "Prapor",
@@ -27,11 +20,18 @@ const WIKI_TRADER_REQS = {
    "value": 1
   }
  ],
- "5d25e2cc86f77443e47ae019": [
+ "59675d6c86f7740a842fc482": [
   {
-   "trader": "Jaeger",
+   "trader": "Prapor",
    "kind": "loyalty",
-   "value": 3
+   "value": 2
+  }
+ ],
+ "59675ea386f77414b32bded2": [
+  {
+   "trader": "Prapor",
+   "kind": "loyalty",
+   "value": 2
   }
  ],
  "596b36c586f77450d6045ad2": [
@@ -48,42 +48,35 @@ const WIKI_TRADER_REQS = {
    "value": 1
   }
  ],
- "59675d6c86f7740a842fc482": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "5a27c99a86f7747d2c6bdd8e": [
-  {
-   "trader": "Skier",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "59675ea386f77414b32bded2": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "5c0d190cd09282029f5390d8": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "5a27b75b86f7742e97191958": [
+ "5a03153686f77442d90e2171": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 2
   }
  ],
- "5a27b7d686f77460d847e6a6": [
+ "5a0327ba86f77456b9154236": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "5a03296886f774569778596a": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "5a0449d586f77474e66227b7": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "5a27b75b86f7742e97191958": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
@@ -95,6 +88,13 @@ const WIKI_TRADER_REQS = {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 1
+  }
+ ],
+ "5a27b7d686f77460d847e6a6": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
   }
  ],
  "5a27b80086f774429a5d7e20": [
@@ -118,32 +118,11 @@ const WIKI_TRADER_REQS = {
    "value": 2
   }
  ],
- "5a0327ba86f77456b9154236": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 1
-  }
- ],
- "5a03296886f774569778596a": [
+ "5a27ba1c86f77461ea5a3c56": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 2
-  }
- ],
- "5a03153686f77442d90e2171": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "5a0449d586f77474e66227b7": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 1
   }
  ],
  "5a27bafb86f7741c73584017": [
@@ -160,39 +139,11 @@ const WIKI_TRADER_REQS = {
    "value": 3
   }
  ],
- "61958c366726521dd96828ec": [
+ "5a27c99a86f7747d2c6bdd8e": [
   {
-   "trader": "Peacekeeper",
+   "trader": "Skier",
    "kind": "loyalty",
-   "value": 3
-  }
- ],
- "6086c852c945025d41566124": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 3
-  }
- ],
- "5c0bde0986f77479cf22c2f8": [
-  {
-   "trader": "Mechanic",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
- "6179b4d1bca27a099552e04e": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 3
-  }
- ],
- "6179aff8f57fb279792c60a1": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 3
+   "value": 2
   }
  ],
  "5ae448bf86f7744d733e55ee": [
@@ -202,69 +153,6 @@ const WIKI_TRADER_REQS = {
    "value": 1
   }
  ],
- "669fa38fad7f1eac2607ed46": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "639135f286e646067c176a87": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "66aa58245ab22944110db6e9": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 1
-  }
- ],
- "5a27ba1c86f77461ea5a3c56": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "639282134ed9512be67647ed": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "64e7b9bffd30422ed03dad38": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "68ee1c18b4e5bc9a68018cd7": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
- "639136f086e646067c176a8b": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "5edac63b930f5454f51e128b": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
  "5b47926a86f7747ccc057c15": [
   {
    "trader": "Skier",
@@ -272,30 +160,9 @@ const WIKI_TRADER_REQS = {
    "value": 1
   }
  ],
- "6578eb36e5020875d64645cd": [
+ "5c0bde0986f77479cf22c2f8": [
   {
-   "trader": "Jaeger",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
- "5d4bec3486f7743cac246665": [
-  {
-   "trader": "Prapor",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
- "63a9b229813bba58a50c9ee5": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
- "63a9ae24009ffc6a551631a5": [
-  {
-   "trader": "Prapor",
+   "trader": "Mechanic",
    "kind": "loyalty",
    "value": 4
   }
@@ -307,16 +174,16 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
- "6572e876dc0d635f633a5714": [
+ "5c0d190cd09282029f5390d8": [
   {
-   "trader": "Peacekeeper",
+   "trader": "Prapor",
    "kind": "loyalty",
-   "value": 3
+   "value": 2
   }
  ],
- "6179b5eabca27a099552e052": [
+ "5c0d1c4cd0928202a02a6f5c": [
   {
-   "trader": "Peacekeeper",
+   "trader": "Therapist",
    "kind": "loyalty",
    "value": 4
   }
@@ -328,39 +195,11 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
- "639dbaf17c898a131e1cffff": [
-  {
-   "trader": "Skier",
-   "kind": "loyalty",
-   "value": 2
-  }
- ],
  "5c0d4e61d09282029f53920e": [
   {
    "trader": "Peacekeeper",
    "kind": "loyalty",
    "value": 4
-  }
- ],
- "639135534b15ca31f76bc317": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 3
-  }
- ],
- "5c0d1c4cd0928202a02a6f5c": [
-  {
-   "trader": "Therapist",
-   "kind": "loyalty",
-   "value": 4
-  }
- ],
- "60e71c9ad54b755a3b53eb66": [
-  {
-   "trader": "Peacekeeper",
-   "kind": "loyalty",
-   "value": 3
   }
  ],
  "5c51aac186f77432ea65c552": [
@@ -400,32 +239,46 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
- "60e71dc0a94be721b065bbfc": [
+ "5d25e2cc86f77443e47ae019": [
   {
-   "trader": "Ragman",
-   "kind": "loyalty",
-   "value": 1
-  }
- ],
- "60e71dc67fcf9c556f325056": [
-  {
-   "trader": "Ragman",
+   "trader": "Jaeger",
    "kind": "loyalty",
    "value": 3
   }
  ],
- "60e71d6d7fcf9c556f325055": [
+ "5d4bec3486f7743cac246665": [
   {
-   "trader": "Mechanic",
-   "kind": "loyalty",
-   "value": 1
-  }
- ],
- "60e71e8ed54b755a3b53eb67": [
-  {
-   "trader": "Jaeger",
+   "trader": "Prapor",
    "kind": "loyalty",
    "value": 4
+  }
+ ],
+ "5edac63b930f5454f51e128b": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "6086c852c945025d41566124": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "60e71c11d54b755a3b53eb65": [
+  {
+   "trader": "Skier",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "60e71c9ad54b755a3b53eb66": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
   }
  ],
  "60e71ccb5688f6424c7bfec4": [
@@ -442,9 +295,156 @@ const WIKI_TRADER_REQS = {
    "value": 4
   }
  ],
- "60e71c11d54b755a3b53eb65": [
+ "60e71d6d7fcf9c556f325055": [
+  {
+   "trader": "Mechanic",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "60e71dc0a94be721b065bbfc": [
+  {
+   "trader": "Ragman",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "60e71dc67fcf9c556f325056": [
+  {
+   "trader": "Ragman",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "60e71e8ed54b755a3b53eb67": [
+  {
+   "trader": "Jaeger",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "6179aff8f57fb279792c60a1": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "6179b4d1bca27a099552e04e": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "6179b5eabca27a099552e052": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "61958c366726521dd96828ec": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "639135534b15ca31f76bc317": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "639135f286e646067c176a87": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "639136f086e646067c176a8b": [
+  {
+   "trader": "Prapor",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "639282134ed9512be67647ed": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "639dbaf17c898a131e1cffff": [
   {
    "trader": "Skier",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "63a9ae24009ffc6a551631a5": [
+  {
+   "trader": "Prapor",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "63a9b229813bba58a50c9ee5": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 4
+  }
+ ],
+ "64e7b9bffd30422ed03dad38": [
+  {
+   "trader": "Prapor",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "6572e876dc0d635f633a5714": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 3
+  }
+ ],
+ "657315ddab5a49b71f098853": [
+  {
+   "trader": "Therapist",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "6578eb36e5020875d64645cd": [
+  {
+   "trader": "Jaeger",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "669fa38fad7f1eac2607ed46": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 2
+  }
+ ],
+ "66aa58245ab22944110db6e9": [
+  {
+   "trader": "Peacekeeper",
+   "kind": "loyalty",
+   "value": 1
+  }
+ ],
+ "68ee1c18b4e5bc9a68018cd7": [
+  {
+   "trader": "Prapor",
    "kind": "loyalty",
    "value": 4
   }
@@ -457,85 +457,85 @@ const WIKI_TRADER_REQS = {
 // so the change is auditable rather than invisible. Pages with no Requirements
 // section at all are NOT in here: that is silence, not a claim.
 const WIKI_NO_LEVEL = {
- "657315ddab5a49b71f098853": 1,
  "5936d90786f7742b1420ba5b": 1,
- "5d25e2cc86f77443e47ae019": 2,
+ "59675d6c86f7740a842fc482": 9,
+ "59675ea386f77414b32bded2": 10,
+ "5967725e86f774601a446662": 9,
  "596b36c586f77450d6045ad2": 5,
  "5979eee086f774311955e614": 8,
- "5967725e86f774601a446662": 9,
- "59675d6c86f7740a842fc482": 9,
- "5a27c99a86f7747d2c6bdd8e": 9,
- "59675ea386f77414b32bded2": 10,
- "5a27b75b86f7742e97191958": 10,
- "5a27b7d686f77460d847e6a6": 10,
- "5a27b7a786f774579c3eb376": 10,
- "66058cd19f59e625462acc90": 10,
- "5a27b80086f774429a5d7e20": 11,
  "597a160786f77477531d39d2": 11,
  "597a171586f77405ba6887d3": 11,
- "5a27b87686f77460de0252a8": 11,
- "5a27b9de86f77464e5044585": 12,
+ "5a03153686f77442d90e2171": 12,
  "5a0327ba86f77456b9154236": 12,
  "5a03296886f774569778596a": 12,
- "5a03153686f77442d90e2171": 12,
  "5a0449d586f77474e66227b7": 12,
+ "5a27b75b86f7742e97191958": 10,
+ "5a27b7a786f774579c3eb376": 10,
+ "5a27b7d686f77460d847e6a6": 10,
+ "5a27b80086f774429a5d7e20": 11,
+ "5a27b87686f77460de0252a8": 11,
+ "5a27b9de86f77464e5044585": 12,
+ "5a27ba1c86f77461ea5a3c56": 18,
  "5a27bafb86f7741c73584017": 12,
  "5a27bb1e86f7741f27621b7e": 12,
- "61958c366726521dd96828ec": 12,
- "6086c852c945025d41566124": 14,
- "5c0bde0986f77479cf22c2f8": 14,
- "6179b4d1bca27a099552e04e": 14,
- "6179aff8f57fb279792c60a1": 15,
+ "5a27c99a86f7747d2c6bdd8e": 9,
  "5ae448bf86f7744d733e55ee": 15,
- "665eeca92f7aedcc900b0437": 15,
- "669fa38fad7f1eac2607ed46": 15,
- "67a0967c003a9986cb0f5ac1": 15,
- "639135f286e646067c176a87": 17,
- "66aa58245ab22944110db6e9": 17,
- "5a27ba1c86f77461ea5a3c56": 18,
- "639282134ed9512be67647ed": 20,
- "64e7b9bffd30422ed03dad38": 20,
- "68ee1c18b4e5bc9a68018cd7": 20,
- "64f5aac4b63b74469b6c14c2": 22,
+ "5ae449d986f774453a54a7e1": 40,
+ "5b47926a86f7747ccc057c15": 24,
+ "5c0bde0986f77479cf22c2f8": 14,
+ "5c0d1c4cd0928202a02a6f5c": 35,
+ "5c0d4c12d09282029f539173": 30,
+ "5c0d4e61d09282029f53920e": 32,
+ "5c51aac186f77432ea65c552": 45,
+ "5d25e2cc86f77443e47ae019": 2,
+ "5d4bec3486f7743cac246665": 25,
+ "5e381b0286f77420e3417a74": 42,
+ "5e383a6386f77465910ce1f3": 42,
  "5edac34d0bb72a50635c2bfa": 22,
  "5edac63b930f5454f51e128b": 23,
- "5b47926a86f7747ccc057c15": 24,
- "6578eb36e5020875d64645cd": 23,
- "5d4bec3486f7743cac246665": 25,
+ "600302d73b897b11364cd161": 33,
+ "6086c852c945025d41566124": 14,
+ "60e71c11d54b755a3b53eb65": 50,
+ "60e71c9ad54b755a3b53eb66": 45,
+ "60e71ce009d7c801eb0c0ec6": 60,
+ "60e71d6d7fcf9c556f325055": 52,
+ "60e71dc0a94be721b065bbfc": 45,
+ "60e71e8ed54b755a3b53eb67": 55,
+ "6179aff8f57fb279792c60a1": 15,
+ "6179b4d1bca27a099552e04e": 14,
+ "61958c366726521dd96828ec": 12,
+ "639135534b15ca31f76bc317": 35,
+ "639135f286e646067c176a87": 17,
+ "639282134ed9512be67647ed": 20,
+ "639dbaf17c898a131e1cffff": 31,
  "63a9b229813bba58a50c9ee5": 25,
+ "64e7b9bffd30422ed03dad38": 20,
+ "64f5aac4b63b74469b6c14c2": 22,
+ "64f83bb69878a0569d6ecfbe": 39,
+ "64f83bcdde58fc437700d8fa": 39,
+ "64f83bd983cfca080a362c82": 39,
+ "6572e876dc0d635f633a5714": 28,
+ "657315ddab5a49b71f098853": 1,
+ "6578eb36e5020875d64645cd": 23,
+ "66058cd19f59e625462acc90": 10,
+ "665eeca92f7aedcc900b0437": 15,
  "666314b0acf8442f8b0531a1": 27,
+ "666314b2a9290f9e0806cca3": 27,
  "666314b696a9349baa021bac": 27,
  "666314b8312343839d032d24": 27,
  "666314bafd5ca9577902e03a": 27,
+ "666314bc1d3ec95634095e77": 27,
  "666314bd920800278d0f6748": 27,
  "666314bf1cd52e3d040a2e78": 27,
  "666314c10aa5c7436c00908c": 27,
  "666314c3acf8442f8b0531a3": 27,
- "666314b2a9290f9e0806cca3": 27,
- "666314bc1d3ec95634095e77": 27,
- "6572e876dc0d635f633a5714": 28,
  "666314c5a9290f9e0806cca5": 27,
- "5c0d4c12d09282029f539173": 30,
- "639dbaf17c898a131e1cffff": 31,
- "5c0d4e61d09282029f53920e": 32,
+ "669fa38fad7f1eac2607ed46": 15,
+ "66aa58245ab22944110db6e9": 17,
  "6764174c86addd02bc033d68": 33,
- "600302d73b897b11364cd161": 33,
- "639135534b15ca31f76bc317": 35,
- "5c0d1c4cd0928202a02a6f5c": 35,
- "6942b44f891369fc790e385a": 37,
- "64f83bcdde58fc437700d8fa": 39,
- "64f83bd983cfca080a362c82": 39,
- "64f83bb69878a0569d6ecfbe": 39,
- "5ae449d986f774453a54a7e1": 40,
- "5e381b0286f77420e3417a74": 42,
- "5e383a6386f77465910ce1f3": 42,
- "60e71c9ad54b755a3b53eb66": 45,
- "5c51aac186f77432ea65c552": 45,
- "60e71dc0a94be721b065bbfc": 45,
- "60e71d6d7fcf9c556f325055": 52,
- "60e71e8ed54b755a3b53eb67": 55,
- "60e71ce009d7c801eb0c0ec6": 60,
- "60e71c11d54b755a3b53eb65": 50
+ "67a0967c003a9986cb0f5ac1": 15,
+ "68ee1c18b4e5bc9a68018cd7": 20,
+ "6942b44f891369fc790e385a": 37
 };
 
 // The Collector (Kappa) gate as rewritten in 1.1.0. Replaces the old
