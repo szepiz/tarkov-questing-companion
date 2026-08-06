@@ -1406,6 +1406,10 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mk-lock   { fill: #6fa8dc; }
 .mk-keys   { fill: #d0a943; }
 .mk-intel  { fill: #7fb2e5; }
+/* BattlePass documents — deliberately NOT mk-intel's blue, though both are
+   paper: intel is ordinary loot, these are season progress and get their own
+   read at a glance */
+.mk-bp     { fill: #d98f3f; }
 .mk-val    { fill: #b06fd0; }
 .mk-med    { fill: #d96e8f; }
 .mk-elec   { fill: #6fc3b0; }

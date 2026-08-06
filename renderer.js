@@ -3008,6 +3008,52 @@ function handTickedOnMap(mapName) {
   return out;
 }
 
+// ---------- BattlePass documents ----------
+//
+// Season 1 "KORD BREACH" turns loose documentation into BattlePass progress:
+// seven types, three maps each, plus "Classified documents" which substitutes
+// for any of them and is bought rather than found.
+//
+// ⚠️ These have NO COORDINATES anywhere — json.tarkov.dev carries no item
+// record for them at all (a name in its locale file and nothing else, no
+// lootLoose entry on any map), and the wiki documents the spots as prose and
+// screenshots. So this behaves like the story objectives directly above: a
+// LIST in the side panel, not pins. A spot only becomes a pin once it has been
+// hand-placed through the dev map editor, which is why the marker path below
+// exists while the data behind it is still empty.
+function bpDocs() {
+  return (typeof BP_DOCS !== 'undefined' && Array.isArray(BP_DOCS)) ? BP_DOCS : [];
+}
+const bpLayerId = (d) => 'bp:' + (d.id || d.name);
+
+// the types that can turn up on a map, whether or not their spots are written
+// up yet — three of the seven are at "we know the maps" and no further
+function bpDocsOnMap(mapName) {
+  return bpDocs().filter((d) => d.spots && Object.prototype.hasOwnProperty.call(d.spots, mapName));
+}
+
+// Hand-placed pins, once they exist: MAP_DATA[map].bpDocs = [{type, x, y, z}].
+// Absent today by design — this is the half that fills in over time.
+function bpPins(mapName) {
+  const md = (typeof MAP_DATA !== 'undefined' && MAP_DATA[mapName]) || null;
+  return (md && Array.isArray(md.bpDocs)) ? md.bpDocs : [];
+}
+
+// What the side panel shows: every described spot of every TICKED type on this
+// map. Ticking is the same per-layer setting the map pins use, so one box
+// governs both halves and they can never disagree.
+function bpSpotsFor(mapName) {
+  const out = [];
+  for (const d of bpDocsOnMap(mapName)) {
+    if (!layerOn(bpLayerId(d))) continue;
+    const spots = (d.spots && d.spots[mapName]) || [];
+    const placed = bpPins(mapName).filter((p) => p.type === (d.id || d.name)).length;
+    if (!spots.length) out.push({ type: d.name, desc: null, placed: 0 });
+    else spots.forEach((desc, i) => out.push({ type: d.name, desc, placed: i < placed }));
+  }
+  return out;
+}
+
 function renderMapLoadout(mapName) {
   const load = collectMapLoadout(mapName);
   // The item's row remembers which objectives want it; clicking lights those
@@ -3031,6 +3077,19 @@ function renderMapLoadout(mapName) {
   $('mapStoryList').innerHTML = story.length ? `<div class="ld-group ld-story">
       <ul>${story.map((o) => `<li data-story-obj="${escapeHtml(o.id)}" title="${escapeHtml(o.chapter)} — click to tick this story objective off">
         <span class="ld-name">${escapeHtml(o.desc)}</span></li>`).join('')}</ul>
+    </div>` : '';
+
+  // BattlePass documents on this map — same treatment as the story block above
+  // and for the same reason: descriptions exist, positions do not.
+  const bp = bpSpotsFor(mapName);
+  const bpAny = bpDocsOnMap(mapName).length;
+  $('mapBpSec').hidden = !bpAny;
+  $('mapBpCount').textContent = bpAny ? String(bp.length || '') : '';
+  $('mapBpList').innerHTML = bpAny ? `<div class="ld-group ld-bp">
+      <ul>${bp.length ? bp.map((o) => `<li title="${escapeHtml(o.type)}">
+        <span class="ld-name">${o.desc ? escapeHtml(o.desc) : '<em>spots not written up yet</em>'}</span>
+        <span class="ld-qty">${escapeHtml(o.type.replace(/ documentation| documents| files/i, ''))}</span></li>`).join('')
+      : '<li><span class="ld-name"><em>tick a document type in LAYERS to list its spots</em></span></li>'}</ul>
     </div>` : '';
 
   const html = section('KEYS', load.keys) + section('TAKE WITH YOU', load.bring);
@@ -3490,7 +3549,11 @@ const handMarkersFor = (name) => {
     .filter((h) => h.map === name && (h.pts || []).length).length;
   return hz + sw;
 };
-const hasAnyMarkers = (name) => hasMapMarkers(name) || handMarkersFor(name) > 0;
+// ...or any BattlePass document type, which has no markers by nature. Without
+// that last clause the whole LAYERS panel stays hidden on Icebreaker — a map
+// with nothing in the marker bake at all, and two document types on it.
+const hasAnyMarkers = (name) => hasMapMarkers(name) || handMarkersFor(name) > 0
+  || bpDocsOnMap(name).length > 0;
 
 // One row per checkbox. This is the single source of truth: it drives the panel,
 // the glyph, the legend swatch, the settings key and the filter, so none of
@@ -3584,6 +3647,29 @@ const MARKER_GROUPS = [
     rows: [{ id: 'switchAll', label: 'Levers & switches', glyph: 'lever', cls: 'mk-switch' }],
   },
   {
+    id: 'bpdocs', title: 'BP DOCUMENTS',
+    note: 'Season 1 documentation. Nobody publishes positions for these, so ticking one lists its known spots in the panel on the left rather than pinning them.',
+    // built from the data, so a type the wiki adds later needs no code change
+    get rows() {
+      return bpDocs().map((d) => ({
+        id: bpLayerId(d),
+        label: d.name,
+        glyph: 'folder',
+        cls: 'mk-bp',
+        // counts DESCRIBED SPOTS on the open map, not markers — there are no
+        // markers yet, and a row reading "0" for a type that spawns here would
+        // be a lie about the game rather than about our data
+        count: () => {
+          const list = (d.spots && d.spots[mapView.name]) || null;
+          return list ? (list.length || 0) : 0;
+        },
+        // ...and it stays tickable even at zero, because "this type spawns here,
+        // spots not written up yet" is worth being able to switch on
+        live: () => (d.spots && Object.prototype.hasOwnProperty.call(d.spots, mapView.name)),
+      }));
+    },
+  },
+  {
     id: 'keys', title: 'KEYS & KEYCARDS',
     note: 'Spots a key can turn up at. None of them is a guaranteed spawn.',
     rows: LOOT_CATS.slice(0, 2),
@@ -3669,6 +3755,10 @@ async function setLayer(id, on) {
   const next = { ...((state.settings && state.settings.mapLayers) || {}), [id]: on };
   state.settings = { ...state.settings, mapLayers: next };
   drawMap();
+  // A BattlePass document layer has nothing to draw — its whole output is the
+  // list in the side panel, so redrawing the map alone leaves the tick looking
+  // broken. Only that group needs this: every other layer IS map geometry.
+  if (String(id).startsWith('bp:') && mapView.name) renderMapLoadout(mapView.name);
   state.settings = await backend.saveSettings({ mapLayers: next });
 }
 
@@ -3940,7 +4030,14 @@ function labelCount() {
 }
 
 function mapGroupCount(grp) {
-  const ids = new Set(groupRows(grp).map((r) => r.id));
+  const rows = groupRows(grp);
+  // A group whose rows count something other than markers (BP documents count
+  // described spots) has to total the rows instead, or its header reads "–"
+  // over a body full of numbers.
+  if (rows.length && rows.every((r) => r.count)) {
+    return rows.reduce((a, r) => a + r.count(), 0);
+  }
+  const ids = new Set(rows.map((r) => r.id));
   let n = 0;
   for (const m of mapView.markers || []) if (m.layers.some((id) => ids.has(id))) n++;
   return n;
@@ -4267,9 +4364,11 @@ function renderMapLayers() {
       // `always` rows aren't markers, so they have no marker count and must never
       // be disabled — that is the location-names toggle, which counts labels and
       // is on unless explicitly turned off.
-      const n = r.always ? labelCount() : (counts[r.id] || 0);
+      const n = r.count ? r.count() : (r.always ? labelCount() : (counts[r.id] || 0));
       const on = r.always ? labelsOn() : layerOn(r.id);
-      const dead = !n && !r.always;
+      // a row can declare itself live with a zero count — the BP document types
+      // whose spots the wiki has not written up yet are still real spawns here
+      const dead = r.live ? !r.live() : (!n && !r.always);
       return `<label class="ml-row${dead ? ' off' : ''}">`
         + `<input type="checkbox" data-layer="${r.id}"${on ? ' checked' : ''}${dead ? ' disabled' : ''}>`
         + markerSvg(r.glyph, r.cls, 16, r.container)
