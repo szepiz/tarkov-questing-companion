@@ -1414,6 +1414,9 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    paper: intel is ordinary loot, these are season progress and get their own
    read at a glance */
 .mk-bp     { fill: #d98f3f; }
+/* posters — muted on purpose: these are shared loot spots that MIGHT give a
+   poster, not a spawn worth crossing a map for */
+.mk-poster { fill: #8a7fa8; }
 .mk-val    { fill: #b06fd0; }
 .mk-med    { fill: #d96e8f; }
 .mk-elec   { fill: #6fc3b0; }

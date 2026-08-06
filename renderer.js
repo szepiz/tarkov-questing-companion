@@ -3051,27 +3051,6 @@ function bpPins(mapName) {
 // What the side panel shows: every described spot of every TICKED type on this
 // map. Ticking is the same per-layer setting the map pins use, so one box
 // governs both halves and they can never disagree.
-function bpSpotsFor(mapName) {
-  const out = [];
-  const pins = bpPins(mapName);
-  for (const d of bpDocsOnMap(mapName)) {
-    if (!layerOn(bpLayerId(d))) continue;
-    const key = d.id || d.name;
-    const spots = (d.spots && d.spots[mapName]) || [];
-    // matched by SPOT INDEX, not by counting: pins get placed in whatever order
-    // suits the person placing them, and "the first three are done" would put
-    // the marker against the wrong lines the moment one is skipped
-    const placedSpots = new Set(pins.filter((p) => p.type === key && p.spot !== null)
-      .map((p) => p.spot));
-    if (!spots.length) out.push({ type: d.name, desc: null, placed: false });
-    else spots.forEach((desc, i) => out.push({ type: d.name, desc, placed: placedSpots.has(i) }));
-    // spawns found in game that the wiki never listed still deserve a line
-    for (const p of pins.filter((x) => x.type === key && x.spot === null)) {
-      out.push({ type: d.name, desc: 'a spot not listed on the wiki', placed: true, extra: true });
-    }
-  }
-  return out;
-}
 
 function renderMapLoadout(mapName) {
   const load = collectMapLoadout(mapName);
@@ -3098,19 +3077,11 @@ function renderMapLoadout(mapName) {
         <span class="ld-name">${escapeHtml(o.desc)}</span></li>`).join('')}</ul>
     </div>` : '';
 
-  // BattlePass documents on this map — same treatment as the story block above
-  // and for the same reason: descriptions exist, positions do not.
-  const bp = bpSpotsFor(mapName);
-  const bpAny = bpDocsOnMap(mapName).length;
-  $('mapBpSec').hidden = !bpAny;
-  $('mapBpCount').textContent = bpAny ? String(bp.length || '') : '';
-  $('mapBpList').innerHTML = bpAny ? `<div class="ld-group ld-bp">
-      <ul>${bp.length ? bp.map((o) => `<li class="${o.placed ? 'bp-pinned' : ''}" title="${escapeHtml(o.type)}${o.placed ? ' — pinned on the map' : ''}">
-        <span class="ld-name">${o.placed ? '<span class="bp-dot">◆</span>' : ''}${o.desc ? escapeHtml(o.desc) : '<em>spots not written up yet</em>'}</span>
-        <span class="ld-qty">${escapeHtml(o.type.replace(/ documentation| documents| files/i, ''))}</span></li>`).join('')
-      : '<li><span class="ld-name"><em>tick a document type in LAYERS to list its spots</em></span></li>'}</ul>
-    </div>` : '';
-
+  // The BattlePass document SPOT LIST is gone (2026-08-06). It existed because
+  // no source published positions, so the wiki's written descriptions were the
+  // best available. Once the spots were pinned by hand the prose added nothing
+  // — the pins say where, and say it better than "on a shelf on 2nd floor of
+  // the Tarbank building" ever did. The layer tickboxes now govern pins only.
   const html = section('KEYS', load.keys) + section('TAKE WITH YOU', load.bring);
   const ticked = handTickedOnMap(mapName);
   const tickedHtml = ticked.length ? `<div class="ld-group ld-ticked">
@@ -3747,14 +3718,9 @@ const MARKER_GROUPS = [
         // counts DESCRIBED SPOTS on the open map, not markers — there are no
         // markers yet, and a row reading "0" for a type that spawns here would
         // be a lie about the game rather than about our data
-        count: () => {
-          const list = (d.spots && d.spots[mapView.name]) || null;
-          const spots = list ? (list.length || 0) : 0;
-          // pins can outnumber descriptions once spawns the wiki never listed
-          // get placed, so the row reports whichever is the bigger truth
-          const pins = ((d.pins && d.pins[mapView.name]) || []).length;
-          return Math.max(spots, pins);
-        },
+        // pins placed on this map — the only number there is now that the
+        // written spot descriptions are gone
+        count: () => ((d.pins && d.pins[mapView.name]) || []).length,
         // ...and it stays tickable even at zero, because "this type spawns here,
         // spots not written up yet" is worth being able to switch on
         live: () => (d.spots && Object.prototype.hasOwnProperty.call(d.spots, mapView.name)),
@@ -3786,7 +3752,14 @@ const MARKER_GROUPS = [
     rows: [
       { id: 'lootHighValue', label: 'High value', glyph: 'star', cls: 'mk-hv' },
       { id: 'lootHighValuePool', label: 'High value · long shot', glyph: 'starOpen', cls: 'mk-hv' },
-    ].concat(LOOT_CATS.slice(2)),
+    ].concat(LOOT_CATS.slice(2)).concat([
+      // Posters. One row, no names: 56 poster items exist, none has an item
+      // record, no parent category and no rarity — nothing separates them but
+      // a name. And not one of these points is dedicated: nearly every one
+      // offers 21+ different items, so this marks "a poster can turn up here",
+      // which is the only honest claim the data supports.
+      { id: 'lootPosters', label: 'Posters', glyph: 'folder', cls: 'mk-poster' },
+    ]),
   },
   {
     id: 'containers', title: 'CONTAINERS',
@@ -4102,11 +4075,17 @@ function collectMapMarkers(mapName) {
   // Hand-placed BattlePass documents (dev editor -> bpdocs.js). The ONLY
   // positions these will ever have — no source publishes them — so the pin
   // carries the wiki's description of the spot it was placed for.
+  // Posters (posters.js, baked from the JSON API — the marker bake still runs
+  // on the dead GraphQL path and has none of these). Every one is a shared
+  // pool, so the line says so rather than promising a poster.
+  const posters = (typeof POSTER_POINTS !== 'undefined' && POSTER_POINTS[mapName]) || [];
+  for (const [px, pz] of posters) {
+    add(px, 0, pz, ['lootPosters'], 'folder', 'mk-poster', 'Posters',
+      [['', 'A shared loot spot that can give a poster among many other items']]);
+  }
   for (const p of bpPins(mapName)) {
-    const d = bpDocs().find((x) => (x.id || x.name) === p.type);
-    const desc = (d && p.spot !== null && ((d.spots || {})[mapName] || [])[p.spot]) || '';
     add(p.x, 0, p.z, ['bp:' + p.type], 'folder', 'mk-bp', p.name,
-      [['', desc || 'Placed by hand — the wiki does not list this spot']],
+      [['', 'Placed by hand — no source publishes positions for these']],
       { floor: typeof p.floor === 'number' ? p.floor : -1 });
   }
   return out;

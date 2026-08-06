@@ -20,28 +20,9 @@ const BP_DOCS = [
   "id": "6a31824878450ec91c0ea1ae",
   "name": "Blueprints and technical documentation",
   "spots": {
-   "Factory": [
-    "In the laboratory zone 1st floor in the breachable room.",
-    "In the laboratory zone, 2nd floor on a desk.",
-    "In the offices 1st floor next to the safe inside a open drawer.",
-    "Inside the hallway of offices 3rd floor inside a cabinet.",
-    "Inside the medical tent on a table.",
-    "In the window office room on the desk",
-    "Inside the office on 3rd floor in a opened drawer",
-    "Inside the Factory emergency exit key room on 3rd floor on top of drawers.",
-    "Inside the 3rd floor office on the floor next to the drawers.",
-    "On a dead USEC body in basement under the medical area."
-   ],
-   "Interchange": [
-    "In the PC cubicle in the back of OLI.",
-    "Inside GOSHAN north offices.",
-    "Inside the back offices of OLI.",
-    "Inside IDEA in the southern part of the store on the floor.",
-    "In the office between GOSHAN and OLI."
-   ],
-   "The Labyrinth": [
-    "On top of a wooden box."
-   ]
+   "Factory": [],
+   "Interchange": [],
+   "The Labyrinth": []
   }
  },
  {
@@ -53,28 +34,9 @@ const BP_DOCS = [
   "id": "6a31807f17005505b70d5827",
   "name": "Financial documents",
   "spots": {
-   "Customs": [
-    "Inside crackhouse on the floor near the bookshelves.",
-    "On the desk inside old gas station building.",
-    "Inside 3 story dorms, in room 304 on the nightstand.",
-    "Inside the industrial plant used for ref quest in the office at the top floor.",
-    "Inside 3 story dorms in room 212 on the shelf above the desk.",
-    "Inside a blue shack next to big red.",
-    "Inside the 2 story dorms behind Dorm guard desk key door.",
-    "Inside crackhouse on the backshelf upstairs.",
-    "In the computer room behind Tarcone Director's office key door.",
-    "On top of the safe behind Company director's room key door."
-   ],
-   "Interchange": [
-    "On desks inside idea office.",
-    "Inside an office between Goshan and IDEA.",
-    "At the smuggler base on a rounded table below a green container."
-   ],
-   "Streets of Tarkov": [
-    "Inside \"Unity Credit\" bank on Klimov St.",
-    "Inside Cardinal Residential Complex inside the corporate apartement.",
-    "Insode terragroup building reception, insie the counter shelves."
-   ]
+   "Customs": [],
+   "Interchange": [],
+   "Streets of Tarkov": []
   }
  },
  {
@@ -90,54 +52,18 @@ const BP_DOCS = [
   "id": "6a317b9692cfdcddcb02a58e",
   "name": "PMC personnel files",
   "spots": {
-   "Icebreaker": [
-    "Inside Med. Office on level 1."
-   ],
-   "Lighthouse": [
-    "Inside the WTP Building 2 in the radio room next to the car.",
-    "At the scav villave inside a red two floor house in the bedroom on 2nd floor.",
-    "At the WTP inside a tent at the southeastern water basin.",
-    "Inside the blue chalet upstairs on a rounded table in a bedroom."
-   ],
-   "Reserve": [
-    "Into the tunnels, in the room opposite of the D2 extraction.",
-    "Inside Black Biship in the underground on a desk.",
-    "Inside RB-KORL key room.",
-    "Behind RB-KPRL key door by trhe window."
-   ]
+   "Icebreaker": [],
+   "Lighthouse": [],
+   "Reserve": []
   }
  },
  {
   "id": "6a3181f178450ec91c0ea1aa",
   "name": "Project documentation",
   "spots": {
-   "Customs": [
-    "Inside the repair shop on a table.",
-    "Inside the crackhouse library on the shelves.",
-    "Inside the crackhouse 2nd floor in the library under the window.",
-    "In the warehouse 17 in the upstairs bunkhouse inside a nightstand.",
-    "Behind Company director's room key on the shelf.",
-    "Inside the old gas station building next to the entrance door.",
-    "In the 3 story dorms in room 212 under the desk.",
-    "Inside Fortress in the southern room with the beds on the shelf."
-   ],
-   "Factory": [
-    "Behind Factory emergency exit key door on the 3rd floor of the offices.",
-    "In factory offices on the 3rd floor within the pile of books near the drawers.",
-    "At the workbench area in front of Exit Door 3.",
-    "Under the 1986 tag within the electrical boxes.",
-    "In factory offices in the room accessible from the window.",
-    "In the medical area 1st floor in a blue locker.",
-    "In the pumping station next to a blue locker.",
-    "In offices 1st floor in the pile of books behind the safe.",
-    "Inside the chemical laboratory.",
-    "Inside offices 3rd floor in the room of the breachable door."
-   ],
-   "Reserve": [
-    "In the bunker in the command office, under a desk.",
-    "In the 1-room office next to command office next to a printer.",
-    "Behind RB-KORL key door, between two shelves."
-   ]
+   "Customs": [],
+   "Factory": [],
+   "Reserve": []
   }
  },
  {
@@ -153,68 +79,18 @@ const BP_DOCS = [
   "id": "6a31828557705071410ca00e",
   "name": "Test documentation",
   "spots": {
-   "Icebreaker": [
-    "Inside Med. storage room on level 1",
-    "Inside the east room of the canteen on level 3",
-    "Inside the green flare room at spawn on level 1",
-    "Inside the drone room before the helipad on level 2"
-   ],
-   "Shoreline": [
-    "At pier on a emergency beds in front of the building.",
-    "Inside the smuggler camp in the southern warehouse.",
-    "At the weather station, 2nd floor of the building.",
-    "In the resort east wing room 326 inside a opened drawer of the nightstand."
-   ],
-   "Woods": [
-    "At the old sawmill in the 2 floor shack on a table.",
-    "At scav village inside the red brick house within the floor.",
-    "At USEC checkpoint on top of drawers.",
-    "At scav village inside the 2 floor house.",
-    "At USEC Camp inside a tent next to a bed.",
-    "At USEC Camp on top of a wooden crate.",
-    "At old sawmill inside the small shack.",
-    "At USEC Camp on the medical table with the corpse.",
-    "At Emercom base inside the white container with the bodies.",
-    "At USEC Camp on a sleeping bag."
-   ]
+   "Icebreaker": [],
+   "Shoreline": [],
+   "Woods": []
   }
  },
  {
   "id": "6a3182b72fd891345e047eef",
   "name": "User documentation",
   "spots": {
-   "Ground Zero": [
-    "On a desk in TerraGroup science office key on the 2nd floor of the Terragroup building. imagine from window from room 3 POV.",
-    "On a bench on 2nd floor in the hallway opposite of the scientist's office in the Terragroup building.",
-    "On a shelf on 2nd floor of the Tarbank building.",
-    "On a glass table on ground floor of the Tarbank building next to the barbwire area.",
-    "On a table in room no.3 on the 2nd floor of the Terragroup building.",
-    "Inside the counter on 2nd floor of the Terragroup Building in the reception.",
-    "On a desk inside TerraGroup science office key.",
-    "On a chair on 2nd floor of the Terragroup building in the reception room.",
-    "On a rounded table inside Coffee Maniac store in front of the Terragroup building.",
-    "In the room next to TerraGroup science office key door on a couch"
-   ],
-   "Streets of Tarkov": [
-    "Behind Cardinal apartment key door on a table.",
-    "Behind TerraGroup security armory key door on the desk.",
-    "Inside the terragroup building in a office on the side of the cardinal courtyard.",
-    "In the FINANCE building second floor, in the first office to the right on the middle desk (same place as Audit.",
-    "Inside Unity Bank in the board room on the table.",
-    "Inside the negotiation building in the meeting room on the table."
-   ],
-   "The Lab": [
-    "Inside office O22.",
-    "Inside office O23.",
-    "On the desk behind TerraGroup Labs keycard (Violet) door.",
-    "Inside manager conference room O21.",
-    "Behind TerraGroup Labs manager's office room key door on the desk.",
-    "Behind TerraGroup Labs residential unit keycard door on the table.",
-    "On the table inside the garage extraction activation room (Y21).",
-    "In the office where Kruglov Office is located (R22) on the shelves.",
-    "In the hall between violet and kruglov office on 1st floor (R12) on the counter.",
-    "Inside the cafeteria on 2nd floor (R24)."
-   ]
+   "Ground Zero": [],
+   "Streets of Tarkov": [],
+   "The Lab": []
   },
   "pins": {
    "Ground Zero": [
