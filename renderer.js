@@ -3028,6 +3028,29 @@ function bpDocs() {
 }
 const bpLayerId = (d) => 'bp:' + (d.id || d.name);
 
+// Document type -> its glyph and colour class. Keyed by NAME because that is what
+// the wiki gives us and what bpdocs.js bakes. The shapes themselves live with the
+// other glyphs (BP_DOC_GLYPHS); only the mapping is here, next to the layer rows
+// that read it — declared BELOW them it is still in its temporal dead zone when
+// the rows getter first runs.
+// A type we have no icon for (today "Classified documents", which has no maps and
+// no pins) keeps the generic folder, so a type the wiki adds later still needs no
+// code change.
+// ---------- bp doc icons ----------
+const BP_DOC_ICONS = {
+  'Blueprints and technical documentation': 'bpBlueprints',
+  'Financial documents': 'bpFinancial',
+  'Medical documents': 'bpMedical',
+  'PMC personnel files': 'bpPmc',
+  'Project documentation': 'bpProject',
+  'Technical documentation': 'bpTechnical',
+  'Test documentation': 'bpTest',
+  'User documentation': 'bpUser',
+};
+const bpGlyph = (name) => BP_DOC_ICONS[name] || 'folder';
+const bpCls = (name) => (BP_DOC_ICONS[name] ? 'mk-' + BP_DOC_ICONS[name].toLowerCase() : 'mk-bp');
+// ---------- bp doc icons end ----------
+
 // the types that can turn up on a map, whether or not their spots are written
 // up yet — three of the seven are at "we know the maps" and no further
 function bpDocsOnMap(mapName) {
@@ -3713,8 +3736,9 @@ const MARKER_GROUPS = [
       return bpDocs().map((d) => ({
         id: bpLayerId(d),
         label: d.name,
-        glyph: 'folder',
-        cls: 'mk-bp',
+        // one icon per type, painted from its own artwork — see BP_DOC_GLYPHS
+        glyph: bpGlyph(d.name),
+        cls: bpCls(d.name),
         // counts DESCRIBED SPOTS on the open map, not markers — there are no
         // markers yet, and a row reading "0" for a type that spawns here would
         // be a lie about the game rather than about our data
@@ -4084,7 +4108,7 @@ function collectMapMarkers(mapName) {
       [['', 'A shared loot spot that can give a poster among many other items']]);
   }
   for (const p of bpPins(mapName)) {
-    add(p.x, 0, p.z, ['bp:' + p.type], 'folder', 'mk-bp', p.name,
+    add(p.x, 0, p.z, ['bp:' + p.type], bpGlyph(p.name), bpCls(p.name), p.name,
       [['', 'Placed by hand — no source publishes positions for these']],
       { floor: typeof p.floor === 'number' ? p.floor : -1 });
   }
@@ -4200,14 +4224,148 @@ const HOLLOW = new Set([
   'crate', 'toolbox', 'pcblock', 'drawers', 'safe', 'shirt', 'bag', 'cache', 'body', 'rouble',
 ]);
 
+// ---------- BattlePass document glyphs ----------
+// One icon per document type. Every other glyph on the map is a single shape in
+// a single category colour; these are RICH glyphs — an object rather than a path
+// string — because a document type is told apart by its COLOURS, not its outline:
+// eight portrait documents differing only in silhouette would be eight identical
+// smudges at map size.
+//
+// Shape: { d, detail: [{ d, fill, stroke, w }] }. `d` is the silhouette and is
+// the only part the halo and the CSS class paint, so selection and the off-floor
+// fade keep working exactly as they do for a plain glyph. Interior marks carry
+// inline colours because they are sampled from the item's own artwork rather
+// than drawn from the app's palette — see the hex values below, every one of
+// which was measured off the wiki render, not guessed.
+//
+// They deliberately share ONE silhouette. These are all the same kind of thing
+// and read as a family; the colour is what says which one.
+const BP_DOC = 'M-4.6 -6.2 L4.6 -6.2 L4.6 6.2 L-4.6 6.2 Z';
+
+const BP_DOC_GLYPHS = {
+  // A dark case holding blueprints: the case is the OUTLINE (measured #242424 to
+  // #303030 across the render), the blueprint sheet inside is the fill, and the
+  // white lines are the drawing on it.
+  bpBlueprints: {
+    d: BP_DOC,
+    detail: [{
+      d: 'M-3.2 -4.2 L1.4 -4.2 M-3.2 -1.8 L3.0 -1.8 M-1.0 -5.2 L-1.0 3.0'
+        + ' M0.4 0.8 L3.2 0.8 M-3.2 3.0 L0.6 3.0 M1.8 3.0 L3.2 3.0 M-3.2 -5.2 L-2.0 -5.2',
+      stroke: '#dfe8f2', w: 0.62,
+    }],
+  },
+  // Two-tone folder: the steel blue band and the set-square triangle are the two
+  // shapes that carry the real document, on white.
+  bpFinancial: {
+    d: BP_DOC,
+    detail: [
+      { d: 'M-4.6 -6.2 L-1.4 -6.2 L-1.4 1.0 L-4.6 1.0 Z', fill: '#5f8398' },
+      { d: 'M-1.4 1.0 L-4.6 1.0 L-4.6 3.4 L-2.6 3.4 Z', fill: '#5f8398' },
+      { d: 'M0.4 1.4 L4.0 1.4 L4.0 5.0 Z', stroke: '#5f8398', w: 0.75 },
+      { d: 'M-0.2 -4.6 L3.4 -4.6 M-0.2 -3.0 L2.6 -3.0', stroke: '#93aab7', w: 0.5 },
+    ],
+  },
+  // White throughout, with the brain CT scan the real item carries in its top
+  // left corner and text-like ruling everywhere else.
+  bpMedical: {
+    d: BP_DOC,
+    detail: [
+      { d: 'M-3.8 -5.2 L-0.6 -5.2 L-0.6 -2.0 L-3.8 -2.0 Z', fill: '#1c1f22' },
+      { d: 'M-2.2 -4.6 A1.05 1.3 0 1 1 -2.21 -4.6 Z', fill: '#9aa3a6' },
+      {
+        d: 'M0.4 -4.8 L3.8 -4.8 M0.4 -3.5 L3.2 -3.5 M0.4 -2.2 L3.8 -2.2'
+          + ' M-3.8 -0.4 L3.8 -0.4 M-3.8 1.2 L2.4 1.2 M-3.8 2.8 L3.8 2.8 M-3.8 4.4 L1.2 4.4',
+        stroke: '#8d9598', w: 0.5,
+      },
+    ],
+  },
+  // The folder's own diamond lattice, drawn as crossing diagonals. Each segment
+  // is cut to the silhouette by construction — there is no clip path in the
+  // marker layer and adding one for a texture would not be worth it.
+  bpPmc: {
+    d: BP_DOC,
+    detail: [{
+      d: 'M-4.6 -4.6 L4.6 4.6 M-4.6 -0.6 L2.2 6.2 M-2.2 -6.2 L4.6 0.6'
+        + ' M-4.6 3.4 L-1.8 6.2 M1.8 -6.2 L4.6 -3.4'
+        + ' M-4.6 4.6 L4.6 -4.6 M-2.2 6.2 L4.6 -0.6 M-4.6 0.6 L2.2 -6.2'
+        + ' M1.8 6.2 L4.6 3.4 M-4.6 -3.4 L-1.8 -6.2',
+      stroke: '#6f6f69', w: 0.45,
+    }],
+  },
+  // Rolled canary paper with its tube beside it. The tube is part of the
+  // silhouette too, so the halo goes round both and it reads as one object.
+  bpProject: {
+    d: 'M-5.0 -6.2 L1.2 -6.2 L1.2 6.2 L-5.0 6.2 Z M2.4 -6.2 L4.9 -6.2 L4.9 6.2 L2.4 6.2 Z',
+    body: 'M-5.0 -6.2 L1.2 -6.2 L1.2 6.2 L-5.0 6.2 Z',
+    detail: [
+      { d: 'M2.4 -6.2 L4.9 -6.2 L4.9 6.2 L2.4 6.2 Z', fill: '#545454', stroke: '#3a3a3a', w: 0.5 },
+      { d: 'M2.4 -4.0 L4.9 -4.0', stroke: '#767676', w: 0.5 },
+      { d: 'M-3.6 -3.6 L-0.2 -3.6 M-3.6 -1.6 L-0.6 -1.6 M-3.6 0.4 L-0.2 0.4', stroke: '#b9ae78', w: 0.5 },
+    ],
+  },
+  // The folder's triangle tessellation, thinned to what survives at map size.
+  bpTechnical: {
+    d: BP_DOC,
+    detail: [{
+      d: 'M-4.0 -5.4 L-1.4 -5.4 L-2.7 -2.9 Z M-0.6 -2.9 L2.0 -2.9 L0.7 -5.4 Z'
+        + ' M2.6 -5.4 L4.2 -5.4 L4.2 -2.9 Z M-4.0 -1.9 L-1.8 -1.9 L-4.0 0.6 Z'
+        + ' M-1.0 0.6 L1.6 0.6 L0.3 -1.9 Z M2.4 -1.9 L4.2 -1.9 L3.3 0.6 Z'
+        + ' M-4.0 1.6 L-1.6 1.6 L-2.8 4.1 Z M-0.6 4.1 L1.8 4.1 L0.6 1.6 Z'
+        + ' M2.6 1.6 L4.2 1.6 L4.2 4.1 Z',
+      // lighter than the folder really is: at 22px the true near-black-on-black
+      // tessellation vanished and the icon read as a plain grey box
+      fill: '#63636b',
+    }],
+  },
+  // Pale cyan sheet with the TerraGroup Labs mark — a quartered diamond, lower
+  // half solid — on the left, where the real document carries it.
+  bpTest: {
+    d: BP_DOC,
+    detail: [
+      { d: 'M-2.4 0.4 L-0.3 2.5 L-2.4 4.6 L-4.5 2.5 Z', fill: '#3f8fd0' },
+      { d: 'M-2.4 -1.7 L-0.3 0.4 L-2.4 2.5 L-4.5 0.4 Z', stroke: '#3f8fd0', w: 0.6 },
+      { d: 'M-2.4 -1.7 L-2.4 2.5 M-4.5 0.4 L-0.3 0.4', stroke: '#3f8fd0', w: 0.55 },
+      { d: 'M0.8 -4.6 L4.0 -4.6 M0.8 -3.0 L3.2 -3.0 M-4.0 -4.6 L-0.8 -4.6', stroke: '#6f9fb5', w: 0.5 },
+    ],
+  },
+  // Midnight blue, black edge. No interior mark by request — the colour is the
+  // whole icon, and it is the darkest of the eight so it never doubles for one.
+  bpUser: { d: BP_DOC, detail: [] },
+};
+Object.assign(MARKER_GLYPHS, BP_DOC_GLYPHS);
+
+
 // Every glyph is drawn twice: a dark, wide, unpainted-fill "halo" underneath and
 // the real thing on top. Without it an outline glyph has no dark edge at all —
 // only solids got one from `.mk`'s stroke — and pale artwork swallows them.
+// The outer shape of a glyph, rich or plain — what the halo strokes.
+const glyphPath = (glyph) => {
+  const g = MARKER_GLYPHS[glyph];
+  return (g && typeof g === 'object') ? g.d : g;
+};
+
+// The inside of a rich glyph: the body first, UNPAINTED so it inherits fill and
+// stroke from the .mk-* class on the element above it (which is what keeps the
+// selection ring and the off-floor fade working), then the interior marks with
+// their own inline colours.
+function richBody(g) {
+  let s = `<path d="${g.body || g.d}"/>`;
+  for (const p of g.detail || []) {
+    const st = `fill:${p.fill || 'none'};stroke:${p.stroke || 'none'};stroke-width:${p.w || 0.5}`;
+    s += `<path d="${p.d}" style="${st}"/>`;
+  }
+  return s;
+}
+
 function glyphMarkup(glyph, cls, extra, light) {
-  const d = MARKER_GLYPHS[glyph];
+  const g = MARKER_GLYPHS[glyph];
+  const d = glyphPath(glyph);
+  const halo = `<path class="mk halo${light ? ' light' : ''}" d="${d}"/>`;
+  if (g && typeof g === 'object') {
+    return halo + `<g class="mk ${cls}${extra || ''}">${richBody(g)}</g>`;
+  }
   const hollow = HOLLOW.has(glyph) ? ' hollow' : '';
-  return `<path class="mk halo${light ? ' light' : ''}" d="${d}"/>`
-    + `<path class="mk ${cls}${hollow}${extra || ''}" d="${d}"/>`;
+  return halo + `<path class="mk ${cls}${hollow}${extra || ''}" d="${d}"/>`;
 }
 
 function markerSvg(glyph, cls, px, dark) {
@@ -4291,8 +4449,14 @@ function drawMapMarkers(md, svg, k) {
   // feel slow. DOMParser, not innerHTML: an SVG fragment set through the HTML
   // parser lands in the wrong namespace and renders as nothing.
   let s = '<defs>';
-  for (const [name, d] of Object.entries(MARKER_GLYPHS)) {
-    s += `<path id="mkdef-${name}" d="${d}"/>`;
+  for (const [name, g] of Object.entries(MARKER_GLYPHS)) {
+    // Two defs per glyph. The halo only ever wants the outer shape: pointing it
+    // at a rich glyph's group would redraw that glyph's own colours underneath
+    // itself instead of a dark edge. For a plain glyph both are the same path.
+    s += `<path id="mkhalo-${name}" d="${glyphPath(name)}"/>`;
+    s += (g && typeof g === 'object')
+      ? `<g id="mkdef-${name}">${richBody(g)}</g>`
+      : `<path id="mkdef-${name}" d="${g}"/>`;
   }
   s += '</defs>';
   // A selected extract that needs a switch draws a dashed line to it, so "needs
@@ -4323,7 +4487,7 @@ function drawMapMarkers(md, svg, k) {
     // Drawn twice: dark halo underneath, then the glyph. The halo is what makes
     // an outline glyph readable over pale artwork, and it takes no clicks.
     const t = `transform="translate(${p.x} ${p.y}) scale(${gs})"`;
-    s += `<use href="#mkdef-${m.glyph}" class="${halo}${off}" ${t}/>`
+    s += `<use href="#mkhalo-${m.glyph}" class="${halo}${off}" ${t}/>`
       + `<use href="#mkdef-${m.glyph}" class="mk ${m.cls}${hollow}${hit}${sel}${off}" ${t} data-mk="${i}"/>`;
     // Extracts carry their name above the icon at all times — which one it is
     // matters more than that one exists. Escaped because these strings come

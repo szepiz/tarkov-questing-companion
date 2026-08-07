@@ -1414,6 +1414,20 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    paper: intel is ordinary loot, these are season progress and get their own
    read at a glance */
 .mk-bp     { fill: #d98f3f; }
+/* One colour pair per document type, sampled off the item's own wiki artwork
+   rather than picked — the fill is the document, the stroke is the thing holding
+   it (the blueprint case, the clipboard, the folder). These are the ONLY glyphs
+   that override .mk's stroke, because for a document the edge colour is half of
+   what identifies it. Interior marks live in BP_DOC_GLYPHS, not here: they are
+   per-shape, and .sel must still be able to take this stroke over. */
+.mk-bpblueprints { fill: #3f5f88; stroke: #2b2e31; stroke-width: 1.5; }
+.mk-bpfinancial  { fill: #e9eff1; stroke: #eef3f4; }
+.mk-bpmedical    { fill: #f2f5f5; stroke: #15171a; stroke-width: 1.3; }
+.mk-bppmc        { fill: #4a4a47; stroke: #535350; }
+.mk-bpproject    { fill: #f0e6aa; stroke: #545454; }
+.mk-bptechnical  { fill: #3a3a3c; stroke: #a1a1a1; }
+.mk-bptest       { fill: #c8dce2; stroke: #4a7f9e; }
+.mk-bpuser       { fill: #252546; stroke: #000000; }
 /* posters — muted on purpose: these are shared loot spots that MIGHT give a
    poster, not a spawn worth crossing a map for */
 .mk-poster { fill: #8a7fa8; }
