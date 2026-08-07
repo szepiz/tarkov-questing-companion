@@ -12,7 +12,7 @@
 // as it already does for story objectives, and shows a real pin only where one
 // has been hand-placed through the dev map editor.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-06.
+// Source: escapefromtarkov.fandom.com, read 2026-08-07.
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const BP_DOCS = [
@@ -23,6 +23,58 @@ const BP_DOCS = [
    "Factory": [],
    "Interchange": [],
    "The Labyrinth": []
+  },
+  "pins": {
+   "Factory": [
+    {
+     "x": 28.43,
+     "z": -35.89,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": 33.38,
+     "z": -36.31,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -15.41,
+     "z": -26.9,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 21.27,
+     "z": 39.34,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 26.96,
+     "z": 41.82,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 32.63,
+     "z": 37.35,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 11.34,
+     "z": 38.07,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 18.37,
+     "z": -22.48,
+     "floor": 2,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -64,6 +116,70 @@ const BP_DOCS = [
    "Customs": [],
    "Factory": [],
    "Reserve": []
+  },
+  "pins": {
+   "Factory": [
+    {
+     "x": 28.68,
+     "z": 36.61,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 11.3,
+     "z": 40.8,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 55.45,
+     "z": 24.14,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 26.98,
+     "z": 41.31,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 30.1,
+     "z": -36.17,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 40.19,
+     "z": -36.39,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 23.01,
+     "z": 39.67,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": -22.78,
+     "z": 29.32,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": 12.36,
+     "z": 42.26,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 25.85,
+     "z": -19.58,
+     "floor": 0,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -147,6 +263,18 @@ const BP_DOCS = [
      "z": 83.67,
      "floor": 1,
      "spot": 4
+    },
+    {
+     "x": -4.87,
+     "z": 61.41,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 55.02,
+     "z": 152.84,
+     "floor": -1,
+     "spot": null
     }
    ],
    "Streets of Tarkov": [
