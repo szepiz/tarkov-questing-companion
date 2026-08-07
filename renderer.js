@@ -1305,13 +1305,15 @@ function renderTree() {
   const hideC = !!(state.settings && state.settings.hideCompleted);
   const hideL = !!(state.settings && state.settings.hideLocked);
   const hideF = !!(state.settings && state.settings.hideFailed);
+  const hideCh = !!(state.settings && state.settings.hideChain);
   // Search deliberately ignores every one of these, laterPart included: typing
   // "spa tour" is how you see a whole line at once.
   const isVisible = (t) => (q ? matchesSearch(t)
     : !laterPart(t)
     && !(hideC && isDone(t.id))
     && !(hideF && !isDone(t.id) && isFailed(t.id))
-    && !(hideL && isLocked(t)));
+    && !(hideL && isLocked(t))
+    && !(hideCh && chainPending(t)));
 
   // What a quest row has to say for itself depends on what the grouping has
   // already said above it: grouped by map only, the row names its trader;
@@ -1434,7 +1436,12 @@ function renderTree() {
       // that one or left out of it. Folded in, the count claims a confidence
       // the chain no longer earns; left out, the row reads "5" above twenty
       // rows, which is the exact complaint that started this.
-      const pending = all.filter((t) => chainPending(t) && !laterPart(t)).length;
+      // ...and it goes to zero when they are hidden, by that same rule: with
+      // "hide follows" on, the rows are not drawn, so a group reading "12
+      // pending" above none of them is the very thing these two numbers exist
+      // to prevent.
+      const pending = hideCh ? 0
+        : all.filter((t) => chainPending(t) && !laterPart(t)).length;
       // Not gated on the hide toggles any more: a line-folded node can be empty
       // with every toggle off, and search prunes non-matching groups through the
       // same test.
@@ -2024,18 +2031,22 @@ function renderSettingsPanel() {
   }
 
   // display toggles
-  for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'], ['hideFailedBtn', 'hideFailed']]) {
+  for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'],
+    ['hideFailedBtn', 'hideFailed'], ['hideChainBtn', 'hideChain']]) {
     const on = !!state.settings[key];
     $(btnId).textContent = on ? 'ON' : 'OFF';
     $(btnId).classList.toggle('on', on);
   }
-  // locked and failed both come from the logs, so both need automatic tracking
+  // locked, failed and the chain tag all come from the logs, so all need
+  // automatic tracking — lockingActive() is false without it and nothing is
+  // tagged FOLLOWS in the first place.
   const auto = state.settings.trackingMode === 'auto';
   $('hideLockedRow').style.opacity = auto ? '1' : '.45';
   $('hideFailedRow').style.opacity = auto ? '1' : '.45';
+  $('hideChainRow').style.opacity = auto ? '1' : '.45';
   $('displayHint').textContent = auto
-    ? 'With all three on, the list only shows quests you can take on right now.'
-    : 'Hiding locked and failed quests needs AUTOMATIC tracking — that is how the app knows about them.';
+    ? 'With all four on, the list only shows quests you can take on right now.'
+    : 'Hiding locked, failed and "follows" quests needs AUTOMATIC tracking — that is how the app knows about them.';
 
   // player level — typed in, or inferred from the hardest quest already finished
   const set = (state.settings.playerLevel || {})[state.gameMode];
@@ -2524,7 +2535,8 @@ $('modeAuto').addEventListener('click', async () => {
   renderAll();
 });
 
-for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'], ['hideFailedBtn', 'hideFailed']]) {
+for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'],
+  ['hideFailedBtn', 'hideFailed'], ['hideChainBtn', 'hideChain']]) {
   $(btnId).addEventListener('click', async () => {
     state.settings = await backend.saveSettings({ [key]: !state.settings[key] });
     renderAll();

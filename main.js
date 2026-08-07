@@ -68,6 +68,11 @@ const DEFAULT_SETTINGS = {
   hideCompleted: false,   // hide completed quests from the list
   hideLocked: false,      // hide locked quests from the list (auto mode only)
   hideFailed: false,      // hide failed quests from the list
+  // Hide the rows tagged FOLLOWS — the ones the PRE-1.1.0 quest chain puts after
+  // something unfinished. Off by default: the chain is stale rather than known
+  // wrong, and hiding a quest the trader may actually be offering is the one
+  // direction this app does not take on its own.
+  hideChain: false,
   // Per profile, because PvE and PvP characters level separately. Empty = the
   // app estimates a floor from the hardest quest already finished; Tarkov never
   // writes your own level to the logs.
