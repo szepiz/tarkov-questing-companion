@@ -4344,6 +4344,12 @@ const BP_DOC_GLYPHS = {
   // whole icon, and it is the darkest of the eight so it never doubles for one.
   bpUser: { d: BP_DOC, detail: [] },
 };
+// ---------- BattlePass document glyphs end ----------
+// The dev map editor slices everything between these two landmarks and evaluates
+// it, so it draws placed document pins with these exact shapes instead of its own
+// copy. Keep the block self-contained — nothing above this line may reference
+// anything the editor does not also have. test_mapeditor.js holds the two to the
+// same set of types.
 Object.assign(MARKER_GLYPHS, BP_DOC_GLYPHS);
 
 
