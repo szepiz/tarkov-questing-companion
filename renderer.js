@@ -533,6 +533,14 @@ const REP_TRADERS = new Set(['Fence']);
 // a service, not a trader you level with.
 const NO_STANDING = new Set(['BTR Driver']);
 
+// Values offered ON TOP of the gate thresholds below. Nothing in the current
+// data cares about +5, so by the rule below it would never appear — but a player
+// sitting at +5 could then only record "+4", and the panel is also where you
+// keep your own standing. Owner-asked. Kept as an explicit list rather than a
+// range so it stays obvious that these are the ones no gate justifies, and so a
+// real +5 gate landing upstream simply merges with it.
+const EXTRA_REP = { Fence: [5] };
+
 // The karma values that actually change something: 0, plus each distinct
 // threshold the quest data gates on. Read from the data, so a new gate adds a
 // button by itself. Fence today: 0, +1 (Is This a Reference?, Network Provider
@@ -555,6 +563,7 @@ function repChoices(trader) {
     && Number.isFinite(Number(KAPPA_GATE.karma)) && Number(KAPPA_GATE.karma) > 0) {
     vals.add(Number(KAPPA_GATE.karma));
   }
+  for (const v of EXTRA_REP[trader] || []) vals.add(v);
   return [...vals].sort((a, b) => a - b);
 }
 
@@ -2403,12 +2412,18 @@ function renderTraders() {
       // a number to look up for no gain. The choices are the thresholds
       // themselves, read from the data, plus 0 for "below the first one".
       // If BSG adds a gate at 6, a sixth button appears here on its own.
+      // EXTRA_REP adds any value we offer WITHOUT a gate behind it, so the
+      // tooltip can say plainly that picking it unlocks nothing — it records
+      // where you actually are.
       const steps = repChoices(g.trader);
+      const ungated = new Set(EXTRA_REP[g.trader] || []);
       rows.push(`<div class="trader-control">
         <div class="trader-control-label">SCAV KARMA</div>
         <div class="rep-buttons">${steps.map((n) => {
     const on = cur !== null && cur === n;
-    const what = n === 0 ? 'Below +1 — the usual starting point' : `At least +${n}`;
+    const what = n === 0 ? 'Below +1 — the usual starting point'
+      : ungated.has(n) ? `At least +${n} — above every gate in the current data, so this only records your standing`
+      : `At least +${n}`;
     return `<button class="rep-btn${on ? ' on' : ''}" data-trader="${escapeHtml(g.trader)}" data-rep="${n}"
             title="${on ? 'Click again to clear' : escapeHtml(what)}">${n > 0 ? '+' : ''}${n}</button>`;
   }).join('')}
