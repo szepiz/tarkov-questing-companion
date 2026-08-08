@@ -1889,6 +1889,20 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   opacity: .95;
 }
 .quest-row.story-obj .quest-name { cursor: default; }
+/* Hovering an objective trades the map tag for the whole line. These names run
+   long and the map list can be four maps wide ("CUSTOMS / WOODS / RESERVE /
+   LIGHTHOUSE"), so at the sidebar's width both cannot fit and it is the TEXT
+   that gets cut — the half you cannot guess. Point at a row and the maps step
+   aside so the name can use their space, wrapping to as many lines as it needs;
+   move off and it goes back. Nothing is lost either way: the maps are readable
+   at rest, and the name carries the full text in its title attribute too. */
+.quest-row.story-obj:hover .story-map { display: none; }
+.quest-row.story-obj:hover .quest-name {
+  flex: 1 1 auto;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
 /* the wiki's conditional / ending section headers inside a chapter */
 .story-sec {
   padding: 8px 10px 4px 14px;
