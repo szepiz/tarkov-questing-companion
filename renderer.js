@@ -1265,6 +1265,44 @@ function renderTree() {
     return;
   }
 
+  // What the game asks for before it will hand a quest over, spelled out on the
+  // row itself: LL<n> for a trader loyalty level, LVL<n> for a player level.
+  // Worth the space because these are the two gates 1.1.0 actually uses, and
+  // until now you had to open a quest to find out why it was out of reach.
+  //
+  // Three sources, all normalised to kind:'loyalty' before they get here —
+  // tarkov.dev's own (6 quests), the wiki harvest (58, `fromWiki`), and the
+  // player's own note on a quest (`fromUser`), which for most quests is the only
+  // place the number exists at all. Deduped on trader+value so a published gate
+  // and a hand-typed one that agree do not print twice.
+  const reqTags = (t) => {
+    const gates = [...(t.traderRequirements || []), userGate(t)]
+      .filter((r) => r && r.kind === 'loyalty' && r.trader && r.trader.name);
+    const seen = new Set();
+    let out = '';
+    for (const r of gates) {
+      const key = r.trader.name + '|' + r.value;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const have = standingFor(r.trader.name).loyalty;
+      const src = r.fromUser ? 'you recorded this from the trader screen'
+        : r.fromWiki ? 'from the wiki — tarkov.dev does not publish this one'
+        : 'published requirement';
+      out += `<span class="req-ll" title="Needs ${escapeHtml(r.trader.name)} loyalty level ${r.value}`
+        + `${Number.isFinite(have) ? ` — yours is LL${have}` : ' — yours is not set'} · ${src}">`
+        + `LL${r.value}</span>`;
+    }
+    // minPlayerLevel is already the CORRECTED number: applyWikiReqs zeroes the 79
+    // the wiki says 1.1.0 dropped, so a level shown here is one the game still asks.
+    const lvl = t.minPlayerLevel || 0;
+    if (lvl > 0) {
+      const mine = playerLevel();
+      out += `<span class="req-lvl" title="Needs player level ${lvl}`
+        + `${mine > 0 ? ` — you are ${mine}` : ' — your level is not set'}">LVL ${lvl}</span>`;
+    }
+    return out;
+  };
+
   // Searching flattens the list: a match buried in a collapsed group is not a
   // result anyone can see, and expanding every group to reveal three hits is
   // worse than just showing the three hits. It also ignores the hide-completed/
@@ -1359,7 +1397,10 @@ function renderTree() {
       whereTitle = whereTitle ? `${whereTitle} · ${m.full}` : m.full;
     }
     row.innerHTML = `
-      <span class="quest-name" title="${escapeHtml(t.name)}">${escapeHtml(t.name.toUpperCase())}</span>
+      <span class="quest-lead">
+        <span class="quest-name" title="${escapeHtml(t.name)}">${escapeHtml(t.name.toUpperCase())}</span>
+        ${done ? '' : reqTags(t)}
+      </span>
       ${where.length ? `<span class="quest-where" title="${escapeHtml(whereTitle)}">${where.join('<span class="sep">·</span>')}</span>` : ''}
       ${failed ? `<span class="failed-tag${t.restartable ? ' retakeable' : ''}">${t.restartable ? 'RETAKE' : 'FAILED'}</span>` : ''}
       ${locked ? '<span class="locked-tag">LOCKED</span>' : ''}

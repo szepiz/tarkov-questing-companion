@@ -343,12 +343,42 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   box-shadow: 0 1px 3px rgba(0,0,0,.6);
   text-shadow: 0 1px 0 rgba(255,255,255,.35);
 }
-.quest-row .quest-name {
+/* Name + its requirement tags travel together and take the flexible space, so
+   the tags sit right beside the name while the trader/map still pushes to the
+   right edge. The NAME is the part that gives way when the row is narrow —
+   `LL3 LVL 29` is four characters of hard information and must not be the thing
+   that gets ellipsised. */
+.quest-lead {
   flex: 1;
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  overflow: hidden;
+}
+.quest-row .quest-name {
+  flex: 0 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* The two gates 1.1.0 actually uses. Blue for the trader level, red for the
+   player level — different colours because they are answered in different
+   places: one on the trader screen, one on your character. */
+.req-ll, .req-lvl {
+  flex: none;
+  margin-left: 7px;
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
+.req-ll  { color: #5aa8e0; }
+.req-lvl { color: #e0603f; }
+/* on the selected row the background goes pale, so both need to darken to stay
+   legible rather than glowing off it */
+.quest-row.selected .req-ll  { color: #1c5f91; }
+.quest-row.selected .req-lvl { color: #a3341c; }
+.quest-row.locked .req-ll, .quest-row.locked .req-lvl { opacity: .55; }
 .quest-row.completed .quest-name {
   text-decoration: line-through;
   text-decoration-color: #c03a3a;
