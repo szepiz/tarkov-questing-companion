@@ -20,11 +20,17 @@
 const MAP_DATA = {
 
   "Ground Zero": {
-    svg: "maps/GroundZero.svg",
-    viewBox: { w: 348.92543, h: 488.44792 },
-    bounds: [[249, -124], [-99, 364]], // [[x,z],[x,z]] in game coords
+    svg: "maps/GroundZero_render.svg",
+    viewBox: { w: 2919, h: 4092 },
+    bounds: [[249.02, -124], [-99.14, 364.07]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+    credit: "Map tiles by tarkov.dev",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/GroundZero_render.svg","viewBox":{"w":2919,"h":4092},"bounds":[[249.02,-124],[-99.14,364.07]],"rotate":180,"baseLayer":"Ground_Level","credit":"Map tiles by tarkov.dev"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/GroundZero.svg","viewBox":{"w":348.92543,"h":488.44792},"bounds":[[249,-124],[-99,364]],"rotate":180,"baseLayer":"Ground_Level"},
+    ],
 
     floors: [
       {
@@ -55,11 +61,17 @@ const MAP_DATA = {
     ],
   },
   Factory: {
-    svg: "maps/Factory.svg",
-    viewBox: { w: 130.81831, h: 141.23242 },
-    bounds: [[77, -64.5], [-65.5, 67.4]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Factory_render.svg",
+    viewBox: { w: 3715, h: 3439 },
+    bounds: [[76.42, -78.66], [-55.58, 66.88]], // [[x,z],[x,z]] in game coords
     rotate: 90,
     baseLayer: "Ground_Floor",
+    credit: "Map tiles by tarkov.dev",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/Factory_render.svg","viewBox":{"w":3715,"h":3439},"bounds":[[76.42,-78.66],[-55.58,66.88]],"rotate":90,"baseLayer":"Ground_Floor","credit":"Map tiles by tarkov.dev"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/Factory.svg","viewBox":{"w":130.81831,"h":141.23242},"bounds":[[77,-64.5],[-65.5,67.4]],"rotate":90,"baseLayer":"Ground_Floor"},
+    ],
 
     floors: [
       {
@@ -98,11 +110,17 @@ const MAP_DATA = {
     ],
   },
   Customs: {
-    svg: "maps/Customs.svg",
-    viewBox: { w: 1062.4827, h: 535.17401 },
-    bounds: [[698, -307], [-372, 237]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Customs_render.svg",
+    viewBox: { w: 4067, h: 2069 },
+    bounds: [[698.06, -305.6], [-365.48, 235.46]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+    credit: "Map tiles by tarkov.dev",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/Customs_render.svg","viewBox":{"w":4067,"h":2069},"bounds":[[698.06,-305.6],[-365.48,235.46]],"rotate":180,"baseLayer":"Ground_Level","credit":"Map tiles by tarkov.dev"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/Customs.svg","viewBox":{"w":1062.4827,"h":535.17401},"bounds":[[698,-307],[-372,237]],"rotate":180,"baseLayer":"Ground_Level"},
+    ],
 
     floors: [
       {
@@ -150,11 +168,17 @@ const MAP_DATA = {
     ],
   },
   Woods: {
-    svg: "maps/Woods.svg",
-    viewBox: { w: 1472.7926, h: 1420.5995 },
-    bounds: [[646, -914], [-761, 442]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Woods_render.svg",
+    viewBox: { w: 4041, h: 3998 },
+    bounds: [[600.13, -904.85], [-761.39, 442.18]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+    credit: "Map tiles by tarkov.dev",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/Woods_render.svg","viewBox":{"w":4041,"h":3998},"bounds":[[600.13,-904.85],[-761.39,442.18]],"rotate":180,"baseLayer":"Ground_Level","credit":"Map tiles by tarkov.dev"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/Woods.svg","viewBox":{"w":1472.7926,"h":1420.5995},"bounds":[[646,-914],[-761,442]],"rotate":180,"baseLayer":"Ground_Level"},
+    ],
 
     floors: [],
     labels: [
@@ -166,11 +190,17 @@ const MAP_DATA = {
     ],
   },
   Shoreline: {
-    svg: "maps/Shoreline.svg",
-    viewBox: { w: 1559.5717, h: 1032.4935 },
-    bounds: [[504, -415], [-1056, 618]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Shoreline_render.svg",
+    viewBox: { w: 3995, h: 2646 },
+    bounds: [[503.98, -415.08], [-1056.56, 618.52]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+    credit: "Map tiles by tarkov.dev · upper floors by Shebuka",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/Shoreline_render.svg","viewBox":{"w":3995,"h":2646},"bounds":[[503.98,-415.08],[-1056.56,618.52]],"rotate":180,"baseLayer":"Ground_Level","credit":"Map tiles by tarkov.dev · upper floors by Shebuka"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/Shoreline.svg","viewBox":{"w":1559.5717,"h":1032.4935},"bounds":[[504,-415],[-1056,618]],"rotate":180,"baseLayer":"Ground_Level"},
+    ],
 
     floors: [
       {
@@ -207,11 +237,17 @@ const MAP_DATA = {
     ],
   },
   Interchange: {
-    svg: "maps/Interchange.svg",
-    viewBox: { w: 1127.6852, h: 947.02582 },
-    bounds: [[598, -442], [-433, 426]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Interchange_render.svg",
+    viewBox: { w: 4096, h: 3681 },
+    bounds: [[557.15, -437.79], [-401.74, 427]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+    credit: "Map tiles by tarkov.dev · upper floors by Shebuka",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/Interchange_render.svg","viewBox":{"w":4096,"h":3681},"bounds":[[557.15,-437.79],[-401.74,427]],"rotate":180,"baseLayer":"Ground_Level","credit":"Map tiles by tarkov.dev · upper floors by Shebuka"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/Interchange.svg","viewBox":{"w":1127.6852,"h":947.02582},"bounds":[[598,-442],[-433,426]],"rotate":180,"baseLayer":"Ground_Level"},
+    ],
 
     floors: [
       {
@@ -265,11 +301,17 @@ const MAP_DATA = {
     ],
   },
   Reserve: {
-    svg: "maps/Reserve.svg",
-    viewBox: { w: 827.28742, h: 761.16437 },
-    bounds: [[289, -274], [-303, 272]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Reserve_render.svg",
+    viewBox: { w: 3742, h: 3394 },
+    bounds: [[288.92, -292.94], [-303.16, 244.08]], // [[x,z],[x,z]] in game coords
     rotate: 180,
     baseLayer: "Ground_Level",
+    credit: "Map tiles by tarkov.dev",   // per-map artwork credit
+    // selectable artwork — settings.mapArt picks one; first is the default
+    art: [
+      {"id":"render","label":"Render (tarkov.dev)","svg":"maps/Reserve_render.svg","viewBox":{"w":3742,"h":3394},"bounds":[[288.92,-292.94],[-303.16,244.08]],"rotate":180,"baseLayer":"Ground_Level","credit":"Map tiles by tarkov.dev"},
+      {"id":"schematic","label":"Schematic (Shebuka)","svg":"maps/Reserve.svg","viewBox":{"w":827.28742,"h":761.16437},"bounds":[[289,-274],[-303,272]],"rotate":180,"baseLayer":"Ground_Level"},
+    ],
 
     floors: [
       {
@@ -374,16 +416,16 @@ const MAP_DATA = {
     ],
   },
   "The Lab": {
-    svg: "maps/Labs.svg",
-    viewBox: { w: 720, h: 586 },
-    bounds: [[-94.62, -439.31], [-290, -223.42]], // [[x,z],[x,z]] in game coords
+    svg: "maps/Labs_v4.svg",
+    viewBox: { w: 3787, h: 2729 },
+    bounds: [[-80.97, -478.4], [-283.7, -197]], // [[x,z],[x,z]] in game coords
     rotate: 270,
     baseLayer: "First_Level",
     approx: true,   // pin positions unverified — see _dev/build_mapdata.js
     // selectable artwork — settings.mapArt picks one; first is the default
     art: [
-      {"id":"shebuka","label":"Schematic (Shebuka)","svg":"maps/Labs.svg","viewBox":{"w":720,"h":586},"bounds":[[-94.62,-439.31],[-290,-223.42]],"rotate":270,"approx":true},
       {"id":"tarkovdev","label":"Render (tarkov.dev) — includes the containment block","svg":"maps/Labs_v4.svg","viewBox":{"w":3787,"h":2729},"bounds":[[-80.97,-478.4],[-283.7,-197]],"rotate":270,"approx":true,"credit":"Map tiles by tarkov.dev"},
+      {"id":"shebuka","label":"Schematic (Shebuka)","svg":"maps/Labs.svg","viewBox":{"w":720,"h":586},"bounds":[[-94.62,-439.31],[-290,-223.42]],"rotate":270,"approx":true},
     ],
 
     floors: [
