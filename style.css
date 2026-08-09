@@ -1473,6 +1473,20 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 /* Landmark names drawn on the map. Sized per draw (they scale with the map);
    the halo is what keeps them readable over pale artwork — they used to be a
    thin outline at .45 opacity and disappeared on several maps. */
+/* Hand-added map text. Sized in MAP units (see drawMap), so unlike .map-label
+   it scales with the artwork — no font-size here, the element carries its own. */
+.map-text {
+  text-anchor: middle;
+  font-family: 'Bender', sans-serif;
+  font-weight: 700;
+  fill: #cfe9f5;
+  stroke: #0a0a08;
+  paint-order: stroke;
+  stroke-linejoin: round;
+  opacity: .95;
+  pointer-events: none;
+  letter-spacing: .3px;
+}
 .map-label {
   text-anchor: middle;
   font-family: 'Bender', sans-serif;

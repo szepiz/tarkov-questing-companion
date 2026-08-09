@@ -4817,6 +4817,24 @@ function drawMap() {
     }
   }
 
+  // Hand-added MAP TEXT. The one thing on this map NOT drawn at a constant
+  // screen size: its font-size is in map units, so it scales with the artwork
+  // like a number painted on the floor would — legible when you zoom into the
+  // dorms, a speck when the whole map is on screen. That is the entire reason
+  // it exists separately from a location name, so it must NOT be multiplied by
+  // `k`. Independent of the location-names toggle for the same reason: it
+  // cannot crowd the view, so it never needs switching off.
+  for (const mt of (MAP_FIXES.mapTexts || [])) {
+    if (mt.map !== mapView.name || mt.floor !== mapView.floor) continue;
+    const p = clampToMap(md, mt.x, mt.z, 0);
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', p.x); t.setAttribute('y', p.y);
+    t.setAttribute('class', 'map-text');
+    t.setAttribute('style', `font-size:${mt.size}px;stroke-width:${mt.size * 0.28}px`);
+    t.textContent = mt.text;
+    g.appendChild(t);
+  }
+
   // The soft green halo that makes an objective unmistakable among the layer
   // markers. A radial gradient, not a blur filter: filter units are the map's
   // viewBox units, which differ 10x between maps, while a gradient scales with
