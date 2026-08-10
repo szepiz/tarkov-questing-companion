@@ -3460,6 +3460,7 @@ function addExtraQuests() {
 function applyQuestFixes() {
   if (typeof QUEST_TRADERS === 'undefined' || !QUEST_TRADERS) return 0;
   const names = (typeof QUEST_NAMES !== 'undefined' && QUEST_NAMES) || {};
+  const maps = (typeof QUEST_MAPS !== 'undefined' && QUEST_MAPS) || {};
   const noLevel = (typeof NO_LEVEL !== 'undefined' && NO_LEVEL) || {};
   let n = 0;
   for (const list of Object.values(state.tasksByMode || {})) {
@@ -3476,6 +3477,25 @@ function applyQuestFixes() {
       if (fresh && fresh !== t.name) {
         if (!t._oldName) t._oldName = t.name;   // keep the ORIGINAL for search
         t.name = fresh;
+        n++;
+      }
+      // A quest 1.1.0 MOVED to another map. Retag the objectives that still
+      // carry the old one as well as the task itself: effectiveMap() reads
+      // task.map, but the details panel and the map screen read the objective
+      // tags, and a quest filed under The Lab whose objective still says
+      // Interchange would draw a pin on the wrong map.
+      const moved = maps[t.id];
+      if (moved && t.map && t.map.name !== moved) {
+        const was = t.map.name;
+        t._oldMap = was;
+        t.map = { ...t.map, name: moved };
+        for (const o of t.objectives || []) {
+          for (const m of o.maps || []) if (m && m.name === was) m.name = moved;
+          for (const z of o.zones || []) if (z && z.map && z.map.name === was) z.map = { ...z.map, name: moved };
+          for (const l of o.possibleLocations || []) {
+            if (l && l.map && l.map.name === was) l.map = { ...l.map, name: moved };
+          }
+        }
         n++;
       }
       // a level requirement the game has demonstrably stopped applying. Same

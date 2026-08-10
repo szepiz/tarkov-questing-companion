@@ -20,6 +20,26 @@ const QUEST_TRADERS = {
   '5c0d0f1886f77457b8210226': 'Skier',
 };
 
+// Quests 1.1.0 MOVED TO A DIFFERENT MAP. tarkov.dev still files them where they
+// used to be, and the wiki's infobox `|location =` is stale on these too — but
+// the wiki's OBJECTIVE line names the real map, which is how these are found:
+// compare `task.map` against the maps linked in the wiki's ==Objectives==
+// section and look at every disagreement by hand.
+//
+// The value replaces the task's map AND retags any objective still carrying the
+// old one, so the row, the details panel and the map screen cannot disagree.
+const QUEST_MAPS = {
+  // "Decontamination Service" (Therapist). tarkov.dev says Interchange for both
+  // the task and its objective. Reported from the game 2026-08-10: it is on The
+  // Lab now. The wiki agrees where it counts and contradicts itself where it
+  // does not — its infobox still reads `|location =[[Interchange]]`, while the
+  // objective reads "...while wearing a gas mask or respirator on [[The Lab]]".
+  // The objective was reworked in the same patch (tarkov.dev still has the old
+  // "Eliminate Scavs" wording against the wiki's "Eliminate 40 any target"), so
+  // this quest is stale upstream in more than one field.
+  '5c0d1c4cd0928202a02a6f5c': 'The Lab',
+};
+
 // Renames the wiki has not made yet. wikinames.js harvests the wiki's page
 // moves, which covers 92 quests; these are the ones reported from the game
 // before an editor got to them. Applied after wikinames.js, so it wins.
@@ -95,5 +115,5 @@ const EXTRA_QUESTS = [
 const MANUAL_ONLY = [];
 
 if (typeof module !== 'undefined') {
-  module.exports = { QUEST_TRADERS, QUEST_NAMES, NO_LEVEL, EXTRA_QUESTS, MANUAL_ONLY };
+  module.exports = { QUEST_TRADERS, QUEST_MAPS, QUEST_NAMES, NO_LEVEL, EXTRA_QUESTS, MANUAL_ONLY };
 }
