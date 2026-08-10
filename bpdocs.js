@@ -12,7 +12,7 @@
 // as it already does for story objectives, and shows a real pin only where one
 // has been hand-placed through the dev map editor.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-07.
+// Source: escapefromtarkov.fandom.com, read 2026-08-10.
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const BP_DOCS = [
@@ -27,51 +27,95 @@ const BP_DOCS = [
   "pins": {
    "Factory": [
     {
-     "x": 28.43,
-     "z": -35.89,
+     "x": 25.8,
+     "z": -26.08,
      "floor": 0,
      "spot": null
     },
     {
-     "x": 33.38,
-     "z": -36.31,
+     "x": 33.91,
+     "z": -36.08,
      "floor": -1,
      "spot": null
     },
     {
-     "x": -15.41,
-     "z": -26.9,
+     "x": -21.7,
+     "z": -17.03,
      "floor": -1,
      "spot": null
     },
     {
-     "x": 21.27,
-     "z": 39.34,
+     "x": 20.29,
+     "z": 42.22,
      "floor": 1,
      "spot": null
     },
     {
-     "x": 26.96,
-     "z": 41.82,
+     "x": 26.66,
+     "z": 43.04,
      "floor": -1,
      "spot": null
     },
     {
-     "x": 32.63,
-     "z": 37.35,
+     "x": 28.8,
+     "z": 37.97,
      "floor": 1,
      "spot": null
     },
     {
-     "x": 11.34,
-     "z": 38.07,
+     "x": 11.58,
+     "z": 38.85,
      "floor": 1,
      "spot": null
     },
     {
-     "x": 18.37,
-     "z": -22.48,
+     "x": 19.07,
+     "z": -22.27,
      "floor": 2,
+     "spot": null
+    },
+    {
+     "x": 12.91,
+     "z": 39.71,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 27.19,
+     "z": 36.11,
+     "floor": 1,
+     "spot": null
+    }
+   ],
+   "Interchange": [
+    {
+     "x": -67.35,
+     "z": -157.55,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": 5.31,
+     "z": -231.38,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -67.25,
+     "z": 53.81,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -92.75,
+     "z": 106.8,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": 35.6,
+     "z": 149.21,
+     "floor": 0,
      "spot": null
     }
    ]
@@ -89,6 +133,90 @@ const BP_DOCS = [
    "Customs": [],
    "Interchange": [],
    "Streets of Tarkov": []
+  },
+  "pins": {
+   "Customs": [
+    {
+     "x": 77.97,
+     "z": -162.1,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 77.65,
+     "z": -155.94,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 318.24,
+     "z": -186.86,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -207.19,
+     "z": -54.46,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 93.68,
+     "z": -59.59,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -200.72,
+     "z": -98.71,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 169.6,
+     "z": 156.81,
+     "floor": 2,
+     "spot": null
+    },
+    {
+     "x": 173.62,
+     "z": 185.07,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 225.09,
+     "z": 141.38,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 263.12,
+     "z": -75.93,
+     "floor": 2,
+     "spot": null
+    }
+   ],
+   "Interchange": [
+    {
+     "x": -78.45,
+     "z": -148.97,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": 4.03,
+     "z": -297.99,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": 420.91,
+     "z": 176.8,
+     "floor": 0,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -98,6 +226,126 @@ const BP_DOCS = [
    "Ground Zero": [],
    "The Lab": [],
    "The Labyrinth": []
+  },
+  "pins": {
+   "Ground Zero": [
+    {
+     "x": -5.5,
+     "z": 61.98,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 23.25,
+     "z": 71.97,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -18.25,
+     "z": 44.85,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": -6.34,
+     "z": 72.46,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 49.36,
+     "z": 252.41,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 101.48,
+     "z": 112.59,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 146.99,
+     "z": 237.58,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 101.83,
+     "z": 154.1,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 81.68,
+     "z": 129.62,
+     "floor": -1,
+     "spot": null
+    }
+   ],
+   "The Lab": [
+    {
+     "x": -129.04,
+     "z": -392.5,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -108.22,
+     "z": -443.93,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -122.05,
+     "z": -368.49,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -231.6,
+     "z": -342.87,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -114.1,
+     "z": -364.32,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -134.35,
+     "z": -408.18,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -86.64,
+     "z": -432.28,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -126.15,
+     "z": -352.15,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -121.9,
+     "z": -360.84,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -233.62,
+     "z": -312.18,
+     "floor": 0,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -107,6 +355,34 @@ const BP_DOCS = [
    "Icebreaker": [],
    "Lighthouse": [],
    "Reserve": []
+  },
+  "pins": {
+   "Reserve": [
+    {
+     "x": -127.97,
+     "z": -21.83,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -42.25,
+     "z": 133.2,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -5.17,
+     "z": 189.46,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -42.14,
+     "z": 174.18,
+     "floor": -1,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -118,16 +394,30 @@ const BP_DOCS = [
    "Reserve": []
   },
   "pins": {
-   "Factory": [
+   "Customs": [
     {
-     "x": 28.68,
-     "z": 36.61,
+     "x": 78.92,
+     "z": -158.42,
      "floor": 1,
      "spot": null
     },
     {
-     "x": 11.3,
-     "z": 40.8,
+     "x": 78.49,
+     "z": -166.72,
+     "floor": 1,
+     "spot": null
+    }
+   ],
+   "Factory": [
+    {
+     "x": 27.93,
+     "z": 41.88,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 11.42,
+     "z": 41.67,
      "floor": 1,
      "spot": null
     },
@@ -138,20 +428,20 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": 26.98,
-     "z": 41.31,
+     "x": 26.77,
+     "z": 42.55,
      "floor": -1,
      "spot": null
     },
     {
-     "x": 30.1,
-     "z": -36.17,
+     "x": 30.34,
+     "z": -34.69,
      "floor": -1,
      "spot": null
     },
     {
-     "x": 40.19,
-     "z": -36.39,
+     "x": 40.39,
+     "z": -36.19,
      "floor": -1,
      "spot": null
     },
@@ -168,15 +458,35 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": 12.36,
-     "z": 42.26,
+     "x": 12.67,
+     "z": 43.05,
      "floor": -1,
      "spot": null
     },
     {
-     "x": 25.85,
-     "z": -19.58,
+     "x": 26.4,
+     "z": -19.02,
      "floor": 0,
+     "spot": null
+    }
+   ],
+   "Reserve": [
+    {
+     "x": -115.92,
+     "z": 33.37,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -108.07,
+     "z": 17.8,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -5.17,
+     "z": 188.67,
+     "floor": -1,
      "spot": null
     }
    ]
@@ -265,12 +575,6 @@ const BP_DOCS = [
      "spot": 4
     },
     {
-     "x": -4.87,
-     "z": 61.41,
-     "floor": 1,
-     "spot": null
-    },
-    {
      "x": 55.02,
      "z": 152.84,
      "floor": -1,
@@ -305,14 +609,14 @@ const BP_DOCS = [
    ],
    "The Lab": [
     {
-     "x": -267.39,
-     "z": -318.61,
+     "x": -268.62,
+     "z": -325.83,
      "floor": 0,
      "spot": 2
     },
     {
-     "x": -232.62,
-     "z": -342.91,
+     "x": -231.87,
+     "z": -345.41,
      "floor": 0,
      "spot": 3
     },
@@ -321,6 +625,60 @@ const BP_DOCS = [
      "z": -347.31,
      "floor": 0,
      "spot": 4
+    },
+    {
+     "x": -172.73,
+     "z": -342.41,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -118.83,
+     "z": -445.38,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -244.06,
+     "z": -382.48,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -225.81,
+     "z": -308.43,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -263.64,
+     "z": -342.79,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -243.83,
+     "z": -382.5,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -187.66,
+     "z": -407.33,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -148.4,
+     "z": -393.4,
+     "floor": 0,
+     "spot": null
+    },
+    {
+     "x": -251.16,
+     "z": -368.43,
+     "floor": 0,
+     "spot": null
     }
    ]
   }

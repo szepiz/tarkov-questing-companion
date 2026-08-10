@@ -2958,6 +2958,53 @@ function collectMapStory(mapName) {
   return out;
 }
 
+// Map names longest first, for matching a name inside a sentence: "The Lab" is
+// a prefix of "The Labyrinth", so a shortest-first scan files Labyrinth
+// objectives on The Lab.
+//
+// ⚠️ Built on FIRST CALL, not at load. test_maps.js and test_groups.js slice a
+// region of this file and eval it with no MAP_DATA in scope, so a top-level
+// `Object.keys(MAP_DATA)` here turns both of them into a ReferenceError that
+// has nothing to do with what they test.
+let _mapNamesLongest = null;
+const mapNamesLongest = () => (_mapNamesLongest
+  || (_mapNamesLongest = Object.keys(MAP_DATA).sort((a, b) => b.length - a.length)));
+
+// Does this line of objective text name THIS map? Longest name first, and each
+// one consumed as it matches, so "The Lab" cannot match inside "The Labyrinth"
+// — the same trap `mapHints` in build_storydata.js works around.
+function objectiveTextNamesMap(text, mapName) {
+  let rest = String(text || '');
+  for (const m of mapNamesLongest()) {
+    if (!rest.includes(m)) continue;
+    if (m === mapName) return true;
+    rest = rest.split(m).join('');
+  }
+  return false;
+}
+
+// Quests patch 1.1.0 REWORKED, whose current objectives name this map. Like the
+// story list above these have no coordinates and so cannot pin: the wiki
+// supplies the text, tarkov.dev still publishes the old objectives, and the two
+// lists are different lengths, which is exactly why `applyWikiObjectives` will
+// not swap them (an objective id carries a hand tick and a map pin).
+//
+// Without this they are invisible on the map they now belong to. Several moved
+// outright — "Chemical Experiments" is 8 old objectives against one current
+// "Stash a Corrugated hose in the med lab on Customs", and the quest data files
+// it under no map at all, so nothing on the Customs screen would mention it.
+function collectMapRework(mapName) {
+  if (typeof WIKI_OBJ_LIST === 'undefined' || !WIKI_OBJ_LIST) return [];
+  const out = [];
+  for (const [t, locked] of mapTasks()) {
+    const fresh = WIKI_OBJ_LIST[t.id];
+    if (!fresh) continue;
+    const here = fresh.filter((line) => objectiveTextNamesMap(line, mapName));
+    if (here.length) out.push({ quest: t.name, trader: (t.trader && t.trader.name) || '', locked, lines: here });
+  }
+  return out;
+}
+
 // Everything you would have to carry in to clear this map in one raid, from the
 // same task set the pins use — so switching to KAPPA narrows both together.
 //
@@ -3113,6 +3160,21 @@ function renderMapLoadout(mapName) {
   $('mapStoryList').innerHTML = story.length ? `<div class="ld-group ld-story">
       <ul>${story.map((o) => `<li data-story-obj="${escapeHtml(o.id)}" title="${escapeHtml(o.chapter)} — click to tick this story objective off">
         <span class="ld-name">${escapeHtml(o.desc)}</span></li>`).join('')}</ul>
+    </div>` : '';
+
+  // Quests 1.1.0 reworked whose current objectives land on this map. Text only,
+  // for the same reason the story list above is text only — no coordinates
+  // exist for them. Not tickable: the ticks hang off the objective ids these
+  // lines deliberately do not have.
+  const rework = collectMapRework(mapName);
+  $('mapReworkSec').hidden = !rework.length;
+  $('mapReworkCount').textContent = rework.length ? String(rework.length) : '';
+  $('mapReworkList').innerHTML = rework.length ? `<div class="ld-group ld-rework">
+      ${rework.map((r) => `<div class="rw-quest${r.locked ? ' rw-locked' : ''}">${escapeHtml(r.quest)}`
+    + (r.trader ? `<span class="rw-trader">${escapeHtml(r.trader)}</span>` : '') + '</div>'
+    + `<ul>${r.lines.map((l) => `<li><span class="ld-name">${escapeHtml(l)}</span></li>`).join('')}</ul>`).join('')}
+      <div class="rw-note">Patch 1.1.0 changed these. The quest data still publishes the old
+        objectives, so they have no pins — the text is what the game asks for now.</div>
     </div>` : '';
 
   // The BattlePass document SPOT LIST is gone (2026-08-06). It existed because

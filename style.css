@@ -2044,3 +2044,20 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 }
 #mapFloorSec #floorTabs::-webkit-scrollbar { width: 7px; }
 #mapFloorSec #floorTabs::-webkit-scrollbar-thumb { background: #3a3a36; border-radius: 4px; }
+
+/* Quests 1.1.0 reworked, listed on the map they now belong to. Text only —
+   no coordinates exist for these, same as the story list. */
+.ld-rework .rw-quest {
+  color: #d8d5cd; font-size: 12px; font-weight: 600; letter-spacing: .02em;
+  margin: 8px 0 3px; display: flex; justify-content: space-between; gap: 8px;
+}
+.ld-rework .rw-quest:first-child { margin-top: 0; }
+.ld-rework .rw-quest.rw-locked { color: #8a8780; }
+.ld-rework .rw-trader { color: #7d7a72; font-weight: 400; font-size: 11px; white-space: nowrap; }
+.ld-rework ul { margin: 0 0 4px; padding: 0; list-style: none; }
+.ld-rework li { color: #cfccc3; font-size: 12px; line-height: 1.45; padding: 1px 0 1px 10px; position: relative; }
+.ld-rework li::before { content: '▪'; position: absolute; left: 0; color: #6f6c65; }
+.ld-rework .rw-note { color: #7d7a72; font-size: 10px; line-height: 1.4; margin-top: 6px; }
+/* Same treatment the floors list gets: 13 reworked quests on Customs would
+   otherwise push TAKE INTO THE RAID off the bottom of the panel. */
+#mapReworkSec #mapReworkList { max-height: 34vh; overflow-y: auto; }
