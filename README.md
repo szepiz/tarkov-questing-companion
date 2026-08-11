@@ -86,10 +86,20 @@ npx electron-packager . --platform=win32 --arch=x64 --asar --overwrite --out dis
 
 ## Data & storage
 
-Quest data comes from the free [tarkov.dev](https://tarkov.dev) API, fetched per
-game mode (~510 PvP / ~506 PvE quests — the lists differ slightly). It's cached
-in `quests_cache.json` so the app also works offline; use **Settings → Refresh**
-after a game patch.
+Quest data comes from
+[tarkov-quest-data](https://github.com/szepiz/tarkov-quest-data), a companion
+project that collects tarkov.dev, the Escape from Tarkov Wiki and a couple of
+others, grades them against quests read straight off the game screen, and dates
+every value so the most recently confirmed one wins. That is where the current
+quest names, the trader loyalty requirements and the list of quests patch 1.1.0
+deleted come from.
+
+Map data — BattlePass document spots, corrected pin positions, added labels and
+room numbers — comes from the same place and updates without an app update.
+
+Both are cached (`quests_cache.json`, `maps_cache.json`) so the app works
+offline, and the app ships with a copy of each. Use **Settings → Refresh** after
+a game patch.
 
 Your settings and progress are stored in your per-user data folder
 (`%APPDATA%\Tarkov Questing Companion` on Windows), **not** in the app folder — so
@@ -102,7 +112,9 @@ any of the following, and the same list is in the app under **Settings → Credi
 
 | What | Who | Licence |
 |---|---|---|
-| Quest data, map geometry, floor extents, landmark names, extracts, hazards, keyed doors and loot spawn points | [tarkov.dev](https://tarkov.dev) by [the-hideout](https://github.com/the-hideout/tarkov-dev) | MIT |
+| Map geometry, floor extents, landmark names, extracts, keyed doors and loot spawn points, and the widest source behind the quest data | [tarkov.dev](https://tarkov.dev) by [the-hideout](https://github.com/the-hideout/tarkov-dev) | MIT |
+| Quest names, objectives, loyalty requirements and which quests still exist | [Escape from Tarkov Wiki](https://escapefromtarkov.fandom.com) contributors | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Quest data, graded against the game and dated per field | [tarkov-quest-data](https://github.com/szepiz/tarkov-quest-data) | CC BY-SA 3.0 · CC0 where first-party |
 | Map artwork — *Escape from Tarkov SVG Maps Project* | **Shebuka** — [tarkov-dev-svg-maps](https://github.com/the-hideout/tarkov-dev-svg-maps) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
 | The Labyrinth map tiles | [tarkov.dev](https://tarkov.dev) | game-derived imagery · fan use |
 | Bender typeface | [Jovanny Lemonad](https://www.behance.net/jovanny) | [SIL Open Font License 1.1](bender/Bender/FREE%20FONT%20LICENSE.txt) |
