@@ -59,12 +59,15 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   are offered to BEAR or USEC only, and come in two versions under one name.
   **BOTH** lists both; picking your side shows just yours. Hover it to see how
   many quests it affects.
-- **Show retry quests**: off by default. Four quests only exist once you have
-  *failed* another one — Hot Wheels - Let's Try Again after Hot Wheels, and the
-  make-amends quests a trader offers once you take a rival's side. They're hidden
-  until the app knows you failed the quest behind them, since otherwise they read
-  as work you're missing. Turn this on to list them anyway. The quest list tells
-  you when any are being held back.
+- **Show quests you can no longer get**: off by default. Four quests only exist
+  once you have *failed* another one — Hot Wheels - Let's Try Again after Hot
+  Wheels, and the make-amends quests a trader offers once you take a rival's
+  side. Complete the quest instead and they can never appear, and neither can
+  anything that needs them: on a profile that finished Hot Wheels, that is
+  Inevitable Response, Another Shipping Delay, Ask for Directions and Stabilize
+  Business as well. They are hidden, because otherwise they read as work you are
+  missing. Turn this on to list them anyway. The quest list says when any are
+  being held back.
 - **RESET ALL PROGRESS**: clears every tick for the current mode. After a reset,
   automatic tracking only imports quests completed *after* the reset — use this
   after a wipe.

@@ -910,9 +910,76 @@ function retryHidden(t) {
   return !failGateOpen(t);
 }
 
+// ---- quests that are no longer POSSIBLE, not merely unavailable ------------
+//
+// A retry quest is hidden while nothing is known. Once the quest it waits on has
+// been COMPLETED and cannot be re-taken, it is not hidden but impossible — and
+// so is everything that needs it. Another Shipping Delay needs Inevitable
+// Response, which needs Hot Wheels - Let's Try Again, which needs Hot Wheels
+// FAILED; Hot Wheels is completed, so none of the three can ever happen.
+//
+// ⚠️ "NOT YET" AND "NEVER" ARE DIFFERENT, and only the second may propagate. A
+// fresh profile has not failed Hot Wheels either, and stripping it of the whole
+// branch it has not chosen yet would be far worse than listing one quest too
+// many.
+//
+// ⚠️ ONLY AN UNAMBIGUOUS ["complete"] CARRIES THE POISON. A row that takes
+// either outcome is satisfied BY the failure: The Huntsman Path - Woods Keeper
+// needs Supply Plans "complete or failed", and reading that as a hard
+// requirement is exactly what hid it while the game was handing it over
+// (v1.38.0, see the note above isLocked). Read loosely, this rule also hides
+// Hunting Trip, Stray Dogs and COLLECTOR off one failed Supply Plans.
+let _impossible = null;
+function impossibleSet() {
+  if (_impossible) return _impossible;
+  const out = new Set();
+  const restartable = (id) => !!(state.byId.get(id) || {}).restartable;
+  for (const t of state.tasks || []) {
+    // a failure that cannot be re-taken can never become a completion
+    if (isFailed(t.id) && !isDone(t.id) && !t.restartable) out.add(t.id);
+    // a second chance for a mistake that was never made
+    if (t.onlyAfterFailure) {
+      const gates = failGates(t);
+      const shut = gates.length && gates.every((r) => isDone(r.task.id) && !restartable(r.task.id));
+      if (shut && !anyOfMet(t)) out.add(t.id);
+    }
+  }
+  // Then forward, to a fixed point. Bounded rather than recursive: the
+  // published requirement graph is not a proof that there are no cycles.
+  for (let pass = 0; pass < 20; pass++) {
+    let grew = false;
+    for (const t of state.tasks || []) {
+      if (out.has(t.id) || isDone(t.id)) continue;
+      const choice = new Set(anyOfIds(t));
+      // a choice survives while any one of its arms does
+      if (choice.size && [...choice].some((id) => !out.has(id))) continue;
+      const blocked = (t.taskRequirements || []).some((r) => {
+        if (!r.task || choice.has(r.task.id)) return false;
+        const st = r.status || ['complete'];
+        return st.length === 1 && st[0] === 'complete' && out.has(r.task.id);
+      });
+      if (blocked) { out.add(t.id); grew = true; }
+    }
+    if (!grew) break;
+  }
+  _impossible = out;
+  return out;
+}
+
+// Same escapes as everywhere else: the player outranks the graph.
+function unreachable(t) {
+  if (!t || !impossibleSet().has(t.id)) return false;
+  if (state.settings && state.settings.showRetryQuests) return false;
+  if (isDone(t.id) || isFailed(t.id) || questOpen(t.id)) return false;
+  return !(t.objectives || []).some((o) => isObjectiveDone(o.id));
+}
+
+// what the list and the map both ask
+function notInYourGame(t) { return retryHidden(t) || unreachable(t); }
+
 // how many the rule alone is holding back, for the note that offers them back
 function retryHiddenCount() {
-  return (state.tasks || []).filter((t) => retryHidden(t)).length;
+  return (state.tasks || []).filter((t) => notInYourGame(t)).length;
 }
 
 // ---- one quest, several ids -------------------------------------------------
@@ -1487,7 +1554,7 @@ function renderTree() {
   // "spa tour" is how you see a whole line at once.
   const isVisible = (t) => (q ? matchesSearch(t)
     : !laterPart(t)
-    && !retryHidden(t)
+    && !notInYourGame(t)
     && !otherArm(t)
     && !(hideC && isDone(t.id))
     && !(hideF && !isDone(t.id) && isFailed(t.id))
@@ -1607,7 +1674,7 @@ function renderTree() {
       // avoid. There used to be a second number beside it for chain-pending
       // quests; it went with that feature in v1.45.0, and the quests it counted
       // now fall into `doable` — which is what the game says they are.
-      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t) && !isFailed(t.id) && !retryHidden(t)
+      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t) && !isFailed(t.id) && !notInYourGame(t)
         && !laterPart(t)).length;
       // Not gated on the hide toggles any more: a line-folded node can be empty
       // with every toggle off, and search prunes non-matching groups through the
@@ -1682,9 +1749,10 @@ function renderTree() {
     const msg = document.createElement('div');
     msg.className = 'tree-message trader-note';
     msg.innerHTML = `<strong>${retries}</strong> quest${retries === 1 ? '' : 's'} hidden — `
-      + `${retries === 1 ? 'it is' : 'they are'} only offered after you FAIL another quest, `
-      + `like Hot Wheels - Let's Try Again after Hot Wheels. `
-      + `Turn on <strong>Show retry quests</strong> in Settings to list ${retries === 1 ? 'it' : 'them'} anyway.`;
+      + `your game will not offer ${retries === 1 ? 'it' : 'them'}. Some only appear after you FAIL `
+      + `another quest, like Hot Wheels - Let's Try Again after Hot Wheels; the rest need one of those. `
+      + `Turn on <strong>Show quests you can no longer get</strong> in Settings to list `
+      + `${retries === 1 ? 'it' : 'them'} anyway.`;
     tree.insertBefore(msg, tree.firstChild);
   }
 
@@ -2338,6 +2406,7 @@ function renderAll() {
   _unsetTraders = null;   // a level clicked in TRADERS turns a whole trader back on
   _seriesHidden = null;   // ticking Part 2 promotes Part 3 into its place
   _armHidden = null;      // ticking one arm of a branch settles which copy is shown
+  _impossible = null;     // a completion can close a branch, or a tick reopen one
   applyMapArt();          // the chosen artwork, before anything reads MAP_DATA
   renderFactionSwitch();
   renderTabs();
@@ -3200,7 +3269,7 @@ function* mapTasks() {
     if (!mapSetPass(t) || isDone(t.id) || isFailed(t.id) || laterPart(t)) continue;
     // a quest the game is not offering has no business putting pins on a map,
     // and neither do the copies of one it offers under a single id
-    if (retryHidden(t) || otherArm(t)) continue;
+    if (notInYourGame(t) || otherArm(t)) continue;
     const locked = isLocked(t);
     if (locked && state.settings && state.settings.hideLocked) continue;
     yield [t, locked];
