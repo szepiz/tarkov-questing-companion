@@ -55,6 +55,10 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   to the bottom of their list, faded, with a yellow **LOCKED** tag and a
   yellow **!** in the tick box — so you always see what you can actually take.
   A locked quest's details show the missing prerequisites in yellow.
+- **PMC FACTION** (in the top bar, next to PvP/PvE/SEASON): a handful of quests
+  are offered to BEAR or USEC only, and come in two versions under one name.
+  **BOTH** lists both; picking your side shows just yours. Hover it to see how
+  many quests it affects.
 - **Show retry quests**: off by default. Four quests only exist once you have
   *failed* another one — Hot Wheels - Let's Try Again after Hot Wheels, and the
   make-amends quests a trader offers once you take a rival's side. They're hidden

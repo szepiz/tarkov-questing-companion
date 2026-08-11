@@ -96,6 +96,18 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .group-btn:hover { background: #242421; color: #b3b0a6; }
 .group-btn.on { background: #c9a94a; color: #241f0e; text-shadow: none; }
 
+/* The two "which character" switches, kept together. Allowed to shrink and to
+   wrap INSIDE itself (max-width, not flex:none) so that at the sidebar's 300px
+   floor the pair takes its own line and breaks internally, instead of
+   overflowing or letting MAPS/TRADERS come between them. */
+.switch-pair {
+  display: flex;
+  gap: 8px;
+  row-gap: 6px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
 /* PvP / PvE profile switch */
 .mode-switch {
   display: flex;

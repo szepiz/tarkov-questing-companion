@@ -2084,10 +2084,31 @@ function buildTasksByMode() {
 function modeLabel(mode) { return modeLabels()[mode] || mode; }
 
 function renderModeSwitch() {
-  document.querySelectorAll('.mode-btn-top').forEach((el) => {
+  // [data-mode] on purpose: the faction switch next door uses the same class.
+  document.querySelectorAll('.mode-btn-top[data-mode]').forEach((el) => {
     el.classList.toggle('on', el.dataset.mode === state.gameMode);
   });
   renderSeasonNote();
+}
+
+// PMC faction, in the titlebar since it belongs beside the profile switch.
+//
+// The tooltip counts the quests it actually affects rather than describing the
+// feature — a control that changes nothing visible reads as broken, and this one
+// changes very few rows. That count is why it was worth keeping when the setting
+// moved out of Settings, where it had a line of its own to say it in.
+function renderFactionSwitch() {
+  const fac = (state.settings && state.settings.pmcFaction) || 'any';
+  document.querySelectorAll('#factionSwitch .mode-btn-top').forEach((el) => {
+    el.classList.toggle('on', el.dataset.faction === fac);
+  });
+  const split = ((state.tasksByMode || {})[state.gameMode] || []).filter((t) => t.factionName);
+  $('factionSwitch').title = split.length
+    ? (fac === 'any'
+      ? `${split.length} quests are offered to one faction only, and all of them are listed. `
+        + 'Pick yours to see just those.'
+      : `Showing the ${fac} version of the ${split.length} quests that come in two.`)
+    : 'Some quests are offered to BEAR or USEC only. None are in this list.';
 }
 
 // Record (or clear) the loyalty level a quest needs, as read off the trader
@@ -2227,20 +2248,6 @@ function renderSettingsPanel() {
     $('logsPathInput').value = state.settings.logsPath || '';
   }
 
-  // PMC faction. The hint counts the quests it actually affects rather than
-  // describing the feature — a setting that changes nothing visible reads as
-  // broken, and this one changes very few rows.
-  const fac = (state.settings.pmcFaction || 'any');
-  $('factionAny').classList.toggle('active', fac === 'any');
-  $('factionBear').classList.toggle('active', fac === 'BEAR');
-  $('factionUsec').classList.toggle('active', fac === 'USEC');
-  const split = (state.tasksByMode[state.gameMode] || []).filter((t) => t.factionName);
-  $('factionHint').textContent = split.length
-    ? (fac === 'any'
-      ? `${split.length} quests are offered to one faction only, and all of them are listed. Set your faction to see just yours.`
-      : `Showing the ${fac} version of the ${split.length} quests that come in two.`)
-    : 'Some quests are offered to BEAR or USEC only.';
-
   // display toggles
   for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'],
     ['hideFailedBtn', 'hideFailed'], ['showRetryBtn', 'showRetryQuests']]) {
@@ -2332,6 +2339,7 @@ function renderAll() {
   _seriesHidden = null;   // ticking Part 2 promotes Part 3 into its place
   _armHidden = null;      // ticking one arm of a branch settles which copy is shown
   applyMapArt();          // the chosen artwork, before anything reads MAP_DATA
+  renderFactionSwitch();
   renderTabs();
   renderTree();
   renderHero();
@@ -2752,9 +2760,13 @@ for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedB
 
 // PMC faction. applyMode() re-derives state.tasks from the pristine per-mode
 // lists, so switching back and forth costs nothing and needs no re-fetch.
-for (const [btnId, val] of [['factionAny', 'any'], ['factionBear', 'BEAR'], ['factionUsec', 'USEC']]) {
-  $(btnId).addEventListener('click', async () => {
+for (const el of document.querySelectorAll('#factionSwitch .mode-btn-top')) {
+  el.addEventListener('click', async () => {
+    const val = el.dataset.faction;
+    if (val === ((state.settings && state.settings.pmcFaction) || 'any')) return;
     state.settings = await backend.saveSettings({ pmcFaction: val });
+    // applyMode() first: the faction decides which tasks exist at all, and
+    // everything below renders from that list.
     applyMode();
     renderAll();
     renderSettingsPanel();
