@@ -845,14 +845,16 @@ function isLocked(t) {
 //   * the collection records ZERO Lightkeeper quests on this profile, and these
 //     are MECHANIC quests on a trader captured IN FULL, so their absence is the
 //     game's answer and not a gap in the capture.
-//   * 14 quests, all flagged `lightkeeperRequired` by the publisher, so the set
+//   * 7 quests, all flagged `lightkeeperRequired` by the publisher, so the set
 //     is drawn by the data rather than by a name list here.
 //
-// Part 1 stays visible deliberately. It is the entry point, and the wiki gates
-// it on "progressing through the story chapter Batya" — which this profile is
-// doing, 13 objectives of 59, while the game still withholds the quest. So
-// "progressing" is some specific point the wiki does not name, and guessing one
-// would hide the only quest that starts the line.
+// Part 1 is the entry point and NO quest holds it: the wiki gates it on
+// "progressing through the story chapter Batya", which this profile is doing,
+// 13 objectives of 59, while the game still withholds the quest. So
+// "progressing" is some specific point the wiki does not name, and a guess at
+// one would be a guess about the only quest that starts the line. The chain
+// rule therefore leaves Part 1 alone; what holds it is the unset-trader rule
+// below, which the player clears the moment they set a Lightkeeper level.
 function lightkeeperChainLocked(t) {
   if (!t || !t.lightkeeperRequired) return false;
   // THE TRADER HAS TO EXIST FOR YOU FIRST, which covers the entry point the
