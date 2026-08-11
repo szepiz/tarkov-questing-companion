@@ -2153,7 +2153,7 @@ function renderSettingsPanel() {
   const di = state.dataInfo;
   $('dataStatus').innerHTML = !di ? 'Loading…'
     : di.source === 'online'
-      ? `<span class="ok">Up to date</span> — fetched from tarkov.dev just now (${state.tasks.length} quests).`
+      ? `<span class="ok">Up to date</span> — fetched just now from tarkov-quest-data (${state.tasks.length} quests).`
       : di.source === 'cache'
         ? `Using cached data from ${new Date(di.fetchedAt).toLocaleString()} (${state.tasks.length} quests). Refresh when online.`
         : `<span class="bad">No data.</span> Connect to the internet and refresh.`;
