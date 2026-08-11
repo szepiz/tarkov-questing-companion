@@ -12,7 +12,7 @@
 // as it already does for story objectives, and shows a real pin only where one
 // has been hand-placed through the dev map editor.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-10.
+// Source: escapefromtarkov.fandom.com, read 2026-08-11.
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const BP_DOCS = [
