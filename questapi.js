@@ -160,7 +160,16 @@ function adaptQuest(q, mode, nameById) {
       compareMethod: r.compareMethod || '>=',
       value: typeof r.value === 'number' ? r.value : 0,
     })),
-    objectives: (q.objectives || []).map(adaptObjective),
+    // OBJECTIVES THE GAME NO LONGER HAS ARE DROPPED HERE, once, so that pins,
+    // ticks, counts and the details panel all agree without any of them
+    // knowing about it. `objectivesGone` is only ever published for a quest
+    // whose whole card was captured, and only for leftovers of a type the card
+    // was ALREADY showing — a fourth stash step cannot be hidden behind the
+    // second, while a "hand over" step genuinely does appear only once the item
+    // is in hand. Gratitude asks for two of the four items tarkov.dev lists.
+    objectives: (q.objectives || [])
+      .filter((o) => !(q.objectivesGone || []).includes(o.id))
+      .map(adaptObjective),
 
     // Carried through from the published file, and new to the app. The renderer
     // ignores anything it does not know, so these are additive.
