@@ -185,6 +185,11 @@ function adaptQuest(q, mode, nameById) {
     // identical objectives. The player is offered exactly one.
     sameQuestAs: (q.sameQuestAs && q.sameQuestAs.length) ? q.sameQuestAs : undefined,
     objectiveText: q.objectiveText || undefined,
+    // The same wording keyed by OBJECTIVE ID, which is what the renderer shows.
+    // Matched by content in the published file, never by index — the two lists
+    // disagree about order and length often enough that pairing positionally
+    // attaches one objective's sentence to another objective's coordinates.
+    objectiveTextById: q.objectiveTextById || undefined,
   };
 }
 

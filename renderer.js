@@ -3779,15 +3779,30 @@ function applyWikiNames() {
 // case is swapped here, so every objective keeps its id and nothing that hangs
 // off an id — a hand tick, a map pin — moves. Most of these ADD the count the
 // data's description leaves out ("Eliminate 5 Scavs…" against "Eliminate Scavs…").
+// TWO layers rewrite objective text, and the ORDER IS THE WHOLE POINT.
+//
+//   t.objectiveTextById   the GAME's own wording, off the quest screen, dated,
+//                         arriving in the quest data. 180 quests carry it.
+//   WIKI_OBJ_TEXT         a bundled bake of the wiki. Undated, and it predates
+//                         the app reading its own API.
+//
+// The wiki bake used to be the only one and ran over everything. It now runs
+// SECOND, filling in the quests the game has not settled. Left first, it put
+// Hot Delivery back to asking for 2 ComTac II headsets where the game asks for
+// one, sent Job for a Patriot to three maps the quest no longer uses, and gave
+// No Swiping no map at all — the published data had already corrected all three
+// and the overlay quietly undid it.
 function applyWikiObjectives() {
-  if (typeof WIKI_OBJ_TEXT === 'undefined' || !WIKI_OBJ_TEXT) return 0;
+  const wiki = (typeof WIKI_OBJ_TEXT !== 'undefined' && WIKI_OBJ_TEXT) || null;
   let n = 0;
   for (const list of Object.values(state.tasksByMode || {})) {
     for (const t of list || []) {
-      const map = WIKI_OBJ_TEXT[t.id];
-      if (!map) continue;
+      const own = t.objectiveTextById || null;
+      const fromWiki = wiki ? wiki[t.id] : null;
+      if (!own && !fromWiki) continue;
       for (const o of t.objectives || []) {
-        if (map[o.id] && map[o.id] !== o.description) { o.description = map[o.id]; n++; }
+        const text = (own && own[o.id]) || (fromWiki && fromWiki[o.id]) || null;
+        if (text && text !== o.description) { o.description = text; n++; }
       }
     }
   }
