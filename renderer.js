@@ -3371,16 +3371,38 @@ function reworkedObjectiveIds() {
 // someone checked that spot against the game and vouched for it. That outranks
 // the blanket suspicion, and it is what makes this recoverable one pin at a
 // time instead of all-or-nothing.
+// ONE PUBLISHED POINT CAN ARRIVE SEVERAL TIMES, and each copy drew its own pin.
+//
+// tarkov.dev files some maps as more than one map sharing a display name —
+// Factory is day and night, Ground Zero is the ordinary one and the level-21+
+// one — and publishes an objective's zones under each. It then repeats them, so
+// "Fix the first control board" comes through as FOUR entries: two map ids, two
+// copies each, all carrying the same zone id (`place_SADOVOD_01_1`) and the same
+// coordinates. The app draws one map called Factory, so all four land on the
+// same control board.
+//
+// Deduplicated on the PRISTINE coordinates, which is the same identity the hand
+// moves key on (see applyMapFixes) — so a moved pin dedupes with its own copies
+// rather than with whatever it was moved next to. Exact equality, deliberately:
+// two published points that merely round to the same spot are still two points,
+// and this is only meant to collapse the ones that are literally the same.
 function objectiveMapPoints(o, mapName) {
   const suspect = reworkedObjectiveIds().has(o.id);
   const usable = (p) => !suspect || (p && p._o);
+  const seen = new Set();
   const pts = [];
+  const add = (p) => {
+    const k = `${p._o ? p._o[0] : p.x}|${p.y}|${p._o ? p._o[1] : p.z}`;
+    if (seen.has(k)) return;
+    seen.add(k);
+    pts.push(p);
+  };
   for (const z of o.zones || []) {
-    if (z && z.position && normMapName(z.map && z.map.name) === mapName && usable(z.position)) pts.push(z.position);
+    if (z && z.position && normMapName(z.map && z.map.name) === mapName && usable(z.position)) add(z.position);
   }
   for (const l of o.possibleLocations || []) {
     if (normMapName(l.map && l.map.name) !== mapName) continue;
-    for (const p of l.positions || []) if (usable(p)) pts.push(p);
+    for (const p of l.positions || []) if (usable(p)) add(p);
   }
   return pts;
 }
