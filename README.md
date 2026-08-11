@@ -55,6 +55,12 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   to the bottom of their list, faded, with a yellow **LOCKED** tag and a
   yellow **!** in the tick box — so you always see what you can actually take.
   A locked quest's details show the missing prerequisites in yellow.
+- **Show retry quests**: off by default. Four quests only exist once you have
+  *failed* another one — Hot Wheels - Let's Try Again after Hot Wheels, and the
+  make-amends quests a trader offers once you take a rival's side. They're hidden
+  until the app knows you failed the quest behind them, since otherwise they read
+  as work you're missing. Turn this on to list them anyway. The quest list tells
+  you when any are being held back.
 - **RESET ALL PROGRESS**: clears every tick for the current mode. After a reset,
   automatic tracking only imports quests completed *after* the reset — use this
   after a wipe.

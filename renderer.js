@@ -15,7 +15,7 @@ const backend = window.api || (() => {
   const store = {
     settings: JSON.parse(localStorage.getItem('tqt-settings') || 'null') || {
       trackingMode: 'manual', logsPath: 'C:\\Battlestate Games\\EFT\\Logs', filter: 'ALL', gameMode: 'regular',
-      hideCompleted: false, hideLocked: false, mapLayers: {}, mapLayersOpen: {},
+      hideCompleted: false, hideLocked: false, showRetryQuests: false, mapLayers: {}, mapLayersOpen: {},
     },
     progress: JSON.parse(localStorage.getItem('tqt-progress') || 'null') || { regular: emptyBucket(), pve: emptyBucket() },
   };
@@ -469,10 +469,17 @@ function taskReachable(taskId) {
   if (_reachStack.has(taskId)) return true;  // cycle failsafe
   _reachStack.add(taskId);
   let ok = true;
+  // A row naming one arm of a choice is superseded by the choice itself.
+  // Battery Change publishes "Stick in the Wheel" as its prerequisite and opens
+  // just as well after Stabilize Business; ANDing the published row would lock
+  // it for everyone who took the other arm.
+  const choice = new Set(anyOfIds(t));
   for (const req of t.taskRequirements || []) {
     if (!req.task) continue;
+    if (choice.has(req.task.id)) continue;
     if (!reqSatisfied(req)) { ok = false; break; }
   }
+  if (ok && choice.size) ok = anyOfMet(t);
   _reachStack.delete(taskId);
   _reachMemo.set(taskId, ok);
   return ok;
@@ -838,6 +845,114 @@ function isLocked(t) {
 // anything. If a source ever publishes the 1.1.0
 // unlock rules (loyalty, per wikireqs.js), that is what should drive a note
 // here — not this.
+
+// ---------- branch gates: a FAILURE to open, or a CHOICE of prerequisite ----
+//
+// A prerequisite row carries a `status`, and until now the only thing reading
+// it was the requirement panel's "(must be failed)" note. Two shapes hide in
+// there, and they are not variations on "do this first":
+//
+//   ["failed"]              The quest exists ONLY if you failed the other one.
+//                           Hot Wheels - Let's Try Again is BTR Driver handing
+//                           you the job again after you marked the wrong wheels.
+//                           The other three are the make-amends quests a trader
+//                           offers once you have taken a rival's side.
+//   ["complete","failed"]   EITHER outcome will do. Already handled correctly by
+//                           reqMet/reqSatisfied, and not a gate at all.
+//
+// And a third that is not in tarkov.dev's schema at all: "complete either of
+// these", which arrives as `requiresAnyOf` off the wiki. Where a quest has one,
+// the requirement rows naming those same quests are SUPERSEDED by it — the
+// published file lists whichever arm tarkov.dev happened to keep, and ANDing
+// that with the choice would demand a specific arm the game does not.
+//
+// This is the second thing in the app allowed to hide a quest on its own
+// reasoning, and it earns it the same way the numbered lines do: it is not a
+// claim about the 1.1.0 quest tree, it is what the quest's own data says about
+// itself, and it is never silent — the list says how many and offers them back.
+
+function failGates(t) {
+  return (t.taskRequirements || []).filter((r) => r.task
+    && (r.status || []).includes('failed') && !(r.status || []).includes('complete'));
+}
+
+// the alternatives we actually track, so a quest is never gated on an id the
+// app has never heard of
+function anyOfIds(t) {
+  return (t.requiresAnyOf || []).filter((id) => state.byId.has(id));
+}
+function anyOfMet(t) {
+  const ids = anyOfIds(t);
+  return ids.length > 0 && ids.some((id) => isDone(id));
+}
+
+// Has anything told us the player has been offered this? The failure itself is
+// the direct answer. Completing one of the alternatives is the SAME STATEMENT
+// from the other side: the three-way choice between Big Customer, Out of
+// Curiosity and Chemical - Part 4 fails the two you did not take, so finishing
+// any of them is proof the other trader's version failed — and the app is far
+// more likely to have seen a completion than a failure.
+function failGateOpen(t) {
+  const gates = failGates(t);
+  if (!gates.length) return true;
+  if (gates.some((r) => isFailed(r.task.id))) return true;
+  return anyOfMet(t);
+}
+
+// Hidden from the list until something says otherwise. Every one of these is a
+// statement by the PLAYER and outranks the gate: a tick, a failure, a marked
+// objective, "the game does offer it", or the Settings switch.
+function retryHidden(t) {
+  if (!t || !t.onlyAfterFailure) return false;
+  if (state.settings && state.settings.showRetryQuests) return false;
+  if (isDone(t.id) || isFailed(t.id) || questOpen(t.id)) return false;
+  if ((t.objectives || []).some((o) => isObjectiveDone(o.id))) return false;
+  return !failGateOpen(t);
+}
+
+// how many the rule alone is holding back, for the note that offers them back
+function retryHiddenCount() {
+  return (state.tasks || []).filter((t) => retryHidden(t)).length;
+}
+
+// ---- one quest, several ids -------------------------------------------------
+//
+// "Either A or B" is not a shape the game's data has. What it holds instead is
+// SEPARATE QUESTS with the same name and identical objectives, one per arm, each
+// requiring its own arm — Make Amends is three ids, Battery Change two. Listed
+// by id, that is one quest shown three times, and two of them are quests this
+// player can never be offered.
+//
+// Which one to show: the one the player's own progress points at. A tick or a
+// failure on one settles it outright; otherwise the arm whose prerequisite is
+// done. With nothing to go on, the first, so the row is stable rather than
+// jumping about as unrelated quests are ticked.
+//
+// Same footing as the numbered lines: it hides nothing the player could act on
+// (the arms are identical), search ignores it, and the details panel says the
+// quest has several versions.
+let _armHidden = null;
+function armState() {
+  if (_armHidden) return _armHidden;
+  const hidden = new Set();
+  const seen = new Set();
+  for (const t of state.tasks || []) {
+    if (!(t.sameQuestAs || []).length || seen.has(t.id)) continue;
+    const group = [t, ...t.sameQuestAs.map((id) => state.byId.get(id)).filter(Boolean)];
+    for (const g of group) seen.add(g.id);
+    if (group.length < 2) continue;
+    const pick = group.find((g) => isDone(g.id) || isFailed(g.id))
+      || group.find((g) => (g.taskRequirements || []).length
+        && (g.taskRequirements || []).every((r) => r.task && isDone(r.task.id)))
+      || group[0];
+    for (const g of group) if (g.id !== pick.id) hidden.add(g.id);
+  }
+  _armHidden = hidden;
+  return hidden;
+}
+// a copy of a quest belonging to a branch the player did not take
+function otherArm(t) { return armState().has(t.id); }
+// ---------- branch gates end ----------
 
 // ---------- END OF LOCK LOGIC ----------
 // _dev/test_locks.js slices this file from `function isDone` to this marker and
@@ -1372,6 +1487,8 @@ function renderTree() {
   // "spa tour" is how you see a whole line at once.
   const isVisible = (t) => (q ? matchesSearch(t)
     : !laterPart(t)
+    && !retryHidden(t)
+    && !otherArm(t)
     && !(hideC && isDone(t.id))
     && !(hideF && !isDone(t.id) && isFailed(t.id))
     && !(hideL && isLocked(t)));
@@ -1490,7 +1607,7 @@ function renderTree() {
       // avoid. There used to be a second number beside it for chain-pending
       // quests; it went with that feature in v1.45.0, and the quests it counted
       // now fall into `doable` — which is what the game says they are.
-      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t) && !isFailed(t.id)
+      const doable = all.filter((t) => !isDone(t.id) && !isLocked(t) && !isFailed(t.id) && !retryHidden(t)
         && !laterPart(t)).length;
       // Not gated on the hide toggles any more: a line-folded node can be empty
       // with every toggle off, and search prunes non-matching groups through the
@@ -1557,6 +1674,20 @@ function renderTree() {
   // being gone, which reads as "the app is broken" rather than "answer the
   // question in TRADERS". Counts only what this rule ALONE is hiding, so the
   // number is the one that would come back.
+  // Quests that exist only after a failure. Unlike the trader note below this
+  // one is NOT tied to automatic tracking: the rule reads the quest's own data,
+  // not the logs, so it applies in manual mode too.
+  const retries = retryHiddenCount();
+  if (retries) {
+    const msg = document.createElement('div');
+    msg.className = 'tree-message trader-note';
+    msg.innerHTML = `<strong>${retries}</strong> quest${retries === 1 ? '' : 's'} hidden — `
+      + `${retries === 1 ? 'it is' : 'they are'} only offered after you FAIL another quest, `
+      + `like Hot Wheels - Let's Try Again after Hot Wheels. `
+      + `Turn on <strong>Show retry quests</strong> in Settings to list ${retries === 1 ? 'it' : 'them'} anyway.`;
+    tree.insertBefore(msg, tree.firstChild);
+  }
+
   if (lockingActive()) {
     const unset = [...tradersWithoutLevel()];
     // no longer excludes chain-pending quests: since v1.38.0 the chain does not
@@ -1790,15 +1921,37 @@ function renderQuest() {
   // shown for everything else, just without an unmet one painted as a blocker,
   // because since v1.45.0 the app makes no claim that the chain still gates.
   const showMissing = isLocked(t);
+  const choice = new Set(anyOfIds(t));
+  if (choice.size) {
+    const met = anyOfMet(t);
+    const names = [...choice].map((id) => escapeHtml((state.byId.get(id) || {}).name || id));
+    reqs.push(`<div class="req-line${met ? ' prereq-done' : ''}">`
+      + `<span class="req-tag">EITHER</span><span>${names.join(' &nbsp;or&nbsp; ')}</span></div>`);
+  }
+  // The tag column is 52px and every other tag in here is six characters or
+  // fewer, so the count goes in the text rather than the label.
+  if ((t.sameQuestAs || []).length) {
+    const n = t.sameQuestAs.length + 1;
+    reqs.push('<div class="req-line"><span class="req-tag">ONE OF</span>'
+      + `<span>The game publishes this quest ${n} times, one per branch — you are offered the `
+      + 'version matching the quest you took.</span></div>');
+  }
   for (const req of t.taskRequirements || []) {
     if (!req.task) continue;
+    // An arm of a choice is not a requirement on its own. It is already listed,
+    // above, as the EITHER line it belongs to; repeating it here would read as
+    // "and also this one specifically", which is the misreading the choice
+    // exists to correct.
+    if (choice.has(req.task.id)) continue;
     const statuses = reqStatuses(req);
     const met = reqMet(req);
     const missing = showMissing && !reqSatisfied(req);
     const failOnly = statuses.includes('failed') && !statuses.includes('complete');
-    const label = escapeHtml(req.task.name) + (failOnly ? ' (must be failed)' : '');
+    const either = statuses.includes('failed') && statuses.includes('complete');
+    const label = escapeHtml(req.task.name)
+      + (either ? ' — completed or failed, either way' : '');
     reqs.push(`<div class="req-line${met ? ' prereq-done' : ''}${missing ? ' prereq-missing' : ''}">
-      <span class="req-tag">QUEST</span><span>${label}</span></div>`);
+      <span class="req-tag">${failOnly ? 'FAILED' : 'QUEST'}</span><span>${label}</span></div>`);
   }
   // keys: objective.requiredKeys is [[key]] — outer list = alternatives,
   // inner list = keys needed together
@@ -2090,7 +2243,7 @@ function renderSettingsPanel() {
 
   // display toggles
   for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'],
-    ['hideFailedBtn', 'hideFailed']]) {
+    ['hideFailedBtn', 'hideFailed'], ['showRetryBtn', 'showRetryQuests']]) {
     const on = !!state.settings[key];
     $(btnId).textContent = on ? 'ON' : 'OFF';
     $(btnId).classList.toggle('on', on);
@@ -2177,6 +2330,7 @@ function renderAll() {
   _levelFloor = null;     // a new completion can raise the inferred level
   _unsetTraders = null;   // a level clicked in TRADERS turns a whole trader back on
   _seriesHidden = null;   // ticking Part 2 promotes Part 3 into its place
+  _armHidden = null;      // ticking one arm of a branch settles which copy is shown
   applyMapArt();          // the chosen artwork, before anything reads MAP_DATA
   renderTabs();
   renderTree();
@@ -2588,7 +2742,8 @@ $('modeAuto').addEventListener('click', async () => {
   renderAll();
 });
 
-for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'], ['hideFailedBtn', 'hideFailed']]) {
+for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'],
+  ['hideFailedBtn', 'hideFailed'], ['showRetryBtn', 'showRetryQuests']]) {
   $(btnId).addEventListener('click', async () => {
     state.settings = await backend.saveSettings({ [key]: !state.settings[key] });
     renderAll();
@@ -3031,6 +3186,9 @@ function* mapTasks() {
     // laterPart too, or the map contradicts the list it was opened from: pins
     // for Part 4 while the sidebar is telling you to go and do Part 2
     if (!mapSetPass(t) || isDone(t.id) || isFailed(t.id) || laterPart(t)) continue;
+    // a quest the game is not offering has no business putting pins on a map,
+    // and neither do the copies of one it offers under a single id
+    if (retryHidden(t) || otherArm(t)) continue;
     const locked = isLocked(t);
     if (locked && state.settings && state.settings.hideLocked) continue;
     yield [t, locked];

@@ -69,6 +69,11 @@ const DEFAULT_SETTINGS = {
   hideCompleted: false,   // hide completed quests from the list
   hideLocked: false,      // hide locked quests from the list (auto mode only)
   hideFailed: false,      // hide failed quests from the list
+  // Four quests exist only once you have FAILED another one — Hot Wheels -
+  // Let's Try Again, and the make-amends quests a trader offers after you side
+  // with a rival. Hidden by default because the game offers them to nobody who
+  // succeeded, and listing them reads as work the player is missing.
+  showRetryQuests: false,
   // Per profile, because PvE and PvP characters level separately. Empty = the
   // app estimates a floor from the hardest quest already finished; Tarkov never
   // writes your own level to the logs.

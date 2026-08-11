@@ -171,6 +171,19 @@ function adaptQuest(q, mode, nameById) {
     confirmedInGame: q.confirmedInGame || undefined,
     asOf: q.asOf || undefined,
     failedBy: (q.failedBy && q.failedBy.length) ? q.failedBy : undefined,
+    // A SECOND CHANCE, NOT A NEXT STEP. Four quests are offered only once
+    // another has been FAILED, which the published file states outright rather
+    // than leaving in a `status` array nobody reads. The specific rows still
+    // come from `taskRequirements` above, per mode, so the flag says what KIND
+    // of quest this is and the rows say what the gate actually is.
+    onlyAfterFailure: q.onlyAfterFailure || undefined,
+    // "Complete EITHER of these." tarkov.dev's requirement list is flat and can
+    // only mean AND, so where the game branches it keeps one arm and drops the
+    // rest; this comes off the wiki, which writes the choice out.
+    requiresAnyOf: (q.requiresAnyOf && q.requiresAnyOf.length) ? q.requiresAnyOf : undefined,
+    // The same quest published once per arm — Make Amends is three ids with
+    // identical objectives. The player is offered exactly one.
+    sameQuestAs: (q.sameQuestAs && q.sameQuestAs.length) ? q.sameQuestAs : undefined,
     objectiveText: q.objectiveText || undefined,
   };
 }
