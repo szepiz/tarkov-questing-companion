@@ -253,6 +253,7 @@ function forFaction(list) {
 // point the active-mode views (tasks/byId/progress) at the current game mode
 function applyMode() {
   const m = state.gameMode;
+  _reworkedObjIds = null;   // task data may have been rebuilt underneath it
   state.tasks = forFaction(state.tasksByMode[m] || []);
   state.byId = new Map(state.tasks.map((t) => [t.id, t]));
   state.progress = state.fullProgress[m] || { completed: {}, failed: {}, objectives: {}, resetAt: 0 };
@@ -2950,16 +2951,53 @@ function objectiveNeeds(o) {
   return out;
 }
 
+// Objectives belonging to a quest 1.1.0 REWROTE, whose published coordinates
+// therefore describe a step the game no longer asks for.
+//
+// WIKI_OBJ_LIST is the same set the CHANGED IN 1.1.0 panel is built from: quests
+// whose objective LIST changed shape, not merely its wording. WIKI_OBJ_TEXT is
+// deliberately NOT used — those are rewordings of an objective that still
+// exists, so their pins are still right, and suppressing 292 correct pins to
+// catch 54 wrong ones would be the worse trade.
+let _reworkedObjIds = null;
+function reworkedObjectiveIds() {
+  if (_reworkedObjIds) return _reworkedObjIds;
+  const ids = new Set();
+  if (typeof WIKI_OBJ_LIST !== 'undefined' && WIKI_OBJ_LIST) {
+    for (const list of Object.values(state.tasksByMode || {})) {
+      for (const t of list || []) {
+        if (!WIKI_OBJ_LIST[t.id]) continue;
+        for (const o of t.objectives || []) ids.add(o.id);
+      }
+    }
+  }
+  _reworkedObjIds = ids;
+  return ids;
+}
+
 // Every point this objective puts on the given map. Shared by the pins and the
 // loadout list so the two can never disagree about what is "on this map".
+//
+// A rewritten quest's points are withheld here rather than at the pin layer, so
+// that the loadout and the done-list drop them too. A key listed for an
+// objective the game no longer asks for is as wrong as a pin for it, and the
+// three views agreeing is the whole reason this function exists.
+//
+// THE EXCEPTION IS A HAND-CORRECTED POSITION. applyObjectiveFixes stashes the
+// pristine coordinates in `p._o` when it moves a pin, so `_o` present means
+// someone checked that spot against the game and vouched for it. That outranks
+// the blanket suspicion, and it is what makes this recoverable one pin at a
+// time instead of all-or-nothing.
 function objectiveMapPoints(o, mapName) {
+  const suspect = reworkedObjectiveIds().has(o.id);
+  const usable = (p) => !suspect || (p && p._o);
   const pts = [];
   for (const z of o.zones || []) {
-    if (z && z.position && normMapName(z.map && z.map.name) === mapName) pts.push(z.position);
+    if (z && z.position && normMapName(z.map && z.map.name) === mapName && usable(z.position)) pts.push(z.position);
   }
   for (const l of o.possibleLocations || []) {
     if (normMapName(l.map && l.map.name) !== mapName) continue;
-    for (const p of l.positions || []) pts.push(p);
+    for (const p of l.positions || []) if (usable(p)) pts.push(p);
   }
   return pts;
 }
@@ -3234,7 +3272,9 @@ function renderMapLoadout(mapName) {
     + (r.trader ? `<span class="rw-trader">${escapeHtml(r.trader)}</span>` : '') + '</div>'
     + `<ul>${r.lines.map((l) => `<li><span class="ld-name">${escapeHtml(l)}</span></li>`).join('')}</ul>`).join('')}
       <div class="rw-note">Patch 1.1.0 changed these. The quest data still publishes the old
-        objectives, so they have no pins — the text is what the game asks for now.</div>
+        objectives, so their pins are hidden rather than left pointing at somewhere the quest
+        no longer sends you — the text is what the game asks for now. Pins come back one at a
+        time as each is placed by hand, and all at once if the data upstream catches up.</div>
     </div>` : '';
 
   // The BattlePass document SPOT LIST is gone (2026-08-06). It existed because
