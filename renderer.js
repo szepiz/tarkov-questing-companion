@@ -1197,6 +1197,26 @@ function groupLevels() {
   return GROUPINGS[state.groupBy] || GROUPINGS['map-trader'];
 }
 
+// THE ORDER THE GAME PUTS THEM IN: LL1, LL2, LL3, LL4, Essential, then the
+// ones we have never seen on a trader screen.
+//
+// `traderTab` is where the game files a quest, which is NOT its loyalty gate —
+// LL1 and Essential both gate on nothing, so the requirement list cannot tell
+// them apart and neither can it separate either from an unseen quest. That is
+// why this reads the tab and not `traderRequirements`.
+//
+// Essential sits after LL4 because that is where the trader screen puts it, and
+// unseen last because "we do not know" is not a position — 233 quests have no
+// observation, and scattering them through the loyalty levels on a guess would
+// make the order look measured when it is not.
+const TAB_UNSEEN = 5;
+function tabRank(t) {
+  const tab = t && t.traderTab;
+  if (tab === 'essential') return 4;
+  if (typeof tab === 'number' && tab >= 1 && tab <= 4) return tab - 1;
+  return TAB_UNSEEN;
+}
+
 // sink the ones you cannot act on, without hiding any of them
 function sortQuests(list) {
   const locking = lockingActive();
@@ -1207,8 +1227,13 @@ function sortQuests(list) {
     : (locking && isLocked(t)) ? 1
     : 0;
   const rank = new Map(list.map((t) => [t.id, rankOf(t)]));
+  // Trader tab first WITHIN a tier, not above it. The tiers are about whether
+  // you can go and do the quest at all; a failed LL1 quest belongs under an
+  // available LL4 one, and putting the tab outermost would float dead rows to
+  // the top of every trader.
   list.sort((a, b) =>
     rank.get(a.id) - rank.get(b.id) ||
+    tabRank(a) - tabRank(b) ||
     (a.minPlayerLevel || 0) - (b.minPlayerLevel || 0) ||
     a.name.localeCompare(b.name));
   return list;
@@ -3459,8 +3484,13 @@ function collectMapRework(mapName) {
     const fresh = WIKI_OBJ_LIST[t.id];
     if (!fresh) continue;
     const here = fresh.filter((line) => objectiveTextNamesMap(line, mapName));
-    if (here.length) out.push({ quest: t.name, trader: (t.trader && t.trader.name) || '', locked, lines: here });
+    if (here.length) {
+      out.push({ quest: t.name, trader: (t.trader && t.trader.name) || '',
+        locked, lines: here, tab: tabRank(t) });
+    }
   }
+  // same trader-tab order as the quest list, so the two read alike
+  out.sort((a, b) => a.tab - b.tab || a.quest.localeCompare(b.quest));
   return out;
 }
 

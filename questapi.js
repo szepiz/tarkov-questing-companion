@@ -143,6 +143,12 @@ function adaptQuest(q, mode, nameById) {
     lightkeeperRequired: !!val('lightkeeperRequired'),
     minPlayerLevel: val('minPlayerLevel') != null ? val('minPlayerLevel') : null,
     restartable: !!q.restartable,
+    // Which tab of the trader's quest list the game filed this under: 1-4 for
+    // the loyalty tabs, "essential" for the one it calls Essential, absent for
+    // a quest nobody has seen in game. NOT a requirement — LL1 and Essential
+    // both mean "no loyalty gate", which is why the gate model cannot be used
+    // to order a list by tab.
+    traderTab: q.traderTab !== undefined ? q.traderTab : null,
     wikiLink: q.wikiLink || null,
     factionName: q.faction || null,
     trader: nameOf(val('trader')),
@@ -221,7 +227,8 @@ const MIN_SCHEMA = 2;
 //
 //   1  the original
 //   2  objectiveTextById, objectivesGone, onlyAfterFailure, requiresAnyOf
-const ADAPTER = 2;
+//   3  traderTab
+const ADAPTER = 3;
 
 // -> { regular: [...], pve: [...], season: [...] }, the existing cache shape.
 function adaptAll(payload) {
