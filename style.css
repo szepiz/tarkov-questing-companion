@@ -1303,6 +1303,9 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .qpin-dot.story:hover { fill: #7dc4ec; }
 .qpin-dot.story.sel { fill: #ff6a3d; }
 .story-area { fill: #5aa0c8; fill-opacity: .12; stroke: #5aa0c8; pointer-events: none; }
+/* lit by its row in the side panel, and dimmed while another one is lit */
+.story-area.hl { fill-opacity: .3; stroke: #9ad7f5; }
+.story-area.off { fill-opacity: .04; stroke-opacity: .25; }
 .hz-area { fill: #e05f5f; fill-opacity: .10; stroke: #e05f5f; pointer-events: none; }
 .qpin-leader {
   stroke: #ff6a3d;
@@ -1975,6 +1978,17 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
   animation: story-glow 2.6s ease-in-out infinite;
 }
 .ld-story li:hover { background: rgba(90,160,200,.16); animation: none; }
+/* the lit row, matching the loadout list's own active state next door */
+#mapStoryList li.ld-link { cursor: pointer; }
+#mapStoryList li.ld-on {
+  background: rgba(90,160,200,.26);
+  box-shadow: inset 2px 0 0 #9ad7f5;
+  animation: none;
+}
+#mapStoryList li.ld-on .ld-name { color: #d6efff; }
+/* nothing placed for it yet — still right-clickable, so not disabled, just quiet */
+#mapStoryList li.ld-nopin { cursor: default; }
+#mapStoryList li.ld-nopin .ld-name { opacity: .72; }
 .ld-story .ld-name { color: #a8cfe4; }
 @keyframes story-glow {
   0%, 100% { background: rgba(90,160,200,.05); }

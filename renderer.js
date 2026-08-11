@@ -3494,9 +3494,21 @@ function renderMapLoadout(mapName) {
   const story = collectMapStory(mapName);
   $('mapStorySec').hidden = !story.length;
   $('mapStoryCount').textContent = story.length ? String(story.length) : '';
+  // Which of these have anything drawn for them. A row that lights nothing has
+  // to say so before it is clicked, not after: the story spots are hand-placed
+  // and most objectives still have none.
+  const storyPinned = new Set((mapView.pins || []).filter((p) => p.story && p.objId).map((p) => p.objId));
   $('mapStoryList').innerHTML = story.length ? `<div class="ld-group ld-story">
-      <ul>${story.map((o) => `<li data-story-obj="${escapeHtml(o.id)}" title="${escapeHtml(o.chapter)} — click to tick this story objective off">
-        <span class="ld-name">${escapeHtml(o.desc)}</span></li>`).join('')}</ul>
+      <ul>${story.map((o) => {
+    const pinned = storyPinned.has(o.id);
+    const lit = hl && hl.story === o.id;
+    return `<li data-story-obj="${escapeHtml(o.id)}"`
+      + ` class="${pinned ? 'ld-link' : 'ld-nopin'}${lit ? ' ld-on' : ''}"`
+      + ` title="${escapeHtml(o.chapter)} — `
+      + `${pinned ? 'click to show it on the map' : 'no spot has been placed for this one yet'}`
+      + ` · right-click to tick it off">`
+      + `<span class="ld-name">${escapeHtml(o.desc)}</span></li>`;
+  }).join('')}</ul>
     </div>` : '';
 
   // Quests 1.1.0 reworked whose current objectives land on this map. Text only,
@@ -3533,11 +3545,31 @@ function renderMapLoadout(mapName) {
     || (ticked.length ? '' : '<div class="ld-empty">Nothing needs bringing for these objectives.</div>')) + tickedHtml;
 
   for (const li of $('mapStoryList').querySelectorAll('li[data-story-obj]')) {
-    li.addEventListener('click', async () => {
-      state.fullProgress = await backend.toggleObjective(li.dataset.storyObj, true, state.gameMode);
+    const objId = li.dataset.storyObj;
+    li.addEventListener('click', () => {
+      if (!storyPinned.has(objId)) {
+        toast('No spot has been placed for that objective yet.');
+        return;
+      }
+      mapView.highlight = (mapView.highlight && mapView.highlight.story === objId)
+        ? null
+        : { story: objId, objs: new Set([objId]) };
+      renderMapLoadout(mapName);   // repaint the active row
+      drawMap();
+    });
+    // Ticking it off is still one gesture away, and it is the same gesture that
+    // ticks a pin off and a quest row off.
+    li.addEventListener('contextmenu', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (mapView.highlight && mapView.highlight.story === objId) mapView.highlight = null;
+      state.fullProgress = await backend.toggleObjective(objId, true, state.gameMode);
       applyMode();
+      mapView.pins = collectMapPins(mapName);
       renderMapLoadout(mapName);
+      drawMap();
       renderAll();
+      toast('Story objective marked done.');
     });
   }
 
@@ -3554,8 +3586,15 @@ function renderMapLoadout(mapName) {
   };
   // If the highlighted item no longer exists (its last objective was ticked
   // off), the highlight must not linger invisibly.
-  if (mapView.highlight
+  // Each kind of highlight is checked against its OWN list. Left as one test on
+  // `item`, a story highlight has no item, matches nothing, and clears itself
+  // on the very repaint that was meant to show it.
+  if (mapView.highlight && mapView.highlight.item
     && ![...load.keys, ...load.bring].some((i) => i.name === mapView.highlight.item)) {
+    mapView.highlight = null;
+  }
+  if (mapView.highlight && mapView.highlight.story
+    && !story.some((o) => o.id === mapView.highlight.story)) {
     mapView.highlight = null;
   }
   for (const li of $('mapLoadoutList').querySelectorAll('li.ld-link')) {
@@ -5357,10 +5396,15 @@ function drawMap() {
   // hand-placed story AREAS first, so their outlines sit under every pin
   for (const p of shown) {
     if (!p.story || !p.area) continue;
+    // An AREA is the whole answer for some objectives — "search this warehouse"
+    // has no single point — so it has to light up with the pins rather than sit
+    // there unchanged while everything around it fades.
+    const isHl = hlObjs && hlObjs.has(p.objId);
+    const faded = hlObjs && !isHl;
     const poly = document.createElementNS(ns, 'polygon');
     poly.setAttribute('points', p.area.map((q) => { const sp = mapPoint(md, q.x, q.z); return sp.x + ',' + sp.y; }).join(' '));
-    poly.setAttribute('class', 'story-area');
-    poly.setAttribute('stroke-width', 2.2 * k);
+    poly.setAttribute('class', 'story-area' + (isHl ? ' hl' : '') + (faded ? ' off' : ''));
+    poly.setAttribute('stroke-width', (isHl ? 3.4 : 2.2) * k);
     poly.setAttribute('stroke-dasharray', `${6 * k} ${5 * k}`);
     g.appendChild(poly);
   }
