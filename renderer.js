@@ -2327,6 +2327,18 @@ function renderSettingsPanel() {
   const auto = state.settings.trackingMode === 'auto';
   $('hideLockedRow').style.opacity = auto ? '1' : '.45';
   $('hideFailedRow').style.opacity = auto ? '1' : '.45';
+  {
+    const story = new Set(storyObjectiveIds());
+    const ticks = Object.keys((state.progress && state.progress.objectives) || {});
+    const s = ticks.filter((id) => story.has(id)).length;
+    const q = Object.keys((state.progress && state.progress.completed) || {}).length;
+    const hint = $('resetHint');
+    if (hint) {
+      hint.textContent = `${modeLabel(state.gameMode)}: ${s} story objective${s === 1 ? '' : 's'} ticked, `
+        + `${q} quest${q === 1 ? '' : 's'} completed. The two are tracked separately, so either can be `
+        + 'cleared on its own.';
+    }
+  }
   $('displayHint').textContent = auto
     ? 'With all three on, the list only shows quests you can take on right now.'
     : 'Hiding locked and failed quests needs AUTOMATIC tracking — that is how the app knows about them.';
@@ -2891,6 +2903,45 @@ $('refreshDataBtn').addEventListener('click', async () => {
   }
   renderAll();
   document.fonts.ready.then(fitSidebarWidth);
+});
+
+// Every objective id the story campaign owns, which is what "story progress"
+// IS — chapters have no state of their own, they are derived from these ticks.
+function storyObjectiveIds() {
+  const out = [];
+  for (const c of storyChapters()) for (const ob of (c.objectives || [])) if (ob.id) out.push(ob.id);
+  return out;
+}
+
+$('resetStoryBtn').addEventListener('click', async () => {
+  const label = modeLabel(state.gameMode);
+  const ids = storyObjectiveIds();
+  const ticked = ids.filter((id) => state.progress.objectives && state.progress.objectives[id]).length;
+  if (!ticked) { toast('No story progress to reset.'); return; }
+  if (!confirm(`Reset your ${label} STORY progress? This cannot be undone.\n\n`
+    + `${ticked} story objective${ticked === 1 ? '' : 's'} will be cleared. Your side task `
+    + 'completions are not touched.')) return;
+  state.fullProgress = await backend.resetProgressPart(state.gameMode, 'story', ids);
+  applyMode();
+  renderAll();
+  toast(`Story progress reset — ${ticked} objective${ticked === 1 ? '' : 's'} cleared.`);
+});
+
+$('resetSideBtn').addEventListener('click', async () => {
+  const label = modeLabel(state.gameMode);
+  // objective ticks that are NOT the story's: hand-ticked steps of ordinary
+  // quests, which belong with the completions they sit under
+  const story = new Set(storyObjectiveIds());
+  const ids = Object.keys((state.progress && state.progress.objectives) || {}).filter((id) => !story.has(id));
+  const done = Object.keys((state.progress && state.progress.completed) || {}).length;
+  if (!confirm(`Reset your ${label} SIDE TASK progress? This cannot be undone.\n\n`
+    + `${done} completed quest${done === 1 ? '' : 's'} will be cleared. Your story progress is not `
+    + `touched. Automatic tracking will then only re-import ${label} quests completed AFTER this `
+    + 'reset — useful after a wipe.')) return;
+  state.fullProgress = await backend.resetProgressPart(state.gameMode, 'side', ids);
+  applyMode();
+  renderAll();
+  toast(`Side task progress reset — ${done} quest${done === 1 ? '' : 's'} cleared.`);
 });
 
 $('resetBtn').addEventListener('click', async () => {

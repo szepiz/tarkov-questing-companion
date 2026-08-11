@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('api', {
   toggleObjective: (objectiveId, done, mode) => ipcRenderer.invoke('toggle-objective', { objectiveId, done, mode }),
   clearObjectives: (objectiveIds, mode) => ipcRenderer.invoke('clear-objectives', { objectiveIds, mode }),
   resetProgress: (mode) => ipcRenderer.invoke('reset-progress', mode),
+  resetProgressPart: (mode, part, objectiveIds) => ipcRenderer.invoke('reset-progress-part', { mode, part, objectiveIds }),
   rescanAll: () => ipcRenderer.invoke('rescan-all'),
   browseLogs: () => ipcRenderer.invoke('browse-logs'),
   openWiki: (url) => ipcRenderer.invoke('open-wiki', url),

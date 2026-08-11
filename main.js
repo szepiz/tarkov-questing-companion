@@ -1417,6 +1417,29 @@ ipcMain.handle('clear-objectives', (_e, { objectiveIds, mode }) => {
   return progress;
 });
 
+// HALF A RESET, of whichever half was asked for.
+//
+// main.js has no idea which objective ids belong to the story campaign —
+// storydata.js is a renderer script — so the caller passes the ids and this
+// only does what it is told. That keeps the split in one place instead of
+// growing a second definition of "story" that can disagree with the first.
+//
+// `resetAt` is the log-import cut-off and belongs to the side tasks: quest
+// completions come from the logs, story ticks do not.
+ipcMain.handle('reset-progress-part', (_e, { mode, part, objectiveIds }) => {
+  const m = MODES.includes(mode) ? mode : settings.gameMode;
+  const b = progress[m];
+  for (const id of objectiveIds || []) delete b.objectives[id];
+  if (part === 'side') {
+    b.completed = {};
+    b.failed = {};
+    b.resetAt = Date.now();
+  }
+  saveProgress();
+  if (part === 'side') syncWatcherToSettings(); // forget offsets, honour the new resetAt
+  return progress;
+});
+
 ipcMain.handle('reset-progress', (_e, mode) => {
   const m = MODES.includes(mode) ? mode : settings.gameMode;
   progress[m] = { completed: {}, failed: {}, objectives: {}, resetAt: Date.now() };
