@@ -55,6 +55,11 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   to the bottom of their list, faded, with a yellow **LOCKED** tag and a
   yellow **!** in the tick box — so you always see what you can actually take.
   A locked quest's details show the missing prerequisites in yellow.
+- **The Lightkeeper line** (Network Provider, Assessment, Key to the Tower,
+  Knock-Knock) is hidden until you set a loyalty level for the **Lightkeeper**
+  under TRADERS, and then unlocks in order as you finish each one. It's the one
+  quest line the app gates this way, because it's the one whose published order
+  matches what the game does.
 - **PMC FACTION** (in the top bar, next to PvP/PvE/SEASON): a handful of quests
   are offered to BEAR or USEC only, and come in two versions under one name.
   **BOTH** lists both; picking your side shows just yours. Hover it to see how

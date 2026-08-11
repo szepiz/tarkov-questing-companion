@@ -441,6 +441,11 @@ function reqMet(req) {
 // unlocking a whole deep chain the player hasn't progressed into yet.
 function reqSatisfied(req) {
   if (!state.byId.has(req.task.id)) return true; // untracked prereq → don't lock on it
+  // A REQUIREMENT POINTING AT A QUEST BSG DELETED CANNOT GATE ANYTHING. 33 are
+  // still published, and everything behind one would lock forever on a
+  // prerequisite nobody can complete.
+  const pre = state.byId.get(req.task.id);
+  if (pre && pre.removedFromGame) return true;
   const statuses = reqStatuses(req);
   if (statuses.includes('complete') && isDone(req.task.id)) return true;
   if (statuses.includes('failed') && isFailed(req.task.id)) return true;
@@ -820,7 +825,55 @@ function isLocked(t) {
   // for the same cause: their screen outranks a stale requirement graph.
   if (questOpen(t.id)) return false;
   return lockingActive() && !isDone(t.id)
-    && (levelLocked(t) || repLocked(t) || traderNotUnlocked(t));
+    && (levelLocked(t) || repLocked(t) || traderNotUnlocked(t) || lightkeeperChainLocked(t));
+}
+
+// THE LIGHTKEEPER LINE, AND ONLY IT, LOCKS BEHIND ITS OWN CHAIN.
+//
+// The general case does not work: locking every quest on its published
+// prerequisites hid 52 quests this profile's game was actively offering,
+// because the game unlocks the next quest when you ACCEPT the previous one
+// while tarkov.dev publishes ["complete"]. 43 contradictions with the in-game
+// records under a completed-only rule; 0 once an accepted prerequisite counts.
+// Until accepts are recorded as accepts, the chain cannot gate in general.
+//
+// This line is the exception, and it is not a hunch:
+//
+//   * 1.1.0 REBUILT it and the published chain matches what the game does —
+//     Network Provider - Part 1 has no quest prerequisite at all, then NP2,
+//     Assessment 1-3, Key to the Tower, Knock-Knock, strictly in order.
+//   * the collection records ZERO Lightkeeper quests on this profile, and these
+//     are MECHANIC quests on a trader captured IN FULL, so their absence is the
+//     game's answer and not a gap in the capture.
+//   * 14 quests, all flagged `lightkeeperRequired` by the publisher, so the set
+//     is drawn by the data rather than by a name list here.
+//
+// Part 1 stays visible deliberately. It is the entry point, and the wiki gates
+// it on "progressing through the story chapter Batya" — which this profile is
+// doing, 13 objectives of 59, while the game still withholds the quest. So
+// "progressing" is some specific point the wiki does not name, and guessing one
+// would hide the only quest that starts the line.
+function lightkeeperChainLocked(t) {
+  if (!t || !t.lightkeeperRequired) return false;
+  // THE TRADER HAS TO EXIST FOR YOU FIRST, which covers the entry point the
+  // chain cannot. These are handed out by Mechanic, so `traderNotUnlocked`
+  // asks about Mechanic and answers yes — but the line belongs to the
+  // LIGHTKEEPER, and an unset level there is the player saying they have not
+  // unlocked him. Same rule as every other trader, asked about the right one,
+  // and it undoes itself the moment a level is clicked in TRADERS.
+  if (tradersWithoutLevel().has('Lightkeeper')) return true;
+  return !taskReachable(t.id);
+}
+
+// what it is waiting for, so the LOCKED row can say so
+function chainBlockers(t) {
+  const choice = new Set(anyOfIds(t));
+  const out = [];
+  for (const req of t.taskRequirements || []) {
+    if (!req.task || choice.has(req.task.id)) continue;
+    if (!reqSatisfied(req)) out.push(req.task.name);
+  }
+  return out;
 }
 
 // THE PRE-PATCH PREREQUISITE CHAIN IS GONE FROM THE UI ENTIRELY (v1.45.0).
@@ -1611,6 +1664,11 @@ function renderTree() {
       : locked && traderNotUnlocked(t) ? `locked — you have not set a loyalty level for ${(t.trader || {}).name}, so none of their quests are shown. Open TRADERS and click your level to bring them back.`
       : locked && repLocked(t) ? `locked — ${repLockReason(t)}. Open TRADERS if that is wrong.`
       : locked && levelLocked(t) ? `locked — needs player level ${t.minPlayerLevel} and you are ${playerLevel()}. Set your level in Settings if that is wrong.`
+      : locked && lightkeeperChainLocked(t) && tradersWithoutLevel().has('Lightkeeper')
+        ? 'locked — you have not set a loyalty level for the Lightkeeper, so none of his line is shown. '
+          + 'Click a level under TRADERS to bring it back.'
+      : locked && lightkeeperChainLocked(t) ? `locked — the Lightkeeper line runs in order and `
+        + `${chainBlockers(t).join(', ') || 'an earlier quest'} is not done yet.`
       : locked ? 'locked — a requirement is not met (you can still tick it manually)'
       : 'mark as completed';
     const where = [];
