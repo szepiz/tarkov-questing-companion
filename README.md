@@ -68,6 +68,10 @@ it anywhere, and run the `.exe` inside. No installer, nothing to set up.
   Business as well. They are hidden, because otherwise they read as work you are
   missing. Turn this on to list them anyway. The quest list says when any are
   being held back.
+- **RESET STORY PROGRESS** / **RESET SIDE TASK PROGRESS**: the two are tracked
+  separately, so either can be cleared on its own — starting the story again
+  doesn't throw away your quest completions, and clearing your quests doesn't
+  wipe the story. Each button says how much it would clear.
 - **RESET ALL PROGRESS**: clears every tick for the current mode. After a reset,
   automatic tracking only imports quests completed *after* the reset — use this
   after a wipe.
