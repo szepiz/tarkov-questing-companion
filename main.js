@@ -10,7 +10,8 @@ const OLD_PRODUCT_NAME = 'Tarkov Quest Tracker'; // pre-rebrand userData folder
 // Read-only quest data shipped inside the app bundle (first-run + offline seed).
 const BUNDLED_CACHE = path.join(APP_DIR, 'quests_cache.json');
 const DEFAULT_LOGS_PATH = 'C:\\Battlestate Games\\EFT\\Logs';
-const jsonapi = require('./jsonapi'); // tarkov.dev JSON API (GraphQL is deprecated)
+const questapi = require('./questapi'); // our own published quest data
+const mapapi = require('./mapapi');     // our own published map data
 const POLL_MS = 5000;
 // EFT 1.1.0 (Aug 2026) made this THREE separate characters, not two. Seasonal
 // PvP is a full third profile with its own ProfileId, served from its own
@@ -35,7 +36,7 @@ const MODE_TOKENS = { regular: 'regular', pve: 'pve', pvpseason: 'season' };
 const MODE_LABELS = { regular: 'PvP', pve: 'PvE', season: 'SEASON' };
 
 // User-writable storage, resolved after the app is ready (see initStorage).
-let SETTINGS_FILE, PROGRESS_FILE, CACHE_FILE;
+let SETTINGS_FILE, PROGRESS_FILE, CACHE_FILE, MAPS_CACHE_FILE;
 
 // ---------- json helpers ----------
 
@@ -165,6 +166,7 @@ function initStorage() {
   SETTINGS_FILE = path.join(dir, 'settings.json');
   PROGRESS_FILE = path.join(dir, 'progress.json');
   CACHE_FILE = path.join(dir, 'quests_cache.json');
+  MAPS_CACHE_FILE = path.join(dir, 'maps_cache.json');
   const ownSettings = readJson(SETTINGS_FILE, null);
   const ownProgress = readJson(PROGRESS_FILE, null);
   // migrate legacy data ONLY when this location is brand new (neither file yet),
@@ -204,15 +206,23 @@ function saveProgress() { writeJson(PROGRESS_FILE, progress); }
 
 // ---------- quest data ----------
 
-// Task `id` is the BSG MongoDB id — the same id that appears in the game's
-// notifications log. Fetched per game mode because PvE and PvP have slightly
-// different quest lists. Since 2026-07-22 the data comes from the JSON API
-// (json.tarkov.dev) via jsonapi.js, which adapts it to the exact shape the
-// old GraphQL query produced — cache format and renderer are unchanged.
-// The adapter was proven against the last GraphQL cache field-by-field
-// (see DEV-NOTES §2/§12).
+// Task `id` is the BSG MongoDB id, the same id that appears in the game's
+// notifications log. Quest lists differ slightly between game modes, so all
+// three are kept.
+//
+// The source is this project's own published data, not tarkov.dev directly:
+// https://raw.githubusercontent.com/szepiz/tarkov-quest-data/main/api/quests.json
+// It is built from tarkov.dev, the wiki, tarkov-data-overlay and SPT, graded
+// against 304 quests read off the game, so the ~91 quests 1.1.0 renamed arrive
+// under their current names and the 29 that were deleted arrive marked as such.
+// One request of about 1.9 MB, against nine and about 9.1 MB before.
+//
+// questapi.js emits the SAME shape jsonapi.js did, so the cache file,
+// questIndex() and the renderer are untouched. Verified field by field against
+// a cache the old adapter wrote: zero drift on objective ids, types, zones,
+// coordinates, keys and optional flags.
 async function fetchTasksOnline() {
-  const modes = await jsonapi.fetchAllModes();
+  const modes = await questapi.fetchAllModes();
   if (!Array.isArray(modes.regular) || !modes.regular.length) throw new Error('API returned no tasks');
   return modes;
 }
@@ -345,6 +355,29 @@ function applyImpliedCompletions(mode, addedIds) {
   return added;
 }
 
+// The hand-placed map work: corrected pin positions, added labels, map texts,
+// BattlePass document pins, hazards and the story chapters. Best-effort in every
+// direction, because the app shipped with a bake of all of it and can run on
+// that: a failure here must never take the quest refresh down with it, and a
+// payload that parses but says nothing is refused by mapapi rather than applied
+// over the top of good data.
+async function loadMapData() {
+  try {
+    const data = await mapapi.fetchMaps();
+    writeJson(MAPS_CACHE_FILE, { fetchedAt: Date.now(), data });
+    return { ...data, source: 'online' };
+  } catch (err) {
+    const cached = readJson(MAPS_CACHE_FILE, null);
+    if (cached && cached.data) {
+      try { return { ...mapapi.validate(cached.data), source: 'cache', error: String(err.message || err) }; }
+      catch { /* a cache that no longer validates is no better than none */ }
+    }
+    // null means "use the bundled bake", which is what the app did before any
+    // of this existed.
+    return null;
+  }
+}
+
 async function loadTasks() {
   try {
     const modes = await fetchTasksOnline();
@@ -360,13 +393,14 @@ async function loadTasks() {
       season: season || modes.regular,
       seasonAliased: !season,
       source: 'online', fetchedAt: Date.now(),
+      mapData: await loadMapData(),
     };
   } catch (err) {
     for (const f of [CACHE_FILE, BUNDLED_CACHE]) {
       const modes = cacheToModes(readJson(f, null));
       if (modes) {
         const cache = readJson(f, {});
-        return { ...modes, source: 'cache', fetchedAt: cache.fetchedAt, error: String(err.message || err) };
+        return { ...modes, source: 'cache', fetchedAt: cache.fetchedAt, error: String(err.message || err), mapData: await loadMapData() };
       }
     }
     return {

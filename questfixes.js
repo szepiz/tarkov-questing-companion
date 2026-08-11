@@ -15,9 +15,13 @@
 // tarkov.dev on 521 of 526 quests when this was measured, so it does not know
 // about these either.
 const QUEST_TRADERS = {
-  // "From Hand to Hand" (was Lend-Lease - Part 2). Both sources say Peacekeeper.
-  // Reported from the game 2026-08-05: it is Skier's now.
-  '5c0d0f1886f77457b8210226': 'Skier',
+  // Empty since 2026-08-11, and that is the system working.
+  //
+  // It held "From Hand to Hand" (was Lend-Lease - Part 2), reported from the
+  // game on 2026-08-05 as Skier's where both sources said Peacekeeper. The app
+  // now reads its quest data from our own API, which carries that observation,
+  // so the row agreed with its own input and was deleted. A correction that
+  // corrects nothing reads like a live finding and hides the ones that are.
 };
 
 // Quests 1.1.0 MOVED TO A DIFFERENT MAP. tarkov.dev still files them where they
@@ -28,16 +32,31 @@ const QUEST_TRADERS = {
 //
 // The value replaces the task's map AND retags any objective still carrying the
 // old one, so the row, the details panel and the map screen cannot disagree.
+// An ARRAY means the quest allows several maps: the task then carries none and
+// the objectives list them, which is how every other multi-map quest reads.
+//
+// ⚠️ A map move DROPS the objective's coordinates rather than relabelling them.
+// A zone position is a point on the OLD map and means nothing on the new one —
+// relabelling would scatter pins across the wrong map at plausible-looking
+// spots. Neither row below has any coordinates (both are `shoot` objectives, 0
+// zones and 0 locations), so nothing is lost today; the rule is here for the
+// first row that does.
 const QUEST_MAPS = {
-  // "Decontamination Service" (Therapist). tarkov.dev says Interchange for both
-  // the task and its objective. Reported from the game 2026-08-10: it is on The
-  // Lab now. The wiki agrees where it counts and contradicts itself where it
-  // does not — its infobox still reads `|location =[[Interchange]]`, while the
-  // objective reads "...while wearing a gas mask or respirator on [[The Lab]]".
-  // The objective was reworked in the same patch (tarkov.dev still has the old
-  // "Eliminate Scavs" wording against the wiki's "Eliminate 40 any target"), so
-  // this quest is stale upstream in more than one field.
-  '5c0d1c4cd0928202a02a6f5c': 'The Lab',
+  // "Decontamination Service" was here until 2026-08-11, moved to The Lab from
+  // Interchange. The published API now carries that observation, so the row
+  // agreed with its input and was removed.
+  //
+  // "Easy-Breezy" (Prapor, was Test Drive - Part 5). BOTH sources say Factory
+  // and agree with each other, which is the case this file exists for:
+  // tarkov.dev has `map: Factory` and objective maps Night Factory + Factory,
+  // and the wiki says Factory in its infobox AND in its objective line — the
+  // LIVE page, re-read 2026-08-10, not the cached copy. Reported from the game
+  // the same day: it is Reserve or Lighthouse now.
+  //
+  // ⚠️ Recorded as the owner phrased it — the two maps the quest allows. If it
+  // turns out to be only ONE of them, this is a one-word edit to that map, and
+  // it should be made rather than left listing a raid you cannot do it on.
+  '669fa3a40c828825de06d6a1': ['Reserve', 'Lighthouse'],
 };
 
 // Renames the wiki has not made yet. wikinames.js harvests the wiki's page
@@ -83,25 +102,16 @@ const NO_LEVEL = {
 // had appeared in the quest data — it did not; no such check existed, which is
 // exactly why this went unnoticed. It exists now, so check the test rather than
 // eyeballing the API before adding anything here.
-const EXTRA_QUESTS = [
-  {
-    id: 'hand:fall-ailment', name: 'Fall Ailment', trader: 'Therapist',
-    objectives: ['Find 5 Disposable syringe in raid', 'Hand over the items'],
-  },
-  {
-    id: 'hand:the-tarkov-butcher', name: 'The Tarkov Butcher', trader: 'Therapist',
-    map: 'Ground Zero',
-    objectives: ['Locate and obtain the chemical container on Ground Zero',
-      'Stash the container by the police station on Streets of Tarkov'],
-  },
-  // No wiki page exists for these three. Trader is what the owner saw in game.
-  // Woods reported from the game 2026-08-05, off the in-game task list's own
-  // Location column. Without a map a hand-added quest files under "Anywhere",
-  // which is where this one was hiding while the owner was looking at Woods.
-  { id: 'hand:hiking', name: 'Hiking', trader: 'Peacekeeper', map: 'Woods', objectives: [] },
-  { id: 'hand:secret-message', name: 'Secret Message', trader: 'Peacekeeper', objectives: [] },
-  { id: 'hand:demonstration-model', name: 'Demonstration Model', trader: 'Peacekeeper', objectives: [] },
-];
+// Quests the game has that no published source did. Empty since 2026-08-11.
+//
+// All five (Fall Ailment, The Tarkov Butcher, Hiking, Secret Message,
+// Demonstration Model) now arrive from our own API under `observed:` ids,
+// because they are in the observation set it is built from. Leaving the
+// `hand:` rows here would list every one of them TWICE.
+//
+// Nothing had progress recorded against a `hand:` id, so deleting them orphans
+// nothing. Add a row here only for a quest the API does NOT carry.
+const EXTRA_QUESTS = [];
 
 // Quests that can NEVER tick themselves, beyond the hand-added ones above
 // (which cannot by construction — the log carries BSG's id and these carry

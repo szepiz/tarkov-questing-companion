@@ -222,6 +222,12 @@ function adaptTask(t, names, questItemName) {
     restartable: !!t.restartable,
     // upstream builds some links from names that end in "\n" — encoded as %0A
     wikiLink: t.wikiLink != null ? String(t.wikiLink).replace(/(?:%0A|%0D)+$/i, '') : null,
+    // A handful of quests are published ONCE PER PMC FACTION under the same
+    // name, identical in every field but the id — Ragman's Drip-Out and Textile
+    // lines, and a few others. Without this the app has no way to tell the two
+    // Part 1s apart, which is why series folding had to skip those lines
+    // entirely (see seriesState in renderer.js).
+    factionName: t.factionName && t.factionName !== 'Any' ? t.factionName : null,
     trader: t.trader != null ? { name: names.trader(t.trader) } : null,
     map: t.map != null ? { name: names.map(t.map) } : null,
     taskRequirements: (t.taskRequirements || []).map(r => ({

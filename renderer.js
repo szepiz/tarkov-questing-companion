@@ -152,6 +152,11 @@ function distinctObjectiveMaps(t) {
 function isRoamingShootOnly(t) {
   if (t.map && t.map.name) return false;
   if (BOSS_LOCKED_SHOOT.has(t.id)) return false;
+  // A hand-placed QUEST_MAPS override is a statement that this quest is locked
+  // to those maps, so it is never "anywhere" — without this a multi-map
+  // override on a `shoot` quest (Easy-Breezy) clears task.map and then falls
+  // straight through to ANYWHERE, losing the correction it just applied.
+  if (typeof QUEST_MAPS !== 'undefined' && QUEST_MAPS && QUEST_MAPS[t.id]) return false;
   const mapped = (t.objectives || []).filter((o) => (o.maps || []).some((m) => normMapName(m.name)));
   return mapped.length > 0 && mapped.every((o) => String(o.type).toLowerCase() === 'shoot');
 }
@@ -232,10 +237,23 @@ const state = {
 
 const $ = (id) => document.getElementById(id);
 
+// A quest published once per PMC faction can never be taken by both, so with a
+// faction set the other side's copy is not "a quest you have not done" — it is a
+// quest that is not yours. Filtered at the source so every count, every list and
+// every map pin agrees, rather than at each of the twenty places that read
+// state.tasks. Unset shows both, which is what the app did before.
+// ⚠️ state.tasksByMode is left ALONE: it is the pristine fetch, and the settings
+// panel has to be able to switch faction back without a re-fetch.
+function forFaction(list) {
+  const f = state.settings && state.settings.pmcFaction;
+  if (!f || f === 'any') return list;
+  return list.filter((t) => !t.factionName || t.factionName.toUpperCase() === f);
+}
+
 // point the active-mode views (tasks/byId/progress) at the current game mode
 function applyMode() {
   const m = state.gameMode;
-  state.tasks = state.tasksByMode[m] || [];
+  state.tasks = forFaction(state.tasksByMode[m] || []);
   state.byId = new Map(state.tasks.map((t) => [t.id, t]));
   state.progress = state.fullProgress[m] || { completed: {}, failed: {}, objectives: {}, resetAt: 0 };
   if (!state.progress.completed) state.progress.completed = {};
@@ -844,7 +862,20 @@ function isLocked(t) {
 //
 // Names are read AFTER the rename overlays, which is why the zone marker has to
 // be handled: 1.1.0 renames moved the "[PVP ZONE]" suffix past the number.
+//
+// ⚠️ BUT THE LINE IS DETECTED FROM THE ORIGINAL NAME, NOT THE DISPLAYED ONE.
+// 1.1.0 renamed 62 quests out of 24 numbered lines — "Test Drive - Part 5/6"
+// became "Easy-Breezy"/"Unique Experience", all 13 Gunsmith parts became weapon
+// names — and once the shown name no longer parses, the line dissolves and
+// every later part stops being folded behind the one you can actually do. That
+// looked exactly like the app ignoring its own gate: Unique Experience listed
+// as available with Easy-Breezy untouched. Our own rename layer caused it, so
+// the fix is to read the line off the pre-rename name, which `_oldName`
+// preserves. Display is unaffected — only the arithmetic uses it.
 const PART_RE = /^(.*?)[\s–-]+part\s+(\d+)\s*(\[(?:PVP|PVE) ZONE\])?\s*$/i;
+// the name a numbered line is read from: what the source published, before the
+// wiki rename overlay replaced it
+const lineName = (t) => (t && (t._oldName || t.name)) || '';
 
 function parsePart(name) {
   const m = PART_RE.exec(String(name || ''));
@@ -859,7 +890,7 @@ function seriesState() {
   if (_seriesHidden) return _seriesHidden;
   const lines = new Map();
   for (const t of state.tasks || []) {
-    const p = parsePart(t.name);
+    const p = parsePart(lineName(t));
     if (!p) continue;
     const key = `${p.base}|${p.zone}`;
     if (!lines.has(key)) lines.set(key, []);
@@ -874,6 +905,9 @@ function seriesState() {
     // to tell which Part 1 pairs with which Part 2, so collapsing would hide a
     // variant at random. Leave those alone: showing four rows beats hiding the
     // wrong two.
+    // Setting a PMC faction in Settings removes the other side's copies before
+    // this ever runs, so those lines fold normally once it is set. This guard is
+    // what happens when it is not.
     if (new Set(parts.map((p) => p.n)).size !== parts.length) continue;
     const open = parts.filter((p) => !isDone(p.id)).map((p) => p.n);
     if (!open.length) continue;              // whole line finished, nothing to fold
@@ -2039,6 +2073,20 @@ function renderSettingsPanel() {
     $('logsPathInput').value = state.settings.logsPath || '';
   }
 
+  // PMC faction. The hint counts the quests it actually affects rather than
+  // describing the feature — a setting that changes nothing visible reads as
+  // broken, and this one changes very few rows.
+  const fac = (state.settings.pmcFaction || 'any');
+  $('factionAny').classList.toggle('active', fac === 'any');
+  $('factionBear').classList.toggle('active', fac === 'BEAR');
+  $('factionUsec').classList.toggle('active', fac === 'USEC');
+  const split = (state.tasksByMode[state.gameMode] || []).filter((t) => t.factionName);
+  $('factionHint').textContent = split.length
+    ? (fac === 'any'
+      ? `${split.length} quests are offered to one faction only, and all of them are listed. Set your faction to see just yours.`
+      : `Showing the ${fac} version of the ${split.length} quests that come in two.`)
+    : 'Some quests are offered to BEAR or USEC only.';
+
   // display toggles
   for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedBtn', 'hideLocked'],
     ['hideFailedBtn', 'hideFailed']]) {
@@ -2546,6 +2594,17 @@ for (const [btnId, key] of [['hideCompletedBtn', 'hideCompleted'], ['hideLockedB
   });
 }
 
+// PMC faction. applyMode() re-derives state.tasks from the pristine per-mode
+// lists, so switching back and forth costs nothing and needs no re-fetch.
+for (const [btnId, val] of [['factionAny', 'any'], ['factionBear', 'BEAR'], ['factionUsec', 'USEC']]) {
+  $(btnId).addEventListener('click', async () => {
+    state.settings = await backend.saveSettings({ pmcFaction: val });
+    applyMode();
+    renderAll();
+    renderSettingsPanel();
+  });
+}
+
 // player level is per profile: your PvE and PvP characters level separately
 async function savePlayerLevel(v) {
   const levels = { ...(state.settings.playerLevel || {}) };
@@ -2589,6 +2648,7 @@ $('refreshDataBtn').addEventListener('click', async () => {
   state.dataInfo = await backend.loadTasks();
   if (state.dataInfo.regular) {
     buildTasksByMode();
+    applyFetchedMapData(state.dataInfo.mapData);  // published map work over the bundled bake
     applyObjectiveFixes();   // hand-corrected pin positions (MAP_FIXES)
     applyMode();
   }
@@ -3307,6 +3367,59 @@ function collectMapPins(mapName) {
 // "has markers" means has any, not merely has an entry: Terminal is in the file
 // with every list empty, and an all-disabled panel over an empty map is noise.
 // Hand-corrected positions from the dev map editor, baked through storydata.js
+
+// ---- fetched map data (api/maps.json) over the bundled bake
+//
+// The hand-placed work, published as data instead of baked into the app:
+// corrected pin positions, hidden markers, added labels, map texts, BattlePass
+// document pins, hazards, interactables and the story chapters.
+//
+// Applied by MUTATING the existing objects rather than reassigning them. They
+// are `const` bindings from storydata.js / bpdocs.js, so reassignment throws,
+// and mutating in place means every reader keeps working untouched and the
+// bundled bake stays available as the fallback.
+//
+// Nothing is applied unless the payload actually carries it. A partial payload
+// must never blank a category the app already has data for: an empty map is
+// indistinguishable from "no corrections", and the result would look exactly
+// like the hand-placed work being lost.
+const MAP_API_CORRECTIONS = ['labels', 'extracts', 'objectives', 'transits', 'switches',
+  'objectiveFloors', 'extractFloors', 'labelFloors', 'transitFloors', 'switchFloors',
+  'extractFactions', 'extractNotes', 'extractSwitches', 'hidden'];
+const MAP_API_ADDITIONS = { newLabels: 'labels', mapTexts: 'mapTexts', newExtracts: 'extracts' };
+
+function applyFetchedMapData(payload) {
+  if (!payload || typeof MAP_FIXES === 'undefined') return false;
+  const refillObj = (target, src) => {
+    if (!src || typeof src !== 'object') return;
+    for (const k of Object.keys(target)) delete target[k];
+    Object.assign(target, src);
+  };
+  const refillArr = (target, src) => {
+    if (!Array.isArray(src) || !src.length) return;
+    target.length = 0;
+    target.push(...src);
+  };
+
+  for (const k of MAP_API_CORRECTIONS) {
+    const src = (payload.corrections || {})[k];
+    if (!src) continue;
+    if (!MAP_FIXES[k]) MAP_FIXES[k] = {};
+    refillObj(MAP_FIXES[k], src);
+  }
+  for (const [appKey, apiKey] of Object.entries(MAP_API_ADDITIONS)) {
+    if (!Array.isArray(MAP_FIXES[appKey])) MAP_FIXES[appKey] = [];
+    refillArr(MAP_FIXES[appKey], (payload.additions || {})[apiKey]);
+  }
+  if (typeof BP_DOCS !== 'undefined') refillArr(BP_DOCS, (payload.battlePassDocuments || {}).documents);
+  if (typeof STORY_HAZARDS !== 'undefined') refillArr(STORY_HAZARDS, (payload.additions || {}).hazards);
+  if (typeof HAND_INTERACTABLES !== 'undefined') refillArr(HAND_INTERACTABLES, (payload.additions || {}).interactables);
+  if (typeof STORY_DATA !== 'undefined' && STORY_DATA && Array.isArray(STORY_DATA.chapters)) {
+    refillArr(STORY_DATA.chapters, (payload.story || {}).chapters);
+  }
+  return true;
+}
+
 // (MAP_FIXES). Some upstream label/extract coordinates sit visibly off on some
 // maps; the owner drags them right in the editor and the moves land here. Keys
 // are built from the PRISTINE baked coords, so this must run before anything
@@ -3547,18 +3660,29 @@ function applyQuestFixes() {
       // tags, and a quest filed under The Lab whose objective still says
       // Interchange would draw a pin on the wrong map.
       const moved = maps[t.id];
-      if (moved && t.map && t.map.name !== moved) {
-        const was = t.map.name;
-        t._oldMap = was;
-        t.map = { ...t.map, name: moved };
-        for (const o of t.objectives || []) {
-          for (const m of o.maps || []) if (m && m.name === was) m.name = moved;
-          for (const z of o.zones || []) if (z && z.map && z.map.name === was) z.map = { ...z.map, name: moved };
-          for (const l of o.possibleLocations || []) {
-            if (l && l.map && l.map.name === was) l.map = { ...l.map, name: moved };
+      if (moved) {
+        const want = Array.isArray(moved) ? moved : [moved];
+        const was = (t.map && t.map.name) || null;
+        if (!(want.length === 1 && was === want[0])) {
+          if (was) t._oldMap = was;
+          // one map -> the task carries it; several -> the task carries none and
+          // the objectives list them, the shape every multi-map quest already has
+          t.map = want.length === 1 ? { ...(t.map || {}), name: want[0] } : null;
+          for (const o of t.objectives || []) {
+            const stale = (n2) => !!n2 && (!was || normMapName(n2) === normMapName(was));
+            if ((o.maps || []).some((m) => stale(m.name))) {
+              o.maps = want.map((name) => ({ name }));
+            }
+            // ⚠️ DROP coordinates that belonged to the old map, never relabel
+            // them: a zone position is a point on the OLD map and would land
+            // somewhere arbitrary but plausible-looking on the new one.
+            if (o.zones) o.zones = o.zones.filter((z) => !(z && z.map && stale(z.map.name)));
+            if (o.possibleLocations) {
+              o.possibleLocations = o.possibleLocations.filter((l) => !(l && l.map && stale(l.map.name)));
+            }
           }
+          n++;
         }
-        n++;
       }
       // a level requirement the game has demonstrably stopped applying. Same
       // removal applyWikiReqs does, from the owner's screen instead of the wiki,
@@ -5444,6 +5568,7 @@ backend.onUpdateAvailable((r) => {
   state.dataInfo = await backend.loadTasks();
   if (state.dataInfo.regular) {
     buildTasksByMode();
+    applyFetchedMapData(state.dataInfo.mapData);  // published map work over the bundled bake
     applyObjectiveFixes();   // hand-corrected pin positions (MAP_FIXES)
     applyMode();
   }
