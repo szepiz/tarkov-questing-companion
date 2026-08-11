@@ -876,7 +876,17 @@ function chainBlockers(t) {
   return out;
 }
 
-// THE PRE-PATCH PREREQUISITE CHAIN IS GONE FROM THE UI ENTIRELY (v1.45.0).
+// THE PRE-PATCH PREREQUISITE CHAIN GATES NOTHING, WITH ONE FENCED EXCEPTION.
+//
+// Removed entirely in v1.45.0, for the reasons below. The Lightkeeper line came
+// back as a lock in v1.55.0 — see lightkeeperChainLocked() — because that line
+// is the one 1.1.0 rebuilt and whose published order still matches the game,
+// and because the owner's collection records ZERO Lightkeeper quests on a
+// profile whose Mechanic list was captured in full. 7 quests, drawn by the
+// publisher's own flag. Everything below still applies to every other quest:
+// re-measured 2026-08-11, a general chain lock hides 52 quests the game is
+// actively offering, because the game unlocks on ACCEPT and the data says
+// [complete].
 //
 // History, because the reasoning matters more than the code that went: it was a
 // LOCK until v1.38.0, when the owner read their own Woods list off the in-game
@@ -2045,7 +2055,8 @@ function renderQuest() {
   // decides LOCKED: green = positively met, yellow = the one blocking it.
   // Only for a quest the app actually locks — the prerequisite list is still
   // shown for everything else, just without an unmet one painted as a blocker,
-  // because since v1.45.0 the app makes no claim that the chain still gates.
+  // because outside the Lightkeeper line the app makes no claim that the chain
+  // gates (v1.45.0, and re-measured in v1.55.0).
   const showMissing = isLocked(t);
   const choice = new Set(anyOfIds(t));
   if (choice.size) {
