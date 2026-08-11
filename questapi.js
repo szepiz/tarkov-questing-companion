@@ -213,6 +213,16 @@ const MODE_KEY = { regular: 'pvp', pve: 'pve', season: 'seasonal' };
 // with rubble.
 const MIN_SCHEMA = 2;
 
+// WHAT THIS ADAPTER UNDERSTANDS. Not the payload's schema — the payload can
+// gain fields without breaking anyone — but a stamp on what WE wrote, so a
+// cache produced by an older build is not mistaken for a current one. Raise it
+// whenever adaptQuest starts reading a field it used to ignore, or a cache
+// written before that keeps its old shape forever and looks like fresh data.
+//
+//   1  the original
+//   2  objectiveTextById, objectivesGone, onlyAfterFailure, requiresAnyOf
+const ADAPTER = 2;
+
 // -> { regular: [...], pve: [...], season: [...] }, the existing cache shape.
 function adaptAll(payload) {
   const quests = (payload && payload.quests) || [];
@@ -245,4 +255,4 @@ async function fetchAllModes(opts) {
   return adaptAll(await fetchPayload(opts));
 }
 
-module.exports = { fetchAllModes, fetchPayload, adaptAll, adaptQuest, adaptObjective, API_URL, API_URL_FALLBACK };
+module.exports = { fetchAllModes, fetchPayload, adaptAll, adaptQuest, adaptObjective, ADAPTER, API_URL, API_URL_FALLBACK };

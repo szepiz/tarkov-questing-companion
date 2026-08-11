@@ -242,6 +242,10 @@ async function fetchTasksOnline() {
 // stays as the fallback — and `seasonAliased` still tells the UI which it is.
 function cacheToModes(cache) {
   if (!cache) return null;
+  // Written by an adapter that did not understand the fields this build reads.
+  // It is not corrupt, it is INCOMPLETE — and silently so, which is worse: the
+  // quests are all there with the right names and the wrong objectives.
+  if ((cache.adapter || 1) < questapi.ADAPTER) return null;
   if (Array.isArray(cache.regular) && cache.regular.length) {
     const real = Array.isArray(cache.season) && cache.season.length;
     return {
@@ -391,7 +395,8 @@ async function loadTasks() {
     // PvP list rather than leaving the mode empty, and say which it is.
     const season = Array.isArray(modes.season) && modes.season.length ? modes.season : null;
     writeJson(CACHE_FILE, {
-      fetchedAt: Date.now(), regular: modes.regular, pve: modes.pve, season: season || undefined,
+      fetchedAt: Date.now(), adapter: questapi.ADAPTER,
+      regular: modes.regular, pve: modes.pve, season: season || undefined,
     });
     return {
       ...modes,
