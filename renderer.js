@@ -4568,6 +4568,75 @@ function labelsOn() {
 // each one read state.settings only at call time, both would build on the same
 // stale object and the second write would drop the first box's change. Applying
 // it locally first means the later call already contains the earlier one.
+// ---------- item search over the loot markers ----------
+//
+// WHAT THIS CAN AND CANNOT FIND, because the difference is not visible on
+// screen and a search that quietly misses things is worse than none.
+//
+// A spawn point emits ONE marker PER CATEGORY, labelled with the DEAREST item
+// of that category there (see build_mapmarkers.js — first-wins used to hide 86
+// high-value spawns behind a cheaper neighbour). So an item is findable at a
+// point only where it is the priciest thing of its kind there. That makes the
+// search near-complete for the expensive items people actually hunt, and
+// increasingly lossy the cheaper the item: search a Salewa and every shelf that
+// can also roll a LEDX is invisible, because that shelf is filed under LEDX.
+//
+// `alts` is a COUNT, not a list, so the alternates' names are not in the data
+// at all — this cannot be fixed here, only by re-baking. Until then the honest
+// move is to say what a spot IS: the chip carries how many of its points are
+// dedicated, which is the one strong claim the data supports.
+let _itemIndex = null;
+function itemSpawnIndex() {
+  if (_itemIndex) return _itemIndex;
+  const M = (typeof MAP_MARKERS !== 'undefined' && MAP_MARKERS) || {};
+  const idx = new Map();
+  const put = (name, map, dedicated) => {
+    if (!name) return;
+    let e = idx.get(name);
+    if (!e) {
+      const lv = (typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[name]) || null;
+      e = { name, value: lv ? lv[0] : 0, maps: new Map(), total: 0 };
+      idx.set(name, e);
+    }
+    let m = e.maps.get(map);
+    if (!m) { m = { n: 0, dedicated: 0 }; e.maps.set(map, m); }
+    m.n++; e.total++;
+    if (dedicated) m.dedicated++;
+  };
+  for (const map of Object.keys(M)) {
+    // a loose spot is DEDICATED when nothing else can roll there (alts === 0)
+    for (const r of M[map].lt || []) put(r[5], map, (r[4] || 0) === 0);
+    // a locked door is where the key opens, not where it spawns — but "which
+    // door does this key open" is the same question asked backwards, and the
+    // marker names the key, so it answers to the same box
+    for (const r of M[map].lk || []) put(r[5] || r[4], map, true);
+  }
+  _itemIndex = idx;
+  return idx;
+}
+
+const itemsState = () => (state.settings && state.settings.mapItems) || {};
+const pinnedItems = () => itemsState().pinned || [];
+const itemFilterSet = () => new Set((itemsState().on || []).filter((n) => pinnedItems().includes(n)));
+
+async function saveItems(next) {
+  state.settings = { ...state.settings, mapItems: next };
+  drawMap();
+  renderMapLayers();
+  state.settings = await backend.saveSettings({ mapItems: next });
+}
+function pinItem(name, on) {
+  const pinned = pinnedItems().filter((n) => n !== name);
+  const ticked = (itemsState().on || []).filter((n) => n !== name);
+  if (on) { pinned.push(name); ticked.push(name); }   // pinning ticks it: nobody pins to then switch it on
+  return saveItems({ pinned, on: ticked });
+}
+function tickItem(name, on) {
+  const ticked = (itemsState().on || []).filter((n) => n !== name);
+  if (on) ticked.push(name);
+  return saveItems({ pinned: pinnedItems(), on: ticked });
+}
+
 async function setLayer(id, on) {
   const next = { ...((state.settings && state.settings.mapLayers) || {}), [id]: on };
   state.settings = { ...state.settings, mapLayers: next };
@@ -4733,7 +4802,11 @@ function collectMapMarkers(mapName) {
   }
   for (const [x, y, z, type, short, full] of M.lk || []) {
     const what = ['Locked door', 'Locked trunk', 'Locked container', 'Locked switch'][type] || 'Locked';
-    add(x, y, z, ['lockAll'], 'key', 'mk-lock', full || short || what, [['', what], ['Opens with', full || short]]);
+    // `item` is what the item search matches on. Set here and on the loose-loot
+    // markers below, and NOWHERE else: a marker carrying it is one the search
+    // governs, and the filter reads exactly that.
+    add(x, y, z, ['lockAll'], 'key', 'mk-lock', full || short || what, [['', what], ['Opens with', full || short]],
+      { item: full || short || '' });
   }
   for (const [x, y, z, cat, alts, item] of M.lt || []) {
     const c = LOOT_CATS[cat];
@@ -4782,7 +4855,7 @@ function collectMapMarkers(mapName) {
     if (diluted) lines.push(['', 'A shared pool — much longer odds than a dedicated spot']);
     const layers = hv ? (diluted ? ['lootHighValuePool'] : [c.id, 'lootHighValue']) : [c.id];
     add(x, y, z, layers, hv ? (diluted ? 'starOpen' : 'star') : c.glyph,
-      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv, pool });
+      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv, pool, item: item || '' });
   }
   // The only layer that is genuinely always there: the container is level
   // geometry, so it is in that spot every raid. Its CONTENTS are still a roll,
@@ -5163,15 +5236,31 @@ function decimateMarkers(list, md, gapPx, k) {
 
 function drawMapMarkers(md, svg, k) {
   const ns = 'http://www.w3.org/2000/svg';
+  // With items ticked, THEY govern every marker that names an item — the loot
+  // and key layer boxes stop applying to those, which is what "show me where
+  // this spawns" has to mean. Everything else (extracts, hazards, containers,
+  // marked rooms) keeps its box, because that is the context you read the
+  // answer against rather than part of the answer.
+  const picked = itemFilterSet();
   const all = (mapView.markers || [])
-    .filter((m) => (m.anyFloor || m.floor === mapView.floor) && m.layers.some(layerOn));
+    .filter((m) => (m.anyFloor || m.floor === mapView.floor)
+      && (picked.size && m.item ? picked.has(m.item) : m.layers.some(layerOn)));
   if (!all.length) { mapView.selectedMarker = null; return; }
 
+  // AN ITEM YOU ASKED FOR IS NEVER THINNED. Decimation stops six thousand
+  // markers turning the map into a smear, and none of that applies to a set the
+  // player named: the count on the chip and the pins on the map have to be the
+  // same number, or the feature is lying in the one place it cannot afford to.
+  // The bound is small — a median of 4 markers per item per map, 284 at the
+  // very worst (Lighthouse Moonshine), against the ~975 Customs draws with
+  // every loot box ticked.
+  const asked = picked.size ? all.filter((m) => m.item && picked.has(m.item)) : [];
+  const pool = asked.length ? all.filter((m) => !(m.item && picked.has(m.item))) : all;
   // Mines are the dense case and the least individually interesting, so they
   // thin harder than everything else.
-  const dense = all.filter((m) => m.glyph === 'mine');
-  const rest = all.filter((m) => m.glyph !== 'mine');
-  const shown = decimateMarkers(dense, md, 9, k).concat(decimateMarkers(rest, md, 13, k));
+  const dense = pool.filter((m) => m.glyph === 'mine');
+  const rest = pool.filter((m) => m.glyph !== 'mine');
+  const shown = asked.concat(decimateMarkers(dense, md, 9, k), decimateMarkers(rest, md, 13, k));
   // Never thin away the marker whose card is open: zooming out would leave the
   // card gone but the selection still set, so the next click on it would read as
   // a second click and do nothing.
@@ -5374,7 +5463,7 @@ function renderMapLayers() {
   const baked = (typeof MARKER_BAKED_AT !== 'undefined' && MARKER_BAKED_AT)
     ? new Date(MARKER_BAKED_AT).toISOString().slice(0, 10) : '';
   host.innerHTML = '<button class="ml-toggle" type="button">LAYERS</button>'
-    + `<div class="ml-body">${groups}`
+    + `<div class="ml-body">${itemSearchHtml()}${groups}`
     + `<div class="ml-foot">Tarkov publishes no spawn chances — every loot marker is a place an item <em>can</em> appear, never a promise.`
     + (baked ? `<br>Marker data ${baked} · tarkov.dev` : '') + '</div></div>';
 
@@ -5390,8 +5479,107 @@ function renderMapLayers() {
   host.querySelectorAll('details[data-group]').forEach((d) => {
     d.addEventListener('toggle', () => setGroupOpen(d.dataset.group, d.open));
   });
+  wireItemSearch(host);
   stopMapEvents(host);
 }
+// The search sits ABOVE the loot boxes because it overrides them: with
+// something ticked, the loot and key layers stop deciding what is drawn.
+// Putting it under them would read as one more filter among equals.
+function itemSearchHtml() {
+  const picked = itemFilterSet();
+  const idx = itemSpawnIndex();
+  const here = (n) => (idx.get(n) || { maps: new Map() }).maps.get(mapView.name) || null;
+
+  const chips = pinnedItems().map((n) => {
+    const h = here(n);
+    const on = picked.has(n);
+    // A pinned item that does not spawn on the open map keeps its chip — you
+    // pinned it to hunt it, and moving map should not silently drop the list —
+    // but it says so rather than showing a count of nothing.
+    const label = h ? `${h.n}` : '–';
+    const title = h
+      ? `${h.n} spot${h.n === 1 ? '' : 's'} on ${mapView.name}`
+        + (h.dedicated ? `, ${h.dedicated} of them dedicated` : ', none of them dedicated')
+      : `No spots on ${mapView.name}`;
+    return `<span class="mi-chip${on ? ' on' : ''}${h ? '' : ' none'}" title="${escapeHtml(title)}">`
+      + `<input type="checkbox" data-item-tick="${escapeHtml(n)}"${on ? ' checked' : ''}${h ? '' : ' disabled'}>`
+      + `<span class="mi-name">${escapeHtml(n)}</span><span class="mi-n">${label}</span>`
+      + `<button class="mi-x" type="button" data-item-unpin="${escapeHtml(n)}" title="Unpin">×</button></span>`;
+  }).join('');
+
+  return '<div class="ml-items">'
+    + '<input class="mi-search" type="search" autocomplete="off" spellcheck="false"'
+    + ' placeholder="Find an item or a key…">'
+    + '<div class="mi-results" hidden></div>'
+    + (chips ? `<div class="mi-chips">${chips}</div>` : '')
+    + (picked.size
+      ? `<div class="mi-active">Showing only these — the loot and key boxes below are paused. `
+        + `<button class="mi-clear" type="button">Clear</button></div>`
+      : '')
+    + '</div>';
+}
+
+// Ranked for the map you are looking at: what is HERE first, dearest first
+// inside that, then everything else. With 146 names the list is browsable, and
+// that matters — the data carries short forms ("WFilter", "SJ6", "0.2BTC") and
+// no full item names at all, so anyone typing "water filter" would find
+// nothing. Opening the box on a map and reading down it is the discovery path.
+function itemSearchMatches(q) {
+  const idx = itemSpawnIndex();
+  const needle = String(q || '').trim().toLowerCase();
+  const rows = [];
+  for (const e of idx.values()) {
+    if (needle && !e.name.toLowerCase().includes(needle)) continue;
+    const h = e.maps.get(mapView.name) || null;
+    rows.push({ name: e.name, value: e.value, here: h ? h.n : 0, dedicated: h ? h.dedicated : 0, maps: e.maps.size });
+  }
+  rows.sort((a, b) => (b.here > 0) - (a.here > 0) || b.value - a.value || a.name.localeCompare(b.name));
+  return rows.slice(0, 12);
+}
+
+function renderItemResults(host, q) {
+  const box = host.querySelector('.mi-results');
+  if (!box) return;
+  const pinned = new Set(pinnedItems());
+  const rows = itemSearchMatches(q);
+  if (!rows.length) {
+    box.innerHTML = '<div class="mi-empty">Nothing matches. Only the items the marker data names '
+      + 'can be found — 146 of them, and containers name nothing at all.</div>';
+    box.hidden = false;
+    return;
+  }
+  box.innerHTML = rows.map((r) => `<button class="mi-hit${r.here ? '' : ' elsewhere'}`
+    + `${pinned.has(r.name) ? ' pinned' : ''}" type="button" data-item-pin="${escapeHtml(r.name)}">`
+    + `<span class="mi-name">${escapeHtml(r.name)}</span>`
+    + `<span class="mi-where">${r.here
+      ? `${r.here} here${r.dedicated ? ` · ${r.dedicated} dedicated` : ''}`
+      : `not on this map · ${r.maps} other${r.maps === 1 ? '' : 's'}`}</span></button>`).join('');
+  box.hidden = false;
+}
+
+function wireItemSearch(host) {
+  const input = host.querySelector('.mi-search');
+  if (!input) return;
+  const box = host.querySelector('.mi-results');
+  input.addEventListener('focus', () => renderItemResults(host, input.value));
+  input.addEventListener('input', () => renderItemResults(host, input.value));
+  // Escape closes the list without clearing what was typed, so a mis-click does
+  // not cost you the search
+  input.addEventListener('keydown', (e) => { if (e.key === 'Escape' && box) box.hidden = true; });
+  host.addEventListener('click', (e) => {
+    const pin = e.target.closest('[data-item-pin]');
+    if (pin) { input.value = ''; if (box) box.hidden = true; pinItem(pin.dataset.itemPin, true); return; }
+    const un = e.target.closest('[data-item-unpin]');
+    if (un) { pinItem(un.dataset.itemUnpin, false); return; }
+    const clear = e.target.closest('.mi-clear');
+    if (clear) { saveItems({ pinned: pinnedItems(), on: [] }); return; }
+    if (box && !e.target.closest('.ml-items')) box.hidden = true;
+  });
+  host.querySelectorAll('[data-item-tick]').forEach((cb) => {
+    cb.addEventListener('change', () => tickItem(cb.dataset.itemTick, cb.checked));
+  });
+}
+
 // ---------- map layers end ----------
 
 // A map with more storeys than this gets a picker instead of a row of tabs.
