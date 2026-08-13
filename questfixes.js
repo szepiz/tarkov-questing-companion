@@ -57,6 +57,16 @@ const QUEST_MAPS = {
   // turns out to be only ONE of them, this is a one-word edit to that map, and
   // it should be made rather than left listing a raid you cannot do it on.
   '669fa3a40c828825de06d6a1': ['Reserve', 'Lighthouse'],
+
+  // "Job for a Patriot" (Prapor). Read off the game screen 2026-08-10: Streets,
+  // Ground Zero and Shoreline. tarkov.dev publishes Lighthouse, Customs and
+  // Reserve — three different maps, not a subset — and the two lists disagreeing
+  // in full is why the merge leaves `map: null` and the app files it under
+  // Anywhere, where it appears on no map screen at all.
+  //
+  // Its one objective is a `shoot` with no zones and no positions, so this
+  // relabels a row rather than moving any pin.
+  '64f5deac39e45b527a7c4232': ['Streets of Tarkov', 'Ground Zero', 'Shoreline'],
 };
 
 // Renames the wiki has not made yet. wikinames.js harvests the wiki's page
