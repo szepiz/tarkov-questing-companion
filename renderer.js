@@ -1608,8 +1608,8 @@ function renderTree() {
         + `${Number.isFinite(have) ? ` — yours is LL${have}` : ' — yours is not set'} · ${src}">`
         + `LL${r.value}</span>`;
     }
-    // minPlayerLevel is already the CORRECTED number: applyWikiReqs zeroes the 79
-    // the wiki says 1.1.0 dropped, so a level shown here is one the game still asks.
+    // minPlayerLevel is already the CORRECTED number: the API drops the levels
+    // the wiki says 1.1.0 replaced, so a level shown here is one it still asks.
     const lvl = t.minPlayerLevel || 0;
     if (lvl > 0) {
       const mine = playerLevel();
@@ -2236,7 +2236,6 @@ function buildTasksByMode() {
   const season = (d.season && d.season.length) ? d.season : d.regular;
   state.tasksByMode = { regular: d.regular, pve, season };
   state.seasonAliased = d.seasonAliased !== false;
-  applyWikiReqs();   // additive: gates the wiki knows and tarkov.dev has not published
   applyWikiNames();  // 1.1.0 renamed ~90 quests; the data source still has the old names
   addExtraQuests();      // quests 1.1.0 added that tarkov.dev has never published
   applyWikiObjectives(); // 1.1.0 reworked objectives; the data still has the old text
@@ -4191,9 +4190,10 @@ function applyQuestFixes() {
           n++;
         }
       }
-      // a level requirement the game has demonstrably stopped applying. Same
-      // removal applyWikiReqs does, from the owner's screen instead of the wiki,
-      // and it keeps the dropped value the same way so it stays auditable.
+      // a level requirement the game has demonstrably stopped applying, from the
+      // OWNER's screen. This is not the retired wiki overlay: it is the one
+      // source allowed to contradict the rest, and it keeps the dropped value
+      // in `_devLevel` so the edit stays auditable from a console.
       if (noLevel[t.id] && t.minPlayerLevel) {
         t._devLevel = t.minPlayerLevel;
         t.minPlayerLevel = 0;
@@ -4211,32 +4211,26 @@ function applyQuestFixes() {
   return n;
 }
 
-function applyWikiReqs() {
-  if (typeof WIKI_TRADER_REQS === 'undefined' || !WIKI_TRADER_REQS) return 0;
-  const gone = (typeof WIKI_NO_LEVEL !== 'undefined' && WIKI_NO_LEVEL) || {};
-  let added = 0;
-  for (const list of Object.values(state.tasksByMode || {})) {
-    for (const t of list || []) {
-      // The one thing the wiki is allowed to REMOVE: a player level its own
-      // Requirements section does not list. 1.1.0 swapped most of those for a
-      // loyalty gate and tarkov.dev still publishes the old number, so the
-      // quest showed a level that has not applied since the patch. Only for
-      // pages that actually have a filled-in section — see build_wikireqs.js.
-      // `_devLevel` keeps the dropped value so this is auditable from a console
-      // rather than being an invisible edit to the data.
-      if (gone[t.id] && t.minPlayerLevel) { t._devLevel = t.minPlayerLevel; t.minPlayerLevel = 0; }
-      const extra = WIKI_TRADER_REQS[t.id];
-      if (!extra || !extra.length) continue;
-      const have = t.traderRequirements || (t.traderRequirements = []);
-      for (const r of extra) {
-        if (have.some((h) => (h.trader || {}).name === r.trader && h.kind === r.kind)) continue;
-        have.push({ trader: { name: r.trader }, kind: r.kind, compareMethod: '>=', value: r.value, fromWiki: true });
-        added++;
-      }
-    }
-  }
-  return added;
-}
+// applyWikiReqs() lived here until v1.60.0. The app reads our own API now, and
+// that API already does both of its jobs — it drops the stale player levels and
+// adds the wiki's trader gates — with the GAME's own loyalty tabs outranking
+// both, which an overlay in the app could not do.
+//
+// Measured against the shipped cache before removing it: of 79 level removals
+// 76 were no-ops, of 64 trader rows 51 were already present, and the two
+// disagreed on a value ZERO times. All 16 that still acted were it being wrong:
+//
+//   12 rows were "loyalty 1", which is not a gate at all — LL1 is where every
+//      trader starts, and the API omits those deliberately
+//    1 row put One Less Loose End at Peacekeeper LL2; the owner saw it under
+//      the LL1 tab, and the game outranks the wiki
+//    3 level removals (Gunsmith Master 10, 11, 13) had no wiki Requirements
+//      section behind them — the API's own copy of those pages has none, and
+//      this file's test was already flagging unbacked removals
+//
+// Two sources for one field is how this project keeps getting caught. There is
+// one now, and corrections go into it, where they carry provenance.
+// KAPPA_GATE stays: it is used, and nothing else publishes it.
 
 function applyObjectiveFixes() {
   if (typeof MAP_FIXES === 'undefined' || !MAP_FIXES) return;
