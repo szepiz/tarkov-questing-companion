@@ -4585,6 +4585,73 @@ function labelsOn() {
 // at all — this cannot be fixed here, only by re-baking. Until then the honest
 // move is to say what a spot IS: the chip carries how many of its points are
 // dedicated, which is the one strong claim the data supports.
+// EVERY ITEM AT EVERY POSITION, which is what the map layers throw away.
+//
+// `LT_POS` holds each loose position once; `LT_ITEMS` maps an item to the
+// positions it can roll at, delta-encoded in base 36. Both directions are needed
+// — the search reads item -> positions, the layers need position -> items — so
+// the inverse is built once here rather than at every draw.
+let _byPos = null;
+function lootByPosition() {
+  if (_byPos) return _byPos;
+  const items = (typeof LT_ITEMS !== 'undefined' && LT_ITEMS) || {};
+  const out = new Map();
+  for (const name of Object.keys(items)) {
+    for (const i of decodePositions(items[name])) {
+      let a = out.get(i);
+      if (!a) { a = []; out.set(i, a); }
+      a.push(name);
+    }
+  }
+  _byPos = out;
+  return out;
+}
+function decodePositions(enc) {
+  if (!enc) return [];
+  let prev = 0;
+  return String(enc).split('.').map((t) => { prev += parseInt(t, 36); return prev; });
+}
+
+// The loose-loot LAYER rows, rebuilt from the index. This is the rule the bake
+// used to apply and now applies here, unchanged and for the same reasons: one
+// row per CATEGORY at a point, labelled with the dearest item of that category
+// (first-wins hid 86 high-value spawns behind cheaper neighbours), and a point
+// offering more than LOOT_POOL_MAX things is a shared table rather than a spawn
+// worth marking — except for its high-value items, which are the only way LEDX
+// and bitcoin appear at all in most of their spots.
+let _lootRows = null;
+function lootRowsFor(mapName) {
+  if (!_lootRows) _lootRows = new Map();
+  if (_lootRows.has(mapName)) return _lootRows.get(mapName);
+  const pos = (typeof LT_POS !== 'undefined' && LT_POS) || [];
+  const maps = (typeof LT_MAPS !== 'undefined' && LT_MAPS) || [];
+  const cats = (typeof LT_CATS !== 'undefined' && LT_CATS) || {};
+  const poolMax = typeof LOOT_POOL_MAX !== 'undefined' ? LOOT_POOL_MAX : 5;
+  const hvMin = typeof LOOT_HV_MIN !== 'undefined' ? LOOT_HV_MIN : Infinity;
+  const byPos = lootByPosition();
+  const rows = [];
+  for (let i = 0; i < pos.length; i++) {
+    const p = pos[i];
+    if (maps[p[3]] !== mapName) continue;
+    const here = byPos.get(i) || [];
+    const best = new Map();
+    for (const name of here) {
+      const c = cats[name];
+      if (c === undefined) continue;
+      const val = ((typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[name]) || [0])[0];
+      const cur = best.get(c);
+      if (!cur || val > cur.val) best.set(c, { name, val });
+    }
+    const big = p[4] > poolMax;
+    for (const [c, bst] of best) {
+      if (big && bst.val < hvMin) continue;
+      rows.push([p[0], p[1], p[2], c, p[4] - 1, bst.name]);
+    }
+  }
+  _lootRows.set(mapName, rows);
+  return rows;
+}
+
 let _itemIndex = null;
 function itemSpawnIndex() {
   if (_itemIndex) return _itemIndex;
@@ -4603,9 +4670,21 @@ function itemSpawnIndex() {
     m.n++; e.total++;
     if (dedicated) m.dedicated++;
   };
+  // FROM THE INDEX, not from the layer rows. The rows keep only the dearest item
+  // of each category at a point, which is why searching BakeEzy used to answer
+  // "3 spots, Streets only" when it has 148 across seven maps.
+  const pos = (typeof LT_POS !== 'undefined' && LT_POS) || [];
+  const maps = (typeof LT_MAPS !== 'undefined' && LT_MAPS) || [];
+  const items = (typeof LT_ITEMS !== 'undefined' && LT_ITEMS) || {};
+  for (const name of Object.keys(items)) {
+    for (const i of decodePositions(items[name])) {
+      const p = pos[i];
+      if (!p) continue;
+      // DEDICATED means nothing else can roll at that exact spot: a pool of one
+      put(name, maps[p[3]], p[4] === 1);
+    }
+  }
   for (const map of Object.keys(M)) {
-    // a loose spot is DEDICATED when nothing else can roll there (alts === 0)
-    for (const r of M[map].lt || []) put(r[5], map, (r[4] || 0) === 0);
     // a locked door is where the key opens, not where it spawns — but "which
     // door does this key open" is the same question asked backwards, and the
     // marker names the key, so it answers to the same box
@@ -4621,6 +4700,9 @@ const itemFilterSet = () => new Set((itemsState().on || []).filter((n) => pinned
 
 async function saveItems(next) {
   state.settings = { ...state.settings, mapItems: next };
+  // The searched-for markers are BUILT from the tick state, so the marker set
+  // has to be rebuilt, not just redrawn.
+  if (mapView.name) mapView.markers = collectMapMarkers(mapView.name);
   drawMap();
   renderMapLayers();
   state.settings = await backend.saveSettings({ mapItems: next });
@@ -4808,7 +4890,7 @@ function collectMapMarkers(mapName) {
     add(x, y, z, ['lockAll'], 'key', 'mk-lock', full || short || what, [['', what], ['Opens with', full || short]],
       { item: full || short || '' });
   }
-  for (const [x, y, z, cat, alts, item] of M.lt || []) {
+  for (const [x, y, z, cat, alts, item] of lootRowsFor(mapName)) {
     const c = LOOT_CATS[cat];
     if (!c) continue;
     // How many items in total can roll at this exact spot (alts is the count of
@@ -4854,9 +4936,58 @@ function collectMapMarkers(mapName) {
     // know it is worse odds than a spot with two or three things in it.
     if (diluted) lines.push(['', 'A shared pool — much longer odds than a dedicated spot']);
     const layers = hv ? (diluted ? ['lootHighValuePool'] : [c.id, 'lootHighValue']) : [c.id];
+    // `item` is deliberately NOT set here any more. These rows exist for the
+    // layer boxes; a ticked item is drawn from the index above, at every spot
+    // rather than only the ones it headlines. Leaving the name on would draw a
+    // second marker on top of the index's at whichever spots overlap.
     add(x, y, z, layers, hv ? (diluted ? 'starOpen' : 'star') : c.glyph,
-      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv, pool, item: item || '' });
+      hv ? 'mk-hv' : c.cls, item || c.label, lines, { loose: true, hv, pool });
   }
+  // EVERY SPOT A TICKED ITEM CAN ROLL AT, from the index rather than the layer
+  // rows above. The rows keep one item per category per point, so a cheap item
+  // is missing from nearly all of its own spots — BakeEzy headlines 0 of its
+  // 148. These markers exist only while the item is ticked, carry `item` so the
+  // filter in drawMapMarkers governs them, and belong to no layer box at all:
+  // ticking an item is the box.
+  //
+  // Drawn hollow when the spot is shared, solid when it is dedicated, which is
+  // the same vocabulary the high-value layer already uses for the same fact.
+  {
+    const picked = itemFilterSet();
+    if (picked.size) {
+      const pos = (typeof LT_POS !== 'undefined' && LT_POS) || [];
+      const maps = (typeof LT_MAPS !== 'undefined' && LT_MAPS) || [];
+      const items = (typeof LT_ITEMS !== 'undefined' && LT_ITEMS) || {};
+      const cats = (typeof LT_CATS !== 'undefined' && LT_CATS) || {};
+      for (const name of picked) {
+        const c = LOOT_CATS[cats[name]];
+        const lv = (typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[name]) || null;
+        for (const i of decodePositions(items[name])) {
+          const p = pos[i];
+          if (!p || maps[p[3]] !== mapName) continue;
+          const pool = p[4];
+          const lines = [['', pool > 1
+            ? `One of ${pool} items that can roll at this spot`
+            : 'This item has a chance to spawn here, and nothing else can']];
+          if (lv) {
+            const fv = (n) => Math.round(n).toLocaleString('en-US');
+            lines.push(['Worth', `≈ ${fv(lv[0])} roubles`
+              + (lv[0] !== lv[1] ? ` (${fv(lv[1])} per slot)` : '')]);
+          }
+          if (pool > 1) lines.push(['', 'A shared spot — longer odds than a dedicated one']);
+          // A DEDICATED SPOT FILLS IN. `hollow` is chosen from the glyph and every
+          // loot-category glyph is already hollow, so the difference has to ride
+          // on the class. This is the one thing the data states strongly — that
+          // nothing else can roll here — and across 148 pins it is what tells a
+          // detour from a lottery ticket.
+          add(p[0], p[1], p[2], ['itemSearch'], (c && c.glyph) || 'star',
+            ((c && c.cls) || 'mk-hv') + (pool === 1 ? ' mk-only' : ''), name, lines,
+            { loose: true, pool, item: name, searchHit: true });
+        }
+      }
+    }
+  }
+
   // The only layer that is genuinely always there: the container is level
   // geometry, so it is in that spot every raid. Its CONTENTS are still a roll,
   // and the card says so rather than letting "always here" be read as a promise
@@ -5242,9 +5373,19 @@ function drawMapMarkers(md, svg, k) {
   // marked rooms) keeps its box, because that is the context you read the
   // answer against rather than part of the answer.
   const picked = itemFilterSet();
+  // With items ticked: a marker NAMING an item shows if that item was asked for,
+  // any other loot marker is paused, and everything else keeps its box. The
+  // middle clause is the one worth spelling out — the loose-loot rows carry no
+  // name now, so without it the layer they came from quietly kept drawing
+  // underneath the answer while the panel claimed it was paused.
+  const shownWith = (m) => {
+    if (!picked.size) return m.layers.some(layerOn);
+    if (m.item) return picked.has(m.item);
+    if (m.loose) return false;
+    return m.layers.some(layerOn);
+  };
   const all = (mapView.markers || [])
-    .filter((m) => (m.anyFloor || m.floor === mapView.floor)
-      && (picked.size && m.item ? picked.has(m.item) : m.layers.some(layerOn)));
+    .filter((m) => (m.anyFloor || m.floor === mapView.floor) && shownWith(m));
   if (!all.length) { mapView.selectedMarker = null; return; }
 
   // AN ITEM YOU ASKED FOR IS NEVER THINNED. Decimation stops six thousand
@@ -5489,6 +5630,23 @@ function itemSearchHtml() {
   const picked = itemFilterSet();
   const idx = itemSpawnIndex();
   const here = (n) => (idx.get(n) || { maps: new Map() }).maps.get(mapView.name) || null;
+  // How many of them are on the storey you are looking at. Customs shows three
+  // of BakeEzy's twelve on the ground floor and the other nine two storeys up,
+  // and a chip reading 12 over a map showing 3 is the feature contradicting
+  // itself. Computed only for what is pinned, so it costs nothing on a map.
+  const onThisFloor = (n) => {
+    const md = MAP_DATA[mapView.name];
+    const pos = (typeof LT_POS !== 'undefined' && LT_POS) || [];
+    const maps = (typeof LT_MAPS !== 'undefined' && LT_MAPS) || [];
+    const items = (typeof LT_ITEMS !== 'undefined' && LT_ITEMS) || {};
+    if (!md || !items[n]) return null;
+    let k = 0;
+    for (const i of decodePositions(items[n])) {
+      const p = pos[i];
+      if (p && maps[p[3]] === mapView.name && floorOf(md, p[0], p[1], p[2]) === mapView.floor) k++;
+    }
+    return k;
+  };
 
   const chips = pinnedItems().map((n) => {
     const h = here(n);
@@ -5496,10 +5654,14 @@ function itemSearchHtml() {
     // A pinned item that does not spawn on the open map keeps its chip — you
     // pinned it to hunt it, and moving map should not silently drop the list —
     // but it says so rather than showing a count of nothing.
-    const label = h ? `${h.n}` : '–';
+    const floorN = h ? onThisFloor(n) : null;
+    // "3/12" rather than "12" when the rest are on other storeys, because the
+    // number next to the name has to be the number of pins you can see
+    const label = h ? (floorN !== null && floorN !== h.n ? `${floorN}/${h.n}` : `${h.n}`) : '–';
     const title = h
       ? `${h.n} spot${h.n === 1 ? '' : 's'} on ${mapView.name}`
         + (h.dedicated ? `, ${h.dedicated} of them dedicated` : ', none of them dedicated')
+        + (floorN !== null && floorN !== h.n ? ` — ${floorN} on the floor you are looking at` : '')
       : `No spots on ${mapView.name}`;
     return `<span class="mi-chip${on ? ' on' : ''}${h ? '' : ' none'}" title="${escapeHtml(title)}">`
       + `<input type="checkbox" data-item-tick="${escapeHtml(n)}"${on ? ' checked' : ''}${h ? '' : ' disabled'}>`

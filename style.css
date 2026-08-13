@@ -1468,6 +1468,11 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
    solid star still means the spot where little else competes with it. */
 .mk-hv.hollow { stroke: #ffd75a; }
 .mk-keys.hollow   { stroke: #d0a943; }
+/* A searched-for item at a spot where NOTHING else can roll. Filled rather than
+   outlined, so among a hundred-odd pins for one item the few that are actually
+   dedicated read at a glance. Beats the .hollow rule above it on specificity. */
+.mk.mk-only { fill: currentColor; fill-opacity: .9; }
+.mk.mk-only.hollow { fill: currentColor; fill-opacity: .9; }
 .mk-intel.hollow  { stroke: #7fb2e5; }
 .mk-val.hollow    { stroke: #b06fd0; }
 .mk-med.hollow    { stroke: #d96e8f; }
