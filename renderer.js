@@ -4694,9 +4694,30 @@ function itemSpawnIndex() {
   return idx;
 }
 
+// HOW MANY CONTAINERS ON A MAP COULD HOLD IT. A far weaker claim than a loose
+// spot — the item is on that container type's table somewhere, at odds nobody
+// publishes — so it is counted separately, never added into the spot count.
+let _contCount = null;
+function containerCountFor(name, mapName) {
+  if (!_contCount) _contCount = new Map();
+  const key = name + '|' + mapName;
+  if (_contCount.has(key)) return _contCount.get(key);
+  const cont = (typeof LT_CONT !== 'undefined' && LT_CONT[name]) || null;
+  const M = (typeof MAP_MARKERS !== 'undefined' && MAP_MARKERS[mapName]) || {};
+  let n = 0;
+  if (cont) for (const r of M.co || []) if (cont.includes(r[3])) n++;
+  _contCount.set(key, n);
+  return n;
+}
+
 const itemsState = () => (state.settings && state.settings.mapItems) || {};
 const pinnedItems = () => itemsState().pinned || [];
 const itemFilterSet = () => new Set((itemsState().on || []).filter((n) => pinnedItems().includes(n)));
+// OFF by default, and it has to be: bitcoin's seven container types cover 402
+// of Streets' 998 containers, which turns an answer into a smear unless it was
+// asked for. The count sits on the chip either way, so it is discoverable
+// without being imposed.
+const showContainers = () => !!itemsState().containers;
 
 async function saveItems(next) {
   state.settings = { ...state.settings, mapItems: next };
@@ -4984,6 +5005,29 @@ function collectMapMarkers(mapName) {
             ((c && c.cls) || 'mk-hv') + (pool === 1 ? ' mk-only' : ''), name, lines,
             { loose: true, pool, item: name, searchHit: true });
         }
+      }
+    }
+  }
+
+  // CONTAINERS THAT COULD HOLD A TICKED ITEM. Same shape and glyph as the
+  // container layer, because that is what they are, plus a class that dims them
+  // against the loose spots: a loose marker says this exact place can roll the
+  // item, one of these says only that the item is on this container type's list.
+  // The card says which of the two it is rather than leaving the pin to imply.
+  if (showContainers()) {
+    const picked = itemFilterSet();
+    for (const name of picked) {
+      const cont = (typeof LT_CONT !== 'undefined' && LT_CONT[name]) || null;
+      if (!cont) continue;
+      for (const [x, y, z, type] of M.co || []) {
+        if (!cont.includes(type)) continue;
+        const cname = containerTypes()[type];
+        const ui = CONTAINER_UI[cname] || [cname, 'crate', 'mk-common'];
+        add(x, y, z, ['itemSearch'], ui[1], ui[2] + ' mk-canhold', ui[0], [
+          ['', `A ${ui[0].toLowerCase()} — ${escapeHtml(name)} is on its loot table`],
+          ['', 'The container is here every raid. Whether it holds this is a roll, '
+            + 'and nobody publishes the odds'],
+        ], { item: name, container: true, canHold: true });
       }
     }
   }
@@ -5395,8 +5439,16 @@ function drawMapMarkers(md, svg, k) {
   // The bound is small — a median of 4 markers per item per map, 284 at the
   // very worst (Lighthouse Moonshine), against the ~975 Customs draws with
   // every loot box ticked.
-  const asked = picked.size ? all.filter((m) => m.item && picked.has(m.item)) : [];
-  const pool = asked.length ? all.filter((m) => !(m.item && picked.has(m.item))) : all;
+  // Containers ARE thinned: there can be four hundred of them for one item and
+  // they are the weaker claim, so the map staying readable matters more than
+  // every last jacket. The loose spots are still exempt.
+  const asked = picked.size ? all.filter((m) => m.item && picked.has(m.item) && !m.canHold) : [];
+  // EVERYTHING ELSE, defined as the complement of `asked` rather than by its own
+  // rule. Two independent predicates left a gap the moment a third kind of
+  // marker appeared: the container hits were excluded from asked on purpose and
+  // matched pool's exclusion by accident, so nothing drew them.
+  const exempt = new Set(asked);
+  const pool = exempt.size ? all.filter((m) => !exempt.has(m)) : all;
   // Mines are the dense case and the least individually interesting, so they
   // thin harder than everything else.
   const dense = pool.filter((m) => m.glyph === 'mine');
@@ -5658,14 +5710,17 @@ function itemSearchHtml() {
     // "3/12" rather than "12" when the rest are on other storeys, because the
     // number next to the name has to be the number of pins you can see
     const label = h ? (floorN !== null && floorN !== h.n ? `${floorN}/${h.n}` : `${h.n}`) : '–';
-    const title = h
+    const cN = containerCountFor(n, mapView.name);
+    const title = (h
       ? `${h.n} spot${h.n === 1 ? '' : 's'} on ${mapView.name}`
         + (h.dedicated ? `, ${h.dedicated} of them dedicated` : ', none of them dedicated')
         + (floorN !== null && floorN !== h.n ? ` — ${floorN} on the floor you are looking at` : '')
-      : `No spots on ${mapView.name}`;
-    return `<span class="mi-chip${on ? ' on' : ''}${h ? '' : ' none'}" title="${escapeHtml(title)}">`
-      + `<input type="checkbox" data-item-tick="${escapeHtml(n)}"${on ? ' checked' : ''}${h ? '' : ' disabled'}>`
+      : `No loose spots on ${mapView.name}`)
+      + (cN ? ` · and ${cN} container${cN === 1 ? '' : 's'} whose loot table it is on` : '');
+    return `<span class="mi-chip${on ? ' on' : ''}${h || cN ? '' : ' none'}" title="${escapeHtml(title)}">`
+      + `<input type="checkbox" data-item-tick="${escapeHtml(n)}"${on ? ' checked' : ''}${h || cN ? '' : ' disabled'}>`
       + `<span class="mi-name">${escapeHtml(n)}</span><span class="mi-n">${label}</span>`
+      + (cN ? `<span class="mi-c" title="containers whose loot table it is on">+${cN}</span>` : '')
       + `<button class="mi-x" type="button" data-item-unpin="${escapeHtml(n)}" title="Unpin">×</button></span>`;
   }).join('');
 
@@ -5675,7 +5730,9 @@ function itemSearchHtml() {
     + '<div class="mi-results" hidden></div>'
     + (chips ? `<div class="mi-chips">${chips}</div>` : '')
     + (picked.size
-      ? `<div class="mi-active">Showing only these — the loot and key boxes below are paused. `
+      ? `<label class="mi-cont"><input type="checkbox" class="mi-cont-box"${showContainers() ? ' checked' : ''}>`
+        + `<span>Also show containers that can hold them</span></label>`
+        + `<div class="mi-active">Showing only these — the loot and key boxes below are paused. `
         + `<button class="mi-clear" type="button">Clear</button></div>`
       : '')
     + '</div>';
@@ -5735,6 +5792,8 @@ function wireItemSearch(host) {
     if (un) { pinItem(un.dataset.itemUnpin, false); return; }
     const clear = e.target.closest('.mi-clear');
     if (clear) { saveItems({ pinned: pinnedItems(), on: [] }); return; }
+    const cont = e.target.closest('.mi-cont-box');
+    if (cont) { saveItems({ ...itemsState(), containers: cont.checked }); return; }
     if (box && !e.target.closest('.ml-items')) box.hidden = true;
   });
   host.querySelectorAll('[data-item-tick]').forEach((cb) => {
