@@ -1632,6 +1632,15 @@ button { font-family: 'Bender', sans-serif; cursor: pointer; }
 .mi-hit.elsewhere .mi-name { color: #8a877e; }
 .mi-hit.pinned { opacity: .5; }
 .mi-hit .mi-where { margin-left: auto; color: #7f7c73; font-size: 11px; white-space: nowrap; }
+/* the short form the map data files it under, next to the real name — the pins
+   and the marker cards still say this, so it has to stay visible somewhere */
+.mi-hit .mi-short {
+  margin-left: 6px;
+  color: #6f6c64;
+  font-size: 10.5px;
+  font-weight: 400;
+}
+.mi-hit.elsewhere .mi-short { color: #5d5a53; }
 .mi-empty { padding: 9px; color: #6b675e; font-size: 11.5px; line-height: 1.45; }
 .mi-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .mi-chip {

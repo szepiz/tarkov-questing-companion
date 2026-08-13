@@ -4646,6 +4646,39 @@ function lootRowsFor(mapName) {
   return rows;
 }
 
+// WHAT THE ITEM IS ACTUALLY CALLED. The marker data names items by tarkov.dev's
+// short label — "0.2BTC", "WFilter", "Aband." — and a player searches for
+// Physical Bitcoin, a water filter, the Abandoned factory marked key. LT_NAMES
+// carries the real name(s) for every label where it differs.
+//
+// A label that can mean SEVERAL items keeps its label: "Safe" is four different
+// things and the map cannot tell you which one spawned, so naming one would be a
+// claim the data does not support. Both names still match the search.
+function itemNames(short) {
+  const N = (typeof LT_NAMES !== 'undefined' && LT_NAMES) || {};
+  return N[short] || [];
+}
+function itemLabel(short) {
+  const n = itemNames(short);
+  return n.length === 1 ? n[0] : short;
+}
+// Pins are stored by index key. Before the short/full split was fixed a key
+// pinned from a locked door was stored under its FULL name, so those settings
+// have to keep working — map them back rather than dropping them silently.
+let _canonBack = null;
+function canonItem(name) {
+  if (!_canonBack) {
+    _canonBack = new Map();
+    const N = (typeof LT_NAMES !== 'undefined' && LT_NAMES) || {};
+    for (const [short, fulls] of Object.entries(N)) {
+      for (const f of fulls) if (!_canonBack.has(f)) _canonBack.set(f, short);
+    }
+  }
+  const items = (typeof LT_ITEMS !== 'undefined' && LT_ITEMS) || {};
+  if (items[name]) return name;
+  return _canonBack.get(name) || name;
+}
+
 let _itemIndex = null;
 function itemSpawnIndex() {
   if (_itemIndex) return _itemIndex;
@@ -4682,7 +4715,28 @@ function itemSpawnIndex() {
     // a locked door is where the key opens, not where it spawns — but "which
     // door does this key open" is the same question asked backwards, and the
     // marker names the key, so it answers to the same box
-    for (const r of M[map].lk || []) put(r[5] || r[4], map, true);
+    // KEYED BY THE SHORT LABEL, like everything else. This row carries both
+    // names and used to be indexed under the full one, which put 146 keys in
+    // the list twice — and the full-name copy matched no LT_ITEMS row, no
+    // LOOT_VALUE and no LT_CONT, so it was the half that could say nothing.
+    for (const r of M[map].lk || []) put(r[4] || r[5], map, true);
+  }
+  // ITEMS WITH NO PUBLISHED POSITION AT ALL. The wiki names the containers they
+  // come out of and nothing names a coordinate, so they carry an empty map list
+  // and are answered by the container join alone. Keyed by their full name —
+  // they have no short label anywhere in this data, and 646 short names in the
+  // catalogue stand for more than one item, so borrowing one would merge two
+  // different things under one row.
+  const cont = (typeof LT_CONT !== 'undefined' && LT_CONT) || {};
+  // A name the index already stands for under a label is NOT a new item —
+  // "Ophthalmoscope" is the OScope entry, not a second thing to pin. Guarded
+  // here rather than only in the bake, because this is where it would show.
+  const known = new Set();
+  for (const n of idx.keys()) for (const f of itemNames(n)) known.add(f);
+  for (const name of Object.keys(cont)) {
+    if (idx.has(name) || known.has(name)) continue;
+    const lv = (typeof LOOT_VALUE !== 'undefined' && LOOT_VALUE[name]) || null;
+    idx.set(name, { name, value: lv ? lv[0] : 0, maps: new Map(), total: 0, containerOnly: true });
   }
   _itemIndex = idx;
   return idx;
@@ -4705,8 +4759,12 @@ function containerCountFor(name, mapName) {
 }
 
 const itemsState = () => (state.settings && state.settings.mapItems) || {};
-const pinnedItems = () => itemsState().pinned || [];
-const itemFilterSet = () => new Set((itemsState().on || []).filter((n) => pinnedItems().includes(n)));
+// Settings written before keys were merged onto one index key hold full names.
+// Canonicalising on READ migrates them the first time anything is saved, with
+// no upgrade step and no lost pins.
+const canonList = (a) => [...new Set((a || []).map(canonItem))];
+const pinnedItems = () => canonList(itemsState().pinned);
+const itemFilterSet = () => new Set(canonList(itemsState().on).filter((n) => pinnedItems().includes(n)));
 // OFF by default, and it has to be: bitcoin's seven container types cover 402
 // of Streets' 998 containers, which turns an answer into a smear unless it was
 // asked for. The count sits on the chip either way, so it is discoverable
@@ -4724,12 +4782,12 @@ async function saveItems(next) {
 }
 function pinItem(name, on) {
   const pinned = pinnedItems().filter((n) => n !== name);
-  const ticked = (itemsState().on || []).filter((n) => n !== name);
+  const ticked = canonList(itemsState().on).filter((n) => n !== name);
   if (on) { pinned.push(name); ticked.push(name); }   // pinning ticks it: nobody pins to then switch it on
   return saveItems({ pinned, on: ticked });
 }
 function tickItem(name, on) {
-  const ticked = (itemsState().on || []).filter((n) => n !== name);
+  const ticked = canonList(itemsState().on).filter((n) => n !== name);
   if (on) ticked.push(name);
   return saveItems({ pinned: pinnedItems(), on: ticked });
 }
@@ -4902,8 +4960,11 @@ function collectMapMarkers(mapName) {
     // `item` is what the item search matches on. Set here and on the loose-loot
     // markers below, and NOWHERE else: a marker carrying it is one the search
     // governs, and the filter reads exactly that.
+    // The CARD says the full name, because that is what you read. `item` is the
+    // index key and has to be the short label, or the search filter never
+    // matches its own markers.
     add(x, y, z, ['lockAll'], 'key', 'mk-lock', full || short || what, [['', what], ['Opens with', full || short]],
-      { item: full || short || '' });
+      { item: short || full || '' });
   }
   for (const [x, y, z, cat, alts, item] of lootRowsFor(mapName)) {
     const c = LOOT_CATS[cat];
@@ -5008,11 +5069,19 @@ function collectMapMarkers(mapName) {
   // against the loose spots: a loose marker says this exact place can roll the
   // item, one of these says only that the item is on this container type's list.
   // The card says which of the two it is rather than leaving the pin to imply.
-  if (showContainers()) {
+  {
     const picked = itemFilterSet();
+    const idx = picked.size ? itemSpawnIndex() : null;
     for (const name of picked) {
       const cont = (typeof LT_CONT !== 'undefined' && LT_CONT[name]) || null;
       if (!cont) continue;
+      // The toggle is a choice about ITEMS THAT ALSO HAVE SPOTS: it decides
+      // whether the weaker claim joins the stronger one. An item with nothing
+      // else to draw on this map has no stronger claim to be buried under, and
+      // leaving it off would make ticking it do nothing at all.
+      const e = idx.get(name);
+      const nothingElseHere = !e || !e.maps.get(mapName);
+      if (!showContainers() && !nothingElseHere) continue;
       for (const [x, y, z, type] of M.co || []) {
         if (!cont.includes(type)) continue;
         const cname = containerTypes()[type];
@@ -5705,7 +5774,11 @@ function itemSearchHtml() {
     // number next to the name has to be the number of pins you can see
     const label = h ? (floorN !== null && floorN !== h.n ? `${floorN}/${h.n}` : `${h.n}`) : '–';
     const cN = containerCountFor(n, mapView.name);
-    const title = (h
+    const alt = itemNames(n);
+    const title = (alt.length > 1
+      ? `"${n}" can mean ${alt.length} different items — ${alt.join(', ')}. The map cannot tell you which. `
+      : alt.length === 1 ? `${alt[0]} · filed as "${n}". ` : '')
+      + (h
       ? `${h.n} spot${h.n === 1 ? '' : 's'} on ${mapView.name}`
         + (h.dedicated ? `, ${h.dedicated} of them dedicated` : ', none of them dedicated')
         + (floorN !== null && floorN !== h.n ? ` — ${floorN} on the floor you are looking at` : '')
@@ -5713,7 +5786,8 @@ function itemSearchHtml() {
       + (cN ? ` · and ${cN} container${cN === 1 ? '' : 's'} whose loot table it is on` : '');
     return `<span class="mi-chip${on ? ' on' : ''}${h || cN ? '' : ' none'}" title="${escapeHtml(title)}">`
       + `<input type="checkbox" data-item-tick="${escapeHtml(n)}"${on ? ' checked' : ''}${h || cN ? '' : ' disabled'}>`
-      + `<span class="mi-name">${escapeHtml(n)}</span><span class="mi-n">${label}</span>`
+      + `<span class="mi-name">${escapeHtml(itemLabel(n))}</span>`
+      + `<span class="mi-n">${label}</span>`
       + (cN ? `<span class="mi-c" title="containers whose loot table it is on">+${cN}</span>` : '')
       + `<button class="mi-x" type="button" data-item-unpin="${escapeHtml(n)}" title="Unpin">×</button></span>`;
   }).join('');
@@ -5733,20 +5807,39 @@ function itemSearchHtml() {
 }
 
 // Ranked for the map you are looking at: what is HERE first, dearest first
-// inside that, then everything else. With 146 names the list is browsable, and
-// that matters — the data carries short forms ("WFilter", "SJ6", "0.2BTC") and
-// no full item names at all, so anyone typing "water filter" would find
-// nothing. Opening the box on a map and reading down it is the discovery path.
+// inside that, then everything else.
+//
+// Browsing the list used to be the ONLY way in — the data carries short forms
+// ("WFilter", "SJ6", "0.2BTC") and this matched nothing else, so "water filter"
+// found nothing. LT_NAMES puts the real name behind the label and both are
+// matched now; the ranking still matters, because a name can be on ten maps and
+// the one you are looking at is the one you asked about.
 function itemSearchMatches(q) {
   const idx = itemSpawnIndex();
-  const needle = String(q || '').trim().toLowerCase();
+  // EVERY WORD, ANYWHERE, IN ANY ORDER — not the phrase.
+  //
+  // "6-sten-140-m battery" is a fair way to ask for the 6-STEN-140-M MILITARY
+  // battery, and a phrase match cannot span the word in the middle. Nobody
+  // recites an item's full name; they remember the parts of it that are
+  // distinctive. Order-independence comes free and costs nothing.
+  const words = String(q || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
   const rows = [];
   for (const e of idx.values()) {
-    if (needle && !e.name.toLowerCase().includes(needle)) continue;
+    // the label AND every real name behind it, so "physical bitcoin", "water
+    // filter" and "6-sten battery" reach items the data files as 0.2BTC,
+    // WFilter and 6-STEN-140-M military battery
+    const alias = (typeof LT_ALIAS !== 'undefined' && LT_ALIAS[e.name]) || '';
+    const hay = [e.name, ...itemNames(e.name), alias].join(' ').toLowerCase();
+    if (words.length && !words.every((w) => hay.includes(w))) continue;
     const h = e.maps.get(mapView.name) || null;
-    rows.push({ name: e.name, value: e.value, here: h ? h.n : 0, dedicated: h ? h.dedicated : 0, maps: e.maps.size });
+    rows.push({ name: e.name, label: itemLabel(e.name), value: e.value,
+      here: h ? h.n : 0, dedicated: h ? h.dedicated : 0, maps: e.maps.size,
+      cont: containerCountFor(e.name, mapView.name), noPositions: !!e.containerOnly });
   }
-  rows.sort((a, b) => (b.here > 0) - (a.here > 0) || b.value - a.value || a.name.localeCompare(b.name));
+  // A spot on this map outranks a container on this map, which outranks
+  // anything elsewhere — strongest claim first, which is also most-useful first
+  const rank = (r) => (r.here > 0 ? 2 : r.cont > 0 ? 1 : 0);
+  rows.sort((a, b) => rank(b) - rank(a) || b.value - a.value || a.label.localeCompare(b.label));
   return rows.slice(0, 12);
 }
 
@@ -5756,17 +5849,33 @@ function renderItemResults(host, q) {
   const pinned = new Set(pinnedItems());
   const rows = itemSearchMatches(q);
   if (!rows.length) {
-    box.innerHTML = '<div class="mi-empty">Nothing matches. Only the items the marker data names '
-      + 'can be found — 146 of them, and containers name nothing at all.</div>';
+    // COUNTED, NOT QUOTED. This said "146 of them" while the list held 453,
+    // because the number was typed in once and the index was rebuilt twice
+    // since. Reading it off the index is the only version that stays true.
+    const n = itemSpawnIndex().size;
+    box.innerHTML = `<div class="mi-empty">Nothing here matches that. The search covers ${n} `
+      + 'items — every one with a published spawn point, every key with a lock to open, '
+      + 'and every item the wiki names a container for. Ammo, weapons and mods are not '
+      + 'in it: nothing publishes where those come from.</div>';
     box.hidden = false;
     return;
   }
   box.innerHTML = rows.map((r) => `<button class="mi-hit${r.here ? '' : ' elsewhere'}`
     + `${pinned.has(r.name) ? ' pinned' : ''}" type="button" data-item-pin="${escapeHtml(r.name)}">`
-    + `<span class="mi-name">${escapeHtml(r.name)}</span>`
+    + `<span class="mi-name">${escapeHtml(r.label)}`
+    // the short label kept alongside, small: it is what the marker cards and
+    // the chips say, so dropping it entirely would break the link between the
+    // name you searched and the name on the map
+    + (r.label === r.name ? '' : `<span class="mi-short">${escapeHtml(r.name)}</span>`)
+    + '</span>'
+    // Three different answers, and they must not read alike: a loose spot here,
+    // no spot here but some elsewhere, and NO PUBLISHED POSITION ANYWHERE —
+    // the last one is answered by containers only, which is a much weaker claim.
     + `<span class="mi-where">${r.here
       ? `${r.here} here${r.dedicated ? ` · ${r.dedicated} dedicated` : ''}`
-      : `not on this map · ${r.maps} other${r.maps === 1 ? '' : 's'}`}</span></button>`).join('');
+      : r.noPositions
+        ? (r.cont ? `${r.cont} container${r.cont === 1 ? '' : 's'} here` : 'no known spots')
+        : `not on this map · ${r.maps} other${r.maps === 1 ? '' : 's'}`}</span></button>`).join('');
   box.hidden = false;
 }
 
