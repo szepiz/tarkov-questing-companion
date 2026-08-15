@@ -85,13 +85,18 @@ const QUEST_NAMES = {};
 // already removes 73 of these where the wiki's own Requirements section lists a
 // loyalty gate and no level; this list is for the ones where the wiki is still
 // carrying the old number too, so that harvest cannot see them.
-const NO_LEVEL = {
-  // "Swift" (Jaeger). tarkov.dev and the wiki both say level 50. Reported from
-  // the game 2026-08-05 by a player who is exactly level 40 and has it in their
-  // active task list — so whatever gates it now, it is not the level. Jaeger
-  // was at loyalty 4, which is the likely replacement.
-  '60e729cf5698ee7b05057439': true,
-};
+// EMPTY since 2026-08-15, and that is the point: every row here was a claim
+// that a published level gate was wrong, and the sources have caught up.
+//
+// "Swift" (Jaeger) was the last one. Both tarkov.dev and the wiki published a
+// level 50 gate on a quest a level-40 player had active, reported from the game
+// 2026-08-05. tarkov.dev's 1.1.0 correction publishes no level for it at all, so
+// the row had nothing left to remove and `test_wikinames.js` flagged it as
+// redundant. A row that removes nothing is worse than no row: it reads as a
+// live correction and hides that the argument is over.
+//
+// Add one only when a source publishes a level the game contradicts.
+const NO_LEVEL = {};
 
 // Quests patch 1.1.0 ADDED that tarkov.dev has never published. Reported from
 // the game 2026-08-05; the first two also have wiki pages, so their objectives

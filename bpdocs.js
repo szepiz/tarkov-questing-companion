@@ -12,7 +12,7 @@
 // as it already does for story objectives, and shows a real pin only where one
 // has been hand-placed through the dev map editor.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-11.
+// Source: escapefromtarkov.fandom.com, read 2026-08-15.
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const BP_DOCS = [
@@ -39,8 +39,8 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": -21.7,
-     "z": -17.03,
+     "x": -15.4,
+     "z": -25.86,
      "floor": -1,
      "spot": null
     },
@@ -84,6 +84,18 @@ const BP_DOCS = [
      "x": 27.19,
      "z": 36.11,
      "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 25.65,
+     "z": -35.18,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 27.84,
+     "z": -35.76,
+     "floor": 0,
      "spot": null
     }
    ],
@@ -214,6 +226,20 @@ const BP_DOCS = [
      "x": 420.91,
      "z": 176.8,
      "floor": 0,
+     "spot": null
+    }
+   ],
+   "Streets of Tarkov": [
+    {
+     "x": 72.61,
+     "z": -20.63,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 59.92,
+     "z": -60.86,
+     "floor": -1,
      "spot": null
     }
    ]
@@ -357,6 +383,44 @@ const BP_DOCS = [
    "Reserve": []
   },
   "pins": {
+   "Lighthouse": [
+    {
+     "x": -63.28,
+     "z": -734.4,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -186.66,
+     "z": -210.03,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -92.48,
+     "z": -490.18,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -88.21,
+     "z": -72.28,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -106.57,
+     "z": -12.92,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -120.65,
+     "z": 86.1,
+     "floor": -1,
+     "spot": null
+    }
+   ],
    "Reserve": [
     {
      "x": -127.97,
@@ -371,14 +435,62 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": -5.17,
-     "z": 189.46,
+     "x": -4.38,
+     "z": 175.43,
      "floor": -1,
      "spot": null
     },
     {
      "x": -42.14,
      "z": 174.18,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -11.03,
+     "z": 196.9,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -16.12,
+     "z": 175.6,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -159.49,
+     "z": 0.03,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 59.77,
+     "z": 103.12,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 82.04,
+     "z": -14.23,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 27.54,
+     "z": -93.2,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 22.47,
+     "z": -24.32,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 60.29,
+     "z": -114.4,
      "floor": -1,
      "spot": null
     }
@@ -526,8 +638,8 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": -5.17,
-     "z": 188.67,
+     "x": -5.11,
+     "z": 175.42,
      "floor": -1,
      "spot": null
     }
@@ -541,6 +653,164 @@ const BP_DOCS = [
    "Lighthouse": [],
    "Shoreline": [],
    "Woods": []
+  },
+  "pins": {
+   "Lighthouse": [
+    {
+     "x": -95.73,
+     "z": -489.91,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -174.87,
+     "z": -645.22,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -191.49,
+     "z": -196.75,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 134.16,
+     "z": -186.62,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 140.49,
+     "z": -129.05,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -78.18,
+     "z": -85.73,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -59.9,
+     "z": -129.28,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 29.32,
+     "z": -620.64,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -116.87,
+     "z": 97.17,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -86.94,
+     "z": -66.16,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -68.24,
+     "z": 112.7,
+     "floor": -1,
+     "spot": null
+    }
+   ],
+   "Shoreline": [
+    {
+     "x": -319.05,
+     "z": 485.49,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -180.99,
+     "z": -75.35,
+     "floor": 2,
+     "spot": null
+    },
+    {
+     "x": -241.37,
+     "z": 204,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -627.65,
+     "z": -231.7,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 93.95,
+     "z": 117.39,
+     "floor": -1,
+     "spot": null
+    }
+   ],
+   "Woods": [
+    {
+     "x": -248.69,
+     "z": -22.3,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 295.38,
+     "z": -507.65,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 226.51,
+     "z": -712.59,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -43.15,
+     "z": -251.39,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 141,
+     "z": -725.68,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -276.57,
+     "z": -422.52,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -2.19,
+     "z": -75.08,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -475.71,
+     "z": -178.76,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 370.15,
+     "z": 123.54,
+     "floor": -1,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -550,6 +820,96 @@ const BP_DOCS = [
    "Icebreaker": [],
    "Shoreline": [],
    "Woods": []
+  },
+  "pins": {
+   "Shoreline": [
+    {
+     "x": -317.95,
+     "z": 497.52,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -614.52,
+     "z": -180.87,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -511.58,
+     "z": 237.69,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -349.01,
+     "z": -89.68,
+     "floor": 2,
+     "spot": null
+    }
+   ],
+   "Woods": [
+    {
+     "x": -544.33,
+     "z": -200.85,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -455.92,
+     "z": -366.3,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 239.01,
+     "z": -70.45,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -513.47,
+     "z": -394.72,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 309.77,
+     "z": -460.9,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 272.98,
+     "z": -510.36,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -513.4,
+     "z": -177.57,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 285.15,
+     "z": -517.1,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": 272.54,
+     "z": -439.2,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -200.66,
+     "z": 230.49,
+     "floor": -1,
+     "spot": null
+    }
+   ]
   }
  },
  {
@@ -625,8 +985,8 @@ const BP_DOCS = [
    ],
    "Streets of Tarkov": [
     {
-     "x": 62.41,
-     "z": -76.33,
+     "x": 59.4,
+     "z": -71.36,
      "floor": -1,
      "spot": 1
     },
@@ -637,16 +997,34 @@ const BP_DOCS = [
      "spot": 2
     },
     {
-     "x": -172.38,
+     "x": -170.37,
      "z": 224.9,
      "floor": 1,
      "spot": 3
     },
     {
-     "x": 85.64,
-     "z": -24.65,
+     "x": 84.02,
+     "z": -23.48,
      "floor": -1,
      "spot": 4
+    },
+    {
+     "x": 115.57,
+     "z": -40.56,
+     "floor": 1,
+     "spot": null
+    },
+    {
+     "x": 171.43,
+     "z": 162.56,
+     "floor": -1,
+     "spot": null
+    },
+    {
+     "x": -24.51,
+     "z": -32.79,
+     "floor": 1,
+     "spot": null
     }
    ],
    "The Lab": [
