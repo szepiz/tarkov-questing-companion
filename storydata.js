@@ -7664,7 +7664,7 @@ const STORY_DATA = {
   }
  ]
 };
-const STORY_BAKED_AT = "2026-08-16";
+const STORY_BAKED_AT = "2026-08-17";
 const STORY_HAZARDS = [
  {
   "map": "Shoreline",

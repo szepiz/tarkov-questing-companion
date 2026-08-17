@@ -12,7 +12,7 @@
 // as it already does for story objectives, and shows a real pin only where one
 // has been hand-placed through the dev map editor.
 //
-// Source: escapefromtarkov.fandom.com, read 2026-08-16.
+// Source: escapefromtarkov.fandom.com, read 2026-08-17.
 // Community-maintained and only as current as its editors; re-run to refresh.
 
 const BP_DOCS = [
@@ -904,8 +904,8 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": 40.39,
-     "z": -36.19,
+     "x": 41.48,
+     "z": -15.36,
      "floor": -1,
      "spot": null
     },
@@ -928,8 +928,8 @@ const BP_DOCS = [
      "spot": null
     },
     {
-     "x": 26.4,
-     "z": -19.02,
+     "x": 26.34,
+     "z": -18.96,
      "floor": 0,
      "spot": null
     }
